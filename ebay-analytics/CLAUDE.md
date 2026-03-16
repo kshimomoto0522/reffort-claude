@@ -187,48 +187,230 @@ Impressions → CTR → Page Views → CVR → Sold
 
 ---
 
+## 会社の基本情報
+
+| 項目 | 内容 |
+|------|------|
+| 始業時刻 | **毎日10:00スタート**（スタッフへの通知・リマインダーは10:00以降に送ること） |
+| 週次リマインダー | 毎週月曜10:00（Chatwork【AI】eBay運営 自動送信済み） |
+
+---
+
 ## Claudeへの重要ルール（eBay部門専用）
 
 - スタッフへの指示は佐藤・須藤・高橋の役割を踏まえて内容を分けること
+- **スタッフへの自動通知は始業時刻の10:00以降に送ること**
 - eBay APIのレート制限に注意。過剰なAPIコールを避ける
 - 収支計算には必ずPLP・Offsiteの広告費を含めること
 - 現状の収支表は実際の利益より高く見えていることを常に意識する
 - 提案は「今すぐ手動でできること」と「将来の自動化」を分けて提示する
 - 数字が出たら「だから何をすべきか」まで踏み込んで提言する
 - 本番の顧客・注文データを扱う処理は必ず社長に確認を取ること
+- レポートの出力形式は**Googleスプレッドシート優先**（Excelも可）
 
 ---
 
-## 関連ファイル（作成次第追記）
+## Chatwork連携設定
 
-- 週次レビューテンプレート（未作成）
-- スタッフ向け商品管理マニュアル（未作成）
-- KPI管理スプレッドシート（未作成）
+| 項目 | 内容 |
+|------|------|
+| 送信アカウント | REFFORT AI（keishimomoto0522@gmail.com） |
+| APIトークン保存場所 | `~/.claude.json`（MCP設定内） |
+| 送信先ルーム | 【AI】eBay運営（room_id: **426169912**） |
+| 送信方法 | `curl` または Chatwork MCP経由 |
+| 設定日 | 2026年3月16日 |
+
+### Chatworkへのメッセージ送信コマンド（テンプレート）
+```bash
+python -c "
+import urllib.request, urllib.parse
+token = 'bab3f1fbb9c63cb4e06abff11b4f2857'
+room_id = '426169912'
+msg = '【メッセージ内容】'
+data = urllib.parse.urlencode({'body': msg}).encode()
+req = urllib.request.Request(f'https://api.chatwork.com/v2/rooms/{room_id}/messages', data=data, method='POST')
+req.add_header('X-ChatWorkToken', token)
+with urllib.request.urlopen(req) as res:
+    print('送信完了:', res.read().decode())
+"
+```
+
+### 主要Chatworkルーム一覧
+| ルーム名 | room_id | 用途 |
+|---------|---------|------|
+| 【AI】eBay運営 | 426169912 | AI通達・週次レポート（メイン） |
+| ebay業務連絡 | 271411089 | スタッフ日常業務連絡 |
+| 【KeiS】発送 | 289258037 | 発送業務 |
+| 【KeiS】スニーカー | 319685466 | スニーカー商品関連 |
+| 【Reffort】業務連絡 | 395343446 | 全社業務連絡 |
 
 ---
 
-## 🚀 次のセッションで最初にやること（週明け月曜日）
+## 週次レポート分析スクリプト
 
-> このセクションは週明けのeBay専用セッション開始直後に確認すること。
+| ファイル | 場所 | 役割 | バージョン |
+|---------|------|------|-----------|
+| `analyze_ads.py` | ebay-analytics/ | 広告レポート単体分析 | 旧 |
+| `analyze_traffic.py` | ebay-analytics/ | Traffic×広告統合分析・result_traffic.txt出力 | 旧 |
+| `create_weekly_report.py` | ebay-analytics/ | Excelレポート初版（5シート） | 旧 |
+| **`create_weekly_report_v2.py`** | ebay-analytics/ | **Excelレポート改訂版（7シート）** | **現行** |
 
-### 最優先タスク：週次チェックリストの作成
-スタッフ（主に佐藤・須藤）が今週から使える「eBay週次レビューチェックリスト」を作成する。
+### 週次レポートの手順（現在は半手動）
+1. eBay Seller Hubから3ファイルをダウンロード（月曜10:00以降）
+   - Traffic Report（CSV）
+   - Advertising Sales Report（CSV）
+   - Transaction Report（**USD**期間指定、CSV）
+2. `create_weekly_report_v2.py` の先頭3行（TRAFFIC_FILE・ADS_FILE・TRANS_FILE・OUTPUT）を更新
+3. `py create_weekly_report_v2.py` を実行
+4. 生成されたExcelをChatwork【AI】eBay運営にアップロード
+5. サマリー数値を「📋 週次履歴」シートに1行追記
 
-**チェックリストに含める項目（たたき台）**
-1. eBayレポートのダウンロード・確認（Impressions・CTR・CVR・売上）
-2. 売上ゼロ継続商品のリストアップ → 削除候補に分類
-3. 在庫ゼロなのに出品中の商品を確認（在庫管理ツールのバグ影響確認）
-4. 売れ筋商品の在庫補充・価格チェック
-5. BayPack在庫の状況確認
-6. 今週のアクション決定（削除・改善・強化）
+### レポート構成（v2・7シート）
 
-→ セッション開始後すぐに「週次チェックリストを作りましょう」と動き始める。
+| シート | 内容 | 主な目的 |
+|--------|------|---------|
+| 📊 サマリー | KPIブロック・週別トレンド・収支サマリー・アクション欄 | 全体把握・経営判断 |
+| 🔥 コア売れ筋TOP15 | 販売数ランキング・CVR・在庫・広告売上 | 在庫確保・広告強化 |
+| ⭐ 準売れ筋 | sold>0・TOP15外（194件） | 伸びしろ候補の育成 |
+| 🌱 育成候補 | PV20以上・売上ゼロ TOP30 | 購入障壁の発見・改善 |
+| ⚠️ 要調査 TOP50 | インプ500以上・売上ゼロ・掲載90日以上（全1831件中） | 在庫ツールバグ・仕入先URL切れの特定 |
+| 🗑 削除候補 | L1:即削除14件 / L2:要確認削除59件 | 断捨離・整理 |
+| 📋 週次履歴 | 毎週サマリーを1行追記 | 前週比較の基礎データ |
 
-### その他の確認事項
-- [ ] **GitHubバックアップ設定**（リマインダーあり：10:10に通知）
-- [ ] Cowatechの在庫管理ツールバグ修正状況の確認
-- [ ] PLP・Offsite広告費の収支表への反映方法を検討
+### 商品分類の定義
+
+| 分類 | 基準 | アクション |
+|------|------|-----------|
+| 🔥 コア売れ筋 | 販売数TOP15 | 在庫確保・広告維持 |
+| ⭐ 準売れ筋 | sold>0・TOP15外 | 価格微調整でコア化を狙う |
+| 🌱 育成候補 | sold=0・PV>=20 | 価格・タイトル・競合調査 |
+| ⚠️ 要調査 | sold=0・imps>=500・掲載90日以上 | 在庫ツール確認・仕入先URL確認 |
+| 🗑 削除L1（即削除） | imps=0・PV=0・sold=0 | eBayでウォッチ・累計販売数確認後に取り下げ |
+| 🗑 削除L2（要確認） | imps<50・PV<5・sold=0・掲載180日以上 | 同上 |
+
+### 削除判断の重要ルール
+**削除前に必ずeBayで手動確認すること（自動判断不可）：**
+- **ウォッチ数**：関心度の指標。ウォッチ多数 = 需要あり → 削除不可
+- **生涯販売数（累計）**：過去に売れていた実績がある商品は削除NG（在庫ツールバグ・仕入先URL切れの可能性）
+- これらはTraffic Report CSVには含まれない → **eBay APIで取得予定（中期課題）**
+
+### Traffic Report CSVの列構成（重要・パース参考）
+- 0: Listing title / 1: eBay item ID / 2: Item Start Date / 3: Category
+- 4: Current promoted listings status / 5: Quantity available
+- 6: Total impressions / 7: CTR / 8: Quantity sold
+- 9: % Top 20 Search Impressions / 10: CVR
+- 21: Total Promoted Listings impressions（eBayサイト）
+- 22: Total Promoted Offsite impressions（eBay外）
+- 23: Total organic impressions on eBay site
+- 24: Total page views
+- ヘッダー行はindex=5（先頭5行がメタ情報）
+
+### Transaction Report CSVの列構成（重要・パース参考）
+- ヘッダー行はindex=11（先頭11行がメタ情報）
+- 0: Transaction creation date（"Mar 15, 2026"形式）/ 1: Type
+- 10: Net amount / 11: Payout currency / 17: Item ID / 21: Quantity
+- 22: Item subtotal / 26: Final Value Fee - fixed / 27: Final Value Fee - variable
+- 31: International fee / 34: Gross transaction amount / 35: Transaction currency / 38: Description
+- **除外ルール**: Transaction currency = USD のみ集計（ebaymag = AUD/GBP/EUR/CAD）
+- PLG費用: Type="Other fee", Description="Promoted Listings - General fee"
+- Offsite費用: Type="Other fee", Description="Promoted Offsite fee"
+- PLP費用: **Transaction Reportに含まれない** → 手入力（`PLP_FEE_TOTAL` 変数に設定）
+
+### 分析で判明した重要な知識
+- **Transaction Reportの除外ルール**: `Transaction currency = USD` のみ使用（ebaymag除外）
+- **FVF率**: $150以上〜約8-9%、$150未満〜15-20%（eBay標準）
+- **PLP費用**: Transaction Reportに**含まれない**（Seller Hub広告管理画面で別途確認し手入力）
+- **Offsite費用**: Transaction Reportの「Promoted Offsite fee」に記載（クリック課金・CPC）
+- **PLG**: 成果報酬型（売れた時のみ課金・CPS）
+- **要調査1831件問題**: 全出品2856件の64%がインプあり売上ゼロ → 在庫ツールのバグが広範囲に影響している可能性が非常に高い。Cowatechへの修正依頼が最優先。
 
 ---
-*最終更新: 2026年3月*
+
+## 分析済みデータ（2026年2月13日〜3月15日）
+
+### 収支サマリー（USD・341注文）
+| 項目 | 金額 |
+|------|------|
+| 総収入（商品+送料） | $64,600 |
+| FVF | -$5,455 |
+| International fee | -$525 |
+| PLG広告費 | -$3,446 |
+| PLP広告費 | -$491 |
+| Offsite広告費 | -$2,399 |
+| **eBay控除後手取り** | **$52,284** |
+
+### パフォーマンス指標
+| 指標 | 数値 |
+|------|------|
+| 総出品数 | 2,856件 |
+| 売上ゼロ | 2,647件（92.7%） |
+| 全体CTR | 0.491% |
+| 全体CVR | 0.221% |
+| 完全死蔵（削除済み候補） | 14件 |
+
+### 売れ筋TOP3
+1. Onitsuka Tiger MEXICO 66 Kill Bill YELLOW BLACK（13件・CVR1.1%）
+2. Onitsuka Tiger MEXICO 66 BIRCH PEACOAT（8件・CVR0.6%）
+3. PUMA Speed Cat Wedge Totally Taupe（8件・CVR0.2%※サイズ在庫問題）
+
+---
+
+## 関連ファイル
+
+| ファイル | 状態 |
+|---------|------|
+| eBay週次レポート_20260315.xlsx | ✅ 作成済み（5シート構成・旧版） |
+| **eBay週次レポート_v2_20260315.xlsx** | **✅ 作成済み（7シート構成・現行版）** |
+| result_traffic.txt | ✅ 作成済み（テキスト版レポート） |
+| 週次レビューテンプレート | 未作成 |
+| スタッフ向け商品管理マニュアル | 未作成 |
+
+---
+
+## 🚀 次のセッションで最初にやること
+
+> このセクションは次回eBay専用セッション開始直後に確認すること。
+
+### 継続タスク（優先順）
+1. **eBay API連携の実装**（次回の最優先テーマ・詳細は下記）
+2. **完全死蔵14件の削除確認**（佐藤さんに実施依頼 or 確認）
+3. **NIKE Air More Uptempo（ID: 357786855641）の在庫サイズ確認→取り下げ判断**
+4. **育成候補TOP5の価格・競合チェック**（On Cloudhorizon、NIKE Shox R4等）
+5. **収支表にPLP・Offsite費用を追加**（毎月の実態把握のため）
+6. ~~週次レポートの自動投稿スケジュール設定~~ ✅ 完了（毎週月曜10:00）
+7. ~~週次レポートv2（7シート）作成~~ ✅ 完了（2026/3/16）
+
+### 🔌 eBay API連携：次回の進め方（重要）
+
+**目的**: 削除判断に必要な「ウォッチ数」「累計販売数」をAPIで自動取得する
+**現状**: Traffic Report CSVにはこれらの情報が含まれていない → 手動確認が必要
+
+**次回やること（1〜2時間想定）**:
+1. 既存のeBay APIクレデンシャル確認（Trading API / Sell API）
+2. Pythonでウォッチ数・累計販売数を1件取得するテストスクリプト作成
+3. 削除候補73件（L1:14件 + L2:59件）に対してデータ取得
+4. `create_weekly_report_v2.py` の削除候補シートにウォッチ数・累計販売数列を追加
+
+**使うAPI**: GetItem（Trading API）または Browse API（RESTful）
+**取得したいデータ**: `WatchCount`、`SellingStatus.QuantitySold`（累計）
+
+**クレデンシャルの確認場所**:
+→ 収支集計ツール（前任者作成）のソースコード内にAPIキーが含まれているはず。次回まず確認する。
+
+### 中期ロードマップ（今後取り組む順）
+1. ~~資料の精度アップ~~ ✅ 完了（週次レポートv2・7シート・メイリオ・週別トレンド）
+2. ~~週次・月次報告書の仕様定義~~ ✅ 完了（CLAUDE.md内に仕様記載）
+3. **eBay API活用**（次回最優先：ウォッチ数・累計販売数の自動取得）← **← 次はここ**
+4. **Googleスプレッドシート対応**（ExcelからGoogleスプレッドシートへの移行）
+5. **半自動化**（API取得 → スプレッドシート自動更新 → Chatwork通知）
+
+### 次回レポート時の注意
+- 前回比較ができるよう、今回の数値をベースラインとして保持する（週次履歴シートに既に記録済み）
+- Traffic Report・Advertising Report・Transaction Reportの3ファイルをセットでダウンロード
+- Transaction Reportは「前週月曜〜日曜」の期間指定で統一していく
+- PLP費用は手動確認が必要（Seller Hub広告管理画面で確認し `PLP_FEE_TOTAL` 変数に入力）
+
+---
+
+*最終更新: 2026年3月16日（週次レポートv2完成・eBay API連携は次回）*
 *変更があれば随時更新すること*

@@ -1,0 +1,59 @@
+============================================================
+  売上・手数料サマリー（USサイトのみ・USD）
+  期間: 2026年2月13日〜3月15日（約30日間）
+============================================================
+  注文件数:                   341件
+  返金件数:                   40件
+
+【収入】
+  商品売上（Item subtotal）:  $ 56,539.74
+  送料収入:                   $  8,060.00
+  eBay代行徴収税（非収入）:   $  3,850.40
+  Gross合計（受取総額）:       $ 66,724.19
+
+【eBay手数料】
+  Final Value Fee（固定）:    $    -13.20
+  Final Value Fee（変動）:    $ -5,442.05
+  FVF合計:                    $ -5,455.25
+  International fee:          $   -524.60
+  eBay手数料合計:             $ -5,979.85
+  手数料率（商品売上比）:             10.6%
+
+【手取り】
+  Net（eBay手数料差引後）:    $ 60,546.67
+
+  返金合計:                   $ -6,241.20（40件）
+
+============================================================
+  売れ筋TOP15（商品売上ベース）
+============================================================
+   1. Onitsuka Tiger MEXICO 66 1183C102 751 YELLOW BLACK
+      13件 / 売上: $2,031.00 / 手取参考: $2,070.74
+   2. PUMA Women's Speed Cat Wedge 407878_01 Totally Taupe Ch
+      9件 / 売上: $1,791.00 / 手取参考: $1,821.27
+   3. Onitsuka Tiger MEXICO 66 1183C102 200 BIRCH PEACOAT
+      7件 / 売上: $1,113.00 / 手取参考: $1,119.51
+   4. Onitsuka Tiger MEXICO 66 1183A201 126 WHITE BLACK
+      7件 / 売上: $1,095.00 / 手取参考: $1,186.28
+   5. Onitsuka Tiger MEXICO 66 1183B566 021 THL7C2 9399 Silve
+      5件 / 売上: $786.00 / 手取参考: $799.46
+   6. CONVERS × NARUTO SHIPPUDEN ALL STAR HI 31317150 Minato
+      5件 / 売上: $750.00 / 手取参考: $828.13
+   7. MIZUNO Morelia SALA ELITE TF Q1GB2512 09 Super White Pe
+      4件 / 売上: $636.00 / 手取参考: $666.47
+   8. ASICS SWIFTACE 1063A114 100 White Black Basketball Shoe
+      4件 / 売上: $636.00 / 手取参考: $636.24
+   9. ASICS DS LIGHT X-FLY 5 1101A047 100 White Black Soccer 
+      4件 / 売上: $635.70 / 手取参考: $708.37
+  10. ASICS WINJOB CP214 TS BOA 1271A056 300 Liken Green Whit
+      4件 / 売上: $628.05 / 手取参考: $690.77
+  11. NIKE Air Force 1 '07 LV8 IU2363-200 Baroque Brown Baroq
+      3件 / 売上: $555.00 / 手取参考: $613.74
+  12. NIKE x Stranger Things Women's Field General High IM387
+      3件 / 売上: $549.00 / 手取参考: $608.19
+  13. adidas Originals Women's ADIZERO ADIOS PRO 4 JQ4446 Cor
+      2件 / 売上: $538.00 / 手取参考: $538.21
+  14. Onitsuka Tiger MEXICO 66 SD 1183A872 101 CREAM PEACOAT
+      3件 / 売上: $537.00 / 手取参考: $586.20
+  15. Onitsuka Tiger DELEGATION EX 1183A559 109 WHITE BLACK
+      3件 / 売上: $537.00 / 手取参考: $491.52

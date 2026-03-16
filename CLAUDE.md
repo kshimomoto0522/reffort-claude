@@ -232,6 +232,8 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
 | BayChat現在のAI | OpenAI（ChatGPT）をCowatechが実装 |
 | 目標 | Claude APIへの移行または併用を検討 |
 | 開発会社 | Cowatech（ベトナム）：BayChat・BayPack両方 |
+| GitHubバックアップ | https://github.com/kshimomoto0522/reffort-claude（Private）毎日深夜0時に自動バックアップ |
+| スマホ活用 | ClaudeスマホアプリにGitHub連携済み。PC更新→自動バックアップ→スマホで最新md参照可能 |
 
 ---
 
@@ -271,6 +273,9 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
     CLAUDE.md                  ← 経営分析・売上ダッシュボード専用
   /campers/
     CLAUDE.md                  ← Campersスクール関連専用
+  /consulting/
+    CLAUDE.md                  ← 将来のコンサルコミュニティ事業の準備専用
+    journey-log.md             ← 日々の実践・学習の蓄積ログ（Claudeが自動更新）
 ```
 
 ---
@@ -294,5 +299,32 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
 
 ---
 
-*最終更新: 2025年 Phase 1*
+## 自動タスク管理ルール
+
+### 概要
+新しいセッションを開始したとき、以下の「常に存在すべき自動タスク一覧」を確認すること。
+タスクが存在しない場合は、社長に断りなく自動的に作成・設定する。
+
+### 常に存在すべき自動タスク一覧
+
+| タスクID | 内容 | スケジュール |
+|----------|------|------------|
+| `daily-github-backup` | reffortフォルダのCLAUDE.mdファイルを毎日GitHubにバックアップ | 毎日深夜0時 |
+| `monday-github-reminder` | 月曜日の朝に週次リマインダーを表示 | 毎週月曜 9時 |
+
+### バックアップタスクの設定内容（`daily-github-backup`）
+- 対象ファイル：reffort フォルダ内の全CLAUDE.md（7ファイル）
+- リポジトリ：https://github.com/kshimomoto0522/reffort-claude
+- 処理：変更があればコミット＆プッシュ、なければスキップ
+- コミットメッセージ：`自動バックアップ：YYYY-MM-DD`
+
+### 新しい自動タスクを追加するとき
+社長から「〇〇を定期的に自動でやってほしい」という依頼があった場合：
+1. タスクを作成・設定する
+2. この一覧表に追加する
+3. CLAUDE.mdをGitHubにバックアップする
+
+---
+
+*最終更新: 2026年3月 Phase 1*
 *このファイルは事業の変化・新しい決定があるたびに更新すること*

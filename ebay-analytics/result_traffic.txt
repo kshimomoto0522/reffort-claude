@@ -1,0 +1,122 @@
+=================================================================
+  Traffic × Advertising 統合レポート（2/13〜3/15）
+=================================================================
+  総出品数:                  2,856件
+  売上ゼロ商品:              2,647件 (92.7%)
+  完全死蔵（インプ・PVゼロ）: 14件 (0.5%)
+  インプレッション合計:      28,282,747
+  ページビュー合計:          138,870
+  販売数合計:                307件
+  全体CTR（表示→閲覧）:      0.491%
+  全体CVR（閲覧→購入）:      0.221%
+
+=================================================================
+  🔥 売れ筋TOP15（販売数ベース）
+=================================================================
+   1. Onitsuka Tiger MEXICO 66 Kill Bill 1183C102 751 YELLOW BLACK
+      ID:355315032752 | 売:13件 | CVR:1.1% | PV:1,182 | Imp:1,335,735 | 広告売:$3,717
+   2. Onitsuka Tiger MEXICO 66 1183C102 200 BIRCH PEACOAT
+      ID:354304299792 | 売:8件 | CVR:0.6% | PV:1,433 | Imp:1,674,651 | 広告売:$2,726
+   3. PUMA Women's Speed Cat Wedge 407878_01 Totally Taupe Chocolate
+      ID:358022227865 | 売:8件 | CVR:0.2% | PV:4,172 | Imp:348,947 | 広告売:$2,067
+   4. Onitsuka Tiger MEXICO 66 1183A201 126 WHITE BLACK
+      ID:356024191164 | 売:6件 | CVR:0.6% | PV:1,001 | Imp:1,288,451 | 広告売:$1,993
+   5. CONVERS × NARUTO SHIPPUDEN ALL STAR HI 31317150 Minato
+      ID:358241699014 | 売:6件 | CVR:1.6% | PV:371 | Imp:28,105 | 広告売:$1,159
+   6. Onitsuka Tiger MEXICO 66 1183B566 021 THL7C2 9399 Silver Off white
+      ID:353477547355 | 売:5件 | CVR:0.9% | PV:559 | Imp:854,871 | 広告売:$1,264
+   7. Onitsuka Tiger MEXICO 66 1183C102 250 BEIGE GRASS GREEN
+      ID:355030639585 | 売:5件 | CVR:1.7% | PV:289 | Imp:91,932 | 広告売:$1,137
+   8. ASICS SWIFTACE 1063A114 100 White Black Basketball Shoes
+      ID:358134094021 | 売:4件 | CVR:1.4% | PV:281 | Imp:61,373 | 広告売:$753
+   9. MIZUNO Morelia SALA ELITE TF Q1GB2512 09 Super White Pearl Black Width 2E Futsal
+      ID:357441449728 | 売:4件 | CVR:1.8% | PV:217 | Imp:35,561 | 広告売:$773
+  10. ASICS DS LIGHT X-FLY 5 1101A047 100 White Black Soccer Cleats
+      ID:354715669960 | 売:4件 | CVR:2.5% | PV:158 | Imp:40,561 | 広告売:$842
+  11. CONVERSE CANVAS ALL STAR J HI Sneakers Made in Japan Natural White Black White
+      ID:353360973341 | 売:3件 | CVR:0.7% | PV:409 | Imp:66,695 | 広告売:$575
+  12. Onitsuka Tiger GSM SD 1183A803 100 Cream Peacoat
+      ID:353591721307 | 売:3件 | CVR:1.6% | PV:189 | Imp:40,286 | 広告売:$675
+  13. Onitsuka Tiger MEXICO 66 SLIP-ON 1183A360 002 BLACK BLACK
+      ID:354086872974 | 売:3件 | CVR:1.4% | PV:210 | Imp:52,990 | 広告売:$526
+  14. Onitsuka Tiger MEXICO 66 SD 1183A872 101 CREAM PEACOAT
+      ID:354330480553 | 売:3件 | CVR:0.4% | PV:782 | Imp:90,586 | 広告売:$694
+  15. Onitsuka Tiger DELEGATION EX 1183A559 109 WHITE BLACK
+      ID:357187350844 | 売:3件 | CVR:5.5% | PV:55 | Imp:7,117 | 広告売:$537
+
+=================================================================
+  🌱 育成候補：PVあり・売上ゼロ TOP20（価格・サイズ・競合確認）
+  → 需要はある。何かが購入を妨げている
+=================================================================
+   1. NIKE Air More Uptempo Low IM6649-001 Black Black
+      ID:357786855641 | PV:6,761 | Imp:800,535 | 在庫:1
+   2. On Cloudhorizon Fog Desert 3ME10033311 CloudTec Phase Men's Hiking Shoes
+      ID:356898047547 | PV:4,130 | Imp:77,358 | 在庫:8
+   3. NIKE Shox R4 HQ1988-800 Bright ceramic black metallic dark gray bright ceramic
+      ID:357700080335 | PV:2,534 | Imp:128,864 | 在庫:8
+   4. NIKE Air Max 90 Essential+ IH2063-200 Baroque Brown Desert Ochre Baroque Brown
+      ID:357524882822 | PV:1,814 | Imp:131,745 | 在庫:6
+   5. NIKE Vomero Plus SE IM8072-999 Multicolor Volt White Black
+      ID:357908874112 | PV:1,789 | Imp:126,129 | 在庫:6
+   6. Onitsuka Tiger MEXICO 66 SABOT 1183C123 252 BEIGE GREEN
+      ID:355555194037 | PV:1,549 | Imp:83,313 | 在庫:15
+   7. On Cloudmonster Hyper Red Cream 3WE10123344 CloudTec Women's Running Shoes
+      ID:356746272131 | PV:1,390 | Imp:59,027 | 在庫:4
+   8. adidas Originals ADIZERO EVO SL WOVEN KJ1995 Carbon Core Black Lucid Orange
+      ID:358122250058 | PV:1,256 | Imp:302,554 | 在庫:8
+   9. ASICS Women's GEL-NIMBUS 27 TR 1012B908 600 Nature Bathing Dark Red Planet Teal
+      ID:357693187766 | PV:964 | Imp:19,870 | 在庫:3
+  10. On Cloudultra Pro Cinder Pearl 3MF30173626 Men's Trail Running Shoes
+      ID:357291717466 | PV:909 | Imp:43,051 | 在庫:6
+  11. On Cloudhorizon Waterproof Glacier Alloy 3ME10051536 Missiongrip Men's Hiking
+      ID:356556503226 | PV:777 | Imp:61,668 | 在庫:5
+  12. Reebok SHAQNOSIS LOW 100244789 Black
+      ID:358166671398 | PV:641 | Imp:164,057 | 在庫:5
+  13. CONVERSE CONS ACCELERATOR MID 33500531 Off white Red
+      ID:358145388912 | PV:581 | Imp:56,877 | 在庫:13
+  14. adidas Originals ADIZERO × AMG ADIZERO ADIOS PRO 4 KH8840 Core Black Lucid Red
+      ID:357566465124 | PV:564 | Imp:51,556 | 在庫:5
+  15. On Cloudhorizon Waterproof Fog Thorn 3ME10052506 Missiongrip Men's Hiking
+      ID:356556493637 | PV:533 | Imp:46,542 | 在庫:9
+  16. ASICS GEL-VICKKA PRO 1201A486 003 Black Black Skateboarding
+      ID:357182627894 | PV:528 | Imp:30,609 | 在庫:4
+  17. ASICS GEL-NIMBUS 27 TR 1011C136 300 Nature Bathing Tranquil Teal Trail Running
+      ID:357693168480 | PV:523 | Imp:30,042 | 在庫:6
+  18. On Cloudmonster Hyper Fade Lime 3ME10134323 Speedboard Men's Running Shoes
+      ID:357500276905 | PV:492 | Imp:21,953 | 在庫:9
+  19. NIKE Women's Air Max 90 IF1619-102 Sail Black Burgundy Crush
+      ID:357560594800 | PV:432 | Imp:89,799 | 在庫:4
+  20. On Cloud 6 WP Black Black 3MF10061043 Speedboard Men's Lifestyle Shoes
+      ID:356979484083 | PV:405 | Imp:32,166 | 在庫:10
+
+=================================================================
+  🗑 完全死蔵リスト（14件）インプ・PV・売上すべてゼロ → 削除推奨
+=================================================================
+  ID:355020115340
+  ASICS WINJOB CP701 1273A018 001 Black Black 3E Safety Shoes
+  ID:355234895470
+  MIZUNO WAVE MEDAL 7 81GA2315 03 Navy Lime Purple 2E Table Tennis Shoes
+  ID:355306692506
+  ASICS DS LIGHT X-FLY PRO 2 1101A055 102 White Electric Blue Soccer Cleats
+  ID:355748237334
+  NIKE Air Max Dn DV3337-101 White White Metallic Silver White
+  ID:355840959442
+  MIZUNO Wave Lightning Z8 V1GA2400 11 Yellow Green Blue Width 2E Volleyball Shoes
+  ID:356014913950
+  MIZUNO Wave Medal BOA 81GA2012 02 White Black Lime 2E Table Tennis Shoes
+  ID:356066159211
+  New Balance FuelCell Two Wxy v5 EG5 BB2WYEG5 Width 2E LIME Basketball Shoes
+  ID:356185054962
+  New Balance T500 CG CT500CG Width D WHITE GREEN Lifestyle Shoes
+  ID:357123077299
+  MIZUNO WAVE RIDER β D1GA3309 22 Beige Dark Navy Mustard Width 2E
+  ID:357222017281
+  ASICS NOOSA TRI 16 1011B872 752 Citron Jasper Green Running Shoes
+  ID:357281706000
+  ASICS GEL-KAYANO 31 1011B867 403 Indigo Blue Gunmetal Running Shoes
+  ID:357382941741
+  MIZUNO Morelia Neo IV JAPAN P1GA2530 00 Black Ruby Red Width 2E Soccer Cleats
+  ID:357530028645
+  New Balance CM996V2 CM996SM2 Black Black Cement Arid Stone Width D
+  ID:358091408060
+  New Balance Lunar New Year 204L U204L3K9 THUNDER BROWN BLACK SHADOW RED Width D
