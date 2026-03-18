@@ -21,7 +21,9 @@
       "Bash(curl -s -H \"X-ChatWorkToken: bab3f1fbb9c63cb4e06abff11b4f2857\" \"https://api.chatwork.com/v2/me\" -o \"C:/Users/KEISUKE SHIMOMOTO/Desktop/reffort/ebay-analytics/cw_me.json\")",
       "Bash(curl -s -H \"X-ChatWorkToken: bab3f1fbb9c63cb4e06abff11b4f2857\" \"https://api.chatwork.com/v2/rooms\")",
       "Bash(python -c \":*)",
-      "Bash(py create_weekly_report_v2.py)"
+      "Bash(py create_weekly_report_v2.py)",
+      "mcp__chatwork__list_room_messages",
+      "Bash(py create_weekly_report_v3.py)"
     ]
   }
 }
