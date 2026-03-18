@@ -14,7 +14,7 @@ TRANS_FILE   = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\Transaction-Mar-16-2026-01
 
 # 出力ファイル名は日付を自動挿入（手動更新不要）
 TODAY        = date.today()
-OUTPUT       = rf"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\ebay-analytics\eBay週次レポート_v3_{TODAY.strftime('%Y%m%d')}.xlsx"
+OUTPUT       = rf"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\ebay-analytics\eBay週次レポート_v3_{TODAY.strftime('%Y%m%d')}_{datetime.now().strftime('%H%M')}.xlsx"
 
 # 週次履歴ファイル（前週比較のためのJSONデータ）
 HISTORY_FILE = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\ebay-analytics\weekly_history.json"
@@ -131,6 +131,24 @@ def fmt_delta_sold(current_sold, item_id):
     if delta > 0:  return f'▲+{delta}'
     elif delta < 0: return f'▼{delta}'
     return '±0'
+
+# ===== 標準列幅（全シート共通・統一感のために定数化）=====
+W_RANK     = 6    # 順位・優先度
+W_TITLE    = 52   # 商品タイトル
+W_ITEM_ID  = 14   # Item ID
+W_SCORE    = 11   # スコア・ポテンシャル
+W_SOLD     = 8    # 販売数
+W_CVR      = 8    # CVR
+W_PV       = 9    # PV
+W_IMPS     = 12   # インプレッション
+W_QTY      = 8    # 在庫数
+W_DAYS     = 8    # 掲載日数
+W_PROMO    = 13   # 広告状態
+W_ORGANIC  = 10   # Organic比
+W_PREV_CAT = 14   # 前週カテゴリ
+W_AD_SALES = 12   # 広告売上
+W_MEMO     = 20   # メモ・確認欄
+W_REASON   = 28   # 原因・推測
 
 # ===== スタイル定数 =====
 FONT = 'メイリオ'
@@ -326,8 +344,17 @@ top15     = sorted(items, key=lambda x: -x['sold'])[:15]
 top15_ids = {i['id'] for i in top15}
 
 # ⭐ 準売れ筋: sold>0 かつ TOP15外
-準売れ筋    = sorted([i for i in items if i['sold']>0 and i['id'] not in top15_ids],
-                    key=lambda x: (-x['sold'], -x['cvr']))
+# ポテンシャルスコア = CVR × PV（高いほど「今すぐ伸ばせる」商品）
+# 優先度: S=上位10件（最重点）/ A=11-30件（重点）/ B=31-80件（普通）/ C=それ以下
+_準売れ筋_raw = [i for i in items if i['sold']>0 and i['id'] not in top15_ids]
+for i in _準売れ筋_raw:
+    i['pot_score'] = round(i['cvr'] * i['pv'], 1)   # ポテンシャルスコア計算
+準売れ筋 = sorted(_準売れ筋_raw, key=lambda x: -x['pot_score'])  # スコア降順で並べ替え
+for idx, i in enumerate(準売れ筋):                  # 優先度ラベルを付与
+    if   idx < 10:  i['priority'] = 'S 🔥'
+    elif idx < 30:  i['priority'] = 'A ⭐'
+    elif idx < 80:  i['priority'] = 'B 🌱'
+    else:           i['priority'] = 'C —'
 準売れ筋_ids = {i['id'] for i in 準売れ筋}
 
 # ⚠️ 要調査: sold=0 & インプ500以上 & 掲載90日以上（全件記録し上位50件表示）
@@ -467,13 +494,13 @@ wb = Workbook()
 ws1 = wb.active
 ws1.title = '📊 サマリー'
 ws1.sheet_view.showGridLines = False
-ws1.column_dimensions['A'].width = 30
-ws1.column_dimensions['B'].width = 15
-ws1.column_dimensions['C'].width = 15
-ws1.column_dimensions['D'].width = 15
-ws1.column_dimensions['E'].width = 15
-ws1.column_dimensions['F'].width = 15
-ws1.column_dimensions['G'].width = 13
+ws1.column_dimensions['A'].width = 34   # 指標名（KPI）/ 週別トレンドのラベル
+ws1.column_dimensions['B'].width = 18   # 数値 / W1
+ws1.column_dimensions['C'].width = 30   # 内訳・補足 / W2（テキスト表示のため幅広に）
+ws1.column_dimensions['D'].width = 15   # W3
+ws1.column_dimensions['E'].width = 15   # W4
+ws1.column_dimensions['F'].width = 18   # 合計
+ws1.column_dimensions['G'].width = 13   # W3→W4変化
 
 def s1_section(ws, row_num, title, color='E8EAF6'):
     ws.merge_cells(f'A{row_num}:G{row_num}')
@@ -517,6 +544,9 @@ kpi_rows = [
 for label, val, note, is_sub in kpi_rows:
     bg = C_GRAY_BG if is_sub else None
     apply_body_row(ws1, row, [label, val, note, '', '', '', ''], bg_color=bg)
+    # C列〜G列をマージして内訳・補足テキストが隠れないようにする
+    ws1.merge_cells(f'C{row}:G{row}')
+    ws1.cell(row=row, column=3).alignment = left()
     row += 1
 
 row += 1
@@ -591,6 +621,9 @@ for label, amount, note, bold in finance_rows:
     elif amount.startswith('-'): bg = 'FFF3E0'
     else: bg = None
     apply_body_row(ws1, row, [label, amount, note, '', '', '', ''], bg_color=bg, bold=bold)
+    # C列〜G列をマージして備考テキストが隠れないようにする
+    ws1.merge_cells(f'C{row}:G{row}')
+    ws1.cell(row=row, column=3).alignment = left()
     row += 1
 
 row += 1
@@ -636,7 +669,9 @@ for sug in suggestions:
 ws2 = wb.create_sheet('🔥 コア売れ筋TOP15')
 ws2.sheet_view.showGridLines = False
 # A:順位 B:タイトル C:ItemID D:販売数 E:先週比Δ F:CVR G:PV H:インプ I:在庫 J:広告売上 K:掲載日数 L:先週カテゴリ
-for col, w in zip('ABCDEFGHIJKL', [4, 52, 14, 8, 9, 8, 9, 11, 8, 11, 8, 14]):
+for col, w in zip('ABCDEFGHIJKL', [W_RANK, W_TITLE, W_ITEM_ID, W_SOLD, W_SCORE,
+                                    W_CVR, W_PV, W_IMPS, W_QTY, W_AD_SALES,
+                                    W_DAYS, W_PREV_CAT]):
     ws2.column_dimensions[col].width = w
 
 ws2.merge_cells('A1:L1')
@@ -671,7 +706,8 @@ for rank, item in enumerate(top15, 1):
 # ─────────────────────────────────────────────────────────────
 ws_alert = wb.create_sheet('🚨 コア落ち')
 ws_alert.sheet_view.showGridLines = False
-for col, w in zip('ABCDEFGHIJ', [52, 14, 9, 9, 9, 8, 8, 8, 14, 30]):
+for col, w in zip('ABCDEFGHIJ', [W_TITLE, W_ITEM_ID, W_SOLD, W_SOLD, W_SCORE,
+                                  W_CVR, W_QTY, W_DAYS, W_PREV_CAT, W_REASON]):
     ws_alert.column_dimensions[col].width = w
 
 ws_alert.merge_cells('A1:J1')
@@ -729,44 +765,62 @@ else:
         ], bg_color=C_ALERT_BG, height=20)
 
 # ─────────────────────────────────────────────────────────────
-# Sheet 4: ⭐ 準売れ筋（先週カテゴリ追加）
+# Sheet 4: ⭐ 準売れ筋（ポテンシャルスコア・優先度追加）
 # ─────────────────────────────────────────────────────────────
 ws3 = wb.create_sheet('⭐ 準売れ筋')
 ws3.sheet_view.showGridLines = False
-for col, w in zip('ABCDEFGHIJ', [52, 14, 8, 8, 9, 11, 8, 11, 8, 14]):
+# 列: 優先度 / タイトル / ItemID / ポテンシャル / 販売数 / CVR / PV / インプ / 在庫 / 掲載日数 / 前週カテゴリ
+for col, w in zip('ABCDEFGHIJK', [W_RANK, W_TITLE, W_ITEM_ID, W_SCORE,
+                                   W_SOLD, W_CVR, W_PV, W_IMPS,
+                                   W_QTY, W_DAYS, W_PREV_CAT]):
     ws3.column_dimensions[col].width = w
 
-ws3.merge_cells('A1:J1')
+ws3.merge_cells('A1:K1')
 c = ws3['A1']
-c.value = f'⭐ 準売れ筋（{len(準売れ筋)}件）― 売上あり・TOP15外 ― 価格微調整でコア売れ筋に育つ可能性あり'
+c.value = f'⭐ 準売れ筋（{len(準売れ筋)}件）― ポテンシャルスコア順（CVR×PV）― S=最重点10件 / A=重点20件 / B=普通50件 / C=後回し'
 c.font = Font(name=FONT, size=11, bold=True, color='FFFFFF')
 c.fill = hdr_fill(C_BLUE_HDR)
 c.alignment = center()
 ws3.row_dimensions[1].height = 24
 
-hdr3 = [
-    ('商品タイトル', 52), ('Item ID', 14),
-    ('販売数', 8), ('CVR', 8), ('PV', 9),
-    ('インプ', 11), ('在庫数', 8), ('Organic比', 11), ('掲載日数', 8), ('前週カテゴリ', 14),
-]
-apply_header_row(ws3, 2, hdr3, C_BLUE_HDR)
+ws3.merge_cells('A2:K2')
+note3 = ws3['A2']
+note3.value = ('【優先度の見方】S🔥→今週必ず対処 / A⭐→今週中に確認 / B🌱→来週以降 / C—→後回し  '
+               '【ポテンシャル】CVR×PV：高いほど「少し手を加えれば大きく伸びる」商品')
+note3.font = Font(name=FONT, size=9, color='0D47A1')
+note3.fill = body_fill('E3F2FD')
+note3.alignment = left()
+ws3.row_dimensions[2].height = 20
 
-for i, item in enumerate(準売れ筋, 3):
-    org_ratio = f'{item["org_imps"]/item["imps"]*100:.0f}%' if item['imps'] > 0 else '-'
-    prev_cat  = get_prev_category(item['id'])
+hdr3 = [
+    ('優先度', W_RANK), ('商品タイトル', W_TITLE), ('Item ID', W_ITEM_ID),
+    ('ポテンシャル\n(CVR×PV)', W_SCORE), ('販売数', W_SOLD), ('CVR', W_CVR),
+    ('PV', W_PV), ('インプ', W_IMPS), ('在庫数', W_QTY),
+    ('掲載日数', W_DAYS), ('前週カテゴリ', W_PREV_CAT),
+]
+apply_header_row(ws3, 3, hdr3, C_BLUE_HDR)
+
+# 優先度ごとに背景色を変える
+PRIORITY_BG = {'S 🔥': 'C8E6C9', 'A ⭐': C_BLUE_BG, 'B 🌱': C_YELLOW_BG, 'C —': C_GRAY_BG}
+
+for i, item in enumerate(準売れ筋, 4):
+    prev_cat = get_prev_category(item['id'])
+    bg       = PRIORITY_BG.get(item['priority'], C_BLUE_BG)
+    bold     = item['priority'] == 'S 🔥'   # S優先度は太字で強調
     apply_body_row(ws3, i, [
-        item['title'], item['id'],
-        int(item['sold']), f'{item["cvr"]:.1f}%', int(item['pv']),
-        f'{item["imps"]:,.0f}', int(item['qty']),
-        org_ratio, f'{item["days"]}日', prev_cat,
-    ], bg_color=C_BLUE_BG)
+        item['priority'], item['title'], item['id'],
+        item['pot_score'], int(item['sold']), f'{item["cvr"]:.1f}%',
+        int(item['pv']), f'{item["imps"]:,.0f}', int(item['qty']),
+        f'{item["days"]}日', prev_cat,
+    ], bg_color=bg, bold=bold)
 
 # ─────────────────────────────────────────────────────────────
 # Sheet 5: 🌱 育成候補（v3改訂：PV50以上・要調査除外・上位20件）
 # ─────────────────────────────────────────────────────────────
 ws4 = wb.create_sheet('🌱 育成候補')
 ws4.sheet_view.showGridLines = False
-for col, w in zip('ABCDEFGHIJ', [52, 14, 9, 11, 8, 8, 8, 13, 11, 14]):
+for col, w in zip('ABCDEFGHIJ', [W_TITLE, W_ITEM_ID, W_PV, W_IMPS, W_CVR,
+                                  W_QTY, W_DAYS, W_PROMO, W_ORGANIC, W_PREV_CAT]):
     ws4.column_dimensions[col].width = w
 
 ws4.merge_cells('A1:J1')
@@ -809,7 +863,9 @@ for i, item in enumerate(育成, 4):
 # ─────────────────────────────────────────────────────────────
 ws5 = wb.create_sheet('⚠️ 要調査')
 ws5.sheet_view.showGridLines = False
-for col, w in zip('ABCDEFGHIJK', [52, 14, 11, 9, 8, 8, 13, 11, 14, 20, 18]):
+for col, w in zip('ABCDEFGHIJK', [W_TITLE, W_ITEM_ID, W_IMPS, W_PV, W_QTY,
+                                   W_DAYS, W_PROMO, W_ORGANIC, W_PREV_CAT,
+                                   W_MEMO, W_MEMO]):
     ws5.column_dimensions[col].width = w
 
 ws5.merge_cells('A1:K1')
@@ -856,7 +912,8 @@ for i, item in enumerate(要調査, 4):
 # ─────────────────────────────────────────────────────────────
 ws6 = wb.create_sheet('🗑 削除候補')
 ws6.sheet_view.showGridLines = False
-for col, w in zip('ABCDEFGHI', [52, 14, 8, 8, 13, 14, 14, 14, 8]):
+for col, w in zip('ABCDEFGHI', [W_TITLE, W_ITEM_ID, W_QTY, W_DAYS, W_PROMO,
+                                 W_MEMO, W_MEMO, W_PREV_CAT, W_RANK]):
     ws6.column_dimensions[col].width = w
 
 ws6.merge_cells('A1:I1')
