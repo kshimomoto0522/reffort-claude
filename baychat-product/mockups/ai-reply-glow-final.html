@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Reply エフェクト適用箇所一覧</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif;
+    background: #f0eff4;
+    color: #333;
+  }
+
+  .page-header { text-align: center; padding: 40px 20px 12px; }
+  .page-header h1 { font-size: 20px; color: #333; }
+  .page-header p { font-size: 12px; color: #999; margin-top: 4px; }
+
+  .sections {
+    max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px;
+    display: flex; flex-direction: column; gap: 56px;
+  }
+
+  .block {
+    background: #fff; border-radius: 16px;
+    padding: 32px 36px 36px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .block-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .block-num {
+    font-size: 11px; font-weight: 800; color: #9b2fA0;
+    letter-spacing: 1.5px;
+  }
+  .block-title { font-size: 17px; font-weight: 700; color: #222; }
+  .block-desc {
+    font-size: 12px; color: #888; line-height: 1.7; margin-bottom: 24px;
+  }
+  .block-demo {
+    display: flex; justify-content: center; align-items: center;
+    padding: 20px 0;
+  }
+
+  /* ==========================================================
+     BayChat実際のカラー定義
+     カード: 左 #7B2D8E → 右 #B5287A（マゼンタ寄り紫グラデ）
+     ========================================================== */
+
+  /* ==========================================================
+     共通: パターンGのオーロラボーダー（実際のカラーベース）
+     ========================================================== */
+  @property --angle-g {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @keyframes spin-g {
+    to { --angle-g: 360deg; }
+  }
+  .aurora-border {
+    background: conic-gradient(
+      from var(--angle-g),
+      #7c3aed, #8b5cf6, #c4b5fd, #ddd6fe,
+      #f0abfc, #e879f9, #d946ef,
+      #ff00ff, #e740c4, #d946ef,
+      #a855f7, #7c3aed
+    );
+    animation: spin-g 3s linear infinite;
+  }
+
+  /* ==========================================================
+     1. 料金ページ AI Replyオプションカード
+     ========================================================== */
+  .ai-card-outer {
+    position: relative;
+    border-radius: 16px;
+    padding: 3px;
+    overflow: hidden;
+    width: 100%;
+  }
+  .ai-card {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(to right, #7B2D8E, #A03090, #B5287A);
+    border-radius: 13px;
+    padding: 24px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 1;
+  }
+  .ai-left { display: flex; align-items: center; gap: 24px; }
+
+  /* AI Replyバッジ（カード内） */
+  .ai-card-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+  .ai-card-badge .ai-part {
+    background: #fff;
+    color: #7B2D8E;
+    font-size: 14px; font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 18px 0 0 18px;
+  }
+  .ai-card-badge .reply-part {
+    color: #fff;
+    font-size: 14px; font-weight: 700;
+    padding: 6px 14px;
+  }
+  .ai-divider {
+    width: 1px; height: 28px;
+    background: rgba(255,255,255,0.3);
+    margin: 0 8px;
+  }
+  .ai-text { font-size: 15px; color: rgba(255,255,255,0.9); font-weight: 500; }
+  .ai-right { display: flex; align-items: center; gap: 28px; }
+  .ai-price { color: #fff; text-align: right; }
+  .ai-price .plus { font-size: 14px; opacity: 0.7; }
+  .ai-price .yen { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
+  .ai-price .mo { font-size: 14px; opacity: 0.7; }
+  .free-label {
+    color: #fff; font-size: 14px; font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 8px 20px; border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  /* ==========================================================
+     2. AI Replyアイコン（実際のロゴ再現）
+     ========================================================== */
+  .ai-reply-badge-outer {
+    display: inline-flex;
+    border-radius: 28px;
+    padding: 3px;
+    overflow: hidden;
+  }
+  .ai-reply-badge {
+    display: inline-flex;
+    align-items: stretch;
+    border-radius: 25px;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .ai-reply-badge .ai-part {
+    font-size: 22px; font-weight: 700;
+    color: #8B2F9E;
+    padding: 10px 18px;
+    background: #fff;
+    display: flex; align-items: center;
+    border-radius: 20px 0 0 20px;
+  }
+  .ai-reply-badge .reply-part {
+    font-size: 22px; font-weight: 700;
+    color: #fff;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #9B35A5, #B5287A);
+    display: flex; align-items: center;
+  }
+
+  .comparison {
+    display: flex; gap: 40px; align-items: center; justify-content: center;
+    flex-wrap: wrap;
+  }
+  .comp-item {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .comp-label {
+    font-size: 11px; font-weight: 700; color: #aaa; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  /* ==========================================================
+     3. ツールバーのAIアイコン
+     ========================================================== */
+  .ai-icon-outer {
+    display: inline-flex;
+    border-radius: 6px;
+    padding: 2px;
+    overflow: hidden;
+  }
+  .ai-icon-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #8B2F9E, #B5287A);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    z-index: 1;
+  }
+
+  /* ==========================================================
+     4.「返信を生成」ボタン
+     ========================================================== */
+  .generate-btn-outer {
+    display: inline-flex;
+    border-radius: 10px;
+    padding: 3px;
+    overflow: hidden;
+    align-self: flex-end;
+  }
+  .generate-btn {
+    padding: 12px 28px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #8B2F9E, #B5287A);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+    position: relative;
+  }
+
+  @media (max-width: 700px) {
+    .ai-card { flex-direction: column; gap: 16px; text-align: center; padding: 20px 16px; }
+    .ai-left, .ai-right { flex-direction: column; }
+    .comparison { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>AI Reply エフェクト — 適用箇所一覧（Cowatech共有用）</h1>
+  <p>パターンG（紫 × ピンク × ラベンダー × マゼンタ）— BayChat実際のカラーに合わせて調整済み</p>
+</div>
+
+<div class="sections">
+
+  <!-- ① 料金ページ オプションカード -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">①</span>
+      <span class="block-title">料金ページ — AI Replyオプションカード</span>
+    </div>
+    <div class="block-desc">カード外縁にオーロラボーダーが回転。カード内のレイアウトは実際の画面を再現。</div>
+    <div class="block-demo">
+      <div class="ai-card-outer aurora-border">
+        <div class="ai-card">
+          <div class="ai-left">
+            <div class="ai-card-badge">
+              <span class="ai-part">AI</span>
+              <span class="reply-part">Reply</span>
+            </div>
+            <div class="ai-divider"></div>
+            <span class="ai-text">問い合わせはAIが素早く対応</span>
+          </div>
+          <div class="ai-right">
+            <div class="ai-price"><span class="plus">＋ </span><span class="yen">¥2,200</span><span class="mo">／月</span></div>
+            <div class="free-label">無料期間中</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② AI Replyアイコン（契約中バッジ） -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">②</span>
+      <span class="block-title">AI Reply アイコン（契約中表示）</span>
+    </div>
+    <div class="block-desc">実際のAI Replyロゴに合わせたデザイン。外枠にオーロラボーダーを適用。</div>
+    <div class="block-demo">
+      <div class="comparison">
+        <div class="comp-item">
+          <span class="comp-label">Before</span>
+          <div class="ai-reply-badge-outer" style="background: linear-gradient(135deg, #8B2F9E, #B5287A); animation: none;">
+            <div class="ai-reply-badge">
+              <span class="ai-part">AI</span>
+              <span class="reply-part">Reply</span>
+            </div>
+          </div>
+        </div>
+        <div style="font-size: 24px; color: #ccc;">→</div>
+        <div class="comp-item">
+          <span class="comp-label">After</span>
+          <div class="ai-reply-badge-outer aurora-border">
+            <div class="ai-reply-badge">
+              <span class="ai-part">AI</span>
+              <span class="reply-part">Reply</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ ツールバーのAIアイコン -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">③</span>
+      <span class="block-title">メッセージ入力欄 — AIアイコン</span>
+    </div>
+    <div class="block-desc">ツールバーの小さなAIアイコンの外枠にオーロラボーダー。</div>
+    <div class="block-demo">
+      <div class="comparison">
+        <div class="comp-item">
+          <span class="comp-label">Before</span>
+          <div style="display: flex; gap: 12px; align-items: center; background: #fdf2f8; padding: 10px 16px; border-radius: 8px; border-top: 2px solid #B5287A;">
+            <span style="color:#888; font-size:18px;">🖼</span>
+            <span style="color:#888; font-size:18px;">📝</span>
+            <span style="color:#888; font-size:18px;">📋</span>
+            <span style="color:#888; font-size:18px;">🔖</span>
+            <span style="color:#888; font-size:16px;">🔢</span>
+            <div style="width:28px; height:28px; border-radius:4px; background:linear-gradient(135deg,#8B2F9E,#B5287A); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center;">AI</div>
+          </div>
+        </div>
+        <div style="font-size: 24px; color: #ccc;">→</div>
+        <div class="comp-item">
+          <span class="comp-label">After</span>
+          <div style="display: flex; gap: 12px; align-items: center; background: #fdf2f8; padding: 10px 16px; border-radius: 8px; border-top: 2px solid #B5287A;">
+            <span style="color:#888; font-size:18px;">🖼</span>
+            <span style="color:#888; font-size:18px;">📝</span>
+            <span style="color:#888; font-size:18px;">📋</span>
+            <span style="color:#888; font-size:18px;">🔖</span>
+            <span style="color:#888; font-size:16px;">🔢</span>
+            <div class="ai-icon-outer aurora-border">
+              <div class="ai-icon-inner">AI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④「返信を生成」ボタン -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">④</span>
+      <span class="block-title">AI Reply画面 —「返信を生成」ボタン</span>
+    </div>
+    <div class="block-desc">ボタンの外枠にオーロラボーダー。「押したくなる」アクション誘導。</div>
+    <div class="block-demo">
+      <div class="comparison">
+        <div class="comp-item">
+          <span class="comp-label">Before</span>
+          <button class="generate-btn">返信を生成</button>
+        </div>
+        <div style="font-size: 24px; color: #ccc;">→</div>
+        <div class="comp-item">
+          <span class="comp-label">After</span>
+          <div class="generate-btn-outer aurora-border">
+            <button class="generate-btn">返信を生成</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
