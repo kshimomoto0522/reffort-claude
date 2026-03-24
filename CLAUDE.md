@@ -177,6 +177,12 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
 - 商品を3分類（取り下げ・改善・売れ筋）してスタッフが毎週レビュー
 - 毎週のチェック・アクションルーティンを確立する
 
+#### eBayツール開発（新設）
+- 既存在庫管理ツールのバグ修正をCowatechと連携してQA・検証
+- HIROUNエクセル精査ツールの試作（Claudeで直接開発）
+- Scrapling（OSS）のローカル検証
+- 競合リサーチツールの試作（eBay API活用）
+
 #### BayChat AI Reply リリース
 - Claudeでプロンプトのテスト・改善サイクルを回す
 - Cowatechと連携して本番環境に実装
@@ -195,6 +201,12 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
 - スプレッドシート作業の一部をAIで自動化
 - 広告最適化のAI分析を導入
 - ライバルセラー比較・商品リサーチの補助
+
+#### eBayツール（拡張）
+- 競合リサーチツール本格稼働
+- 価格調整ツール（提案型）開発
+- Scraplingを活用した在庫スクレイピングの安定化
+- HIROUNエクセル精査ツールの自動化（メール受信→自動精査→候補リスト生成）
 
 #### BayChat
 - AI Reply本番稼働・改善継続
@@ -245,6 +257,7 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
 - コードには必ず日本語コメントを入れること（Cowatechへの共有を前提とする）
 - BayChatへの機能追加時は、Cowatech向けの日本語仕様書も一緒に作成すること
 - 実装はCowatechに依頼する前提で、社長が判断・指示できる形でアウトプットを出すこと
+- **セッションが重くなってきたと判断したタイミング（大きなタスクの一段落・会話が長くなった等）で、自発的に「そろそろ新しいセッションに引き継ぎますか？」と声をかけること**
 
 ### 回答スタイル
 - 専門用語を使う場合は必ず簡単な説明を添える
@@ -263,8 +276,12 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
   CLAUDE.md                    ← このファイル（全社共通の記憶）
   /ebay-analytics/
     CLAUDE.md                  ← eBay分析・広告・パフォーマンス管理専用
+  /ebay-tools/
+    CLAUDE.md                  ← eBayツール開発専用（在庫管理・リサーチ・価格調整・スクレイピング）
   /baychat-ai/
     CLAUDE.md                  ← BayChat AIプロンプト開発・機能設計専用
+  /baychat-product/
+    CLAUDE.md                  ← BayChat標準機能・UI/UXデザイン・Cowatech仕様書作成専用
   /marketing/
     CLAUDE.md                  ← BayChat・BayPackのSNS・Webマーケ専用
   /staff-ops/
@@ -277,6 +294,20 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
     CLAUDE.md                  ← 将来のコンサルコミュニティ事業の準備専用
     journey-log.md             ← 日々の実践・学習の蓄積ログ（Claudeが自動更新）
 ```
+
+### `/ebay-analytics/` と `/ebay-tools/` の違い
+
+| 部門 | 役割 | 主な作業 |
+|------|------|---------|
+| `/ebay-analytics/` | **分析・可視化** | 週次レポート作成・KPI追跡・経営判断データ提供 |
+| `/ebay-tools/` | **ツール開発・自動化** | 在庫管理・スクレイピング・リサーチ・価格調整ツールの開発・改善 |
+
+### `/baychat-ai/` と `/baychat-product/` の違い
+
+| 部門 | 役割 | 主な作業 |
+|------|------|---------|
+| `/baychat-ai/` | **AI機能** | AI Reply開発・プロンプト改善・AIモデル選定 |
+| `/baychat-product/` | **標準機能・UI/UX** | UI改善・新機能設計・バグ修正・Cowatech向けモックアップ・仕様書作成 |
 
 ---
 
@@ -310,7 +341,7 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
 | タスクID | 内容 | スケジュール |
 |----------|------|------------|
 | `daily-github-backup` | reffortフォルダのCLAUDE.mdファイルを毎日GitHubにバックアップ | 毎日深夜0時 |
-| `monday-github-reminder` | 月曜日の朝に週次リマインダーを表示 | 毎週月曜 9時 |
+| `monday-ebay-report-delivery` | eBay週次レポート自動生成（GetOrders API）→ Chatwork【AI】eBay運営グループへExcel配信 | 毎週月曜 10:00 |
 
 ### バックアップタスクの設定内容（`daily-github-backup`）
 - 対象ファイル：reffort フォルダ内の全CLAUDE.md（7ファイル）
@@ -326,5 +357,5 @@ Claude Codeを使う主体は社長本人。以下を常に理解した上で動
 
 ---
 
-*最終更新: 2026年3月 Phase 1*
+*最終更新: 2026年3月 Phase 1-2（eBayツール開発部門 `/ebay-tools/` 新設）*
 *このファイルは事業の変化・新しい決定があるたびに更新すること*
