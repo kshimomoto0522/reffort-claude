@@ -3390,21 +3390,24 @@ async function renderCouponAdmin() {
     if (coupons.length === 0) {
       html += '<p style="text-align:center;color:#888;padding:32px">クーポンが登録されていません</p>';
     } else {
-      html += '<div class="table-scroll"><table class="finance-spreadsheet"><thead>';
+      html += '<div class="table-scroll"><table class="finance-spreadsheet coupon-table"><thead>';
       html += '<tr><th>No.</th><th>アカウントID</th><th>パスワード</th><th>クーポンURL</th><th>株主番号</th><th>使用状況</th><th>拠点</th><th>操作</th></tr>';
       html += '</thead><tbody>';
       coupons.forEach((c, i) => {
         const statusLabel = c.status === 'in_use' ? '使用中' : c.status === 'used' ? '使用済' : '';
         const statusClass = c.status === 'in_use' ? 'coupon-status-inuse' : c.status === 'used' ? 'coupon-status-used' : '';
         const locName = c.locationName || '';
-        // クーポンURLは短縮表示
-        const urlShort = c.couponUrl ? (c.couponUrl.length > 25 ? c.couponUrl.substring(0, 25) + '...' : c.couponUrl) : '';
+        // クーポンURLは短縮表示＋ハイパーリンク
+        const urlShort = c.couponUrl ? (c.couponUrl.length > 30 ? c.couponUrl.substring(0, 30) + '...' : c.couponUrl) : '';
+        const urlCell = c.couponUrl
+          ? `<a href="${c.couponUrl}" target="_blank" rel="noopener" class="coupon-url-link">${urlShort}</a>`
+          : '';
 
         html += '<tr>';
         html += `<td>${i + 1}</td>`;
         html += `<td>${c.accountId}</td>`;
         html += `<td>${c.password}</td>`;
-        html += `<td title="${c.couponUrl || ''}">${urlShort}</td>`;
+        html += `<td title="${c.couponUrl || ''}">${urlCell}</td>`;
         html += `<td>${c.shareholderNumber}</td>`;
         html += `<td><span class="${statusClass}">${statusLabel}</span></td>`;
         html += `<td>${locName}</td>`;

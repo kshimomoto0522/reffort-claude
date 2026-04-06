@@ -2240,6 +2240,28 @@ body {
   font-weight: 700;
 }
 
+/* クーポン管理テーブル列幅調整（拠点・操作を使用状況と同じ幅に） */
+.coupon-table th:nth-child(6),
+.coupon-table td:nth-child(6),
+.coupon-table th:nth-child(7),
+.coupon-table td:nth-child(7),
+.coupon-table th:nth-child(8),
+.coupon-table td:nth-child(8) {
+  min-width: 80px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* クーポンURLリンク */
+.coupon-url-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 12px;
+}
+.coupon-url-link:hover {
+  text-decoration: underline;
+}
+
 /* =============================================
    仕入ページ - クーポンセクション
    ============================================= */
