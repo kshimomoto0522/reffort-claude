@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reffort Direct</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== トップ画面 ==================== -->
+  <div id="screen-top" class="screen active">
+    <div class="top-container">
+      <h1 class="logo">REFFORT</h1>
+      <p class="tagline">Direct Order System</p>
+      <div class="role-buttons">
+        <button class="role-btn" onclick="showLogin('buyer')">For Buyers</button>
+        <button class="role-btn" onclick="showSellerLogin('seller-top')">For Sellers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== パスワード入力 ==================== -->
+  <div id="screen-login" class="screen">
+    <div class="login-container">
+      <button class="back-btn" onclick="loginGoBack()">&larr; Back</button>
+      <h2 id="login-title">Login</h2>
+      <input type="password" id="login-password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+      <p id="login-error" class="error-text"></p>
+      <button class="primary-btn" onclick="doLogin()">Enter</button>
+    </div>
+  </div>
+
+  <!-- ==================== バイヤーメニュー ==================== -->
+  <div id="screen-buyer-menu" class="screen">
+    <div class="menu-container">
+      <div class="header-bar">
+        <h1 class="logo-small">REFFORT</h1>
+      </div>
+      <div id="buyer-selector" style="display:none;padding:0 20px 12px;"></div>
+      <div class="menu-buttons">
+        <button class="menu-btn" onclick="showProducts()">Place an Order</button>
+        <button class="menu-btn" onclick="showOrderHistory()">Order History</button>
+      </div>
+      <button class="logout-btn" onclick="goTop()">Logout</button>
+    </div>
+  </div>
+
+  <!-- ==================== 商品一覧（バイヤー） ==================== -->
+  <div id="screen-products" class="screen">
+    <div class="page-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showBuyerMenu()">&larr; Back</button>
+        <h2>Products</h2>
+        <button class="cart-btn" onclick="showCart()">
+          <span class="cart-icon">&#128722;</span>
+          <span id="cart-count" class="cart-badge">0</span>
+        </button>
+      </div>
+      <div id="product-list" class="product-grid"></div>
+    </div>
+  </div>
+
+  <!-- ==================== バリアント選択モーダル ==================== -->
+  <div id="modal-variants" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeVariants()">&times;</button>
+      <h2 id="variant-model-name"></h2>
+      <div id="variant-list"></div>
+    </div>
+  </div>
+
+  <!-- ==================== サイズ選択モーダル ==================== -->
+  <div id="modal-sizes" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeSizes()">&times;</button>
+      <h3 id="size-modal-title"></h3>
+      <p id="size-modal-sku" class="sku-text"></p>
+      <p id="size-modal-price" class="price-text"></p>
+      <div id="size-grid" class="size-grid"></div>
+      <button class="primary-btn" onclick="addToCart()">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- ==================== カート画面 ==================== -->
+  <div id="screen-cart" class="screen">
+    <div class="page-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showProducts()">&larr; Back</button>
+        <h2>Your Cart</h2>
+        <div class="header-bar-right">
+          <button class="cart-btn" onclick="showProducts()">
+            <span class="cart-icon">&#128722;</span>
+            <span id="cart-count-2" class="cart-badge">0</span>
+          </button>
+        </div>
+      </div>
+      <div id="cart-content"></div>
+      <div id="cart-actions" class="table-actions" style="display:none;">
+        <button id="btn-edit" class="secondary-btn" onclick="toggleEditCart()">Edit</button>
+        <button id="btn-place-order" class="primary-btn" onclick="placeOrder()">Place Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 注文完了モーダル ==================== -->
+  <div id="modal-order-done" class="modal">
+    <div class="modal-content modal-small">
+      <h2>Order Placed!</h2>
+      <p>Your order has been submitted successfully.</p>
+      <button class="primary-btn" onclick="closeOrderDone()">OK</button>
+    </div>
+  </div>
+
+  <!-- ==================== トースト ==================== -->
+  <div id="toast" class="toast">Added to cart!</div>
+
+  <!-- ==================== オーダー履歴（バイヤー） ==================== -->
+  <div id="screen-order-history" class="screen">
+    <div class="page-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showBuyerMenu()">&larr; Back</button>
+        <h2>Order History</h2>
+        <div></div>
+      </div>
+      <div class="history-tabs">
+        <button id="tab-current" class="tab-btn active" onclick="showHistoryTab('current')">Current Orders</button>
+        <button id="tab-past" class="tab-btn" onclick="showHistoryTab('past')">Past Orders</button>
+      </div>
+      <div id="history-content"></div>
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- ==================== セラー側 ==================== -->
+  <!-- ====================================================================== -->
+
+  <!-- ==================== セラートップ ==================== -->
+  <div id="screen-seller-top" class="screen">
+    <div class="menu-container">
+      <div class="header-bar">
+        <h1 class="logo-small">REFFORT</h1>
+      </div>
+      <div class="menu-buttons">
+        <button class="menu-btn" onclick="showSellerLogin('purchase')">仕入</button>
+        <button class="menu-btn" onclick="showSellerLogin('order')">オーダー管理</button>
+        <button class="menu-btn" onclick="showSellerLogin('shipping')">発送管理</button>
+        <button class="menu-btn" onclick="showSellerLogin('product')">商品登録</button>
+        <button class="menu-btn" onclick="showSellerLogin('coupon')">クーポン管理</button>
+        <button class="menu-btn" onclick="showSellerLogin('settings')">詳細設定</button>
+        <button class="menu-btn" onclick="showSellerLogin('finance')">収支管理</button>
+      </div>
+      <button class="logout-btn" onclick="goTop()">← トップに戻る</button>
+    </div>
+  </div>
+
+  <!-- ==================== 仕入拠点選択 ==================== -->
+  <div id="screen-purchase-locations" class="screen">
+    <div class="menu-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2>仕入拠点を選択</h2>
+        <div></div>
+      </div>
+      <div id="purchase-location-list" class="menu-buttons"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 詳細設定ページ ==================== -->
+  <div id="screen-settings" class="screen">
+    <div class="page-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2>詳細設定</h2>
+        <div></div>
+      </div>
+
+      <!-- 費用設定 -->
+      <div class="settings-section">
+        <h3>費用設定</h3>
+        <div class="settings-form">
+          <div class="form-row">
+            <label>関税手数料（一足あたりの申告単価 / 円）</label>
+            <div class="form-input-group">
+              <input type="number" id="set-customs-unit" placeholder="0">
+              <span class="form-hint" id="customs-calc">→ 関税: ¥0 / 足</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <label>送料（一足あたり / 円）</label>
+            <input type="number" id="set-shipping" placeholder="0">
+          </div>
+          <div class="form-row">
+            <label>クーポン（一足あたりの仕入時クーポン値引 / 円）</label>
+            <input type="number" id="set-coupon" placeholder="0">
+          </div>
+          <button class="primary-btn" onclick="saveSettings()">保存</button>
+        </div>
+      </div>
+
+      <!-- 利益計算ツール -->
+      <div class="settings-section">
+        <h3>利益計算ツール</h3>
+        <div class="settings-form">
+          <div class="form-row">
+            <label>仕入値（円）</label>
+            <input type="number" id="calc-purchase" placeholder="0" oninput="calcProfit()">
+          </div>
+          <div class="form-row">
+            <label>販売価格（USD）</label>
+            <input type="number" id="calc-sell-price" placeholder="0" oninput="calcProfit()">
+          </div>
+          <div id="calc-result" class="calc-result" style="display:none;">
+            <table class="calc-table">
+              <tr><td>為替レート</td><td id="calc-rate">-</td></tr>
+              <tr><td>A. 仕入値</td><td id="calc-a">-</td></tr>
+              <tr><td>B. クーポン</td><td id="calc-b">-</td></tr>
+              <tr><td>C. 仕入合計 (A+B)</td><td id="calc-c">-</td></tr>
+              <tr><td>D. 関税</td><td id="calc-d">-</td></tr>
+              <tr><td>E. 送料</td><td id="calc-e">-</td></tr>
+              <tr><td>F. 売上</td><td id="calc-f">-</td></tr>
+              <tr class="calc-highlight"><td>G. 利益</td><td id="calc-g">-</td></tr>
+              <tr class="calc-highlight"><td>利益率</td><td id="calc-margin">-</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 拠点管理 -->
+      <div class="settings-section">
+        <h3>拠点管理</h3>
+        <div id="location-list" class="location-list"></div>
+        <div class="settings-form location-add-form">
+          <h4>拠点を追加</h4>
+          <div class="form-row">
+            <label>拠点名</label>
+            <input type="text" id="loc-name" placeholder="例: 東京倉庫">
+          </div>
+          <div class="form-row">
+            <label>パスワード</label>
+            <input type="text" id="loc-password" placeholder="拠点用パスワード">
+          </div>
+          <button class="primary-btn" onclick="addLocation()">追加</button>
+        </div>
+      </div>
+
+      <!-- バイヤー管理 -->
+      <div class="settings-section">
+        <h3>バイヤー管理</h3>
+        <div id="buyer-list" class="location-list"></div>
+        <div class="settings-form location-add-form">
+          <h4>バイヤーを追加</h4>
+          <div class="form-row">
+            <label>名前</label>
+            <input type="text" id="buyer-name" placeholder="例: John">
+          </div>
+          <div class="form-row">
+            <label>WhatsApp番号（国番号付き）</label>
+            <input type="text" id="buyer-phone" placeholder="例: +12125551234">
+          </div>
+          <button class="primary-btn" onclick="addBuyer()">追加</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 商品登録ページ ==================== -->
+  <div id="screen-product-admin" class="screen">
+    <div class="page-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2>商品登録</h2>
+        <button class="primary-btn" style="margin:0" onclick="showProductForm()">+ 新規登録</button>
+      </div>
+      <div id="admin-product-list" class="admin-product-list"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 商品登録/編集モーダル ==================== -->
+  <div id="modal-product-form" class="modal">
+    <div class="modal-content modal-wide">
+      <button class="modal-close" onclick="closeProductForm()">&times;</button>
+      <h2 id="product-form-title">商品登録</h2>
+      <div class="product-form">
+        <div class="form-row">
+          <label>モデル名</label>
+          <input type="text" id="pf-model" placeholder="例: Nike Dunk Low">
+        </div>
+
+        <h3 class="form-subtitle">バリアント（カラー）</h3>
+        <div id="pf-variants"></div>
+        <button class="secondary-btn" style="margin-top:8px" onclick="addVariantRow()">+ カラーを追加</button>
+
+        <div class="form-actions">
+          <button class="primary-btn" onclick="saveProduct()">保存</button>
+          <button class="secondary-btn" onclick="closeProductForm()">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== オーダー管理ページ（セラー） ==================== -->
+  <div id="screen-order-admin" class="screen">
+    <div class="page-container wide-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2>オーダー管理</h2>
+        <div class="header-bar-right">
+          <div id="exchange-rate-display" class="rate-display">USD/JPY: 読込中...</div>
+          <button id="btn-admin-edit" class="secondary-btn" style="margin:0;display:none" onclick="enterAdminEdit()">編集</button>
+          <button id="btn-inst" class="primary-btn" style="margin:0" onclick="openInstructionFlow()">仕入指示</button>
+          <button id="btn-admin-save" class="primary-btn" style="margin:0;display:none" onclick="saveAdminEdits()">保存</button>
+          <button id="btn-admin-cancel" class="secondary-btn" style="margin:0;display:none" onclick="cancelAdminEdit()">キャンセル</button>
+        </div>
+      </div>
+      <div id="order-admin-content"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 仕入指示モーダル ==================== -->
+  <div id="modal-instruction" class="modal">
+    <div class="modal-content modal-wide">
+      <button class="modal-close" onclick="closeInstructionModal()">&times;</button>
+      <h2 id="instruction-modal-title">仕入指示</h2>
+      <div id="instruction-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ==================== クーポン管理ページ（管理者用） ==================== -->
+  <div id="screen-coupon" class="screen">
+    <div class="page-container wide-container">
+      <div class="page-header">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2>クーポン管理</h2>
+      </div>
+      <div id="coupon-admin-content"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 仕入ページ（SP対応） ==================== -->
+  <div id="screen-purchase" class="screen">
+    <div class="purchase-container">
+      <div class="purchase-header">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2 id="purchase-title">仕入</h2>
+      </div>
+      <div id="purchase-content"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 発送管理ページ ==================== -->
+  <div id="screen-shipping" class="screen">
+    <div class="page-container wide-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2>発送管理</h2>
+        <div></div>
+      </div>
+      <div class="history-tabs">
+        <button id="ship-tab-ship" class="tab-btn active" onclick="showShippingTab('ship')">発送</button>
+        <button id="ship-tab-history" class="tab-btn" onclick="showShippingTab('history')">履歴</button>
+      </div>
+      <div id="shipping-content"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 発送確定モーダル ==================== -->
+  <div id="modal-shipping" class="modal">
+    <div class="modal-content modal-wide">
+      <button class="modal-close" onclick="closeShippingModal()">&times;</button>
+      <h2 id="shipping-modal-title">発送情報入力</h2>
+      <div id="shipping-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 収支管理ページ ==================== -->
+  <div id="screen-finance" class="screen">
+    <div class="page-container">
+      <div class="header-bar">
+        <button class="back-btn" onclick="showSellerTop()">&larr; 戻る</button>
+        <h2>収支管理</h2>
+        <div></div>
+      </div>
+      <div class="history-tabs">
+        <button id="fin-tab-overview" class="tab-btn active" onclick="showFinanceTab('overview')">概要</button>
+        <button id="fin-tab-history" class="tab-btn" onclick="showFinanceTab('history')">仕入履歴</button>
+      </div>
+      <div id="finance-content">
+        <div class="placeholder-msg"><p>準備中です</p></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

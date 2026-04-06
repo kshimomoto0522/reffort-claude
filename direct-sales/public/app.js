@@ -1,0 +1,3598 @@
+// =============================================
+// Direct Sales - フロントエンドアプリケーション
+// =============================================
+
+// サイズ定義
+const UNISEX_SIZES = [
+  '4/22.5', '4.5/23', '5/23.5', '5.5/24', '6/24.5', '6.5/25',
+  '7.5/25.5', '8/26', '8.5/26.5', '9/27', '9.5/27.5',
+  '10/28', '11/28.5', '11.5/29', '12.5/30'
+];
+const WOMENS_SIZES = [
+  '4.5/22', '5/22.5', '5.5/22.75', '6/23', '6.5/23.5', '7/24', '7.5/24.5', '8/25',
+  '8.5/25.5', '9/25.75', '9.5/26', '10/26.5', '10.5/27', '11/27.5', '11.5/28', '12/28.5'
+];
+
+function getSizesForType(sizeType) {
+  return sizeType === 'womens' ? WOMENS_SIZES : UNISEX_SIZES;
+}
+function sizeTypeLabel(sizeType) {
+  return sizeType === 'womens' ? "Women's" : 'Unisex';
+}
+
+// グローバル状態
+let currentRole = null;
+let loginTarget = null; // ログイン後の遷移先
+let products = [];
+let cart = [];
+let editingCart = false;
+let selectedVariant = null;
+let selectedProduct = null;
+let currentBuyers = [];
+let selectedBuyer = null;
+let sizeSelections = {};
+let currentSettings = null;
+let currentExchangeRate = 150; // デフォルト値
+let editingProductId = null; // 商品編集中のID
+let pendingPurchaseLocId = null; // 仕入拠点選択時の拠点ID
+
+// 管理者編集モード用
+let adminEditMode = false;
+let editKeys = [];    // [{type, id, sku, size}] — 各セルの識別情報
+let editVals = [];    // [qty] — 現在の値
+let origVals = [];    // [qty] — 元の値（差分計算用）
+let editKeyMap = {};  // "type\0id\0sku\0size" → index（高速ルックアップ）
+let editProductInfo = {}; // sku → {model, colorway, price, sizeType}
+
+// =============================================
+// 画面切り替え
+// =============================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// =============================================
+// トップ画面
+// =============================================
+function goTop() {
+  currentRole = null;
+  loginTarget = null;
+  stopOrderPolling();
+  showScreen('screen-top');
+}
+
+// =============================================
+// セラートップ（5メニュー表示）
+// =============================================
+function showSellerTop() {
+  showScreen('screen-seller-top');
+  startOrderPolling(); // 新規オーダー監視を開始
+}
+
+// =============================================
+// 新規オーダー通知（30秒ごとにポーリング）
+// =============================================
+let orderPollTimer = null;
+let lastOrderCheckTime = null; // 最後にチェックした時刻
+
+function startOrderPolling() {
+  if (orderPollTimer) return; // 既に動いていればスキップ
+  lastOrderCheckTime = new Date().toISOString();
+  orderPollTimer = setInterval(checkNewOrders, 30000); // 30秒間隔
+}
+
+function stopOrderPolling() {
+  if (orderPollTimer) { clearInterval(orderPollTimer); orderPollTimer = null; }
+}
+
+async function checkNewOrders() {
+  try {
+    const res = await fetch(`/api/orders/check-new?since=${encodeURIComponent(lastOrderCheckTime)}`);
+    const data = await res.json();
+    if (data.newOrders > 0) {
+      lastOrderCheckTime = new Date().toISOString();
+      const pairs = data.latest.reduce((s, o) => s + (o.totalPairs || 0), 0);
+      showToast(`🔔 新規オーダー ${data.newOrders}件（${pairs}足）`);
+      // オーダー管理画面を表示中なら自動リロード
+      const activeScreen = document.querySelector('.screen.active')?.id;
+      if (activeScreen === 'screen-order-admin' && !adminEditMode) {
+        const [ordersRes, purchasesRes] = await Promise.all([
+          fetch('/api/orders'), fetch('/api/purchases')
+        ]);
+        cachedOrders = await ordersRes.json();
+        cachedPurchases = await purchasesRes.json();
+        renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
+      }
+      // ブラウザ通知（許可されている場合）
+      if (Notification.permission === 'granted') {
+        new Notification('Reffort Direct', { body: `新規オーダー ${data.newOrders}件（${pairs}足）` });
+      }
+    }
+  } catch (e) { /* ネットワークエラーは無視 */ }
+}
+
+// ブラウザ通知の許可リクエスト（セラーログイン時に1回）
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+// セラーメニューからログイン画面へ
+function showSellerLogin(target) {
+  loginTarget = target;
+
+  // 仕入は拠点選択画面を表示
+  if (target === 'purchase') {
+    showPurchaseLocations();
+    return;
+  }
+
+  const titles = {
+    'seller-top': 'For Sellers',
+    order: 'オーダー管理',
+    product: '商品登録',
+    coupon: 'クーポン管理',
+    settings: '詳細設定',
+    finance: '収支管理'
+  };
+  currentRole = target;
+  document.getElementById('login-title').textContent = titles[target] || 'Login';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').textContent = '';
+  showScreen('screen-login');
+  setTimeout(() => document.getElementById('login-password').focus(), 100);
+}
+
+// 仕入拠点選択画面
+async function showPurchaseLocations() {
+  const res = await fetch('/api/settings');
+  const settings = await res.json();
+  const list = document.getElementById('purchase-location-list');
+  list.innerHTML = '';
+  if (settings.locations.length === 0) {
+    list.innerHTML = '<p style="color:#888">拠点が登録されていません。詳細設定から追加してください。</p>';
+  } else {
+    settings.locations.forEach(loc => {
+      const btn = document.createElement('button');
+      btn.className = 'menu-btn';
+      btn.textContent = loc.name;
+      btn.onclick = () => {
+        currentRole = 'purchase';
+        loginTarget = 'purchase';
+        pendingPurchaseLocId = loc.id; // 選択した拠点IDを保持
+        document.getElementById('login-title').textContent = `仕入 - ${loc.name}`;
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-error').textContent = '';
+        showScreen('screen-login');
+        setTimeout(() => document.getElementById('login-password').focus(), 100);
+      };
+      list.appendChild(btn);
+    });
+  }
+  showScreen('screen-purchase-locations');
+}
+
+// バイヤーログイン表示
+function showLogin(role) {
+  currentRole = role;
+  loginTarget = role;
+  document.getElementById('login-title').textContent =
+    role === 'buyer' ? 'Buyer Login' : 'Seller Login';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').textContent = '';
+  showScreen('screen-login');
+  setTimeout(() => document.getElementById('login-password').focus(), 100);
+}
+
+// ログイン画面の「戻る」ボタン
+function loginGoBack() {
+  if (loginTarget === 'buyer' || loginTarget === 'seller-top') {
+    goTop();
+  } else if (loginTarget === 'purchase') {
+    showPurchaseLocations();
+  } else {
+    showSellerTop();
+  }
+}
+
+// =============================================
+// ログイン処理
+// =============================================
+async function doLogin() {
+  const password = document.getElementById('login-password').value;
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: currentRole, password, locationId: pendingPurchaseLocId || undefined })
+    });
+    if (!res.ok) {
+      document.getElementById('login-error').textContent = 'パスワードが違います';
+      return;
+    }
+    const data = await res.json();
+
+    // ログイン成功後のルーティング
+    switch (loginTarget) {
+      case 'buyer':
+        await loadProducts();
+        // バイヤー一覧を取得してセレクターを準備
+        try {
+          const settingsRes = await fetch('/api/settings');
+          const settings = await settingsRes.json();
+          currentBuyers = settings.buyers || [];
+          if (currentBuyers.length === 1) {
+            selectedBuyer = currentBuyers[0];
+          } else {
+            selectedBuyer = null;
+          }
+        } catch(e) { currentBuyers = []; selectedBuyer = null; }
+        showBuyerMenu();
+        break;
+      case 'seller-top':
+        requestNotificationPermission();
+        showSellerTop();
+        break;
+      case 'order':
+        startOrderPolling();
+        await showOrderAdmin();
+        break;
+      case 'product':
+        await showProductAdmin();
+        break;
+      case 'settings':
+        await showSettings();
+        break;
+      case 'finance':
+        await showFinance();
+        break;
+      case 'shipping':
+        await showShipping();
+        break;
+      case 'coupon':
+        await showCouponAdmin();
+        break;
+      case 'purchase':
+        showPurchasePage(data.locationId, data.locationName);
+        break;
+      default:
+        goTop();
+    }
+  } catch (e) {
+    document.getElementById('login-error').textContent = '接続エラー';
+  }
+}
+
+// =============================================
+// バイヤーメニュー
+// =============================================
+function onBuyerSelect() {
+  const sel = document.getElementById('buyer-select');
+  if (sel && sel.value) {
+    selectedBuyer = currentBuyers.find(b => b.id === sel.value) || null;
+  } else {
+    selectedBuyer = null;
+  }
+}
+
+function showBuyerMenu() {
+  showScreen('screen-buyer-menu');
+  // バイヤー選択セレクター表示
+  const container = document.getElementById('buyer-selector');
+  if (!container) return;
+  if (currentBuyers.length <= 1) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'block';
+  container.innerHTML = `
+    <label style="font-size:13px;color:#666;">Who's ordering?</label>
+    <select id="buyer-select" class="ship-carrier-select" style="width:100%;margin-top:4px;" onchange="onBuyerSelect()">
+      <option value="">-- Select --</option>
+      ${currentBuyers.map(b => `<option value="${b.id}" ${selectedBuyer && selectedBuyer.id === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}
+    </select>
+  `;
+}
+
+// =============================================
+// 商品一覧（バイヤー）
+// =============================================
+async function loadProducts() {
+  const res = await fetch('/api/products');
+  products = await res.json();
+}
+
+function showProducts() {
+  showScreen('screen-products');
+  renderProducts();
+  updateCartBadge();
+}
+
+function renderProducts() {
+  const grid = document.getElementById('product-list');
+  grid.innerHTML = '';
+  // displayOrderでソート
+  const sorted = [...products].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  sorted.forEach(p => {
+    const prices = p.variants.map(v => v.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const priceText = minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.onclick = () => showVariants(p);
+    card.innerHTML = `
+      <h3>${p.model}</h3>
+      <div class="variant-count">${p.variants.length} colorway${p.variants.length > 1 ? 's' : ''}</div>
+      <div class="price-range">${priceText}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// =============================================
+// バリアント表示
+// =============================================
+function showVariants(product) {
+  selectedProduct = product;
+  document.getElementById('variant-model-name').textContent = product.model;
+  const list = document.getElementById('variant-list');
+  list.innerHTML = '';
+  product.variants.forEach(v => {
+    const imgHtml = v.image
+      ? `<img src="${v.image}" alt="${v.colorway}" class="variant-thumb">`
+      : `<div class="variant-thumb-placeholder">&#128095;</div>`;
+    const item = document.createElement('div');
+    item.className = 'variant-item';
+    item.innerHTML = `
+      <div class="variant-left">
+        ${imgHtml}
+        <div class="variant-info">
+          <h4>${v.colorway}</h4>
+          <div class="sku-label">${v.sku} &middot; ${sizeTypeLabel(v.sizeType)}</div>
+          <div class="variant-price">$${v.price}</div>
+        </div>
+      </div>
+      <button class="variant-add-btn" onclick="openSizeModal('${product.id}', '${v.sku}')">Add</button>
+    `;
+    list.appendChild(item);
+  });
+  showModal('modal-variants');
+}
+function closeVariants() { closeModal('modal-variants'); }
+
+// =============================================
+// サイズ選択
+// =============================================
+function openSizeModal(productId, sku) {
+  const product = products.find(p => p.id === productId);
+  const variant = product.variants.find(v => v.sku === sku);
+  selectedVariant = variant;
+  selectedProduct = product;
+  sizeSelections = {};
+  document.getElementById('size-modal-title').textContent = `${product.model} - ${variant.colorway}`;
+  document.getElementById('size-modal-sku').textContent = `${variant.sku} · ${sizeTypeLabel(variant.sizeType)}`;
+  document.getElementById('size-modal-price').textContent = `$${variant.price}`;
+
+  // 除外サイズをフィルタ
+  const allSizes = getSizesForType(variant.sizeType);
+  const excluded = variant.excludedSizes || [];
+  const available = allSizes.filter(s => !excluded.includes(s));
+  renderSizeGrid(available);
+  showModal('modal-sizes');
+}
+
+function renderSizeGrid(sizes) {
+  const grid = document.getElementById('size-grid');
+  grid.innerHTML = '';
+  sizes.forEach(size => {
+    const qty = sizeSelections[size] || 0;
+    const item = document.createElement('div');
+    item.className = 'size-item' + (qty > 0 ? ' has-qty' : '');
+    item.innerHTML = `
+      <div class="size-label">${size}</div>
+      <div class="qty-controls">
+        <button onclick="adjustSize('${size}', -1)">-</button>
+        <span>${qty}</span>
+        <button onclick="adjustSize('${size}', 1)">+</button>
+      </div>
+    `;
+    grid.appendChild(item);
+  });
+}
+
+function adjustSize(size, delta) {
+  const current = sizeSelections[size] || 0;
+  const newQty = Math.max(0, current + delta);
+  if (newQty === 0) delete sizeSelections[size];
+  else sizeSelections[size] = newQty;
+
+  const allSizes = getSizesForType(selectedVariant.sizeType);
+  const excluded = selectedVariant.excludedSizes || [];
+  const available = allSizes.filter(s => !excluded.includes(s));
+  renderSizeGrid(available);
+}
+function closeSizes() { closeModal('modal-sizes'); }
+
+// =============================================
+// カートに追加
+// =============================================
+function addToCart() {
+  if (Object.keys(sizeSelections).length === 0) return;
+  const existingIdx = cart.findIndex(item => item.sku === selectedVariant.sku);
+  if (existingIdx >= 0) {
+    const existing = cart[existingIdx];
+    for (const [size, qty] of Object.entries(sizeSelections)) {
+      existing.sizes[size] = (existing.sizes[size] || 0) + qty;
+    }
+  } else {
+    cart.push({
+      productId: selectedProduct.id,
+      model: selectedProduct.model,
+      colorway: selectedVariant.colorway,
+      sku: selectedVariant.sku,
+      price: selectedVariant.price,
+      sizeType: selectedVariant.sizeType,
+      image: selectedVariant.image || '',
+      sizes: { ...sizeSelections }
+    });
+  }
+  closeSizes();
+  closeVariants();
+  updateCartBadge();
+  showToast();
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  if (message) toast.textContent = message;
+  toast.classList.remove('show');
+  void toast.offsetWidth;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+function updateCartBadge() {
+  const totalPairs = cart.reduce((sum, item) =>
+    sum + Object.values(item.sizes).reduce((s, q) => s + q, 0), 0);
+  const badge = document.getElementById('cart-count');
+  badge.textContent = totalPairs;
+  badge.classList.toggle('hidden', totalPairs === 0);
+  const badge2 = document.getElementById('cart-count-2');
+  if (badge2) {
+    badge2.textContent = totalPairs;
+    badge2.classList.toggle('hidden', totalPairs === 0);
+  }
+}
+
+// =============================================
+// カート画面（テーブル形式）
+// =============================================
+function showCart() {
+  editingCart = false;
+  showScreen('screen-cart');
+  renderCartTable();
+}
+
+function renderCartTable() {
+  const content = document.getElementById('cart-content');
+  const actions = document.getElementById('cart-actions');
+  const editBtn = document.getElementById('btn-edit');
+  content.innerHTML = '';
+
+  if (cart.length === 0) {
+    content.innerHTML = '<div class="empty-msg">Your cart is empty.</div>';
+    actions.style.display = 'none';
+    return;
+  }
+
+  actions.style.display = 'flex';
+  editBtn.textContent = editingCart ? 'Done' : 'Edit';
+
+  const unisexItems = cart.filter(i => i.sizeType !== 'womens');
+  const womensItems = cart.filter(i => i.sizeType === 'womens');
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'order-table-wrapper';
+
+  let totalPairs = 0;
+  let totalAmount = 0;
+
+  if (unisexItems.length > 0) {
+    const { table, pairs, amount } = buildEditableTable(unisexItems, UNISEX_SIZES, 'SIZE (UNISEX)', editingCart, 'cart');
+    wrapper.appendChild(table);
+    totalPairs += pairs;
+    totalAmount += amount;
+  }
+  if (womensItems.length > 0) {
+    const { table, pairs, amount } = buildEditableTable(womensItems, WOMENS_SIZES, "SIZE (WOMEN'S)", editingCart, 'cart');
+    wrapper.appendChild(table);
+    totalPairs += pairs;
+    totalAmount += amount;
+  }
+
+  const totalDiv = document.createElement('div');
+  totalDiv.className = 'order-table-total';
+  totalDiv.innerHTML = `${totalPairs} pairs &middot; $${totalAmount.toLocaleString()}`;
+  wrapper.appendChild(totalDiv);
+
+  content.appendChild(wrapper);
+}
+
+function toggleEditCart() {
+  editingCart = !editingCart;
+  renderCartTable();
+}
+
+function cartCellAdjust(sku, size, delta) {
+  const item = cart.find(i => i.sku === sku);
+  if (!item) return;
+  const newQty = (item.sizes[size] || 0) + delta;
+  if (newQty <= 0) delete item.sizes[size];
+  else item.sizes[size] = newQty;
+  if (Object.keys(item.sizes).length === 0) {
+    cart.splice(cart.indexOf(item), 1);
+  }
+  updateCartBadge();
+  renderCartTable();
+}
+
+// =============================================
+// 注文を送信
+// =============================================
+async function placeOrder() {
+  if (cart.length === 0) return;
+  const items = [];
+  let totalPairs = 0;
+  let totalAmount = 0;
+  cart.forEach(item => {
+    Object.entries(item.sizes).forEach(([size, qty]) => {
+      items.push({
+        productId: item.productId,
+        model: item.model,
+        colorway: item.colorway,
+        sku: item.sku,
+        size, quantity: qty,
+        price: item.price,
+        sizeType: item.sizeType
+      });
+      totalPairs += qty;
+      totalAmount += qty * item.price;
+    });
+  });
+  try {
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items, totalPairs, totalAmount,
+        buyerId: selectedBuyer ? selectedBuyer.id : null,
+        buyerName: selectedBuyer ? selectedBuyer.name : null
+      })
+    });
+    if (!res.ok) throw new Error('Order failed');
+    cart = [];
+    updateCartBadge();
+    showModal('modal-order-done');
+  } catch (e) {
+    alert('Failed to place order. Please try again.');
+  }
+}
+
+function closeOrderDone() {
+  closeModal('modal-order-done');
+  showBuyerMenu();
+}
+
+// =============================================
+// 注文履歴（バイヤー）
+// =============================================
+async function showOrderHistory() {
+  showScreen('screen-order-history');
+  showHistoryTab('current');
+}
+
+async function showHistoryTab(tab) {
+  document.getElementById('tab-current').classList.toggle('active', tab === 'current');
+  document.getElementById('tab-past').classList.toggle('active', tab === 'past');
+
+  const res = await fetch('/api/orders');
+  const orders = await res.json();
+  const container = document.getElementById('history-content');
+  container.innerHTML = '';
+
+  if (tab === 'current') {
+    const pendingOrders = orders.filter(o => o.status === 'pending');
+    if (pendingOrders.length === 0) {
+      container.innerHTML = '<div class="no-orders">No current orders.</div>';
+      return;
+    }
+    const allItems = [];
+    pendingOrders.forEach(order => {
+      order.items.forEach(item => allItems.push(item));
+    });
+    const grouped = groupItemsBySku(allItems);
+    const unisexItems = grouped.filter(g => g.sizeType !== 'womens');
+    const womensItems = grouped.filter(g => g.sizeType === 'womens');
+
+    let totalPairs = 0;
+    let totalAmount = 0;
+
+    const latestDate = new Date(Math.max(...pendingOrders.map(o => new Date(o.createdAt))));
+    const latestDateStr = latestDate.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    });
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'order-table-wrapper';
+    wrapper.innerHTML = `<div class="order-table-header">
+      <h4>Latest order: ${latestDateStr}</h4>
+    </div>`;
+
+    if (unisexItems.length > 0) {
+      const { table, pairs, amount } = buildEditableTable(unisexItems, UNISEX_SIZES, 'SIZE (UNISEX)', false, 'history');
+      wrapper.appendChild(table);
+      totalPairs += pairs;
+      totalAmount += amount;
+    }
+    if (womensItems.length > 0) {
+      const { table, pairs, amount } = buildEditableTable(womensItems, WOMENS_SIZES, "SIZE (WOMEN'S)", false, 'history');
+      wrapper.appendChild(table);
+      totalPairs += pairs;
+      totalAmount += amount;
+    }
+
+    const totalDiv = document.createElement('div');
+    totalDiv.className = 'order-table-total';
+    totalDiv.innerHTML = `${totalPairs} pairs &middot; $${totalAmount.toLocaleString()}`;
+    wrapper.appendChild(totalDiv);
+    container.appendChild(wrapper);
+
+  } else {
+    const shippedOrders = orders.filter(o => o.status === 'shipped' || o.status === 'paid');
+    if (shippedOrders.length === 0) {
+      container.innerHTML = '<div class="no-orders">No past orders.</div>';
+      return;
+    }
+    const byShipDate = {};
+    shippedOrders.forEach(order => {
+      const key = order.shippedDate || 'Unknown';
+      if (!byShipDate[key]) byShipDate[key] = [];
+      byShipDate[key].push(order);
+    });
+
+    Object.entries(byShipDate).sort((a, b) => b[0].localeCompare(a[0])).forEach(([shipDate, orders]) => {
+      const allItems = [];
+      orders.forEach(order => order.items.forEach(item => allItems.push(item)));
+      const grouped = groupItemsBySku(allItems);
+      const unisexItems = grouped.filter(g => g.sizeType !== 'womens');
+      const womensItems = grouped.filter(g => g.sizeType === 'womens');
+
+      let totalPairs = 0;
+      let totalAmount = 0;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'order-table-wrapper';
+
+      let statusHtml = '';
+      const hasPending = orders.some(o => o.status === 'shipped' && !o.paidAt);
+      if (hasPending) {
+        statusHtml = '<span class="order-status status-awaiting-payment">Payment Due</span>';
+      }
+      // 追跡番号を収集
+      let trackingHtml = '';
+      orders.forEach(o => {
+        if (o.tracking && o.tracking.length > 0) {
+          o.tracking.forEach(t => {
+            const trackUrl = t.carrier && t.carrier.toUpperCase().includes('DHL')
+              ? `https://www.dhl.com/jp-ja/home/tracking/tracking-express.html?submit=1&tracking-id=${t.trackingNumber}`
+              : t.carrier && t.carrier.toUpperCase().includes('FEDEX')
+              ? `https://www.fedex.com/fedextrack/?trknbr=${t.trackingNumber}`
+              : t.carrier && t.carrier.toUpperCase().includes('UPS')
+              ? `https://www.ups.com/track?tracknum=${t.trackingNumber}`
+              : null;
+            const numHtml = trackUrl
+              ? `<a href="${trackUrl}" target="_blank" class="tracking-link">${t.trackingNumber}</a>`
+              : `<span>${t.trackingNumber}</span>`;
+            trackingHtml += `<div class="tracking-entry">${t.carrier}: ${numHtml}</div>`;
+          });
+        }
+      });
+      const orderNums = orders.map(o => o.id).join(', ');
+
+      wrapper.innerHTML = `<div class="order-table-header">
+        <h4>Shipped: ${shipDate}</h4>
+        <div>${statusHtml}</div>
+      </div>
+      ${orderNums ? `<div class="order-numbers">Order: ${orderNums}</div>` : ''}
+      ${trackingHtml ? `<div class="tracking-info">${trackingHtml}</div>` : ''}`;
+
+      if (unisexItems.length > 0) {
+        const { table, pairs, amount } = buildEditableTable(unisexItems, UNISEX_SIZES, 'SIZE (UNISEX)', false, 'history');
+        wrapper.appendChild(table);
+        totalPairs += pairs;
+        totalAmount += amount;
+      }
+      if (womensItems.length > 0) {
+        const { table, pairs, amount } = buildEditableTable(womensItems, WOMENS_SIZES, "SIZE (WOMEN'S)", false, 'history');
+        wrapper.appendChild(table);
+        totalPairs += pairs;
+        totalAmount += amount;
+      }
+
+      const totalDiv = document.createElement('div');
+      totalDiv.className = 'order-table-total';
+      totalDiv.innerHTML = `${totalPairs} pairs &middot; $${totalAmount.toLocaleString()}`;
+      wrapper.appendChild(totalDiv);
+      container.appendChild(wrapper);
+    });
+  }
+}
+
+// =============================================
+// ヘルパー：アイテムをSKUでグルーピング
+// =============================================
+function groupItemsBySku(items) {
+  const map = {};
+  items.forEach(item => {
+    const key = item.sku;
+    if (!map[key]) {
+      map[key] = {
+        model: item.model,
+        colorway: item.colorway,
+        sku: item.sku,
+        price: item.price,
+        sizeType: item.sizeType || 'unisex',
+        sizes: {}
+      };
+    }
+    map[key].sizes[item.size] = (map[key].sizes[item.size] || 0) + item.quantity;
+  });
+  return Object.values(map);
+}
+
+// =============================================
+// 共通テーブル生成（Cart / Order History用）
+// =============================================
+function buildEditableTable(items, allSizes, sizeLabel, editing, mode) {
+  let totalPairs = 0;
+  let totalAmount = 0;
+
+  const div = document.createElement('div');
+  div.className = 'order-spreadsheet';
+
+  let html = '<div class="spreadsheet-scroll"><table>';
+
+  html += `<thead><tr>
+    <th class="col-no">No</th>
+    <th class="col-product">Products</th>
+    <th class="col-color">Color</th>
+    <th class="col-sku">Style Code</th>
+    <th class="col-qty">QTY</th>
+    <th class="col-price">Unit Price</th>
+    <th class="col-amount">Amount</th>
+    <th class="col-size-group" colspan="${allSizes.length}">${sizeLabel}</th>
+  </tr>`;
+
+  html += `<tr>
+    <th class="col-no"></th>
+    <th class="col-product"></th>
+    <th class="col-color"></th>
+    <th class="col-sku"></th>
+    <th class="col-qty"></th>
+    <th class="col-price"></th>
+    <th class="col-amount"></th>`;
+  allSizes.forEach(s => {
+    html += `<th class="col-size">${s}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  items.forEach((item, idx) => {
+    const pairs = Object.values(item.sizes).reduce((s, q) => s + q, 0);
+    const amount = pairs * item.price;
+    totalPairs += pairs;
+    totalAmount += amount;
+
+    html += `<tr>
+      <td class="col-no">${idx + 1}</td>
+      <td class="col-product">${item.model}</td>
+      <td class="col-color">${item.colorway}</td>
+      <td class="col-sku">${item.sku}</td>
+      <td class="col-qty">${pairs}</td>
+      <td class="col-price">$${item.price}</td>
+      <td class="col-amount">$${amount.toLocaleString()}</td>`;
+
+    allSizes.forEach(s => {
+      const qty = item.sizes[s] || 0;
+      if (editing && mode === 'cart') {
+        html += `<td class="col-size editing">
+          <div class="cell-edit">
+            <button onclick="cartCellAdjust('${item.sku}','${s}',-1)">-</button>
+            <span>${qty}</span>
+            <button onclick="cartCellAdjust('${item.sku}','${s}',1)">+</button>
+          </div>
+        </td>`;
+      } else {
+        html += `<td class="col-size ${qty ? 'has-value' : ''}">${qty || ''}</td>`;
+      }
+    });
+
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  div.innerHTML = html;
+
+  return { table: div, pairs: totalPairs, amount: totalAmount };
+}
+
+// =============================================
+// =============================================
+// セラー側：詳細設定
+// =============================================
+// =============================================
+async function showSettings() {
+  showScreen('screen-settings');
+  const res = await fetch('/api/settings');
+  currentSettings = await res.json();
+
+  document.getElementById('set-customs-unit').value = currentSettings.customsUnitPrice || '';
+  document.getElementById('set-shipping').value = currentSettings.shippingPerPair || '';
+  document.getElementById('set-coupon').value = currentSettings.couponPerPair || '';
+
+  updateCustomsCalc();
+  renderLocations();
+  renderBuyers();
+
+  // 為替レートを取得して利益計算に使う
+  await fetchExchangeRate();
+
+  // 関税リアルタイム計算
+  document.getElementById('set-customs-unit').addEventListener('input', updateCustomsCalc);
+}
+
+function updateCustomsCalc() {
+  const unit = parseFloat(document.getElementById('set-customs-unit').value) || 0;
+  const customs = Math.round(unit * 0.155);
+  document.getElementById('customs-calc').textContent = `→ 関税: ¥${customs.toLocaleString()} / 足`;
+}
+
+async function saveSettings() {
+  const data = {
+    customsUnitPrice: parseFloat(document.getElementById('set-customs-unit').value) || 0,
+    shippingPerPair: parseFloat(document.getElementById('set-shipping').value) || 0,
+    couponPerPair: parseFloat(document.getElementById('set-coupon').value) || 0
+  };
+  await fetch('/api/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  currentSettings = { ...currentSettings, ...data };
+  alert('保存しました');
+}
+
+// 利益計算ツール
+async function calcProfit() {
+  const purchase = parseFloat(document.getElementById('calc-purchase').value) || 0;
+  const sellPrice = parseFloat(document.getElementById('calc-sell-price').value) || 0;
+
+  if (purchase === 0 && sellPrice === 0) {
+    document.getElementById('calc-result').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('calc-result').style.display = 'block';
+
+  const rate = currentExchangeRate - 1; // マイナス1円
+  const coupon = currentSettings ? (currentSettings.couponPerPair || 0) : 0;
+  const customsUnit = currentSettings ? (currentSettings.customsUnitPrice || 0) : 0;
+  const shipping = currentSettings ? (currentSettings.shippingPerPair || 0) : 0;
+
+  const A = purchase;            // 仕入値
+  const B = coupon;              // クーポン
+  const C = A + B;               // 仕入合計
+  const D = Math.round(customsUnit * 0.155); // 関税
+  const E = shipping;            // 送料
+  const F = Math.round(sellPrice * rate);  // 売上（円）
+  const G = F - C - D - E;       // 利益
+  const margin = F > 0 ? ((G / F) * 100).toFixed(2) : 0;
+
+  document.getElementById('calc-rate').textContent = `¥${rate.toFixed(1)} / USD`;
+  document.getElementById('calc-a').textContent = `¥${A.toLocaleString()}`;
+  document.getElementById('calc-b').textContent = `¥${B.toLocaleString()}`;
+  document.getElementById('calc-c').textContent = `¥${C.toLocaleString()}`;
+  document.getElementById('calc-d').textContent = `¥${D.toLocaleString()}`;
+  document.getElementById('calc-e').textContent = `¥${E.toLocaleString()}`;
+  document.getElementById('calc-f').textContent = `¥${F.toLocaleString()}`;
+  document.getElementById('calc-g').textContent = `¥${G.toLocaleString()}`;
+  document.getElementById('calc-margin').textContent = `${margin}%`;
+}
+
+// 拠点管理
+function renderLocations() {
+  const list = document.getElementById('location-list');
+  list.innerHTML = '';
+  if (!currentSettings || !currentSettings.locations) return;
+  currentSettings.locations.forEach(loc => {
+    const item = document.createElement('div');
+    item.className = 'location-item';
+    item.innerHTML = `
+      <div>
+        <div class="loc-info">${loc.name}</div>
+        <div class="loc-pass">PASS: ${loc.password}</div>
+      </div>
+      <div class="loc-actions">
+        <button class="small-btn" onclick="editLocation('${loc.id}')">編集</button>
+        <button class="danger-btn" onclick="deleteLocation('${loc.id}')">削除</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+async function addLocation() {
+  const name = document.getElementById('loc-name').value.trim();
+  const password = document.getElementById('loc-password').value.trim();
+  if (!name || !password) { alert('拠点名とパスワードを入力してください'); return; }
+  const res = await fetch('/api/settings/locations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, password })
+  });
+  const loc = await res.json();
+  currentSettings.locations.push(loc);
+  document.getElementById('loc-name').value = '';
+  document.getElementById('loc-password').value = '';
+  renderLocations();
+}
+
+function editLocation(id) {
+  const loc = currentSettings.locations.find(l => l.id === id);
+  if (!loc) return;
+  const newName = prompt('拠点名', loc.name);
+  if (newName === null) return;
+  const newPass = prompt('パスワード', loc.password);
+  if (newPass === null) return;
+  fetch(`/api/settings/locations/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: newName, password: newPass })
+  }).then(() => {
+    loc.name = newName;
+    loc.password = newPass;
+    renderLocations();
+  });
+}
+
+async function deleteLocation(id) {
+  if (!confirm('この拠点を削除しますか？')) return;
+  await fetch(`/api/settings/locations/${id}`, { method: 'DELETE' });
+  currentSettings.locations = currentSettings.locations.filter(l => l.id !== id);
+  renderLocations();
+}
+
+// バイヤー管理
+function renderBuyers() {
+  const list = document.getElementById('buyer-list');
+  if (!list) return;
+  const buyers = currentSettings.buyers || [];
+  if (buyers.length === 0) {
+    list.innerHTML = '<div class="no-orders" style="padding:12px">バイヤーが登録されていません</div>';
+    return;
+  }
+  list.innerHTML = buyers.map(b => `
+    <div class="location-item">
+      <div class="location-info">
+        <span class="location-name">${b.name}</span>
+        <span class="location-pass">${b.phone}</span>
+      </div>
+      <div class="location-actions">
+        <button class="secondary-btn" onclick="editBuyer('${b.id}')">編集</button>
+        <button class="danger-btn-sm" onclick="deleteBuyer('${b.id}')">削除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function addBuyer() {
+  const name = document.getElementById('buyer-name').value.trim();
+  const phone = document.getElementById('buyer-phone').value.trim();
+  if (!name || !phone) { alert('名前とWhatsApp番号を入力してください'); return; }
+  const res = await fetch('/api/settings/buyers', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, phone })
+  });
+  const buyer = await res.json();
+  if (!currentSettings.buyers) currentSettings.buyers = [];
+  currentSettings.buyers.push(buyer);
+  document.getElementById('buyer-name').value = '';
+  document.getElementById('buyer-phone').value = '';
+  renderBuyers();
+}
+
+function editBuyer(id) {
+  const buyers = currentSettings.buyers || [];
+  const buyer = buyers.find(b => b.id === id);
+  if (!buyer) return;
+  const newName = prompt('名前', buyer.name);
+  if (newName === null) return;
+  const newPhone = prompt('WhatsApp番号', buyer.phone);
+  if (newPhone === null) return;
+  fetch(`/api/settings/buyers/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: newName, phone: newPhone })
+  }).then(() => {
+    buyer.name = newName;
+    buyer.phone = newPhone;
+    renderBuyers();
+  });
+}
+
+async function deleteBuyer(id) {
+  if (!confirm('このバイヤーを削除しますか？')) return;
+  await fetch(`/api/settings/buyers/${id}`, { method: 'DELETE' });
+  currentSettings.buyers = (currentSettings.buyers || []).filter(b => b.id !== id);
+  renderBuyers();
+}
+
+// =============================================
+// =============================================
+// セラー側：商品登録
+// =============================================
+// =============================================
+async function showProductAdmin() {
+  showScreen('screen-product-admin');
+  await loadProducts();
+  renderAdminProducts();
+}
+
+function renderAdminProducts() {
+  const list = document.getElementById('admin-product-list');
+  list.innerHTML = '';
+  const sorted = [...products].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  sorted.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'admin-product-card';
+
+    let variantsHtml = '';
+    p.variants.forEach(v => {
+      const purchaseStr = v.purchasePrice ? `¥${v.purchasePrice.toLocaleString()}` : '未設定';
+      variantsHtml += `
+        <div class="admin-variant-row">
+          <span class="av-color">${v.colorway}</span>
+          <span class="av-sku">${v.sku}</span>
+          <span class="av-type">${sizeTypeLabel(v.sizeType)}</span>
+          <span class="av-price">$${v.price}</span>
+          <span class="av-purchase">仕入: ${purchaseStr}</span>
+        </div>
+      `;
+    });
+
+    card.innerHTML = `
+      <div class="admin-product-header">
+        <h3>${p.model}</h3>
+        <div class="admin-product-actions">
+          <button class="move-btn" onclick="moveProduct('${p.id}', -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
+          <button class="move-btn" onclick="moveProduct('${p.id}', 1)" ${idx === sorted.length - 1 ? 'disabled' : ''}>▼</button>
+          <button class="small-btn" onclick="editProduct('${p.id}')">編集</button>
+          <button class="danger-btn" onclick="deleteProduct('${p.id}')">削除</button>
+        </div>
+      </div>
+      ${variantsHtml}
+    `;
+    list.appendChild(card);
+  });
+}
+
+// 商品の並び替え
+async function moveProduct(id, direction) {
+  const sorted = [...products].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  const idx = sorted.findIndex(p => p.id === id);
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= sorted.length) return;
+  [sorted[idx], sorted[newIdx]] = [sorted[newIdx], sorted[idx]];
+  const orderedIds = sorted.map(p => p.id);
+  const res = await fetch('/api/products-order', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ orderedIds })
+  });
+  products = await res.json();
+  renderAdminProducts();
+}
+
+// 商品削除
+async function deleteProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!confirm(`「${p.model}」を削除しますか？`)) return;
+  await fetch(`/api/products/${id}`, { method: 'DELETE' });
+  products = products.filter(x => x.id !== id);
+  renderAdminProducts();
+}
+
+// 商品登録/編集フォーム表示
+function showProductForm(productId) {
+  editingProductId = productId || null;
+  document.getElementById('product-form-title').textContent = productId ? '商品を編集' : '商品を登録';
+  document.getElementById('pf-model').value = '';
+  document.getElementById('pf-variants').innerHTML = '';
+
+  if (productId) {
+    const p = products.find(x => x.id === productId);
+    if (!p) return;
+    document.getElementById('pf-model').value = p.model;
+    p.variants.forEach(v => addVariantRow(v));
+  } else {
+    addVariantRow();
+  }
+  showModal('modal-product-form');
+}
+
+function editProduct(id) {
+  showProductForm(id);
+}
+
+function closeProductForm() {
+  closeModal('modal-product-form');
+}
+
+// バリアント行を追加
+let variantCounter = 0;
+function addVariantRow(data) {
+  variantCounter++;
+  const id = variantCounter;
+  const container = document.getElementById('pf-variants');
+  const row = document.createElement('div');
+  row.className = 'variant-form-row';
+  row.id = `vf-row-${id}`;
+
+  const sizeType = data ? data.sizeType : 'unisex';
+  const allSizes = sizeType === 'womens' ? WOMENS_SIZES : UNISEX_SIZES;
+  const excluded = data ? (data.excludedSizes || []) : [];
+
+  let sizeExcludeHtml = allSizes.map(s => {
+    const isExcluded = excluded.includes(s);
+    return `<span class="size-exclude-item ${isExcluded ? 'excluded' : ''}"
+      onclick="toggleSizeExclude(this, '${s}', ${id})" data-size="${s}">${s}</span>`;
+  }).join('');
+
+  row.innerHTML = `
+    <div class="vf-header">
+      <h4>カラー #${id}</h4>
+      <button class="danger-btn" onclick="removeVariantRow(${id})">削除</button>
+    </div>
+    <div class="vf-grid">
+      <div class="form-row">
+        <label>カラー名</label>
+        <input type="text" class="vf-colorway" value="${data ? data.colorway : ''}" placeholder="例: Panda">
+      </div>
+      <div class="form-row">
+        <label>型番 (Style Code)</label>
+        <input type="text" class="vf-sku" value="${data ? data.sku : ''}" placeholder="例: DD1391-100">
+      </div>
+      <div class="form-row">
+        <label>性別</label>
+        <select class="vf-sizetype" onchange="updateSizeExcludeGrid(${id}, this.value)">
+          <option value="unisex" ${sizeType === 'unisex' ? 'selected' : ''}>Unisex</option>
+          <option value="womens" ${sizeType === 'womens' ? 'selected' : ''}>Women's</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>販売価格 (USD)</label>
+        <input type="number" class="vf-price" value="${data ? data.price : ''}" placeholder="130">
+      </div>
+      <div class="form-row">
+        <label>画像URL</label>
+        <input type="text" class="vf-image" value="${data ? (data.image || '') : ''}" placeholder="https://...">
+      </div>
+      <div class="form-row">
+        <label>仕入先URL</label>
+        <input type="text" class="vf-supplier-url" value="${data ? (data.supplierUrl || '') : ''}" placeholder="https://...">
+      </div>
+      <div class="form-row">
+        <label>仕入値（円）</label>
+        <input type="number" class="vf-purchase-price" value="${data ? (data.purchasePrice || '') : ''}" placeholder="11550">
+      </div>
+      <div class="form-row vf-full">
+        <label>サイズ（クリックで除外/復活）</label>
+        <div class="size-exclude-grid" id="vf-sizes-${id}">${sizeExcludeHtml}</div>
+      </div>
+    </div>
+  `;
+  container.appendChild(row);
+}
+
+function removeVariantRow(id) {
+  const row = document.getElementById(`vf-row-${id}`);
+  if (row) row.remove();
+}
+
+function toggleSizeExclude(el, size, rowId) {
+  el.classList.toggle('excluded');
+}
+
+function updateSizeExcludeGrid(rowId, sizeType) {
+  const allSizes = sizeType === 'womens' ? WOMENS_SIZES : UNISEX_SIZES;
+  const grid = document.getElementById(`vf-sizes-${rowId}`);
+  grid.innerHTML = allSizes.map(s =>
+    `<span class="size-exclude-item" onclick="toggleSizeExclude(this, '${s}', ${rowId})" data-size="${s}">${s}</span>`
+  ).join('');
+}
+
+// 商品を保存
+async function saveProduct() {
+  const model = document.getElementById('pf-model').value.trim();
+  if (!model) { alert('モデル名を入力してください'); return; }
+
+  const variantRows = document.querySelectorAll('.variant-form-row');
+  const variants = [];
+  for (const row of variantRows) {
+    const colorway = row.querySelector('.vf-colorway').value.trim();
+    const sku = row.querySelector('.vf-sku').value.trim();
+    const sizeType = row.querySelector('.vf-sizetype').value;
+    const price = parseFloat(row.querySelector('.vf-price').value) || 0;
+    const image = row.querySelector('.vf-image').value.trim();
+    const supplierUrl = row.querySelector('.vf-supplier-url').value.trim();
+    const purchasePrice = parseFloat(row.querySelector('.vf-purchase-price').value) || 0;
+
+    if (!colorway || !sku || !price) {
+      alert('カラー名、型番、販売価格は必須です');
+      return;
+    }
+
+    // 除外サイズを収集
+    const excludedSizes = [];
+    row.querySelectorAll('.size-exclude-item.excluded').forEach(el => {
+      excludedSizes.push(el.dataset.size);
+    });
+
+    variants.push({ colorway, sku, sizeType, price, image, supplierUrl, purchasePrice, excludedSizes });
+  }
+
+  if (variants.length === 0) { alert('少なくとも1つのカラーを追加してください'); return; }
+
+  if (editingProductId) {
+    // 更新
+    const res = await fetch(`/api/products/${editingProductId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, variants })
+    });
+    const updated = await res.json();
+    const idx = products.findIndex(p => p.id === editingProductId);
+    if (idx >= 0) products[idx] = updated;
+  } else {
+    // 新規
+    const res = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, variants })
+    });
+    const created = await res.json();
+    products.push(created);
+  }
+
+  closeProductForm();
+  renderAdminProducts();
+}
+
+// =============================================
+// =============================================
+// セラー側：オーダー管理（収支計算付き）
+// =============================================
+// =============================================
+let cachedOrders = [];
+let cachedPurchases = [];
+let cachedInstructions = [];
+let cachedShipments = [];
+let cachedEffectiveRate = 149;
+
+async function fetchExchangeRate() {
+  try {
+    const res = await fetch('/api/exchange-rate');
+    const data = await res.json();
+    currentExchangeRate = data.rate;
+  } catch (e) {
+    currentExchangeRate = 150;
+  }
+}
+
+async function showOrderAdmin() {
+  showScreen('screen-order-admin');
+  await Promise.all([
+    fetchExchangeRate(),
+    loadProducts()
+  ]);
+
+  cachedEffectiveRate = currentExchangeRate - 1;
+  document.getElementById('exchange-rate-display').textContent =
+    `USD/JPY: ¥${cachedEffectiveRate.toFixed(1)}（実勢 ¥${currentExchangeRate.toFixed(1)} - ¥1）`;
+
+  const [settingsRes, ordersRes, purchasesRes, instRes, shipmentsRes] = await Promise.all([
+    fetch('/api/settings'),
+    fetch('/api/orders'),
+    fetch('/api/purchases'),
+    fetch('/api/instructions'),
+    fetch('/api/shipments')
+  ]);
+  currentSettings = await settingsRes.json();
+  cachedOrders = await ordersRes.json();
+  cachedPurchases = await purchasesRes.json();
+  cachedInstructions = await instRes.json();
+  cachedShipments = await shipmentsRes.json();
+
+  renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
+  updateInstButton();
+}
+
+// 折りたたみセクションヘルパー
+function addCollapsible(container, title, bgClass, id, contentFn) {
+  const header = document.createElement('div');
+  header.className = `collapsible-header ${bgClass}`;
+  header.id = `ch-${id}`;
+  header.innerHTML = `<span class="collapse-icon">▼</span> ${title}`;
+  header.onclick = () => toggleCollapse(id);
+  container.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'collapsible-body';
+  body.id = `cb-${id}`;
+  body.style.maxHeight = '5000px';
+  contentFn(body);
+  container.appendChild(body);
+}
+
+function toggleCollapse(id) {
+  const header = document.getElementById(`ch-${id}`);
+  const body = document.getElementById(`cb-${id}`);
+  header.classList.toggle('collapsed');
+  body.classList.toggle('collapsed');
+}
+
+// =============================================
+// 管理者編集モード
+// =============================================
+function editKeyStr(type, id, sku, size) {
+  return `${type}\0${id}\0${sku}\0${size}`;
+}
+
+// 編集モードを開始
+function enterAdminEdit() {
+  adminEditMode = true;
+  editKeys = [];
+  editVals = [];
+  origVals = [];
+  editKeyMap = {};
+  editProductInfo = {};
+
+  // Current Ordersのデータを取得
+  const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
+  const allItems = [];
+  pendingOrders.forEach(o => o.items.forEach(i => allItems.push(i)));
+  const orderGrouped = groupItemsBySku(allItems);
+
+  // 商品情報を保存
+  orderGrouped.forEach(item => {
+    editProductInfo[item.sku] = {
+      model: item.model, colorway: item.colorway,
+      price: item.price, sizeType: item.sizeType
+    };
+  });
+
+  // オーダーの編集キーを登録
+  orderGrouped.forEach(item => {
+    const sizes = getSizesForType(item.sizeType);
+    sizes.forEach(s => {
+      const qty = item.sizes[s] || 0;
+      const k = editKeyStr('order', '', item.sku, s);
+      editKeyMap[k] = editKeys.length;
+      editKeys.push({ type: 'order', id: '', sku: item.sku, size: s });
+      editVals.push(qty);
+      origVals.push(qty);
+    });
+  });
+
+  // 各拠点の編集キーを登録
+  const shipments = cachedShipments || [];
+  const shippedItems = [];
+  shipments.forEach(s => s.items.forEach(i => shippedItems.push(i)));
+
+  if (currentSettings.locations) {
+    currentSettings.locations.forEach(loc => {
+      const locPurchases = cachedPurchases.filter(p => p.locationId === loc.id);
+      const locGrouped = groupPurchaseItems(locPurchases);
+      const locShipped = shippedItems.filter(i => i.locationId === loc.id);
+      const locShippedGrouped = groupShippedItems(locShipped);
+      const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
+
+      // オーダー全商品 + 拠点既存商品をマージ
+      const allProducts = [...orderGrouped];
+      locGrouped.forEach(locItem => {
+        if (!allProducts.find(p => p.sku === locItem.sku)) {
+          allProducts.push(locItem);
+          if (!editProductInfo[locItem.sku]) {
+            editProductInfo[locItem.sku] = {
+              model: locItem.model, colorway: locItem.colorway,
+              price: 0, sizeType: locItem.sizeType
+            };
+          }
+        }
+      });
+
+      allProducts.forEach(item => {
+        const locItem = locRemaining.find(r => r.sku === item.sku);
+        const sizes = getSizesForType(item.sizeType);
+        sizes.forEach(s => {
+          const qty = locItem ? (locItem.sizes[s] || 0) : 0;
+          const k = editKeyStr('loc', loc.id, item.sku, s);
+          editKeyMap[k] = editKeys.length;
+          editKeys.push({ type: 'loc', id: loc.id, sku: item.sku, size: s });
+          editVals.push(qty);
+          origVals.push(qty);
+        });
+      });
+    });
+  }
+
+  // ボタン切り替え＆再描画
+  updateEditButtons(true);
+  renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
+}
+
+// 編集モードをキャンセル
+function cancelAdminEdit() {
+  adminEditMode = false;
+  updateEditButtons(true);
+  renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
+}
+
+// +/- ボタンで値を変更
+function editAdjust(idx, delta) {
+  editVals[idx] = Math.max(0, editVals[idx] + delta);
+  const el = document.getElementById(`ev-${idx}`);
+  if (el) el.textContent = editVals[idx];
+
+  // 行のQTYを再計算
+  const key = editKeys[idx];
+  let total = 0;
+  editKeys.forEach((k, i) => {
+    if (k.type === key.type && k.id === key.id && k.sku === key.sku) {
+      total += editVals[i];
+    }
+  });
+  const qtyEl = document.getElementById(`eq-${key.type}-${key.id}-${key.sku}`);
+  if (qtyEl) qtyEl.textContent = total;
+}
+
+// 編集内容を保存
+async function saveAdminEdits() {
+  // デルタを計算
+  const orderDeltas = [];
+  const locDeltaMap = {}; // locId → items[]
+
+  editKeys.forEach((key, i) => {
+    const delta = editVals[i] - origVals[i];
+    if (delta === 0) return;
+
+    if (key.type === 'order') {
+      const info = editProductInfo[key.sku];
+      orderDeltas.push({
+        sku: key.sku, size: key.size, delta,
+        model: info.model, colorway: info.colorway,
+        price: info.price, sizeType: info.sizeType
+      });
+    } else if (key.type === 'loc') {
+      if (!locDeltaMap[key.id]) locDeltaMap[key.id] = [];
+      const info = editProductInfo[key.sku];
+      locDeltaMap[key.id].push({
+        sku: key.sku, size: key.size, delta,
+        sizeType: info.sizeType
+      });
+    }
+  });
+
+  // APIに送信
+  const promises = [];
+  if (orderDeltas.length > 0) {
+    promises.push(fetch('/api/orders/adjust', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: orderDeltas })
+    }));
+  }
+  Object.entries(locDeltaMap).forEach(([locId, items]) => {
+    const loc = currentSettings.locations.find(l => l.id === locId);
+    promises.push(fetch('/api/purchases/adjust', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locationId: locId, locationName: loc?.name || '', items })
+    }));
+  });
+
+  if (promises.length > 0) await Promise.all(promises);
+
+  // データ再取得＆再描画
+  adminEditMode = false;
+  const [ordersRes, purchasesRes] = await Promise.all([
+    fetch('/api/orders'),
+    fetch('/api/purchases')
+  ]);
+  cachedOrders = await ordersRes.json();
+  cachedPurchases = await purchasesRes.json();
+  updateEditButtons(true);
+  renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
+  showToast('保存しました');
+}
+
+// ヘッダーボタンの表示切り替え
+function updateEditButtons(hasOrders) {
+  const editBtn = document.getElementById('btn-admin-edit');
+  const instBtn = document.getElementById('btn-inst');
+  const saveBtn = document.getElementById('btn-admin-save');
+  const cancelBtn = document.getElementById('btn-admin-cancel');
+  if (adminEditMode) {
+    if (editBtn) editBtn.style.display = 'none';
+    if (instBtn) instBtn.style.display = 'none';
+    if (saveBtn) saveBtn.style.display = '';
+    if (cancelBtn) cancelBtn.style.display = '';
+  } else {
+    if (editBtn) editBtn.style.display = hasOrders ? '' : 'none';
+    if (instBtn) instBtn.style.display = '';
+    if (saveBtn) saveBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.style.display = 'none';
+  }
+}
+
+// 2つのグループデータのmax値をマージ（未指示計算用）
+// 例: 指示済み3足、仕入済み5足 → 割り当て済みは5足
+function mergeGroupedMax(groupA, groupB) {
+  const map = {};
+  groupA.forEach(item => {
+    if (!map[item.sku]) map[item.sku] = { model: item.model, colorway: item.colorway, sku: item.sku, sizeType: item.sizeType, sizes: {} };
+    Object.entries(item.sizes).forEach(([s, q]) => {
+      map[item.sku].sizes[s] = Math.max(map[item.sku].sizes[s] || 0, q);
+    });
+  });
+  groupB.forEach(item => {
+    if (!map[item.sku]) map[item.sku] = { model: item.model, colorway: item.colorway, sku: item.sku, sizeType: item.sizeType, sizes: {} };
+    Object.entries(item.sizes).forEach(([s, q]) => {
+      map[item.sku].sizes[s] = Math.max(map[item.sku].sizes[s] || 0, q);
+    });
+  });
+  return Object.values(map);
+}
+
+// 商品リストのマージ（オーダー商品 + 拠点商品）
+function mergeProductLists(list1, list2) {
+  const merged = list1.map(item => ({
+    model: item.model, colorway: item.colorway,
+    sku: item.sku, sizeType: item.sizeType, sizes: {}
+  }));
+  list2.forEach(item => {
+    if (!merged.find(m => m.sku === item.sku)) {
+      merged.push({
+        model: item.model, colorway: item.colorway,
+        sku: item.sku, sizeType: item.sizeType, sizes: {}
+      });
+    }
+  });
+  return merged;
+}
+
+// 編集可能なテーブルを構築（+/-ボタン付き）
+function buildEditableAdminTable(items, type, id) {
+  const unisexItems = items.filter(g => g.sizeType !== 'womens');
+  const womensItems = items.filter(g => g.sizeType === 'womens');
+
+  const div = document.createElement('div');
+  const tables = [];
+  if (unisexItems.length > 0) tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  if (womensItems.length > 0) tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+
+  if (tables.length === 0) {
+    div.innerHTML = '<div class="no-orders" style="padding:20px">商品なし</div>';
+    return div;
+  }
+
+  let rowNum = 1;
+  tables.forEach(({ items: tItems, sizes, label }) => {
+    const tDiv = document.createElement('div');
+    tDiv.className = 'finance-spreadsheet';
+    let html = '<div class="spreadsheet-scroll"><table>';
+    html += `<thead><tr>
+      <th class="col-no">No</th><th class="col-product">Products</th>
+      <th class="col-color">Color</th><th class="col-sku">Style Code</th>
+      <th class="col-qty">QTY</th>
+      <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+    </tr><tr>
+      <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+      <th class="col-sku"></th><th class="col-qty"></th>`;
+    sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+    html += '</tr></thead><tbody>';
+
+    tItems.forEach(item => {
+      // 行QTYの計算
+      let rowTotal = 0;
+      sizes.forEach(s => {
+        const k = editKeyStr(type, id, item.sku, s);
+        const idx = editKeyMap[k];
+        if (idx !== undefined) rowTotal += editVals[idx];
+      });
+      const qtyId = `eq-${type}-${id}-${item.sku}`;
+
+      html += `<tr>
+        <td class="col-no">${rowNum++}</td>
+        <td class="col-product">${item.model}</td>
+        <td class="col-color">${item.colorway}</td>
+        <td class="col-sku">${item.sku}</td>
+        <td class="col-qty" id="${qtyId}">${rowTotal}</td>`;
+
+      sizes.forEach(s => {
+        const k = editKeyStr(type, id, item.sku, s);
+        const idx = editKeyMap[k];
+        if (idx !== undefined) {
+          const qty = editVals[idx];
+          html += `<td class="col-size inst-cell"><div class="inst-picker">`;
+          html += `<button class="inst-minus" onclick="editAdjust(${idx},-1)">-</button>`;
+          html += `<span class="inst-val" id="ev-${idx}">${qty}</span>`;
+          html += `<button class="inst-plus" onclick="editAdjust(${idx},1)">+</button>`;
+          html += `</div></td>`;
+        } else {
+          html += '<td class="col-size"></td>';
+        }
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    tDiv.innerHTML = html;
+    div.appendChild(tDiv);
+  });
+
+  return div;
+}
+
+// 編集モードのレンダリング
+function renderOrderAdminEditMode(container, orderGrouped, purchases, shippedItems) {
+  // Current Orders（編集可能）
+  addCollapsible(container, 'Current Orders', 'bg-dark', 'current', (body) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'order-table-wrapper';
+    wrapper.appendChild(buildEditableAdminTable(orderGrouped, 'order', ''));
+    body.appendChild(wrapper);
+  });
+
+  // 全登録拠点（編集可能）
+  if (currentSettings.locations) {
+    currentSettings.locations.forEach(loc => {
+      const locPurchases = cachedPurchases.filter(p => p.locationId === loc.id);
+      const locGrouped = groupPurchaseItems(locPurchases);
+      const locShipped = shippedItems.filter(i => i.locationId === loc.id);
+      const locShippedGrouped = groupShippedItems(locShipped);
+      const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
+      const mergedProducts = mergeProductLists(orderGrouped, locRemaining);
+      const locPairs = locRemaining.reduce((s, i) => s + Object.values(i.sizes).reduce((a, b) => a + b, 0), 0);
+
+      addCollapsible(container, `${loc.name}（${locPairs}足）`, 'bg-blue', `loc-${loc.id}`, (body) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'order-table-wrapper';
+        wrapper.appendChild(buildEditableAdminTable(mergedProducts, 'loc', loc.id));
+        body.appendChild(wrapper);
+      });
+    });
+  }
+}
+
+function renderOrderAdmin(orders, purchases, rate, shipments) {
+  shipments = shipments || [];
+  const container = document.getElementById('order-admin-content');
+  container.innerHTML = '';
+
+  const purchasePriceMap = {};
+  const supplierUrlMap = {};
+  const imageMap = {};
+  products.forEach(p => {
+    p.variants.forEach(v => {
+      purchasePriceMap[v.sku] = v.purchasePrice || 0;
+      supplierUrlMap[v.sku] = v.supplierUrl || '';
+      imageMap[v.sku] = v.image || '';
+    });
+  });
+
+  const coupon = currentSettings.couponPerPair || 0;
+  const customsUnit = currentSettings.customsUnitPrice || 0;
+  const customsPerPair = Math.round(customsUnit * 0.155);
+  const shippingPerPair = currentSettings.shippingPerPair || 0;
+
+  const pendingOrders = orders.filter(o => o.status === 'pending');
+
+  // 編集ボタンの表示制御
+  updateEditButtons(pendingOrders.length > 0);
+
+  if (pendingOrders.length === 0) {
+    container.innerHTML = '<div class="no-orders">現在のオーダーはありません</div>';
+    return;
+  }
+
+  const allItems = [];
+  pendingOrders.forEach(o => o.items.forEach(i => allItems.push(i)));
+  const grouped = groupItemsBySku(allItems);
+  const purchasedGrouped = groupPurchaseItems(purchases);
+
+  // 発送済アイテムをグループ化
+  const shippedItems = [];
+  shipments.forEach(s => s.items.forEach(i => shippedItems.push(i)));
+  const shippedGrouped = groupShippedItems(shippedItems);
+
+  // 編集モードの場合は専用レンダリング
+  if (adminEditMode) {
+    renderOrderAdminEditMode(container, grouped, purchases, shippedItems);
+    return;
+  }
+
+  // 指示済みアイテムを計算（ビルディング中のブロックも含む）
+  const instructedGrouped = getInstructedIncludingBuilding();
+  // 割り当て済み = max(指示済み, 仕入済み) — 拠点に直接追加した分も反映
+  const assignedGrouped = mergeGroupedMax(instructedGrouped, purchasedGrouped);
+  // 未指示 = オーダー - 割り当て済み
+  const unassigned = calcRemaining(grouped, assignedGrouped);
+
+  // ======= Current Orders =======
+  addCollapsible(container, 'Current Orders', 'bg-dark', 'current', (body) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'order-table-wrapper';
+    const result = buildFinanceTable(grouped, rate, purchasePriceMap, supplierUrlMap, coupon, customsPerPair, shippingPerPair);
+    wrapper.appendChild(result.table);
+    wrapper.appendChild(buildFinanceTotals(result.totals));
+    body.appendChild(wrapper);
+  });
+
+  // ======= 未指示 =======
+  const unassignedPairs = unassigned.length > 0 ? unassigned.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0) : 0;
+  addCollapsible(container, `未指示（${unassignedPairs}足）`, 'bg-red', 'unassigned', (body) => {
+    if (unassigned.length === 0) {
+      body.innerHTML = '<div class="no-orders" style="padding:20px">全て指示済みです</div>';
+    } else {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'order-table-wrapper';
+      const result = buildUnassignedTable(unassigned);
+      wrapper.appendChild(result.table);
+      body.appendChild(wrapper);
+    }
+  });
+
+  // ======= 仕入残り =======
+  const remaining = calcRemaining(grouped, purchasedGrouped);
+  const remainingPairs = remaining.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+  addCollapsible(container, `仕入残り（${remainingPairs}足）`, 'bg-orange', 'remaining', (body) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'order-table-wrapper';
+    const result = buildRemainingTable(remaining);
+    wrapper.appendChild(result.table);
+    body.appendChild(wrapper);
+  });
+
+  // ======= 仕入済（倉庫在庫 = 仕入済 - 発送済） =======
+  const inStockGrouped = calcRemaining(purchasedGrouped, shippedGrouped);
+  const inStockPairs = inStockGrouped.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+  const purchasedPairs = purchasedGrouped.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+  if (purchasedGrouped.length > 0) {
+    const label = shippedGrouped.length > 0
+      ? `仕入済 倉庫在庫（${inStockPairs}足）/ 合計${purchasedPairs}足`
+      : `仕入済（${purchasedPairs}足）`;
+    addCollapsible(container, label, 'bg-green', 'purchased', (body) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'order-table-wrapper';
+      // 発送済があれば在庫（差し引き後）を表示、なければ全仕入済を表示
+      const result = buildSimpleTable(shippedGrouped.length > 0 ? inStockGrouped : purchasedGrouped);
+      wrapper.appendChild(result.table);
+      body.appendChild(wrapper);
+    });
+  }
+
+  // ======= 発送済 =======
+  if (shippedGrouped.length > 0) {
+    const shippedPairs = shippedGrouped.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+    addCollapsible(container, `発送済（${shippedPairs}足）`, 'bg-blue', 'shipped', (body) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'order-table-wrapper';
+      const result = buildSimpleTable(shippedGrouped);
+      wrapper.appendChild(result.table);
+      body.appendChild(wrapper);
+    });
+  }
+
+  // ======= 拠点別（全登録拠点を表示） =======
+  if (currentSettings.locations) {
+    currentSettings.locations.forEach(loc => {
+      const locPurchases = purchases.filter(p => p.locationId === loc.id);
+      const locGrouped = groupPurchaseItems(locPurchases);
+      // 拠点の発送済を差し引き
+      const locShipped = shippedItems.filter(i => i.locationId === loc.id);
+      const locShippedGrouped = groupShippedItems(locShipped);
+      const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
+      const locRemainingPairs = locRemaining.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+      addCollapsible(container, `${loc.name}（残 ${locRemainingPairs}足）`, 'bg-blue', `loc-${loc.id}`, (body) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'order-table-wrapper';
+        if (locRemaining.length > 0) {
+          const result = buildSimpleTable(locRemaining);
+          wrapper.appendChild(result.table);
+        } else {
+          wrapper.innerHTML = '<div class="no-orders" style="padding:10px">在庫なし</div>';
+        }
+        body.appendChild(wrapper);
+      });
+    });
+  }
+
+  // ======= 登録済み仕入指示（拠点ごとにグループ化・タブ表示） =======
+  const activeInstructions = cachedInstructions.filter(i => i.status === 'active');
+  if (activeInstructions.length > 0) {
+    // 拠点ごとにグループ化
+    const locGroups = {};
+    activeInstructions.forEach(inst => {
+      if (!locGroups[inst.locationId]) locGroups[inst.locationId] = { name: inst.locationName, instructions: [] };
+      locGroups[inst.locationId].instructions.push(inst);
+    });
+
+    addCollapsible(container, `仕入指示一覧（${activeInstructions.length}件）`, 'bg-dark', 'instructions', (body) => {
+      Object.entries(locGroups).forEach(([locId, group]) => {
+        // 拠点ヘッダー
+        const locSection = document.createElement('div');
+        locSection.className = 'inst-loc-section';
+
+        // タブバー
+        const tabBar = document.createElement('div');
+        tabBar.className = 'inst-tab-bar';
+        group.instructions.forEach((inst, idx) => {
+          const totalPairs = inst.batches.reduce((s, b) =>
+            s + b.items.reduce((ss, i) => ss + Object.values(i.sizes).reduce((a,v)=>a+v,0), 0), 0);
+          const blockCount = inst.batches.length;
+          const tab = document.createElement('button');
+          tab.className = `inst-tab ${idx === 0 ? 'active' : ''}`;
+          tab.id = `inst-tab-${locId}-${idx}`;
+          tab.textContent = `${group.name}仕入 ${idx + 1}（${totalPairs}足/${blockCount}ブロック）`;
+          tab.onclick = () => switchLocInstTab(locId, idx, group.instructions.length);
+          tabBar.appendChild(tab);
+        });
+        locSection.appendChild(tabBar);
+
+        // タブコンテンツ
+        group.instructions.forEach((inst, idx) => {
+          const panel = document.createElement('div');
+          panel.className = `inst-tab-panel ${idx === 0 ? 'active' : ''}`;
+          panel.id = `inst-panel-${locId}-${idx}`;
+
+          // 順番変更 + 削除
+          const actions = document.createElement('div');
+          actions.className = 'inst-tab-actions';
+          actions.innerHTML = `
+            <button class="inst-move-btn" onclick="moveLocInstruction('${locId}',${idx},-1)" ${idx === 0 ? 'disabled' : ''}>▲ 上へ</button>
+            <button class="inst-move-btn" onclick="moveLocInstruction('${locId}',${idx},1)" ${idx === group.instructions.length - 1 ? 'disabled' : ''}>▼ 下へ</button>
+            <button class="danger-btn-sm" onclick="deleteInstruction('${inst.id}')">削除</button>
+          `;
+          panel.appendChild(actions);
+
+          // ブロック（バッチ）ごとに商品テーブルを表示
+          inst.batches.forEach(batch => {
+            const batchDiv = document.createElement('div');
+            batchDiv.className = 'inst-batch-section';
+            const totalBatchPairs = batch.items.reduce((s, i) => s + Object.values(i.sizes).reduce((a,v)=>a+v,0), 0);
+            batchDiv.innerHTML = `<div class="inst-batch-label">${batch.name}（${totalBatchPairs}足）</div>`;
+            const items = batch.items.map(bi => ({
+              model: bi.model, colorway: bi.colorway, sku: bi.sku, sizeType: bi.sizeType, sizes: bi.sizes
+            }));
+            if (items.length > 0) {
+              const wrapper = document.createElement('div');
+              wrapper.className = 'order-table-wrapper';
+              const result = buildSimpleTable(items);
+              wrapper.appendChild(result.table);
+              batchDiv.appendChild(wrapper);
+            }
+            panel.appendChild(batchDiv);
+          });
+
+          locSection.appendChild(panel);
+        });
+
+        body.appendChild(locSection);
+      });
+    });
+  }
+}
+
+// 指示済みアイテムを計算（全アクティブ指示のアイテムをグルーピング）
+function calcInstructedItems(instructions) {
+  const map = {};
+  instructions.filter(i => i.status === 'active').forEach(inst => {
+    inst.batches.forEach(batch => {
+      batch.items.forEach(item => {
+        if (!map[item.sku]) {
+          map[item.sku] = { model: item.model, colorway: item.colorway, sku: item.sku, sizeType: item.sizeType, sizes: {} };
+        }
+        Object.entries(item.sizes).forEach(([size, qty]) => {
+          map[item.sku].sizes[size] = (map[item.sku].sizes[size] || 0) + qty;
+        });
+      });
+    });
+  });
+  return Object.values(map);
+}
+
+// タブ切り替え（拠点別）
+function switchLocInstTab(locId, idx, total) {
+  for (let i = 0; i < total; i++) {
+    const tab = document.getElementById(`inst-tab-${locId}-${i}`);
+    const panel = document.getElementById(`inst-panel-${locId}-${i}`);
+    if (tab) tab.classList.toggle('active', i === idx);
+    if (panel) panel.classList.toggle('active', i === idx);
+  }
+}
+
+// 仕入指示の順番変更（拠点内）
+async function moveLocInstruction(locId, idx, direction) {
+  const locInstructions = cachedInstructions.filter(i => i.status === 'active' && i.locationId === locId);
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= locInstructions.length) return;
+
+  // 拠点内の入れ替え
+  [locInstructions[idx], locInstructions[newIdx]] = [locInstructions[newIdx], locInstructions[idx]];
+
+  // 全指示の新しい順序を構築
+  const allIds = [];
+  // アクティブ: 変更した拠点 + 他の拠点
+  const otherActive = cachedInstructions.filter(i => i.status === 'active' && i.locationId !== locId);
+  locInstructions.forEach(i => allIds.push(i.id));
+  otherActive.forEach(i => allIds.push(i.id));
+  // 非アクティブ
+  cachedInstructions.filter(i => i.status !== 'active').forEach(i => allIds.push(i.id));
+
+  await fetch('/api/instructions/reorder', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ orderedIds: allIds })
+  });
+  await showOrderAdmin();
+}
+
+// 仕入指示を削除
+async function deleteInstruction(id) {
+  if (!confirm('この仕入指示を削除しますか？')) return;
+  await fetch(`/api/instructions/${id}`, { method: 'DELETE' });
+  await showOrderAdmin();
+}
+
+// 収支付きテーブル生成
+function buildFinanceTable(grouped, rate, purchasePriceMap, supplierUrlMap, coupon, customsPerPair, shippingPerPair) {
+  const unisexItems = grouped.filter(g => g.sizeType !== 'womens');
+  const womensItems = grouped.filter(g => g.sizeType === 'womens');
+
+  const allGrouped = [...unisexItems, ...womensItems];
+  const div = document.createElement('div');
+
+  // 合計変数
+  let totals = { pairs: 0, amountUsd: 0, purchase: 0, couponTotal: 0, purchaseTotal: 0, customs: 0, shipping: 0, revenue: 0, profit: 0 };
+
+  // Unisex と Women's を分けて描画
+  const tables = [];
+  if (unisexItems.length > 0) {
+    tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  }
+  if (womensItems.length > 0) {
+    tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+  }
+
+  let rowNum = 1;
+  tables.forEach(({ items, sizes, label }) => {
+    const tDiv = document.createElement('div');
+    tDiv.className = 'finance-spreadsheet';
+
+    let html = '<div class="spreadsheet-scroll"><table>';
+
+    // ヘッダー行1
+    html += `<thead><tr>
+      <th class="col-no">No</th>
+      <th class="col-product">Products</th>
+      <th class="col-color">Color</th>
+      <th class="col-sku">Style Code</th>
+      <th class="col-qty">QTY</th>
+      <th class="col-price">単価</th>
+      <th class="col-amount">Amount</th>
+      <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+      <th class="col-url">URL</th>
+      <th class="col-fin">仕入値</th>
+      <th class="col-fin">クーポン</th>
+      <th class="col-fin-total">仕入合計</th>
+      <th class="col-fin">関税</th>
+      <th class="col-fin">送料</th>
+      <th class="col-fin">売上</th>
+      <th class="col-fin">利益</th>
+      <th class="col-margin">利益率</th>
+    </tr>`;
+
+    // ヘッダー行2
+    html += `<tr>
+      <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+      <th class="col-sku"></th><th class="col-qty"></th><th class="col-price"></th><th class="col-amount"></th>`;
+    sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+    html += `<th class="col-url"></th><th class="col-fin">A</th><th class="col-fin">B</th>
+      <th class="col-fin-total">C</th><th class="col-fin">D</th><th class="col-fin">E</th>
+      <th class="col-fin">F</th><th class="col-fin">G</th><th class="col-margin"></th>
+    </tr></thead><tbody>`;
+
+    items.forEach(item => {
+      const pairs = Object.values(item.sizes).reduce((s, q) => s + q, 0);
+      const amountUsd = pairs * item.price;
+      const pp = purchasePriceMap[item.sku] || 0;
+      const url = supplierUrlMap[item.sku] || '';
+
+      const A = pp * pairs;             // 仕入値合計
+      const B = coupon * pairs;          // クーポン合計
+      const C = A + B;                   // 仕入合計
+      const D = customsPerPair * pairs;  // 関税合計
+      const E = shippingPerPair * pairs; // 送料合計
+      const F = Math.round(amountUsd * rate); // 売上（円）
+      const G = F - C - D - E;          // 利益
+      const margin = F > 0 ? ((G / F) * 100).toFixed(1) : '0.0';
+
+      totals.pairs += pairs;
+      totals.amountUsd += amountUsd;
+      totals.purchase += A;
+      totals.couponTotal += B;
+      totals.purchaseTotal += C;
+      totals.customs += D;
+      totals.shipping += E;
+      totals.revenue += F;
+      totals.profit += G;
+
+      const profitClass = G >= 0 ? 'profit-positive' : 'profit-negative';
+      const urlHtml = url ? `<a href="${url}" target="_blank">Link</a>` : '';
+
+      html += `<tr>
+        <td class="col-no">${rowNum++}</td>
+        <td class="col-product">${item.model}</td>
+        <td class="col-color">${item.colorway}</td>
+        <td class="col-sku">${item.sku}</td>
+        <td class="col-qty">${pairs}</td>
+        <td class="col-price">$${item.price}</td>
+        <td class="col-amount">$${amountUsd.toLocaleString()}</td>`;
+
+      sizes.forEach(s => {
+        const qty = item.sizes[s] || 0;
+        html += `<td class="col-size ${qty ? 'has-value' : ''}">${qty || ''}</td>`;
+      });
+
+      html += `
+        <td class="col-url">${urlHtml}</td>
+        <td class="col-fin">¥${A.toLocaleString()}</td>
+        <td class="col-fin">¥${B.toLocaleString()}</td>
+        <td class="col-fin-total">¥${C.toLocaleString()}</td>
+        <td class="col-fin">¥${D.toLocaleString()}</td>
+        <td class="col-fin">¥${E.toLocaleString()}</td>
+        <td class="col-fin">¥${F.toLocaleString()}</td>
+        <td class="col-fin ${profitClass}">¥${G.toLocaleString()}</td>
+        <td class="col-margin">${margin}%</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table></div>';
+    tDiv.innerHTML = html;
+    div.appendChild(tDiv);
+  });
+
+  return { table: div, totals };
+}
+
+// 合計表示
+function buildFinanceTotals(totals) {
+  const margin = totals.revenue > 0 ? ((totals.profit / totals.revenue) * 100).toFixed(1) : '0.0';
+  const div = document.createElement('div');
+  div.className = 'finance-totals';
+  div.innerHTML = `
+    <div class="ft-item"><span class="ft-label">合計足数:</span><span class="ft-value">${totals.pairs}</span></div>
+    <div class="ft-item"><span class="ft-label">売上(USD):</span><span class="ft-value">$${totals.amountUsd.toLocaleString()}</span></div>
+    <div class="ft-item"><span class="ft-label">仕入合計:</span><span class="ft-value">¥${totals.purchaseTotal.toLocaleString()}</span></div>
+    <div class="ft-item"><span class="ft-label">関税:</span><span class="ft-value">¥${totals.customs.toLocaleString()}</span></div>
+    <div class="ft-item"><span class="ft-label">送料:</span><span class="ft-value">¥${totals.shipping.toLocaleString()}</span></div>
+    <div class="ft-item"><span class="ft-label">売上(JPY):</span><span class="ft-value">¥${totals.revenue.toLocaleString()}</span></div>
+    <div class="ft-item"><span class="ft-label">利益:</span><span class="ft-value" style="color:${totals.profit >= 0 ? '#2e7d32' : '#c62828'}">¥${totals.profit.toLocaleString()}</span></div>
+    <div class="ft-item"><span class="ft-label">利益率:</span><span class="ft-value">${margin}%</span></div>
+  `;
+  return div;
+}
+
+// 仕入記録をSKU+サイズでグルーピング
+function groupPurchaseItems(purchases) {
+  // 商品マスタからmodel/colorwayを引くためのマップ
+  const productInfoMap = {};
+  products.forEach(p => {
+    p.variants.forEach(v => {
+      productInfoMap[v.sku] = { model: p.model, colorway: v.colorway };
+    });
+  });
+
+  const map = {};
+  purchases.forEach(p => {
+    p.items.forEach(item => {
+      const key = item.sku;
+      if (!map[key]) {
+        const info = productInfoMap[item.sku] || {};
+        map[key] = {
+          model: item.model || info.model || '',
+          colorway: item.colorway || info.colorway || '',
+          sku: item.sku,
+          sizeType: item.sizeType || 'unisex',
+          sizes: {}
+        };
+      }
+      map[key].sizes[item.size] = (map[key].sizes[item.size] || 0) + item.quantity;
+    });
+  });
+  return Object.values(map);
+}
+
+// 発送済アイテムをSKUでグループ化
+function groupShippedItems(shippedItems) {
+  const map = {};
+  shippedItems.forEach(item => {
+    const key = item.sku;
+    if (!map[key]) {
+      map[key] = {
+        model: item.model || '',
+        colorway: item.colorway || '',
+        sku: item.sku,
+        sizeType: item.sizeType || 'unisex',
+        sizes: {}
+      };
+    }
+    map[key].sizes[item.size] = (map[key].sizes[item.size] || 0) + item.quantity;
+  });
+  return Object.values(map);
+}
+
+// 仕入残り計算（オーダー - 仕入済）
+function calcRemaining(orderGrouped, purchasedGrouped) {
+  // 全SKUを取得
+  const allSkus = new Set();
+  orderGrouped.forEach(g => allSkus.add(g.sku));
+  purchasedGrouped.forEach(g => allSkus.add(g.sku));
+
+  const result = [];
+  allSkus.forEach(sku => {
+    const orderItem = orderGrouped.find(g => g.sku === sku);
+    const purchaseItem = purchasedGrouped.find(g => g.sku === sku);
+
+    const item = {
+      model: (orderItem || purchaseItem).model,
+      colorway: (orderItem || purchaseItem).colorway,
+      sku,
+      sizeType: (orderItem || purchaseItem).sizeType,
+      sizes: {}
+    };
+
+    // 全サイズを対象
+    const allSizes = getSizesForType(item.sizeType);
+    allSizes.forEach(s => {
+      const ordered = orderItem ? (orderItem.sizes[s] || 0) : 0;
+      const purchased = purchaseItem ? (purchaseItem.sizes[s] || 0) : 0;
+      const remaining = ordered - purchased;
+      if (remaining !== 0) {
+        item.sizes[s] = remaining;
+      }
+    });
+
+    if (Object.keys(item.sizes).length > 0) {
+      result.push(item);
+    }
+  });
+  return result;
+}
+
+// 仕入残りテーブル（マイナスは赤字）
+function buildRemainingTable(items) {
+  const unisexItems = items.filter(g => g.sizeType !== 'womens');
+  const womensItems = items.filter(g => g.sizeType === 'womens');
+
+  const div = document.createElement('div');
+  const tables = [];
+  if (unisexItems.length > 0) tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  if (womensItems.length > 0) tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+
+  if (tables.length === 0) {
+    div.innerHTML = '<div class="no-orders">仕入残りはありません</div>';
+    return { table: div };
+  }
+
+  let rowNum = 1;
+  tables.forEach(({ items: tItems, sizes, label }) => {
+    const tDiv = document.createElement('div');
+    tDiv.className = 'finance-spreadsheet';
+    let html = '<div class="spreadsheet-scroll"><table>';
+    html += `<thead><tr>
+      <th class="col-no">No</th><th class="col-product">Products</th>
+      <th class="col-color">Color</th><th class="col-sku">Style Code</th>
+      <th class="col-qty">残り</th>
+      <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+    </tr><tr>
+      <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+      <th class="col-sku"></th><th class="col-qty"></th>`;
+    sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+    html += '</tr></thead><tbody>';
+
+    tItems.forEach(item => {
+      const totalRemaining = Object.values(item.sizes).reduce((s, q) => s + q, 0);
+      html += `<tr>
+        <td class="col-no">${rowNum++}</td>
+        <td class="col-product">${item.model}</td>
+        <td class="col-color">${item.colorway}</td>
+        <td class="col-sku">${item.sku}</td>
+        <td class="col-qty">${totalRemaining}</td>`;
+
+      sizes.forEach(s => {
+        const qty = item.sizes[s] || 0;
+        if (qty < 0) {
+          html += `<td class="col-size negative-qty">${qty}</td>`;
+        } else if (qty > 0) {
+          html += `<td class="col-size has-value">${qty}</td>`;
+        } else {
+          html += `<td class="col-size"></td>`;
+        }
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    tDiv.innerHTML = html;
+    div.appendChild(tDiv);
+  });
+
+  return { table: div };
+}
+
+// シンプルテーブル（仕入済/拠点別）
+function buildSimpleTable(items) {
+  const unisexItems = items.filter(g => g.sizeType !== 'womens');
+  const womensItems = items.filter(g => g.sizeType === 'womens');
+
+  const div = document.createElement('div');
+  const tables = [];
+  if (unisexItems.length > 0) tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  if (womensItems.length > 0) tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+
+  if (tables.length === 0) {
+    div.innerHTML = '<div class="no-orders">データなし</div>';
+    return { table: div };
+  }
+
+  let rowNum = 1;
+  tables.forEach(({ items: tItems, sizes, label }) => {
+    const tDiv = document.createElement('div');
+    tDiv.className = 'finance-spreadsheet';
+    let html = '<div class="spreadsheet-scroll"><table>';
+    html += `<thead><tr>
+      <th class="col-no">No</th><th class="col-product">Products</th>
+      <th class="col-color">Color</th><th class="col-sku">Style Code</th>
+      <th class="col-qty">QTY</th>
+      <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+    </tr><tr>
+      <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+      <th class="col-sku"></th><th class="col-qty"></th>`;
+    sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+    html += '</tr></thead><tbody>';
+
+    tItems.forEach(item => {
+      const pairs = Object.values(item.sizes).reduce((s, q) => s + q, 0);
+      html += `<tr>
+        <td class="col-no">${rowNum++}</td>
+        <td class="col-product">${item.model}</td>
+        <td class="col-color">${item.colorway}</td>
+        <td class="col-sku">${item.sku}</td>
+        <td class="col-qty">${pairs}</td>`;
+
+      sizes.forEach(s => {
+        const qty = item.sizes[s] || 0;
+        html += `<td class="col-size ${qty ? 'has-value' : ''}">${qty || ''}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    tDiv.innerHTML = html;
+    div.appendChild(tDiv);
+  });
+
+  return { table: div };
+}
+
+// =============================================
+// 仕入指示フロー（管理者側）
+// 未指示テーブルに直接+/-を表示、ヘッダーボタンが赤くなったら拠点選択→確定
+// =============================================
+let instSelections = {}; // {sku: {size: qty}}
+let cachedSettings = null;
+
+// 未指示テーブル（+/-付き）を構築
+function buildUnassignedTable(items) {
+  instSelections = {}; // 選択リセット
+
+  const unisexItems = items.filter(g => g.sizeType !== 'womens');
+  const womensItems = items.filter(g => g.sizeType === 'womens');
+
+  const div = document.createElement('div');
+  const tables = [];
+  if (unisexItems.length > 0) tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  if (womensItems.length > 0) tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+
+  if (tables.length === 0) {
+    div.innerHTML = '<div class="no-orders">データなし</div>';
+    return { table: div };
+  }
+
+  let rowNum = 1;
+  tables.forEach(({ items: tItems, sizes, label }) => {
+    const tDiv = document.createElement('div');
+    tDiv.className = 'finance-spreadsheet';
+    let html = '<div class="spreadsheet-scroll"><table>';
+    html += `<thead><tr>
+      <th class="col-no">No</th><th class="col-product">Products</th>
+      <th class="col-color">Color</th><th class="col-sku">Style Code</th>
+      <th class="col-qty">QTY</th>
+      <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+    </tr><tr>
+      <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+      <th class="col-sku"></th><th class="col-qty"></th>`;
+    sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+    html += '</tr></thead><tbody>';
+
+    tItems.forEach(item => {
+      const pairs = Object.values(item.sizes).reduce((s, q) => s + q, 0);
+      html += `<tr>
+        <td class="col-no">${rowNum++}</td>
+        <td class="col-product">${item.model}</td>
+        <td class="col-color">${item.colorway}</td>
+        <td class="col-sku">${item.sku}</td>
+        <td class="col-qty">${pairs}</td>`;
+
+      sizes.forEach(s => {
+        const qty = item.sizes[s] || 0;
+        if (qty > 0) {
+          const safeId = item.sku.replace(/[^a-zA-Z0-9]/g, '_') + '-' + s.replace(/[^a-zA-Z0-9.]/g, '_');
+          html += `<td class="col-size has-value inst-cell">
+            <div class="inst-picker">
+              <button class="inst-minus" onclick="instAdjust('${item.sku}','${s}',-1,${qty})">-</button>
+              <span class="inst-val" id="inst-v-${safeId}">0</span>
+              <button class="inst-plus" onclick="instAdjust('${item.sku}','${s}',1,${qty})">+</button>
+            </div>
+            <div class="inst-max">${qty}</div>
+          </td>`;
+        } else {
+          html += `<td class="col-size"></td>`;
+        }
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    tDiv.innerHTML = html;
+    div.appendChild(tDiv);
+  });
+
+  return { table: div };
+}
+
+// 数量調整（未指示テーブル上で直接）
+function instAdjust(sku, size, delta, max) {
+  if (!instSelections[sku]) instSelections[sku] = {};
+  const current = instSelections[sku][size] || 0;
+  const newVal = Math.max(0, Math.min(max, current + delta));
+  instSelections[sku][size] = newVal;
+
+  const safeId = sku.replace(/[^a-zA-Z0-9]/g, '_') + '-' + size.replace(/[^a-zA-Z0-9.]/g, '_');
+  const el = document.getElementById(`inst-v-${safeId}`);
+  if (el) {
+    el.textContent = newVal;
+    el.classList.toggle('selected', newVal > 0);
+  }
+
+  // 選択数に応じて仕入指示ボタンの色を変更
+  updateInstButton();
+}
+
+// ビルディングモード（1つの仕入指示に複数ブロック追加）
+let instBuilding = false;
+let instBuildingLoc = null; // {id, name}
+let instBuildingBlocks = []; // [{name:'仕入A', items:[{sku,model,colorway,image,sizeType,sizes}]}]
+
+// 選択合計を取得
+function getInstSelectionTotal() {
+  return Object.values(instSelections).reduce((sum, sizes) =>
+    sum + Object.values(sizes).reduce((s, q) => s + q, 0), 0);
+}
+
+// 仕入指示ボタンの色を更新
+function updateInstButton() {
+  const btn = document.getElementById('btn-inst');
+  if (!btn) return;
+  const totalSelected = getInstSelectionTotal();
+  const buildingTotal = instBuildingBlocks.reduce((sum, block) =>
+    sum + block.items.reduce((s, item) => s + Object.values(item.sizes).reduce((a,v)=>a+v,0), 0), 0);
+
+  if (instBuilding) {
+    btn.className = 'danger-btn';
+    btn.textContent = totalSelected > 0
+      ? `仕入指示 作成中（+${totalSelected}足）`
+      : `仕入指示 作成中（${buildingTotal}足）`;
+  } else if (totalSelected > 0) {
+    btn.className = 'danger-btn';
+    btn.textContent = `仕入指示（${totalSelected}足）`;
+  } else {
+    btn.className = 'primary-btn';
+    btn.textContent = '仕入指示';
+  }
+}
+
+// ビルディングモード中の選択済みアイテムを集計（未指示計算用）
+function getInstructedIncludingBuilding() {
+  const items = calcInstructedItems(cachedInstructions);
+  instBuildingBlocks.forEach(block => {
+    block.items.forEach(bItem => {
+      let existing = items.find(i => i.sku === bItem.sku);
+      if (!existing) {
+        existing = { model: bItem.model, colorway: bItem.colorway, sku: bItem.sku, sizeType: bItem.sizeType, sizes: {} };
+        items.push(existing);
+      }
+      Object.entries(bItem.sizes).forEach(([size, qty]) => {
+        existing.sizes[size] = (existing.sizes[size] || 0) + qty;
+      });
+    });
+  });
+  return items;
+}
+
+// 現在の選択をブロックとしてビルディングに追加
+function addCurrentSelectionAsBlock() {
+  const cleaned = {};
+  Object.entries(instSelections).forEach(([sku, sizes]) => {
+    const filtered = {};
+    Object.entries(sizes).forEach(([size, qty]) => {
+      if (qty > 0) filtered[size] = qty;
+    });
+    if (Object.keys(filtered).length > 0) cleaned[sku] = filtered;
+  });
+  if (Object.keys(cleaned).length === 0) return false;
+
+  const blockLetter = String.fromCharCode(65 + instBuildingBlocks.length);
+  const skuInfo = {};
+  products.forEach(p => {
+    (p.variants || []).forEach(v => {
+      skuInfo[v.sku] = { model: p.model, colorway: v.colorway, image: v.image, sizeType: v.sizeType || p.sizeType || 'mens' };
+    });
+  });
+
+  instBuildingBlocks.push({
+    name: `仕入${blockLetter}`,
+    items: Object.entries(cleaned).map(([sku, sizes]) => ({
+      sku,
+      model: (skuInfo[sku] || {}).model || '',
+      colorway: (skuInfo[sku] || {}).colorway || '',
+      image: (skuInfo[sku] || {}).image || '',
+      sizeType: (skuInfo[sku] || {}).sizeType || 'mens',
+      sizes
+    }))
+  });
+  instSelections = {};
+  return true;
+}
+
+// 仕入指示ボタンクリック
+function openInstructionFlow() {
+  const totalSelected = getInstSelectionTotal();
+
+  if (!instBuilding && totalSelected === 0) {
+    alert('未指示テーブルで仕入するアイテムを+/-で選択してください');
+    return;
+  }
+
+  document.getElementById('modal-instruction').classList.add('active');
+
+  if (!instBuilding) {
+    // 新規: まず拠点を選択
+    showLocationPickerModal();
+  } else {
+    // ビルディング中: 選択があれば追加してサマリー表示
+    if (totalSelected > 0) {
+      addCurrentSelectionAsBlock();
+    }
+    showBuildingSummary();
+  }
+}
+
+function closeInstructionModal() {
+  document.getElementById('modal-instruction').classList.remove('active');
+}
+
+// 拠点選択画面（初回のみ）
+async function showLocationPickerModal() {
+  try {
+    const res = await fetch('/api/settings');
+    cachedSettings = await res.json();
+  } catch (e) {}
+
+  const settings = cachedSettings || { locations: [] };
+  const body = document.getElementById('instruction-modal-body');
+  document.getElementById('instruction-modal-title').textContent = '仕入指示 - 拠点を選択';
+
+  let html = '<div class="inst-step"><div class="inst-loc-grid">';
+  settings.locations.forEach(loc => {
+    html += `<button class="inst-loc-btn" onclick="instPickLocation('${loc.id}','${loc.name}')">${loc.name}</button>`;
+  });
+  if (settings.locations.length === 0) {
+    html += '<p>拠点が登録されていません。詳細設定から追加してください。</p>';
+  }
+  html += '</div>';
+  html += '<div style="margin-top:16px"><button class="secondary-btn" onclick="closeInstructionModal()">キャンセル</button></div>';
+  html += '</div>';
+  body.innerHTML = html;
+}
+
+// 拠点選択 → ビルディングモード開始
+function instPickLocation(locId, locName) {
+  instBuildingLoc = { id: locId, name: locName };
+  instBuilding = true;
+  addCurrentSelectionAsBlock();
+  showBuildingSummary();
+}
+
+// ビルディングサマリー表示（確定/追加/キャンセル）
+function showBuildingSummary() {
+  const body = document.getElementById('instruction-modal-body');
+
+  // 仕入番号を計算（この拠点の既存active指示数 + 1）
+  const activeForLoc = cachedInstructions.filter(i => i.status === 'active' && i.locationId === instBuildingLoc.id);
+  const instNum = activeForLoc.length + 1;
+  document.getElementById('instruction-modal-title').textContent =
+    `${instBuildingLoc.name}仕入 ${instNum}`;
+
+  let html = '<div class="inst-step">';
+
+  // ブロック一覧
+  instBuildingBlocks.forEach(block => {
+    const totalPairs = block.items.reduce((s, item) => s + Object.values(item.sizes).reduce((a,v)=>a+v,0), 0);
+    html += `<div class="inst-block-summary">`;
+    html += `<div class="block-header"><strong>${block.name}</strong>（${totalPairs}足）</div>`;
+    html += '<ul>';
+    block.items.forEach(item => {
+      const sizePairs = Object.entries(item.sizes).map(([s,q]) => `${s} x${q}`).join(', ');
+      html += `<li>${item.model} / ${item.sku} - ${sizePairs}</li>`;
+    });
+    html += '</ul></div>';
+  });
+
+  const totalAll = instBuildingBlocks.reduce((sum, block) =>
+    sum + block.items.reduce((s, item) => s + Object.values(item.sizes).reduce((a,v)=>a+v,0), 0), 0);
+  html += `<p style="margin:12px 0;font-weight:700;">合計: ${totalAll}足 / ${instBuildingBlocks.length}ブロック</p>`;
+
+  html += '<div class="inst-actions" style="display:flex;gap:8px;flex-wrap:wrap;">';
+  html += '<button class="primary-btn" onclick="instFinalize()">確定</button>';
+  html += '<button class="secondary-btn" onclick="instAddMore()">追加</button>';
+  html += '<button class="secondary-btn" onclick="instCancelBuilding()">キャンセル</button>';
+  html += '</div></div>';
+
+  body.innerHTML = html;
+}
+
+// 追加: モーダルを閉じて未指示テーブルに戻る
+function instAddMore() {
+  closeInstructionModal();
+  // 未指示テーブルを再描画（ビルディング中のブロック分が引かれる）
+  renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
+  updateInstButton();
+}
+
+// 確定: サーバーに保存
+async function instFinalize() {
+  if (instBuildingBlocks.length === 0) {
+    alert('ブロックがありません');
+    return;
+  }
+
+  const batches = instBuildingBlocks.map(block => ({
+    id: 'batch-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+    name: block.name,
+    items: block.items,
+    status: 'pending',
+    completedAt: null
+  }));
+
+  try {
+    await fetch('/api/instructions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        locationId: instBuildingLoc.id,
+        locationName: instBuildingLoc.name,
+        batches
+      })
+    });
+    instBuilding = false;
+    instBuildingLoc = null;
+    instBuildingBlocks = [];
+    instSelections = {};
+    closeInstructionModal();
+    await showOrderAdmin();
+  } catch (e) {
+    alert('エラーが発生しました');
+  }
+}
+
+// キャンセル: ビルディングを破棄
+function instCancelBuilding() {
+  if (instBuildingBlocks.length > 0 && !confirm('作成中の仕入指示を破棄しますか？')) return;
+  instBuilding = false;
+  instBuildingLoc = null;
+  instBuildingBlocks = [];
+  instSelections = {};
+  closeInstructionModal();
+  renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
+  updateInstButton();
+}
+
+// =============================================
+// 仕入ページ（SP対応・仕入担当者用）
+// =============================================
+let purchaseLocationId = null;
+let purchaseLocationName = null;
+
+async function showPurchasePage(locId, locName) {
+  purchaseLocationId = locId;
+  purchaseLocationName = locName;
+  document.getElementById('purchase-title').textContent = `仕入 - ${locName}`;
+  showScreen('screen-purchase');
+  await renderPurchasePage();
+}
+
+async function renderPurchasePage() {
+  const container = document.getElementById('purchase-content');
+  container.innerHTML = '<p>読み込み中...</p>';
+
+  try {
+    const [instrRes, prodRes] = await Promise.all([
+      fetch(`/api/instructions/location/${purchaseLocationId}`),
+      fetch('/api/products')
+    ]);
+    const instructions = await instrRes.json();
+    const prods = await prodRes.json();
+
+    // SKU情報マップ
+    const skuInfo = {};
+    prods.forEach(p => {
+      (p.variants || []).forEach(v => {
+        skuInfo[v.sku] = { model: p.model, colorway: v.colorway, image: v.image, sizeType: v.sizeType || 'mens' };
+      });
+    });
+
+    // クーポンセクションを先に取得
+    const couponHtml = await renderPurchaseCoupon();
+
+    if (instructions.length === 0) {
+      container.innerHTML = couponHtml + '<p style="text-align:center;padding:32px;color:#888;">現在の仕入指示はありません</p>';
+      return;
+    }
+
+    // 最初の未完了指示のみ表示（仕入1）。全ブロック完了したら次の指示へ。
+    const currentInst = instructions[0]; // サーバーで順番管理済み
+    const instNum = 1; // 常に「仕入 1」として表示
+
+    let html = `<div class="purchase-inst-header">仕入 ${instNum}</div>`;
+
+    currentInst.batches.forEach(batch => {
+      const isCompleted = batch.status === 'completed';
+      html += `<div class="purchase-batch ${isCompleted ? 'batch-completed' : ''}">`;
+      html += `<div class="batch-header">
+        <span class="batch-name">${batch.name}</span>
+        ${isCompleted ? '<span class="batch-done-badge">✅ 仕入済</span>' : '<span class="batch-pending-badge">未完了</span>'}
+      </div>`;
+
+      batch.items.forEach(item => {
+        const info = skuInfo[item.sku] || {};
+        const imgSrc = item.image || info.image || '';
+
+        html += '<div class="purchase-item">';
+        if (imgSrc) {
+          html += `<div class="pi-image"><img src="${imgSrc}" alt="${item.sku}"></div>`;
+        }
+        html += '<div class="pi-info">';
+        html += `<div class="pi-model">${item.model || info.model || ''}</div>`;
+        html += `<div class="pi-sku" onclick="copySku('${item.sku}')">${item.sku} <span class="copy-hint">📋</span></div>`;
+        html += `<div class="pi-color">${item.colorway || info.colorway || ''}</div>`;
+        html += '<div class="pi-sizes">';
+        Object.entries(item.sizes).forEach(([size, qty]) => {
+          if (qty > 0) {
+            for (let i = 0; i < qty; i++) {
+              html += `<span class="pi-size-tag">${size}</span>`;
+            }
+          }
+        });
+        html += '</div></div></div>';
+      });
+
+      if (!isCompleted) {
+        html += `<button class="batch-complete-btn" onclick="completeBatch('${currentInst.id}','${batch.id}')">仕入完了にする</button>`;
+      }
+      html += '</div>';
+    });
+
+    // 残りの指示数を表示
+    if (instructions.length > 1) {
+      html += `<div class="purchase-remaining">次の仕入指示が ${instructions.length - 1} 件待機中</div>`;
+    }
+
+    container.innerHTML = couponHtml + html;
+  } catch (e) {
+    container.innerHTML = '<p style="color:red;">読み込みエラー</p>';
+  }
+}
+
+// SKUコピー
+function copySku(sku) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(sku).then(() => {
+      showToast('SKUをコピーしました');
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = sku;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('SKUをコピーしました');
+  }
+}
+
+// バッチ完了
+async function completeBatch(instructionId, batchId) {
+  if (!confirm('このバッチの仕入を完了しますか？')) return;
+
+  try {
+    const res = await fetch(`/api/instructions/${instructionId}/batches/${batchId}/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.error || 'エラーが発生しました');
+      return;
+    }
+    showToast('仕入完了しました');
+    await renderPurchasePage();
+  } catch (e) {
+    alert('通信エラーが発生しました');
+  }
+}
+
+// =============================================
+// 収支管理ページ（仕入履歴タブ）
+// =============================================
+let currentFinanceTab = 'overview';
+
+async function showFinance() {
+  showScreen('screen-finance');
+  await showFinanceTab('history');
+}
+
+async function showFinanceTab(tab) {
+  currentFinanceTab = tab;
+  document.querySelectorAll('#screen-finance .tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.id === `fin-tab-${tab}`);
+  });
+
+  const content = document.getElementById('finance-content');
+
+  if (tab === 'overview') {
+    content.innerHTML = '<div class="placeholder-msg"><p>準備中です</p></div>';
+  } else if (tab === 'history') {
+    await renderPurchaseHistory(content);
+  }
+}
+
+async function renderPurchaseHistory(container) {
+  container.innerHTML = '<p>読み込み中...</p>';
+
+  try {
+    const [purchasesRes, settingsRes] = await Promise.all([
+      fetch('/api/purchases'),
+      fetch('/api/settings')
+    ]);
+    const purchases = await purchasesRes.json();
+    const settings = await settingsRes.json();
+
+    if (purchases.length === 0) {
+      container.innerHTML = '<div class="no-orders" style="padding:20px">仕入履歴はありません</div>';
+      return;
+    }
+
+    // 日付ごとにグループ化（JST）
+    const byDate = {};
+    purchases.forEach(p => {
+      const dateJST = new Date(new Date(p.createdAt).getTime() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
+      if (!byDate[dateJST]) byDate[dateJST] = [];
+      byDate[dateJST].push(p);
+    });
+
+    // 月ごとの合計を計算
+    const byMonth = {};
+    Object.entries(byDate).forEach(([date, items]) => {
+      const month = date.substring(0, 7); // YYYY-MM
+      if (!byMonth[month]) byMonth[month] = {};
+      items.forEach(p => {
+        const locName = p.locationName || '不明';
+        if (!byMonth[month][locName]) byMonth[month][locName] = 0;
+        p.items.forEach(item => {
+          byMonth[month][locName] += item.quantity;
+        });
+      });
+    });
+
+    let html = '';
+
+    // 月別サマリー
+    html += '<div class="history-section"><h3>月別サマリー</h3>';
+    html += '<table class="history-summary-table"><thead><tr><th>月</th><th>拠点</th><th>仕入数</th></tr></thead><tbody>';
+    Object.entries(byMonth).sort((a,b) => b[0].localeCompare(a[0])).forEach(([month, locs]) => {
+      let first = true;
+      const locEntries = Object.entries(locs);
+      const totalPairs = locEntries.reduce((s, [_, q]) => s + q, 0);
+      locEntries.forEach(([locName, pairs]) => {
+        html += `<tr>`;
+        if (first) {
+          html += `<td rowspan="${locEntries.length + 1}" class="month-cell">${month}</td>`;
+          first = false;
+        }
+        html += `<td>${locName}</td><td>${pairs}足</td></tr>`;
+      });
+      html += `<tr class="month-total"><td><strong>合計</strong></td><td><strong>${totalPairs}足</strong></td></tr>`;
+    });
+    html += '</tbody></table></div>';
+
+    // 日別詳細（新しい順）
+    html += '<div class="history-section"><h3>日別詳細</h3>';
+    Object.entries(byDate).sort((a,b) => b[0].localeCompare(a[0])).forEach(([date, items]) => {
+      const totalPairs = items.reduce((s, p) => s + p.items.reduce((ss, i) => ss + i.quantity, 0), 0);
+      html += `<div class="history-date-group">`;
+      html += `<div class="history-date-header">${date}（${totalPairs}足）</div>`;
+
+      items.forEach(p => {
+        const time = new Date(new Date(p.createdAt).getTime() + 9 * 60 * 60 * 1000).toISOString().substring(11, 16);
+        const pairCount = p.items.reduce((s, i) => s + i.quantity, 0);
+        html += `<div class="history-entry">`;
+        html += `<div class="he-header"><span class="he-time">${time}</span> <span class="he-loc">${p.locationName}</span>`;
+        if (p.batchName) html += ` <span class="he-batch">${p.batchName}</span>`;
+        html += ` <span class="he-pairs">${pairCount}足</span></div>`;
+        html += '<div class="he-items">';
+        p.items.forEach(item => {
+          html += `<span class="he-item">${item.sku} ${item.size} x${item.quantity}</span>`;
+        });
+        html += '</div></div>';
+      });
+
+      html += '</div>';
+    });
+    html += '</div>';
+
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = '<p style="color:red;">読み込みエラー</p>';
+  }
+}
+
+// =============================================
+// 発送管理
+// =============================================
+let shipLocData = {};
+let shipSelectedLocs = {};
+let shipMode = false;
+let shipAdjustments = {};
+let shipItems = [];
+
+async function showShipping() {
+  showScreen('screen-shipping');
+  await showShippingTab('ship');
+}
+
+async function showShippingTab(tab) {
+  document.getElementById('ship-tab-ship').classList.toggle('active', tab === 'ship');
+  document.getElementById('ship-tab-history').classList.toggle('active', tab === 'history');
+  const content = document.getElementById('shipping-content');
+  if (tab === 'ship') await renderShippingPage(content);
+  else await renderShipmentHistory(content);
+}
+
+async function renderShippingPage(container) {
+  container.innerHTML = '<p>読み込み中...</p>';
+  shipMode = false;
+  shipSelectedLocs = {};
+  shipAdjustments = {};
+
+  try {
+    const res = await fetch('/api/shipped-items');
+    shipLocData = await res.json();
+  } catch (e) {
+    container.innerHTML = '<p style="color:red;">読み込みエラー</p>';
+    return;
+  }
+
+  const locIds = Object.keys(shipLocData);
+  if (locIds.length === 0) {
+    container.innerHTML = '<div class="no-orders" style="padding:20px">発送可能な仕入済アイテムはありません</div>';
+    return;
+  }
+
+  let html = '<div class="ship-actions-bar">';
+  html += '<button id="btn-ship-start" class="primary-btn" onclick="startShipMode()">発送</button>';
+  html += '</div>';
+
+  locIds.forEach(locId => {
+    const loc = shipLocData[locId];
+    const totalPairs = loc.items.reduce((s, i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+    html += `<div class="ship-loc-section" id="ship-loc-${locId}">`;
+    html += `<div class="ship-loc-header">`;
+    html += `<span class="ship-loc-check" id="ship-check-${locId}" style="display:none;">`;
+    html += `<input type="checkbox" id="ship-cb-${locId}" onchange="toggleShipLoc('${locId}')">`;
+    html += `</span>`;
+    html += `<h3>${loc.locationName}（${totalPairs}足）</h3>`;
+    html += `</div>`;
+    html += `<div class="ship-loc-items" id="ship-items-${locId}">`;
+    html += buildShipItemsTable(loc.items, locId, false);
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function buildShipItemsTable(items, locId, adjustable) {
+  // オーダー管理と同じフォーマット（buildSimpleTableと統一）
+  const unisexItems = items.filter(i => i.sizeType !== 'womens');
+  const womensItems = items.filter(i => i.sizeType === 'womens');
+  let html = '';
+  const tables = [];
+  if (unisexItems.length > 0) tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  if (womensItems.length > 0) tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+
+  let rowNum = 1;
+  tables.forEach(({ items: tItems, sizes, label }) => {
+    html += buildShipSizeTable(tItems, sizes, locId, adjustable, label, rowNum);
+    rowNum += tItems.length;
+  });
+  return html;
+}
+
+function buildShipSizeTable(items, sizes, locId, adjustable, label, startRowNum) {
+  // オーダー管理のbuildSimpleTableと同じHTML構造・CSSクラスを使用
+  let html = '<div class="finance-spreadsheet"><div class="spreadsheet-scroll"><table>';
+  html += `<thead><tr>
+    <th class="col-no">No</th><th class="col-product">Products</th>
+    <th class="col-color">Color</th><th class="col-sku">Style Code</th>
+    <th class="col-qty">QTY</th>
+    <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+  </tr><tr>
+    <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+    <th class="col-sku"></th><th class="col-qty"></th>`;
+  sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+  html += '</tr></thead><tbody>';
+
+  let rowNum = startRowNum || 1;
+  items.forEach(item => {
+    const pairs = Object.values(item.sizes).reduce((s, q) => s + q, 0);
+    html += `<tr>
+      <td class="col-no">${rowNum++}</td>
+      <td class="col-product">${item.model || ''}</td>
+      <td class="col-color">${item.colorway || ''}</td>
+      <td class="col-sku">${item.sku}</td>
+      <td class="col-qty">${pairs}</td>`;
+
+    sizes.forEach(size => {
+      const qty = item.sizes[size] || 0;
+      if (qty > 0 && adjustable) {
+        const adjKey = `${locId}|${item.sku}|${size}`;
+        const currentAdj = getShipAdj(locId, item.sku, size, qty);
+        html += `<td class="col-size inst-cell"><div class="inst-picker">`;
+        html += `<button class="inst-minus" onclick="shipAdjust('${locId}','${item.sku}','${size}',-1,${qty})">-</button>`;
+        html += `<span class="inst-val" id="ship-val-${adjKey}">${currentAdj}</span>`;
+        html += `<button class="inst-plus" onclick="shipAdjust('${locId}','${item.sku}','${size}',1,${qty})">+</button>`;
+        html += `</div><div class="inst-max">/${qty}</div></td>`;
+      } else if (qty > 0) {
+        html += `<td class="col-size has-value">${qty}</td>`;
+      } else {
+        html += '<td class="col-size"></td>';
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  return html;
+}
+
+function getShipAdj(locId, sku, size, max) {
+  if (!shipAdjustments[locId] || !shipAdjustments[locId][sku]) return max;
+  return shipAdjustments[locId][sku][size] !== undefined ? shipAdjustments[locId][sku][size] : max;
+}
+
+function shipAdjust(locId, sku, size, delta, max) {
+  if (!shipAdjustments[locId]) shipAdjustments[locId] = {};
+  if (!shipAdjustments[locId][sku]) shipAdjustments[locId][sku] = {};
+  if (shipAdjustments[locId][sku][size] === undefined) shipAdjustments[locId][sku][size] = max;
+  let val = shipAdjustments[locId][sku][size] + delta;
+  val = Math.max(0, Math.min(val, max));
+  shipAdjustments[locId][sku][size] = val;
+  const el = document.getElementById(`ship-val-${locId}|${sku}|${size}`);
+  if (el) el.textContent = val;
+}
+
+function startShipMode() {
+  shipMode = true;
+  Object.keys(shipLocData).forEach(locId => {
+    const checkEl = document.getElementById(`ship-check-${locId}`);
+    if (checkEl) checkEl.style.display = 'inline';
+  });
+  const btn = document.getElementById('btn-ship-start');
+  btn.textContent = '拠点を選択してください';
+  btn.disabled = true;
+  btn.classList.add('btn-disabled');
+}
+
+function toggleShipLoc(locId) {
+  const cb = document.getElementById(`ship-cb-${locId}`);
+  shipSelectedLocs[locId] = cb.checked;
+  const loc = shipLocData[locId];
+  const itemsEl = document.getElementById(`ship-items-${locId}`);
+  if (cb.checked) {
+    if (!shipAdjustments[locId]) {
+      shipAdjustments[locId] = {};
+      loc.items.forEach(item => {
+        shipAdjustments[locId][item.sku] = {};
+        Object.entries(item.sizes).forEach(([size, qty]) => { shipAdjustments[locId][item.sku][size] = qty; });
+      });
+    }
+    itemsEl.innerHTML = buildShipItemsTable(loc.items, locId, true);
+  } else {
+    delete shipAdjustments[locId];
+    itemsEl.innerHTML = buildShipItemsTable(loc.items, locId, false);
+  }
+  updateShipButton();
+}
+
+function updateShipButton() {
+  const hasSelected = Object.values(shipSelectedLocs).some(v => v);
+  const btn = document.getElementById('btn-ship-start');
+  if (hasSelected) {
+    btn.textContent = '確定';
+    btn.disabled = false;
+    btn.classList.remove('btn-disabled');
+    btn.onclick = () => confirmShipSelection();
+  } else {
+    btn.textContent = '拠点を選択してください';
+    btn.disabled = true;
+    btn.classList.add('btn-disabled');
+  }
+}
+
+function confirmShipSelection() {
+  shipItems = [];
+  const selectedLocations = [];
+  Object.entries(shipSelectedLocs).forEach(([locId, selected]) => {
+    if (!selected) return;
+    const loc = shipLocData[locId];
+    selectedLocations.push({ id: locId, name: loc.locationName });
+    loc.items.forEach(item => {
+      const adjs = (shipAdjustments[locId] && shipAdjustments[locId][item.sku]) || {};
+      Object.entries(item.sizes).forEach(([size, maxQty]) => {
+        const qty = adjs[size] !== undefined ? adjs[size] : maxQty;
+        if (qty > 0) {
+          shipItems.push({
+            sku: item.sku, model: item.model, colorway: item.colorway,
+            size, quantity: qty, sizeType: item.sizeType,
+            locationId: locId, locationName: loc.locationName
+          });
+        }
+      });
+    });
+  });
+  if (shipItems.length === 0) { alert('発送するアイテムがありません'); return; }
+  showShippingModal(selectedLocations);
+}
+
+function showShippingModal(locations) {
+  document.getElementById('modal-shipping').classList.add('active');
+  const body = document.getElementById('shipping-modal-body');
+  const totalPairs = shipItems.reduce((s, i) => s + i.quantity, 0);
+  const locNames = locations.map(l => l.name).join(' + ');
+  let html = `<div class="ship-summary"><p><strong>${locNames}</strong> から <strong>${totalPairs}足</strong> を発送</p></div>`;
+  html += `<div class="form-row"><label>オーダー番号（カンマ区切りで複数可）</label>`;
+  html += `<input type="text" id="ship-order-nums" placeholder="例: 260329, 260330"></div>`;
+  html += `<div class="ship-tracking-section"><label>追跡番号</label>`;
+  html += `<div id="ship-tracking-list">${buildTrackingRow(0)}</div>`;
+  html += `<button class="secondary-btn" onclick="addTrackingRow()" style="margin-top:8px">+ 追跡番号を追加</button></div>`;
+  html += `<div class="form-actions" style="margin-top:16px;">`;
+  html += `<button class="primary-btn" onclick="finalizeShipment()">完了</button>`;
+  html += `<button class="secondary-btn" onclick="closeShippingModal()">キャンセル</button></div>`;
+  body.innerHTML = html;
+  body.dataset.locations = JSON.stringify(locations);
+  trackingRowCount = 1;
+}
+
+let trackingRowCount = 1;
+function buildTrackingRow(idx) {
+  return `<div class="tracking-row" id="tracking-row-${idx}">
+    <select id="ship-carrier-${idx}" class="ship-carrier-select">
+      <option value="DHL">DHL</option><option value="FedEx">FedEx</option>
+      <option value="UPS">UPS</option><option value="EMS">EMS</option>
+      <option value="Other">その他</option>
+    </select>
+    <input type="text" id="ship-tracking-${idx}" placeholder="追跡番号" class="ship-tracking-input">
+    ${idx > 0 ? `<button class="danger-btn-sm" onclick="removeTrackingRow(${idx})">✕</button>` : ''}
+  </div>`;
+}
+function addTrackingRow() {
+  const list = document.getElementById('ship-tracking-list');
+  const div = document.createElement('div');
+  div.innerHTML = buildTrackingRow(trackingRowCount);
+  list.appendChild(div.firstElementChild);
+  trackingRowCount++;
+}
+function removeTrackingRow(idx) {
+  const row = document.getElementById(`tracking-row-${idx}`);
+  if (row) row.remove();
+}
+function closeShippingModal() {
+  document.getElementById('modal-shipping').classList.remove('active');
+}
+
+async function finalizeShipment() {
+  const tracking = [];
+  for (let i = 0; i < trackingRowCount; i++) {
+    const carrierEl = document.getElementById(`ship-carrier-${i}`);
+    const trackEl = document.getElementById(`ship-tracking-${i}`);
+    if (carrierEl && trackEl && trackEl.value.trim()) {
+      tracking.push({ carrier: carrierEl.value, trackingNumber: trackEl.value.trim() });
+    }
+  }
+  if (tracking.length === 0) { alert('追跡番号を入力してください'); return; }
+  const orderNumsStr = document.getElementById('ship-order-nums').value.trim();
+  const orderNumbers = orderNumsStr ? orderNumsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const locations = JSON.parse(document.getElementById('shipping-modal-body').dataset.locations);
+  try {
+    const shipRes = await fetch('/api/shipments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: shipItems, locations, tracking, orderNumbers })
+    });
+    const shipResult = await shipRes.json();
+
+    // バイヤー情報があればWhatsAppボタンを表示
+    if (shipResult.buyers && shipResult.buyers.length > 0) {
+      showShipmentCompleteWithWhatsApp(shipResult, tracking);
+    } else {
+      closeShippingModal();
+      showToast('発送が完了しました');
+      await showShippingTab('ship');
+    }
+  } catch (e) { alert('通信エラー'); }
+}
+
+// WhatsApp通知画面（発送完了後）
+function buildWhatsAppUrl(buyer, tracking) {
+  const trackingText = tracking.map(t => `${t.carrier}: ${t.trackingNumber}`).join('\n');
+  const message = `Hi ${buyer.name},
+
+Your order has been shipped!
+
+Tracking:
+${trackingText}
+
+You can view your order history here:
+http://localhost:3000
+
+Thank you!`;
+  const phone = buyer.phone.replace(/[^0-9]/g, '');
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
+
+function showShipmentCompleteWithWhatsApp(shipResult, tracking) {
+  const body = document.getElementById('shipping-modal-body');
+  let html = `<div style="text-align:center;padding:20px 0;">
+    <div style="font-size:40px;margin-bottom:12px;">✅</div>
+    <h3 style="margin:0 0 20px;">発送が完了しました</h3>
+    <p style="color:#666;font-size:13px;margin-bottom:20px;">WhatsAppでバイヤーに通知を送信できます</p>`;
+
+  shipResult.buyers.forEach(buyer => {
+    const waUrl = buildWhatsAppUrl(buyer, tracking);
+    html += `<a href="${waUrl}" target="_blank" class="whatsapp-btn">
+      <span class="whatsapp-icon">💬</span> ${buyer.name} に通知を送る
+    </a>`;
+  });
+
+  html += `<button class="secondary-btn" style="margin-top:20px;width:100%;" onclick="closeShipmentComplete()">閉じる</button>`;
+  html += `</div>`;
+  body.innerHTML = html;
+}
+
+async function closeShipmentComplete() {
+  closeShippingModal();
+  await showShippingTab('ship');
+}
+
+// =============================================
+// 発送履歴
+// =============================================
+async function renderShipmentHistory(container) {
+  container.innerHTML = '<p>読み込み中...</p>';
+  try {
+    const res = await fetch('/api/shipments');
+    const shipments = await res.json();
+    if (shipments.length === 0) {
+      container.innerHTML = '<div class="no-orders" style="padding:20px">発送履歴はありません</div>';
+      return;
+    }
+    let html = '';
+    [...shipments].reverse().forEach(s => {
+      const dateJST = new Date(new Date(s.createdAt).getTime() + 9 * 60 * 60 * 1000);
+      const dateStr = dateJST.toISOString().split('T')[0];
+      const timeStr = dateJST.toISOString().substring(11, 16);
+      const totalPairs = s.items.reduce((sum, i) => sum + i.quantity, 0);
+      const locNames = s.locations.map(l => l.name).join(' + ');
+      html += `<div class="shipment-card">`;
+      html += `<div class="shipment-header" onclick="toggleShipmentDetail('${s.id}')">`;
+      html += `<div class="shipment-date">${dateStr} ${timeStr}</div>`;
+      html += `<div class="shipment-summary">${locNames} / ${totalPairs}足</div>`;
+      html += `<div class="shipment-tracking-brief">`;
+      s.tracking.forEach(t => { html += `<span class="tracking-badge">${t.carrier}: ${t.trackingNumber}</span>`; });
+      html += `</div>`;
+      if (s.orderNumbers && s.orderNumbers.length > 0) html += `<div class="shipment-orders">Order: ${s.orderNumbers.join(', ')}</div>`;
+      html += `<span class="collapse-icon ship-collapse">▼</span></div>`;
+      html += `<div class="shipment-detail" id="shipment-detail-${s.id}" style="display:none;">`;
+      if (s.locations.length > 1) {
+        s.locations.forEach(loc => {
+          const locItems = s.items.filter(i => i.locationId === loc.id);
+          if (locItems.length === 0) return;
+          html += `<div class="shipment-loc-group"><div class="shipment-loc-name">${loc.name}（${locItems.reduce((s,i)=>s+i.quantity,0)}足）</div>${buildShipmentDetailTable(locItems)}</div>`;
+        });
+        html += `<div class="shipment-loc-group"><div class="shipment-loc-name"><strong>合計（${totalPairs}足）</strong></div>${buildShipmentDetailTable(s.items)}</div>`;
+      } else {
+        html += buildShipmentDetailTable(s.items);
+      }
+      html += `</div></div>`;
+    });
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = '<p style="color:red;">読み込みエラー (発送履歴)</p>';
+  }
+}
+
+function buildShipmentDetailTable(items) {
+  // アイテムをSKUでグルーピングし、sizeTypeも保持
+  const grouped = {};
+  items.forEach(i => {
+    if (!grouped[i.sku]) grouped[i.sku] = { model: i.model, colorway: i.colorway, sizeType: i.sizeType || 'unisex', sizes: {} };
+    grouped[i.sku].sizes[i.size] = (grouped[i.sku].sizes[i.size] || 0) + i.quantity;
+  });
+
+  // オーダー管理と同じフォーマットで表示
+  const groupedArr = Object.entries(grouped).map(([sku, data]) => ({ sku, ...data }));
+  const unisexItems = groupedArr.filter(g => g.sizeType !== 'womens');
+  const womensItems = groupedArr.filter(g => g.sizeType === 'womens');
+
+  let html = '';
+  const tables = [];
+  if (unisexItems.length > 0) tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  if (womensItems.length > 0) tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+
+  if (tables.length === 0) return '<p>データなし</p>';
+
+  let rowNum = 1;
+  tables.forEach(({ items: tItems, sizes, label }) => {
+    html += '<div class="finance-spreadsheet"><div class="spreadsheet-scroll"><table>';
+    html += `<thead><tr>
+      <th class="col-no">No</th><th class="col-product">Products</th>
+      <th class="col-color">Color</th><th class="col-sku">Style Code</th>
+      <th class="col-qty">QTY</th>
+      <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+    </tr><tr>
+      <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+      <th class="col-sku"></th><th class="col-qty"></th>`;
+    sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+    html += '</tr></thead><tbody>';
+
+    tItems.forEach(item => {
+      const pairs = Object.values(item.sizes).reduce((s, q) => s + q, 0);
+      html += `<tr>
+        <td class="col-no">${rowNum++}</td>
+        <td class="col-product">${item.model}</td>
+        <td class="col-color">${item.colorway}</td>
+        <td class="col-sku">${item.sku}</td>
+        <td class="col-qty">${pairs}</td>`;
+      sizes.forEach(s => {
+        const qty = item.sizes[s] || 0;
+        html += `<td class="col-size ${qty ? 'has-value' : ''}">${qty || ''}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table></div></div>';
+  });
+  // 旧フォーマット部分を削除し新フォーマットを返す
+  return html;
+}
+
+function toggleShipmentDetail(id) {
+  const el = document.getElementById(`shipment-detail-${id}`);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// =============================================
+// クーポン管理（管理者用）
+// =============================================
+
+// クーポン管理画面を表示
+async function showCouponAdmin() {
+  showScreen('screen-coupon');
+  await renderCouponAdmin();
+}
+
+// クーポン一覧レンダリング
+async function renderCouponAdmin() {
+  const container = document.getElementById('coupon-admin-content');
+  container.innerHTML = '<p>読み込み中...</p>';
+
+  try {
+    const res = await fetch('/api/coupons');
+    const coupons = await res.json();
+
+    let html = '';
+
+    // 新規登録ボタン
+    html += '<button class="primary-btn" style="margin-bottom:16px" onclick="showCouponForm()">+ クーポン追加</button>';
+
+    // 新規登録フォーム（非表示）
+    html += `<div id="coupon-form" style="display:none" class="coupon-form-card">
+      <h3 id="coupon-form-title">クーポン登録</h3>
+      <input type="hidden" id="coupon-edit-id" value="">
+      <div class="form-group">
+        <label>アカウントID</label>
+        <input type="text" id="coupon-accountId" placeholder="アカウントID">
+      </div>
+      <div class="form-group">
+        <label>パスワード</label>
+        <input type="text" id="coupon-password" placeholder="パスワード">
+      </div>
+      <div class="form-group">
+        <label>クーポンURL</label>
+        <input type="text" id="coupon-url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>株主番号</label>
+        <input type="text" id="coupon-shareholder" placeholder="株主番号">
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="primary-btn" onclick="saveCoupon()">保存</button>
+        <button class="secondary-btn" onclick="hideCouponForm()">キャンセル</button>
+      </div>
+    </div>`;
+
+    // クーポン一覧テーブル
+    if (coupons.length === 0) {
+      html += '<p style="text-align:center;color:#888;padding:32px">クーポンが登録されていません</p>';
+    } else {
+      html += '<div class="table-scroll"><table class="finance-spreadsheet"><thead>';
+      html += '<tr><th>No.</th><th>アカウントID</th><th>パスワード</th><th>クーポンURL</th><th>株主番号</th><th>使用状況</th><th>拠点</th><th>操作</th></tr>';
+      html += '</thead><tbody>';
+      coupons.forEach((c, i) => {
+        const statusLabel = c.status === 'in_use' ? '使用中' : c.status === 'used' ? '使用済' : '';
+        const statusClass = c.status === 'in_use' ? 'coupon-status-inuse' : c.status === 'used' ? 'coupon-status-used' : '';
+        const locName = c.locationName || '';
+        // クーポンURLは短縮表示
+        const urlShort = c.couponUrl ? (c.couponUrl.length > 25 ? c.couponUrl.substring(0, 25) + '...' : c.couponUrl) : '';
+
+        html += '<tr>';
+        html += `<td>${i + 1}</td>`;
+        html += `<td>${c.accountId}</td>`;
+        html += `<td>${c.password}</td>`;
+        html += `<td title="${c.couponUrl || ''}">${urlShort}</td>`;
+        html += `<td>${c.shareholderNumber}</td>`;
+        html += `<td><span class="${statusClass}">${statusLabel}</span></td>`;
+        html += `<td>${locName}</td>`;
+        html += `<td>`;
+        if (!c.status) {
+          // 未使用のみ編集・削除可
+          html += `<button class="small-btn" onclick="editCoupon('${c.id}')">編集</button> `;
+          html += `<button class="small-btn danger" onclick="deleteCoupon('${c.id}')">削除</button>`;
+        } else {
+          html += `<span style="color:#888;font-size:12px">${c.status === 'in_use' ? '発行済' : '完了'}</span>`;
+        }
+        html += `</td>`;
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = '<p style="color:red">読み込みエラー</p>';
+  }
+}
+
+// クーポンフォーム表示
+function showCouponForm() {
+  document.getElementById('coupon-form').style.display = 'block';
+  document.getElementById('coupon-form-title').textContent = 'クーポン登録';
+  document.getElementById('coupon-edit-id').value = '';
+  document.getElementById('coupon-accountId').value = '';
+  document.getElementById('coupon-password').value = '';
+  document.getElementById('coupon-url').value = '';
+  document.getElementById('coupon-shareholder').value = '';
+}
+
+function hideCouponForm() {
+  document.getElementById('coupon-form').style.display = 'none';
+}
+
+// クーポン編集
+async function editCoupon(id) {
+  const res = await fetch('/api/coupons');
+  const coupons = await res.json();
+  const c = coupons.find(x => x.id === id);
+  if (!c) return;
+
+  document.getElementById('coupon-form').style.display = 'block';
+  document.getElementById('coupon-form-title').textContent = 'クーポン編集';
+  document.getElementById('coupon-edit-id').value = c.id;
+  document.getElementById('coupon-accountId').value = c.accountId;
+  document.getElementById('coupon-password').value = c.password;
+  document.getElementById('coupon-url').value = c.couponUrl;
+  document.getElementById('coupon-shareholder').value = c.shareholderNumber;
+}
+
+// クーポン保存
+async function saveCoupon() {
+  const id = document.getElementById('coupon-edit-id').value;
+  const data = {
+    accountId: document.getElementById('coupon-accountId').value.trim(),
+    password: document.getElementById('coupon-password').value.trim(),
+    couponUrl: document.getElementById('coupon-url').value.trim(),
+    shareholderNumber: document.getElementById('coupon-shareholder').value.trim()
+  };
+
+  if (!data.accountId) {
+    alert('アカウントIDを入力してください');
+    return;
+  }
+
+  try {
+    if (id) {
+      // 更新
+      await fetch(`/api/coupons/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      showToast('クーポンを更新しました');
+    } else {
+      // 新規登録
+      await fetch('/api/coupons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      showToast('クーポンを登録しました');
+    }
+    hideCouponForm();
+    await renderCouponAdmin();
+  } catch (e) {
+    alert('保存エラー');
+  }
+}
+
+// クーポン削除
+async function deleteCoupon(id) {
+  if (!confirm('このクーポンを削除しますか？')) return;
+  try {
+    await fetch(`/api/coupons/${id}`, { method: 'DELETE' });
+    showToast('クーポンを削除しました');
+    await renderCouponAdmin();
+  } catch (e) {
+    alert('削除エラー');
+  }
+}
+
+// =============================================
+// 仕入ページ - クーポン発行機能
+// =============================================
+
+// 仕入ページにクーポンセクションを追加レンダリング
+async function renderPurchaseCoupon() {
+  try {
+    const res = await fetch(`/api/coupons/location/${purchaseLocationId}`);
+    const coupon = await res.json();
+
+    let html = '<div class="purchase-coupon-section">';
+    html += '<div class="coupon-section-header">クーポン</div>';
+
+    if (coupon) {
+      // 現在発行中のクーポン情報を表示
+      html += '<div class="coupon-info-card">';
+      html += '<div class="coupon-info-row"><span class="coupon-label">アカウントID</span><span class="coupon-value" onclick="copyCouponText(this)">' + coupon.accountId + ' <span class="copy-hint">📋</span></span></div>';
+      html += '<div class="coupon-info-row"><span class="coupon-label">パスワード</span><span class="coupon-value" onclick="copyCouponText(this)">' + coupon.password + ' <span class="copy-hint">📋</span></span></div>';
+      html += '<div class="coupon-info-row"><span class="coupon-label">クーポンURL</span><a href="' + coupon.couponUrl + '" target="_blank" rel="noopener" class="coupon-value coupon-url-val">' + coupon.couponUrl + ' <span class="copy-hint">🔗</span></a></div>';
+      html += '<div class="coupon-info-row"><span class="coupon-label">株主番号</span><span class="coupon-value" onclick="copyCouponText(this)">' + coupon.shareholderNumber + ' <span class="copy-hint">📋</span></span></div>';
+      html += '</div>';
+    } else {
+      html += '<p style="text-align:center;color:#888;padding:16px">現在発行中のクーポンはありません</p>';
+    }
+
+    html += '<button class="coupon-issue-btn" onclick="issueCoupon()">新しいクーポンを発行</button>';
+    html += '</div>';
+
+    return html;
+  } catch (e) {
+    return '<div class="purchase-coupon-section"><p style="color:red">クーポン読み込みエラー</p></div>';
+  }
+}
+
+// クーポンテキストコピー
+function copyCouponText(el) {
+  // コピーヒントのテキストを除外
+  const text = el.textContent.replace('📋', '').trim();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('コピーしました');
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('コピーしました');
+  }
+}
+
+// 新しいクーポン発行
+async function issueCoupon() {
+  // 注意ポップアップ
+  const confirmed = confirm(
+    '前回発行したクーポンが10枚すべて利用済みであることを確認してください。\n\n' +
+    '未使用のクーポンが残っている場合は、新規発行は行わないでください。\n\n' +
+    '問題がなければ、そのまま発行を進めてください。'
+  );
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch('/api/coupons/issue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        locationId: purchaseLocationId,
+        locationName: purchaseLocationName
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.error || 'クーポン発行に失敗しました');
+      return;
+    }
+
+    showToast('新しいクーポンを発行しました');
+    await renderPurchasePage();
+  } catch (e) {
+    alert('通信エラーが発生しました');
+  }
+}
