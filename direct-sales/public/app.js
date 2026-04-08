@@ -847,12 +847,61 @@ async function showSettings() {
   updateCustomsCalc();
   renderLocations();
   renderBuyers();
+  await loadSectionPasswords();
 
   // 為替レートを取得して利益計算に使う
   await fetchExchangeRate();
 
   // 関税リアルタイム計算
   document.getElementById('set-customs-unit').addEventListener('input', updateCustomsCalc);
+}
+
+// ページ別パスワードを読み込んでフォームに表示
+async function loadSectionPasswords() {
+  try {
+    const res = await fetch('/api/section-passwords');
+    const pws = await res.json();
+    const map = {
+      'pw-buyer': 'buyer',
+      'pw-seller-top': 'seller-top',
+      'pw-order': 'order',
+      'pw-shipping': 'shipping',
+      'pw-product': 'product',
+      'pw-coupon': 'coupon',
+      'pw-settings': 'settings',
+      'pw-finance': 'finance'
+    };
+    Object.entries(map).forEach(([elId, key]) => {
+      const el = document.getElementById(elId);
+      if (el) el.value = pws[key] || '';
+    });
+  } catch (e) {
+    console.error('パスワード読み込み失敗:', e);
+  }
+}
+
+// ページ別パスワードを保存
+async function saveSectionPasswords() {
+  const data = {
+    buyer: document.getElementById('pw-buyer').value.trim() || '0000',
+    'seller-top': document.getElementById('pw-seller-top').value.trim() || '0000',
+    order: document.getElementById('pw-order').value.trim() || '0000',
+    shipping: document.getElementById('pw-shipping').value.trim() || '0000',
+    product: document.getElementById('pw-product').value.trim() || '0000',
+    coupon: document.getElementById('pw-coupon').value.trim() || '0000',
+    settings: document.getElementById('pw-settings').value.trim() || '0000',
+    finance: document.getElementById('pw-finance').value.trim() || '0000'
+  };
+  try {
+    await fetch('/api/section-passwords', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    alert('ページ別パスワードを保存しました');
+  } catch (e) {
+    alert('保存に失敗しました');
+  }
 }
 
 function updateCustomsCalc() {
@@ -1292,6 +1341,7 @@ let cachedOrders = [];
 let cachedPurchases = [];
 let cachedInstructions = [];
 let cachedShipments = [];
+let cachedDeliveries = [];
 let cachedEffectiveRate = 149;
 
 async function fetchExchangeRate() {
@@ -1315,18 +1365,20 @@ async function showOrderAdmin() {
   document.getElementById('exchange-rate-display').textContent =
     `USD/JPY: ¥${cachedEffectiveRate.toFixed(1)}（実勢 ¥${currentExchangeRate.toFixed(1)} - ¥1）`;
 
-  const [settingsRes, ordersRes, purchasesRes, instRes, shipmentsRes] = await Promise.all([
+  const [settingsRes, ordersRes, purchasesRes, instRes, shipmentsRes, deliveriesRes] = await Promise.all([
     fetch('/api/settings'),
     fetch('/api/orders'),
     fetch('/api/purchases'),
     fetch('/api/instructions'),
-    fetch('/api/shipments')
+    fetch('/api/shipments'),
+    fetch('/api/deliveries')
   ]);
   currentSettings = await settingsRes.json();
   cachedOrders = await ordersRes.json();
   cachedPurchases = await purchasesRes.json();
   cachedInstructions = await instRes.json();
   cachedShipments = await shipmentsRes.json();
+  cachedDeliveries = await deliveriesRes.json();
 
   renderOrderAdmin(cachedOrders, cachedPurchases, cachedEffectiveRate, cachedShipments);
   updateInstButton();
@@ -1775,6 +1827,17 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
     const wrapper = document.createElement('div');
     wrapper.className = 'order-table-wrapper';
     const result = buildRemainingTable(remaining);
+    wrapper.appendChild(result.table);
+    body.appendChild(wrapper);
+  });
+
+  // ======= 納品済（BayPack倉庫納品済、手動入力） =======
+  // 表示順：仕入済の上に置く。仕入済SKU×sizeを基準に各セルを編集可能にする
+  const deliveredTotal = (cachedDeliveries || []).reduce((s, d) => s + (d.quantity || 0), 0);
+  addCollapsible(container, `納品済（${deliveredTotal}足）`, 'bg-teal', 'delivered', (body) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'order-table-wrapper';
+    const result = buildDeliveryEditTable(purchasedGrouped, cachedDeliveries || []);
     wrapper.appendChild(result.table);
     body.appendChild(wrapper);
   });
@@ -2310,6 +2373,132 @@ function buildSimpleTable(items) {
   });
 
   return { table: div };
+}
+
+// =============================================
+// 納品済テーブル（編集可能）
+// 仕入済SKU×size をベースに、納品済を手動で入力できる
+// =============================================
+function buildDeliveryEditTable(baseItems, deliveries) {
+  // deliveries を sku -> size -> qty の map に変換
+  const delMap = {};
+  deliveries.forEach(d => {
+    if (!delMap[d.sku]) delMap[d.sku] = {};
+    delMap[d.sku][d.size] = d.quantity;
+  });
+
+  // 仕入済 + deliveries の SKU をユニオン
+  const skuSet = new Set(baseItems.map(i => i.sku));
+  deliveries.forEach(d => skuSet.add(d.sku));
+
+  // baseItems に存在しない SKU は products から補完
+  const items = [];
+  skuSet.forEach(sku => {
+    const found = baseItems.find(i => i.sku === sku);
+    if (found) {
+      items.push({ ...found, _delMap: delMap[sku] || {} });
+    } else {
+      // products マスタから補完
+      let model = '', colorway = '', sizeType = 'unisex';
+      for (const p of (products || [])) {
+        const v = (p.variants || []).find(v => v.sku === sku);
+        if (v) {
+          model = p.model || '';
+          colorway = v.colorway || '';
+          sizeType = v.sizeType || p.sizeType || 'unisex';
+          break;
+        }
+      }
+      items.push({ sku, model, colorway, sizeType, sizes: {}, _delMap: delMap[sku] || {} });
+    }
+  });
+
+  const unisexItems = items.filter(g => g.sizeType !== 'womens');
+  const womensItems = items.filter(g => g.sizeType === 'womens');
+
+  const div = document.createElement('div');
+  const tables = [];
+  if (unisexItems.length > 0) tables.push({ items: unisexItems, sizes: UNISEX_SIZES, label: 'SIZE (UNISEX)' });
+  if (womensItems.length > 0) tables.push({ items: womensItems, sizes: WOMENS_SIZES, label: "SIZE (WOMEN'S)" });
+
+  if (tables.length === 0) {
+    div.innerHTML = '<div class="no-orders" style="padding:20px">仕入済アイテムがありません。仕入が完了すると納品済として手動入力できるようになります。</div>';
+    return { table: div };
+  }
+
+  let rowNum = 1;
+  tables.forEach(({ items: tItems, sizes, label }) => {
+    const tDiv = document.createElement('div');
+    tDiv.className = 'finance-spreadsheet';
+    let html = '<div class="spreadsheet-scroll"><table>';
+    html += `<thead><tr>
+      <th class="col-no">No</th><th class="col-product">Products</th>
+      <th class="col-color">Color</th><th class="col-sku">Style Code</th>
+      <th class="col-qty">納品</th>
+      <th class="col-size-group" colspan="${sizes.length}">${label}</th>
+    </tr><tr>
+      <th class="col-no"></th><th class="col-product"></th><th class="col-color"></th>
+      <th class="col-sku"></th><th class="col-qty"></th>`;
+    sizes.forEach(s => html += `<th class="col-size">${s}</th>`);
+    html += '</tr></thead><tbody>';
+
+    tItems.forEach(item => {
+      const delQtySum = Object.values(item._delMap).reduce((s, q) => s + (q || 0), 0);
+      const totalId = `del-total-${item.sku.replace(/[^a-zA-Z0-9]/g,'_')}`;
+      html += `<tr>
+        <td class="col-no">${rowNum++}</td>
+        <td class="col-product">${item.model}</td>
+        <td class="col-color">${item.colorway}</td>
+        <td class="col-sku">${item.sku}</td>
+        <td class="col-qty" id="${totalId}">${delQtySum}</td>`;
+
+      sizes.forEach(s => {
+        const delQty = item._delMap[s] || 0;
+        const purchased = item.sizes[s] || 0;
+        // 仕入済がある、または納品済がある → 入力可能セル
+        const cellClass = delQty > 0 ? 'has-value' : '';
+        html += `<td class="col-size ${cellClass}">`;
+        html += `<input type="number" class="delivery-input" min="0" value="${delQty || ''}"`;
+        html += ` data-sku="${item.sku}" data-size="${s}" data-total="${totalId}"`;
+        html += ` placeholder="${purchased || ''}" onchange="saveDelivery(this)" /></td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    tDiv.innerHTML = html;
+    div.appendChild(tDiv);
+  });
+
+  return { table: div };
+}
+
+// 納品済の数量変更を保存
+async function saveDelivery(inputEl) {
+  const sku = inputEl.dataset.sku;
+  const size = inputEl.dataset.size;
+  const quantity = parseInt(inputEl.value, 10) || 0;
+  try {
+    const res = await fetch('/api/deliveries', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sku, size, quantity })
+    });
+    cachedDeliveries = await res.json();
+    // 合計を更新
+    const totalId = inputEl.dataset.total;
+    const totalEl = document.getElementById(totalId);
+    if (totalEl) {
+      const rowSum = Array.from(document.querySelectorAll(`.delivery-input[data-sku="${sku}"]`))
+        .reduce((s, el) => s + (parseInt(el.value, 10) || 0), 0);
+      totalEl.textContent = rowSum;
+    }
+    // セルのスタイル更新
+    if (quantity > 0) inputEl.parentElement.classList.add('has-value');
+    else inputEl.parentElement.classList.remove('has-value');
+  } catch (e) {
+    alert('納品済の保存に失敗しました');
+  }
 }
 
 // =============================================
@@ -2922,21 +3111,40 @@ async function renderShippingPage(container) {
   shipSelectedLocs = {};
   shipAdjustments = {};
 
+  // 商品マスタ・納品済データ・発送可能アイテムを並列取得
   try {
-    const res = await fetch('/api/shipped-items');
-    shipLocData = await res.json();
+    await loadProducts();
+    const [shipRes, delRes] = await Promise.all([
+      fetch('/api/shipped-items'),
+      fetch('/api/deliveries')
+    ]);
+    shipLocData = await shipRes.json();
+    cachedDeliveries = await delRes.json();
   } catch (e) {
     container.innerHTML = '<p style="color:red;">読み込みエラー</p>';
     return;
   }
 
   const locIds = Object.keys(shipLocData);
+
+  // ====== 納品済一覧（一番上に表示） ======
+  // 納品済は手動管理なので、常に先頭に表示する
+  let html = '';
+  const deliveredTotal = (cachedDeliveries || []).reduce((s, d) => s + (d.quantity || 0), 0);
+  html += `<div class="ship-loc-section">`;
+  html += `<div class="ship-loc-header" style="background:#00796b;">`;
+  html += `<h3 style="color:#fff;">納品済一覧（${deliveredTotal}足）</h3>`;
+  html += `</div>`;
+  html += `<div class="ship-loc-items" id="ship-delivered-items"></div></div>`;
+
   if (locIds.length === 0) {
-    container.innerHTML = '<div class="no-orders" style="padding:20px">発送可能な仕入済アイテムはありません</div>';
+    container.innerHTML = html + '<div class="no-orders" style="padding:20px">発送可能な仕入済アイテムはありません</div>';
+    // 納品済一覧をレンダリング
+    renderDeliveredListOnShipping();
     return;
   }
 
-  let html = '<div class="ship-actions-bar">';
+  html += '<div class="ship-actions-bar">';
   html += '<button id="btn-ship-start" class="primary-btn" onclick="startShipMode()">発送</button>';
   html += '</div>';
 
@@ -2956,6 +3164,39 @@ async function renderShippingPage(container) {
   });
 
   container.innerHTML = html;
+  renderDeliveredListOnShipping();
+}
+
+// 発送管理ページの一番上に納品済一覧をレンダリング（表示のみ）
+function renderDeliveredListOnShipping() {
+  const target = document.getElementById('ship-delivered-items');
+  if (!target) return;
+  const deliveries = cachedDeliveries || [];
+  if (deliveries.length === 0) {
+    target.innerHTML = '<div class="no-orders" style="padding:20px">納品済のアイテムはありません。オーダー管理の「納品済」セクションから手動で入力できます。</div>';
+    return;
+  }
+  // deliveries を SKU ごとにグループ化、products から model/colorway/sizeType を補完
+  const grouped = {};
+  deliveries.forEach(d => {
+    if (!grouped[d.sku]) {
+      let model = '', colorway = '', sizeType = 'unisex';
+      for (const p of (products || [])) {
+        const v = (p.variants || []).find(v => v.sku === d.sku);
+        if (v) {
+          model = p.model || '';
+          colorway = v.colorway || '';
+          sizeType = v.sizeType || p.sizeType || 'unisex';
+          break;
+        }
+      }
+      grouped[d.sku] = { sku: d.sku, model, colorway, sizeType, sizes: {} };
+    }
+    grouped[d.sku].sizes[d.size] = (grouped[d.sku].sizes[d.size] || 0) + d.quantity;
+  });
+  const items = Object.values(grouped);
+  // buildShipItemsTable は locId/adjustable を取るが locId は dummy、adjustable false で表示のみ
+  target.innerHTML = buildShipItemsTable(items, 'delivered', false);
 }
 
 function buildShipItemsTable(items, locId, adjustable) {

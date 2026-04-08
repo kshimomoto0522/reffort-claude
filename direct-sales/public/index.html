@@ -226,6 +226,49 @@
         </div>
       </div>
 
+      <!-- ページ別パスワード設定 -->
+      <div class="settings-section">
+        <h3>ページ別パスワード設定</h3>
+        <p class="form-hint" style="margin:-8px 0 12px;color:#666;font-size:12px;">
+          各ページにアクセスする際のパスワードを設定します。お客さん用・スタッフ用に分けて管理してください。
+        </p>
+        <div class="settings-form">
+          <div class="form-row">
+            <label>バイヤー（お客さん）向けページ</label>
+            <input type="text" id="pw-buyer" placeholder="0000">
+          </div>
+          <div class="form-row">
+            <label>セラートップメニュー</label>
+            <input type="text" id="pw-seller-top" placeholder="0000">
+          </div>
+          <div class="form-row">
+            <label>オーダー管理</label>
+            <input type="text" id="pw-order" placeholder="0000">
+          </div>
+          <div class="form-row">
+            <label>発送管理</label>
+            <input type="text" id="pw-shipping" placeholder="0000">
+          </div>
+          <div class="form-row">
+            <label>商品登録</label>
+            <input type="text" id="pw-product" placeholder="0000">
+          </div>
+          <div class="form-row">
+            <label>クーポン管理</label>
+            <input type="text" id="pw-coupon" placeholder="0000">
+          </div>
+          <div class="form-row">
+            <label>詳細設定（このページ）</label>
+            <input type="text" id="pw-settings" placeholder="0000">
+          </div>
+          <div class="form-row">
+            <label>収支管理</label>
+            <input type="text" id="pw-finance" placeholder="0000">
+          </div>
+          <button class="primary-btn" onclick="saveSectionPasswords()">パスワードを保存</button>
+        </div>
+      </div>
+
       <!-- 拠点管理 -->
       <div class="settings-section">
         <h3>拠点管理</h3>

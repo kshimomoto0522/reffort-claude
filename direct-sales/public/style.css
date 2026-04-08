@@ -1245,6 +1245,30 @@ body {
 .collapsible-header.bg-red { background: #c62828; }
 .collapsible-header.bg-green { background: #2e7d32; }
 .collapsible-header.bg-blue { background: #1565c0; }
+.collapsible-header.bg-teal { background: #00796b; }
+
+/* 納品済の入力セル */
+.delivery-input {
+  width: 100%;
+  min-width: 36px;
+  max-width: 60px;
+  padding: 4px 2px;
+  text-align: center;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff;
+}
+.delivery-input:focus {
+  outline: none;
+  border-color: #00796b;
+  background: #e0f2f1;
+}
+.col-size.has-value .delivery-input {
+  background: #b2dfdb;
+  color: #00463a;
+}
 
 /* =============================================
    仕入指示モーダル

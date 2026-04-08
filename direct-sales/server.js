@@ -23,6 +23,7 @@ const PURCHASES_FILE = path.join(DATA_DIR, 'purchases.json');
 const INSTRUCTIONS_FILE = path.join(DATA_DIR, 'purchaseInstructions.json');
 const SHIPMENTS_FILE = path.join(DATA_DIR, 'shipments.json');
 const COUPONS_FILE = path.join(DATA_DIR, 'coupons.json');
+const DELIVERIES_FILE = path.join(DATA_DIR, 'deliveries.json');
 
 // =============================================
 // データ読み書きヘルパー
@@ -42,8 +43,10 @@ function writeJSON(filePath, data) {
 
 // =============================================
 // 認証API（セクション別パスワード）
+// デフォルトは全て '0000'、詳細設定ページで変更可能。
+// settings.json の sectionPasswords が優先される。
 // =============================================
-const PASSWORDS = {
+const DEFAULT_PASSWORDS = {
   buyer: '0000',
   'seller-top': '0000',
   order: '0000',
@@ -54,8 +57,16 @@ const PASSWORDS = {
   coupon: '0000'
 };
 
+// settings.json からパスワード設定を取得（なければデフォルト）
+function getSectionPasswords() {
+  const settings = readJSON(SETTINGS_FILE, {});
+  const saved = settings.sectionPasswords || {};
+  return { ...DEFAULT_PASSWORDS, ...saved };
+}
+
 app.post('/api/auth', (req, res) => {
   const { role, password } = req.body;
+  const PASSWORDS = getSectionPasswords();
 
   // バイヤー認証
   if (role === 'buyer') {
@@ -316,8 +327,56 @@ const DEFAULT_SETTINGS = {
   shippingPerPair: 0,
   couponPerPair: 0,
   locations: [],
-  buyers: []
+  buyers: [],
+  sectionPasswords: {}  // { buyer:'0000', 'seller-top':'0000', order:'0000', ... }
 };
+
+// ページ別パスワードの取得用API（詳細設定画面で使用）
+app.get('/api/section-passwords', (req, res) => {
+  const settings = readJSON(SETTINGS_FILE, DEFAULT_SETTINGS);
+  const passwords = { ...DEFAULT_PASSWORDS, ...(settings.sectionPasswords || {}) };
+  res.json(passwords);
+});
+
+// ページ別パスワードの一括更新用API
+app.put('/api/section-passwords', (req, res) => {
+  const settings = readJSON(SETTINGS_FILE, DEFAULT_SETTINGS);
+  settings.sectionPasswords = { ...(settings.sectionPasswords || {}), ...req.body };
+  writeJSON(SETTINGS_FILE, settings);
+  res.json(settings.sectionPasswords);
+});
+
+// =============================================
+// 納品済API（deliveries） - 手動管理
+// BayPack倉庫への納品済数量を記録。
+// データ構造: [{ sku, size, quantity, updatedAt }]
+// =============================================
+app.get('/api/deliveries', (req, res) => {
+  const deliveries = readJSON(DELIVERIES_FILE, []);
+  res.json(deliveries);
+});
+
+// 納品済の数量を設定（上書き保存）
+app.put('/api/deliveries', (req, res) => {
+  // req.body: { sku, size, quantity }
+  const { sku, size, quantity } = req.body;
+  if (!sku || !size) return res.status(400).json({ error: 'sku and size required' });
+  const deliveries = readJSON(DELIVERIES_FILE, []);
+  const idx = deliveries.findIndex(d => d.sku === sku && d.size === size);
+  const qty = Math.max(0, parseInt(quantity, 10) || 0);
+  if (idx >= 0) {
+    if (qty === 0) {
+      deliveries.splice(idx, 1);
+    } else {
+      deliveries[idx].quantity = qty;
+      deliveries[idx].updatedAt = new Date().toISOString();
+    }
+  } else if (qty > 0) {
+    deliveries.push({ sku, size, quantity: qty, updatedAt: new Date().toISOString() });
+  }
+  writeJSON(DELIVERIES_FILE, deliveries);
+  res.json(deliveries);
+});
 
 // 設定を取得
 app.get('/api/settings', (req, res) => {
