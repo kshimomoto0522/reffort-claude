@@ -1247,18 +1247,29 @@ body {
 .collapsible-header.bg-blue { background: #1565c0; }
 .collapsible-header.bg-teal { background: #00796b; }
 
-/* 納品済の入力セル */
+/* 納品済の入力セル（他のセルと同じフォントサイズ9px, 太字, 色は納品済カラー） */
 .delivery-input {
   width: 100%;
-  min-width: 36px;
-  max-width: 60px;
-  padding: 4px 2px;
+  min-width: 28px;
+  max-width: 44px;
+  padding: 2px 0;
   text-align: center;
-  border: 1px solid #bbb;
-  border-radius: 3px;
-  font-size: 13px;
-  font-weight: 600;
-  background: #fff;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #00796b;
+  background: transparent;
+  box-sizing: border-box;
+}
+.delivery-input::-webkit-outer-spin-button,
+.delivery-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.delivery-input {
+  -moz-appearance: textfield;
 }
 .delivery-input:focus {
   outline: none;

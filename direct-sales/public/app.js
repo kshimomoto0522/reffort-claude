@@ -1783,6 +1783,28 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
   shipments.forEach(s => s.items.forEach(i => shippedItems.push(i)));
   const shippedGrouped = groupShippedItems(shippedItems);
 
+  // ======= SKU表示順の統一 =======
+  // Current Orders のSKU順を基準として、納品済・仕入済・拠点別すべて同じ順で並ぶように固定
+  // Current Orders にないSKUは products マスタの順で末尾に追加
+  const skuOrder = [];
+  grouped.forEach(g => { if (!skuOrder.includes(g.sku)) skuOrder.push(g.sku); });
+  (products || []).forEach(p => {
+    (p.variants || []).forEach(v => {
+      if (!skuOrder.includes(v.sku)) skuOrder.push(v.sku);
+    });
+  });
+  const sortBySkuOrder = (items) => {
+    return [...items].sort((a, b) => {
+      const ia = skuOrder.indexOf(a.sku);
+      const ib = skuOrder.indexOf(b.sku);
+      // どちらも見つからなければ元の順序を維持
+      if (ia === -1 && ib === -1) return 0;
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+  };
+
   // 編集モードの場合は専用レンダリング
   if (adminEditMode) {
     renderOrderAdminEditMode(container, grouped, purchases, shippedItems);
@@ -1837,7 +1859,7 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
   addCollapsible(container, `納品済（${deliveredTotal}足）`, 'bg-teal', 'delivered', (body) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'order-table-wrapper';
-    const result = buildDeliveryEditTable(purchasedGrouped, cachedDeliveries || []);
+    const result = buildDeliveryEditTable(sortBySkuOrder(purchasedGrouped), cachedDeliveries || [], sortBySkuOrder);
     wrapper.appendChild(result.table);
     body.appendChild(wrapper);
   });
@@ -1854,7 +1876,7 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
       const wrapper = document.createElement('div');
       wrapper.className = 'order-table-wrapper';
       // 発送済があれば在庫（差し引き後）を表示、なければ全仕入済を表示
-      const result = buildSimpleTable(shippedGrouped.length > 0 ? inStockGrouped : purchasedGrouped);
+      const result = buildSimpleTable(sortBySkuOrder(shippedGrouped.length > 0 ? inStockGrouped : purchasedGrouped));
       wrapper.appendChild(result.table);
       body.appendChild(wrapper);
     });
@@ -1866,7 +1888,7 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
     addCollapsible(container, `発送済（${shippedPairs}足）`, 'bg-blue', 'shipped', (body) => {
       const wrapper = document.createElement('div');
       wrapper.className = 'order-table-wrapper';
-      const result = buildSimpleTable(shippedGrouped);
+      const result = buildSimpleTable(sortBySkuOrder(shippedGrouped));
       wrapper.appendChild(result.table);
       body.appendChild(wrapper);
     });
@@ -1886,7 +1908,7 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
         const wrapper = document.createElement('div');
         wrapper.className = 'order-table-wrapper';
         if (locRemaining.length > 0) {
-          const result = buildSimpleTable(locRemaining);
+          const result = buildSimpleTable(sortBySkuOrder(locRemaining));
           wrapper.appendChild(result.table);
         } else {
           wrapper.innerHTML = '<div class="no-orders" style="padding:10px">在庫なし</div>';
@@ -3634,7 +3656,14 @@ async function renderCouponAdmin() {
       html += '<div class="table-scroll"><table class="finance-spreadsheet coupon-table"><thead>';
       html += '<tr><th>No.</th><th>アカウントID</th><th>パスワード</th><th>クーポンURL</th><th>株主番号</th><th>使用状況</th><th>拠点</th><th>操作</th></tr>';
       html += '</thead><tbody>';
-      coupons.forEach((c, i) => {
+      // 使用状況で並び替え: 使用中(in_use) → 使用済(used) → 未使用('')
+      const statusOrder = { 'in_use': 0, 'used': 1, '': 2 };
+      const sortedCoupons = [...coupons].sort((a, b) => {
+        const sa = statusOrder[a.status || ''] ?? 2;
+        const sb = statusOrder[b.status || ''] ?? 2;
+        return sa - sb;
+      });
+      sortedCoupons.forEach((c, i) => {
         const statusLabel = c.status === 'in_use' ? '使用中' : c.status === 'used' ? '使用済' : '';
         const statusClass = c.status === 'in_use' ? 'coupon-status-inuse' : c.status === 'used' ? 'coupon-status-used' : '';
         const locName = c.locationName || '';

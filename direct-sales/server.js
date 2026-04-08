@@ -471,12 +471,17 @@ app.get('/api/purchases', (req, res) => {
 app.post('/api/purchases', (req, res) => {
   const purchases = readJSON(PURCHASES_FILE);
   const purchase = {
-    id: Date.now().toString(),
+    id: Date.now().toString() + Math.floor(Math.random()*1000),
     locationId: req.body.locationId,
     locationName: req.body.locationName,
     items: req.body.items, // [{sku, size, quantity, sizeType}]
-    createdAt: new Date().toISOString()
+    // 復元やバッチ完了時にcreatedAtを指定できる。未指定なら現在時刻
+    createdAt: req.body.createdAt || new Date().toISOString()
   };
+  // batchName/batchId/instructionIdが指定されていれば一緒に保存
+  if (req.body.batchName) purchase.batchName = req.body.batchName;
+  if (req.body.batchId) purchase.batchId = req.body.batchId;
+  if (req.body.instructionId) purchase.instructionId = req.body.instructionId;
   purchases.push(purchase);
   writeJSON(PURCHASES_FILE, purchases);
   res.json(purchase);
