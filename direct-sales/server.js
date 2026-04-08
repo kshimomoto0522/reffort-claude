@@ -500,34 +500,17 @@ app.post('/api/purchases', (req, res) => {
 // 仕入指示API（管理者が拠点に仕入を指示）
 // =============================================
 
-// 日付切り替え: 24時を過ぎた未完了バッチを期限切れにする（JST基準）
+// 仕様B: 仕入指示は完了するまで期限切れにしない（日をまたいでも残り続ける）
+// 過去に旧仕様で expired になったバッチを active/pending に戻す
 function expireOldInstructions() {
   const instructions = readJSON(INSTRUCTIONS_FILE);
-  const now = new Date();
-  // JSTの今日の日付文字列
-  const todayJST = new Date(now.getTime() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
-
   let changed = false;
   instructions.forEach(inst => {
-    if (inst.status !== 'active') return;
-    // 指示の作成日（JST）
-    const createdJST = new Date(new Date(inst.createdAt).getTime() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
-    if (createdJST < todayJST) {
-      // 未完了バッチを期限切れにする
-      inst.batches.forEach(batch => {
-        if (batch.status === 'pending') {
-          batch.status = 'expired';
-          changed = true;
-        }
-      });
-      // 全バッチが完了or期限切れなら指示も完了に
-      if (inst.batches.every(b => b.status !== 'pending')) {
-        inst.status = inst.batches.some(b => b.status === 'completed') ? 'completed' : 'expired';
-        changed = true;
-      }
-    }
+    if (inst.status === 'expired') { inst.status = 'active'; changed = true; }
+    (inst.batches || []).forEach(b => {
+      if (b.status === 'expired') { b.status = 'pending'; changed = true; }
+    });
   });
-
   if (changed) writeJSON(INSTRUCTIONS_FILE, instructions);
   return instructions;
 }
