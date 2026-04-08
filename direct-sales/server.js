@@ -16,6 +16,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // データファイルのパス
 const DATA_DIR = path.join(__dirname, 'data');
+
+// =============================================
+// 初回起動シード処理
+// 永続ディスクが空のとき、seed/ から data/ にファイルをコピーする
+// 既存ファイルは絶対に上書きしない（実データ保護）
+// =============================================
+(function seedDataIfMissing() {
+  try {
+    const SEED_DIR = path.join(__dirname, 'seed');
+    if (!fs.existsSync(SEED_DIR)) return;
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    const files = fs.readdirSync(SEED_DIR);
+    files.forEach(f => {
+      const dest = path.join(DATA_DIR, f);
+      if (!fs.existsSync(dest)) {
+        fs.copyFileSync(path.join(SEED_DIR, f), dest);
+        console.log('[seed] copied', f);
+      }
+    });
+  } catch (e) {
+    console.error('[seed] error', e);
+  }
+})();
 const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
