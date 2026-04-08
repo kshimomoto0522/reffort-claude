@@ -2476,13 +2476,12 @@ function buildDeliveryEditTable(baseItems, deliveries) {
 
       sizes.forEach(s => {
         const delQty = item._delMap[s] || 0;
-        const purchased = item.sizes[s] || 0;
         // 仕入済がある、または納品済がある → 入力可能セル
         const cellClass = delQty > 0 ? 'has-value' : '';
         html += `<td class="col-size ${cellClass}">`;
-        html += `<input type="number" class="delivery-input" min="0" value="${delQty || ''}"`;
+        html += `<input type="number" class="delivery-input" min="1" value="${delQty > 0 ? delQty : ''}"`;
         html += ` data-sku="${item.sku}" data-size="${s}" data-total="${totalId}"`;
-        html += ` placeholder="${purchased || ''}" onchange="saveDelivery(this)" /></td>`;
+        html += ` onchange="saveDelivery(this)" /></td>`;
       });
       html += '</tr>';
     });
@@ -2507,6 +2506,8 @@ async function saveDelivery(inputEl) {
       body: JSON.stringify({ sku, size, quantity })
     });
     cachedDeliveries = await res.json();
+    // 空欄/0は実際に削除（空欄表示に統一）
+    if (quantity === 0) inputEl.value = '';
     // 合計を更新
     const totalId = inputEl.dataset.total;
     const totalEl = document.getElementById(totalId);
@@ -2518,6 +2519,10 @@ async function saveDelivery(inputEl) {
     // セルのスタイル更新
     if (quantity > 0) inputEl.parentElement.classList.add('has-value');
     else inputEl.parentElement.classList.remove('has-value');
+    // 納品済タブのヘッダーラベルを更新
+    const total = (cachedDeliveries || []).reduce((s, d) => s + (d.quantity || 0), 0);
+    const header = document.getElementById('ch-delivered');
+    if (header) header.innerHTML = `<span class="collapse-icon">▼</span> 納品済（${total}足）`;
   } catch (e) {
     alert('納品済の保存に失敗しました');
   }
