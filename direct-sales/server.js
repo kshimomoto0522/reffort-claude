@@ -468,6 +468,15 @@ app.get('/api/purchases', (req, res) => {
 });
 
 // 仕入記録を追加
+// 仕入記録を削除（復元誤投稿の取り消し等に使用）
+app.delete('/api/purchases/:id', (req, res) => {
+  let purchases = readJSON(PURCHASES_FILE);
+  const before = purchases.length;
+  purchases = purchases.filter(p => p.id !== req.params.id);
+  writeJSON(PURCHASES_FILE, purchases);
+  res.json({ success: true, deleted: before - purchases.length });
+});
+
 app.post('/api/purchases', (req, res) => {
   const purchases = readJSON(PURCHASES_FILE);
   const purchase = {
