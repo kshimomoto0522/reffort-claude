@@ -1125,7 +1125,7 @@ body {
   border: 1px solid #ddd;
   text-align: center;
   white-space: nowrap;
-  font-size: 10px;
+  font-size: 11px;
   color: #555;
   font-weight: 600;
 }
@@ -1148,7 +1148,7 @@ body {
 .finance-spreadsheet .col-qty { width: 36px; font-weight: 700; }
 .finance-spreadsheet .col-price { width: 52px; }
 .finance-spreadsheet .col-amount { width: 60px; font-weight: 700; }
-.finance-spreadsheet .col-size { width: 44px; font-size: 9px; }
+.finance-spreadsheet .col-size { width: 44px; font-size: 10px; }
 .finance-spreadsheet .col-size-group { background: #e8e8e8; }
 .finance-spreadsheet td.col-size { border: 1px dashed #ddd; }
 .finance-spreadsheet td.col-size.has-value { font-weight: 700; color: #1565c0; }
@@ -1675,7 +1675,7 @@ body {
   background: #e3f2fd;
   border: 1px solid #90caf9;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #1565c0;
 }
@@ -2366,4 +2366,138 @@ a.coupon-url-val:hover {
 }
 .coupon-issue-btn:hover {
   background: #1565c0;
+}
+
+/* =============================================
+   テーブル交互色（ゼブラストライプ）
+   全一覧テーブルに適用
+   ============================================= */
+.finance-spreadsheet table tbody tr:nth-child(even),
+.order-spreadsheet table tbody tr:nth-child(even) {
+  background: #f7f9fc;
+}
+.finance-spreadsheet table tbody tr:nth-child(odd),
+.order-spreadsheet table tbody tr:nth-child(odd) {
+  background: #fff;
+}
+
+/* =============================================
+   拠点サブヘッダー（オーダー管理の仕入済内）
+   ============================================= */
+.loc-sub-header {
+  background: #e3f2fd;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1565c0;
+  border-left: 4px solid #1565c0;
+  margin: 12px 0 4px;
+}
+
+/* =============================================
+   発送商品パネル（固定ヘッダー）
+   ============================================= */
+.ship-summary-panel {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  border: 2px solid #1976d2;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.ship-summary-header {
+  background: #1976d2;
+  color: #fff;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px 6px 0 0;
+}
+.ship-summary-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.ship-summary-header span {
+  font-size: 14px;
+  font-weight: 700;
+}
+.ship-summary-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* =============================================
+   発送履歴: 拠点内訳プルダウン
+   ============================================= */
+.shipment-loc-details {
+  margin-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+.shipment-loc-summary {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #1976d2;
+  font-weight: 600;
+  list-style: none;
+}
+.shipment-loc-summary::-webkit-details-marker {
+  display: none;
+}
+.shipment-loc-summary::before {
+  content: '▶ ';
+  font-size: 10px;
+}
+details[open] > .shipment-loc-summary::before {
+  content: '▼ ';
+}
+
+/* =============================================
+   まとめモード
+   ============================================= */
+.merge-check {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.merge-check input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* =============================================
+   支払状態バッジ
+   ============================================= */
+.paid-badge {
+  display: inline-block;
+  background: #27ae60;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+.unpaid-badge {
+  display: inline-block;
+  background: #e74c3c;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+.paid-btn {
+  background: #27ae60 !important;
+  color: #fff !important;
+  border: none !important;
+}
+.unpaid-btn {
+  background: #e74c3c !important;
+  color: #fff !important;
+  border: none !important;
 }

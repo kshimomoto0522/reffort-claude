@@ -600,12 +600,30 @@ async function showHistoryTab(tab) {
   document.getElementById('tab-current').classList.toggle('active', tab === 'current');
   document.getElementById('tab-past').classList.toggle('active', tab === 'past');
 
-  const res = await fetch('/api/orders');
-  const orders = await res.json();
+  // オーダーと発送データを両方取得
+  const [ordersRes, shipmentsRes] = await Promise.all([
+    fetch('/api/orders'), fetch('/api/shipments')
+  ]);
+  const orders = await ordersRes.json();
+  const shipments = await shipmentsRes.json();
   const container = document.getElementById('history-content');
   container.innerHTML = '';
 
+  // 発送済アイテムをグルーピング
+  const allShippedItems = [];
+  shipments.forEach(s => s.items.forEach(i => allShippedItems.push(i)));
+  const shippedGrouped = groupShippedItems(allShippedItems);
+
+  // 商品マスタからmodel/colorway補完用マップ
+  const productInfoMap = {};
+  (products || []).forEach(p => {
+    (p.variants || []).forEach(v => {
+      productInfoMap[v.sku] = { model: p.model, colorway: v.colorway, price: v.price, sizeType: v.sizeType };
+    });
+  });
+
   if (tab === 'current') {
+    // 全オーダーのアイテムを集計
     const pendingOrders = orders.filter(o => o.status === 'pending');
     if (pendingOrders.length === 0) {
       container.innerHTML = '<div class="no-orders">No current orders.</div>';
@@ -616,8 +634,27 @@ async function showHistoryTab(tab) {
       order.items.forEach(item => allItems.push(item));
     });
     const grouped = groupItemsBySku(allItems);
-    const unisexItems = grouped.filter(g => g.sizeType !== 'womens');
-    const womensItems = grouped.filter(g => g.sizeType === 'womens');
+
+    // 発送済を差し引いた残りを表示
+    const currentItems = calcRemaining(grouped, shippedGrouped);
+
+    if (currentItems.length === 0) {
+      container.innerHTML = '<div class="no-orders">All orders have been shipped.</div>';
+      return;
+    }
+
+    // priceを補完（calcRemainingで消えるので）
+    currentItems.forEach(item => {
+      if (!item.price && productInfoMap[item.sku]) item.price = productInfoMap[item.sku].price;
+      if (!item.price) {
+        const orig = grouped.find(g => g.sku === item.sku);
+        if (orig) item.price = orig.price;
+      }
+    });
+
+    const sortedCurrentItems = sortItemsBySkuOrder(currentItems);
+    const unisexItems = sortedCurrentItems.filter(g => g.sizeType !== 'womens');
+    const womensItems = sortedCurrentItems.filter(g => g.sizeType === 'womens');
 
     let totalPairs = 0;
     let totalAmount = 0;
@@ -653,22 +690,35 @@ async function showHistoryTab(tab) {
     container.appendChild(wrapper);
 
   } else {
-    const shippedOrders = orders.filter(o => o.status === 'shipped' || o.status === 'paid');
-    if (shippedOrders.length === 0) {
+    // Past Orders = 発送データから表示（shipments ベース）
+    if (shipments.length === 0) {
       container.innerHTML = '<div class="no-orders">No past orders.</div>';
       return;
     }
-    const byShipDate = {};
-    shippedOrders.forEach(order => {
-      const key = order.shippedDate || 'Unknown';
-      if (!byShipDate[key]) byShipDate[key] = [];
-      byShipDate[key].push(order);
-    });
 
-    Object.entries(byShipDate).sort((a, b) => b[0].localeCompare(a[0])).forEach(([shipDate, orders]) => {
-      const allItems = [];
-      orders.forEach(order => order.items.forEach(item => allItems.push(item)));
-      const grouped = groupItemsBySku(allItems);
+    // 発送ごとに表示（新しい順）
+    [...shipments].reverse().forEach(s => {
+      const dateJST = new Date(new Date(s.createdAt).getTime() + 9 * 60 * 60 * 1000);
+      const dateStr = dateJST.toISOString().split('T')[0];
+      const totalPairsShip = s.items.reduce((sum, i) => sum + i.quantity, 0);
+
+      // アイテムをSKUでグルーピング（model/colorway補完）
+      const itemGrouped = {};
+      s.items.forEach(i => {
+        if (!itemGrouped[i.sku]) {
+          const info = productInfoMap[i.sku] || {};
+          itemGrouped[i.sku] = {
+            model: i.model || info.model || '',
+            colorway: i.colorway || info.colorway || '',
+            sku: i.sku,
+            price: info.price || 0,
+            sizeType: i.sizeType || info.sizeType || 'unisex',
+            sizes: {}
+          };
+        }
+        itemGrouped[i.sku].sizes[i.size] = (itemGrouped[i.sku].sizes[i.size] || 0) + i.quantity;
+      });
+      const grouped = sortItemsBySkuOrder(Object.values(itemGrouped));
       const unisexItems = grouped.filter(g => g.sizeType !== 'womens');
       const womensItems = grouped.filter(g => g.sizeType === 'womens');
 
@@ -678,37 +728,29 @@ async function showHistoryTab(tab) {
       const wrapper = document.createElement('div');
       wrapper.className = 'order-table-wrapper';
 
-      let statusHtml = '';
-      const hasPending = orders.some(o => o.status === 'shipped' && !o.paidAt);
-      if (hasPending) {
-        statusHtml = '<span class="order-status status-awaiting-payment">Payment Due</span>';
-      }
       // 追跡番号を収集
       let trackingHtml = '';
-      orders.forEach(o => {
-        if (o.tracking && o.tracking.length > 0) {
-          o.tracking.forEach(t => {
-            const trackUrl = t.carrier && t.carrier.toUpperCase().includes('DHL')
-              ? `https://www.dhl.com/jp-ja/home/tracking/tracking-express.html?submit=1&tracking-id=${t.trackingNumber}`
-              : t.carrier && t.carrier.toUpperCase().includes('FEDEX')
-              ? `https://www.fedex.com/fedextrack/?trknbr=${t.trackingNumber}`
-              : t.carrier && t.carrier.toUpperCase().includes('UPS')
-              ? `https://www.ups.com/track?tracknum=${t.trackingNumber}`
-              : null;
-            const numHtml = trackUrl
-              ? `<a href="${trackUrl}" target="_blank" class="tracking-link">${t.trackingNumber}</a>`
-              : `<span>${t.trackingNumber}</span>`;
-            trackingHtml += `<div class="tracking-entry">${t.carrier}: ${numHtml}</div>`;
-          });
-        }
+      (s.tracking || []).forEach(t => {
+        const trackUrl = t.carrier && t.carrier.toUpperCase().includes('DHL')
+          ? `https://www.dhl.com/us-en/home/tracking/tracking-express.html?submit=1&tracking-id=${t.trackingNumber}`
+          : t.carrier && t.carrier.toUpperCase().includes('FEDEX')
+          ? `https://www.fedex.com/fedextrack/?trknbr=${t.trackingNumber}`
+          : t.carrier && t.carrier.toUpperCase().includes('UPS')
+          ? `https://www.ups.com/track?tracknum=${t.trackingNumber}`
+          : null;
+        const numHtml = trackUrl
+          ? `<a href="${trackUrl}" target="_blank" class="tracking-link">${t.trackingNumber}</a>`
+          : `<span>${t.trackingNumber}</span>`;
+        trackingHtml += `<div class="tracking-entry">${t.carrier}: ${numHtml}</div>`;
       });
-      const orderNums = orders.map(o => o.id).join(', ');
 
+      const paidStatus = s.paid
+        ? '<span class="paid-badge">Paid</span>'
+        : '<span class="unpaid-badge">Unpaid</span>';
       wrapper.innerHTML = `<div class="order-table-header">
-        <h4>Shipped: ${shipDate}</h4>
-        <div>${statusHtml}</div>
+        <h4>Shipped: ${dateStr} ${paidStatus}</h4>
+        <div></div>
       </div>
-      ${orderNums ? `<div class="order-numbers">Order: ${orderNums}</div>` : ''}
       ${trackingHtml ? `<div class="tracking-info">${trackingHtml}</div>` : ''}`;
 
       if (unisexItems.length > 0) {
@@ -1818,15 +1860,32 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
   // 未指示 = オーダー - 割り当て済み
   const unassigned = calcRemaining(grouped, assignedGrouped);
 
-  // ======= Current Orders =======
-  addCollapsible(container, 'Current Orders', 'bg-dark', 'current', (body) => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'order-table-wrapper';
-    const result = buildFinanceTable(grouped, rate, purchasePriceMap, supplierUrlMap, coupon, customsPerPair, shippingPerPair);
-    wrapper.appendChild(result.table);
-    wrapper.appendChild(buildFinanceTotals(result.totals));
-    body.appendChild(wrapper);
+  // ======= Current Orders（発送済を差し引いた残り） =======
+  const currentOrderItems = calcRemaining(grouped, shippedGrouped);
+  // priceを補完（calcRemainingで欠ける場合）
+  currentOrderItems.forEach(item => {
+    if (!item.price) {
+      const orig = grouped.find(g => g.sku === item.sku);
+      if (orig) item.price = orig.price;
+    }
   });
+  const currentOrderPairs = currentOrderItems.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+
+  if (currentOrderPairs === 0 && grouped.length > 0) {
+    // 全発送済
+    addCollapsible(container, 'Current Orders（0足 - 全て発送済）', 'bg-dark', 'current', (body) => {
+      body.innerHTML = '<div class="no-orders" style="padding:20px">全て発送済みです</div>';
+    });
+  } else {
+    addCollapsible(container, `Current Orders（${currentOrderPairs}足）`, 'bg-dark', 'current', (body) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'order-table-wrapper';
+      const result = buildFinanceTable(sortBySkuOrder(currentOrderItems.length > 0 ? currentOrderItems : grouped), rate, purchasePriceMap, supplierUrlMap, coupon, customsPerPair, shippingPerPair);
+      wrapper.appendChild(result.table);
+      wrapper.appendChild(buildFinanceTotals(result.totals));
+      body.appendChild(wrapper);
+    });
+  }
 
   // ======= 未指示 =======
   const unassignedPairs = unassigned.length > 0 ? unassigned.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0) : 0;
@@ -1853,66 +1912,65 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
     body.appendChild(wrapper);
   });
 
-  // ======= 納品済（BayPack倉庫納品済、手動入力） =======
-  // 表示順：仕入済の上に置く。仕入済SKU×sizeを基準に各セルを編集可能にする
-  const deliveredTotal = (cachedDeliveries || []).reduce((s, d) => s + (d.quantity || 0), 0);
-  addCollapsible(container, `納品済（${deliveredTotal}足）`, 'bg-teal', 'delivered', (body) => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'order-table-wrapper';
-    const result = buildDeliveryEditTable(sortBySkuOrder(purchasedGrouped), cachedDeliveries || [], sortBySkuOrder);
-    wrapper.appendChild(result.table);
-    body.appendChild(wrapper);
-  });
-
-  // ======= 仕入済（倉庫在庫 = 仕入済 - 発送済） =======
-  const inStockGrouped = calcRemaining(purchasedGrouped, shippedGrouped);
-  const inStockPairs = inStockGrouped.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
-  const purchasedPairs = purchasedGrouped.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
-  if (purchasedGrouped.length > 0) {
-    const label = shippedGrouped.length > 0
-      ? `仕入済 倉庫在庫（${inStockPairs}足）/ 合計${purchasedPairs}足`
-      : `仕入済（${purchasedPairs}足）`;
-    addCollapsible(container, label, 'bg-green', 'purchased', (body) => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'order-table-wrapper';
-      // 発送済があれば在庫（差し引き後）を表示、なければ全仕入済を表示
-      const result = buildSimpleTable(sortBySkuOrder(shippedGrouped.length > 0 ? inStockGrouped : purchasedGrouped));
-      wrapper.appendChild(result.table);
-      body.appendChild(wrapper);
-    });
-  }
-
-  // ======= 発送済 =======
-  if (shippedGrouped.length > 0) {
-    const shippedPairs = shippedGrouped.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
-    addCollapsible(container, `発送済（${shippedPairs}足）`, 'bg-blue', 'shipped', (body) => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'order-table-wrapper';
-      const result = buildSimpleTable(sortBySkuOrder(shippedGrouped));
-      wrapper.appendChild(result.table);
-      body.appendChild(wrapper);
-    });
-  }
-
-  // ======= 拠点別（全登録拠点を表示） =======
+  // ======= 仕入済（拠点別・発送済み差引） =======
+  // 各拠点の仕入済から、その拠点で発送済みの分を差し引く
+  let totalPurchasedRemaining = 0;
+  const locPurchaseData = []; // [{loc, remaining, pairs}]
   if (currentSettings.locations) {
     currentSettings.locations.forEach(loc => {
       const locPurchases = purchases.filter(p => p.locationId === loc.id);
       const locGrouped = groupPurchaseItems(locPurchases);
-      // 拠点の発送済を差し引き
-      const locShipped = shippedItems.filter(i => i.locationId === loc.id);
+      // この拠点の発送済みを差し引く
+      const locShipped = [];
+      shipments.forEach(s => s.items.forEach(i => {
+        if (i.locationId === loc.id) locShipped.push(i);
+      }));
       const locShippedGrouped = groupShippedItems(locShipped);
       const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
-      const locRemainingPairs = locRemaining.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
-      addCollapsible(container, `${loc.name}（残 ${locRemainingPairs}足）`, 'bg-blue', `loc-${loc.id}`, (body) => {
+      const locPairs = locRemaining.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+      totalPurchasedRemaining += locPairs;
+      if (locPairs > 0) locPurchaseData.push({ loc, remaining: locRemaining, pairs: locPairs });
+    });
+  }
+  // 全拠点の合計
+  const allRemainingGrouped = [];
+  locPurchaseData.forEach(d => {
+    d.remaining.forEach(item => {
+      const existing = allRemainingGrouped.find(g => g.sku === item.sku);
+      if (existing) {
+        Object.entries(item.sizes).forEach(([s, q]) => {
+          existing.sizes[s] = (existing.sizes[s] || 0) + q;
+        });
+      } else {
+        allRemainingGrouped.push({ ...item, sizes: { ...item.sizes } });
+      }
+    });
+  });
+
+  if (allRemainingGrouped.length > 0 || locPurchaseData.length > 0) {
+    addCollapsible(container, `仕入済（${totalPurchasedRemaining}足）`, 'bg-green', 'purchased', (body) => {
+      // 合計一覧テーブル
+      if (allRemainingGrouped.length > 0) {
+        const totalHeader = document.createElement('div');
+        totalHeader.className = 'loc-sub-header';
+        totalHeader.textContent = `合計（${totalPurchasedRemaining}足）`;
+        body.appendChild(totalHeader);
+        const totalWrapper = document.createElement('div');
+        totalWrapper.className = 'order-table-wrapper';
+        const totalResult = buildSimpleTable(sortBySkuOrder(allRemainingGrouped));
+        totalWrapper.appendChild(totalResult.table);
+        body.appendChild(totalWrapper);
+      }
+      // 拠点別
+      locPurchaseData.forEach(d => {
+        const locHeader = document.createElement('div');
+        locHeader.className = 'loc-sub-header';
+        locHeader.textContent = `${d.loc.name}（${d.pairs}足）`;
+        body.appendChild(locHeader);
         const wrapper = document.createElement('div');
         wrapper.className = 'order-table-wrapper';
-        if (locRemaining.length > 0) {
-          const result = buildSimpleTable(sortBySkuOrder(locRemaining));
-          wrapper.appendChild(result.table);
-        } else {
-          wrapper.innerHTML = '<div class="no-orders" style="padding:10px">在庫なし</div>';
-        }
+        const result = buildSimpleTable(sortBySkuOrder(d.remaining));
+        wrapper.appendChild(result.table);
         body.appendChild(wrapper);
       });
     });
@@ -2255,11 +2313,13 @@ function calcRemaining(orderGrouped, purchasedGrouped) {
     const orderItem = orderGrouped.find(g => g.sku === sku);
     const purchaseItem = purchasedGrouped.find(g => g.sku === sku);
 
+    const source = orderItem || purchaseItem;
     const item = {
-      model: (orderItem || purchaseItem).model,
-      colorway: (orderItem || purchaseItem).colorway,
+      model: source.model,
+      colorway: source.colorway,
       sku,
-      sizeType: (orderItem || purchaseItem).sizeType,
+      sizeType: source.sizeType,
+      price: source.price, // price情報を保持
       sizes: {}
     };
 
@@ -2932,8 +2992,10 @@ async function renderPurchasePage() {
         html += '<div class="pi-sizes">';
         Object.entries(item.sizes).forEach(([size, qty]) => {
           if (qty > 0) {
+            // JPサイズ(cm)のみ表示（例: "8/26" → "26"）
+            const jpSize = size.includes('/') ? size.split('/')[1] : size;
             for (let i = 0; i < qty; i++) {
-              html += `<span class="pi-size-tag">${size}</span>`;
+              html += `<span class="pi-size-tag">${jpSize}</span>`;
             }
           }
         });
@@ -3137,16 +3199,13 @@ async function renderShippingPage(container) {
   shipMode = false;
   shipSelectedLocs = {};
   shipAdjustments = {};
+  shipSummaryItems = []; // 発送商品一覧
 
-  // 商品マスタ・納品済データ・発送可能アイテムを並列取得
+  // 商品マスタ・発送可能アイテムを並列取得
   try {
     await loadProducts();
-    const [shipRes, delRes] = await Promise.all([
-      fetch('/api/shipped-items'),
-      fetch('/api/deliveries')
-    ]);
+    const shipRes = await fetch('/api/shipped-items');
     shipLocData = await shipRes.json();
-    cachedDeliveries = await delRes.json();
   } catch (e) {
     container.innerHTML = '<p style="color:red;">読み込みエラー</p>';
     return;
@@ -3154,29 +3213,49 @@ async function renderShippingPage(container) {
 
   const locIds = Object.keys(shipLocData);
 
-  // ====== 納品済一覧（一番上に表示） ======
-  // 納品済は手動管理なので、常に先頭に表示する
   let html = '';
-  const deliveredTotal = (cachedDeliveries || []).reduce((s, d) => s + (d.quantity || 0), 0);
-  html += `<div class="ship-loc-section">`;
-  html += `<div class="ship-loc-header" style="background:#00796b;">`;
-  html += `<h3 style="color:#fff;">納品済一覧（${deliveredTotal}足）</h3>`;
-  html += `</div>`;
-  html += `<div class="ship-loc-items" id="ship-delivered-items"></div></div>`;
 
-  if (locIds.length === 0) {
-    container.innerHTML = html + '<div class="no-orders" style="padding:20px">発送可能な仕入済アイテムはありません</div>';
-    // 納品済一覧をレンダリング
-    renderDeliveredListOnShipping();
-    return;
-  }
+  // ======= 発送商品タブ（固定ヘッダー、発送ボタン押下後に表示） =======
+  html += `<div id="ship-summary-panel" style="display:none;" class="ship-summary-panel">
+    <div class="ship-summary-header">
+      <h3>発送商品</h3>
+      <span id="ship-summary-count"></span>
+    </div>
+    <div id="ship-summary-table"></div>
+    <div class="ship-summary-actions">
+      <button class="primary-btn" onclick="confirmShipSelection()">確定</button>
+      <button class="secondary-btn" onclick="cancelShipMode()">キャンセル</button>
+    </div>
+  </div>`;
 
   html += '<div class="ship-actions-bar">';
   html += '<button id="btn-ship-start" class="primary-btn" onclick="startShipMode()">発送</button>';
   html += '</div>';
 
+  if (locIds.length === 0) {
+    html += '<div class="no-orders" style="padding:20px">発送可能な仕入済アイテムはありません</div>';
+  }
+
+  // 拠点ごとの発送可能アイテム（SKU順統一、model/colorway補完）
   locIds.forEach(locId => {
     const loc = shipLocData[locId];
+    // model/colorway を商品マスタから補完
+    loc.items.forEach(item => {
+      if (!item.model || !item.colorway) {
+        for (const p of (products || [])) {
+          const v = (p.variants || []).find(v => v.sku === item.sku);
+          if (v) {
+            if (!item.model) item.model = p.model;
+            if (!item.colorway) item.colorway = v.colorway;
+            if (!item.sizeType) item.sizeType = v.sizeType;
+            break;
+          }
+        }
+      }
+    });
+    // SKU順ソート
+    loc.items = sortItemsBySkuOrder(loc.items);
+
     const totalPairs = loc.items.reduce((s, i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
     html += `<div class="ship-loc-section" id="ship-loc-${locId}">`;
     html += `<div class="ship-loc-header">`;
@@ -3191,39 +3270,89 @@ async function renderShippingPage(container) {
   });
 
   container.innerHTML = html;
-  renderDeliveredListOnShipping();
 }
 
-// 発送管理ページの一番上に納品済一覧をレンダリング（表示のみ）
-function renderDeliveredListOnShipping() {
-  const target = document.getElementById('ship-delivered-items');
-  if (!target) return;
-  const deliveries = cachedDeliveries || [];
-  if (deliveries.length === 0) {
-    target.innerHTML = '<div class="no-orders" style="padding:20px">納品済のアイテムはありません。オーダー管理の「納品済」セクションから手動で入力できます。</div>';
+// SKU順ソート用ヘルパー（グローバルで使用）
+function sortItemsBySkuOrder(items) {
+  // productsマスタの順番を基準にソート
+  const skuOrder = [];
+  (products || []).forEach(p => {
+    (p.variants || []).forEach(v => {
+      if (!skuOrder.includes(v.sku)) skuOrder.push(v.sku);
+    });
+  });
+  return [...items].sort((a, b) => {
+    const ia = skuOrder.indexOf(a.sku);
+    const ib = skuOrder.indexOf(b.sku);
+    if (ia === -1 && ib === -1) return 0;
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+}
+
+// 発送商品の合計一覧を更新
+let shipSummaryItems = [];
+function updateShipSummary() {
+  const summaryPanel = document.getElementById('ship-summary-panel');
+  const summaryTable = document.getElementById('ship-summary-table');
+  const summaryCount = document.getElementById('ship-summary-count');
+
+  // 選択中の全拠点のアイテムを集計
+  const totalItems = {};
+  Object.entries(shipSelectedLocs).forEach(([locId, selected]) => {
+    if (!selected) return;
+    const loc = shipLocData[locId];
+    loc.items.forEach(item => {
+      const adjs = (shipAdjustments[locId] && shipAdjustments[locId][item.sku]) || {};
+      Object.entries(item.sizes).forEach(([size, maxQty]) => {
+        const qty = adjs[size] !== undefined ? adjs[size] : maxQty;
+        if (qty > 0) {
+          if (!totalItems[item.sku]) {
+            totalItems[item.sku] = { model: item.model, colorway: item.colorway, sku: item.sku, sizeType: item.sizeType, sizes: {} };
+          }
+          totalItems[item.sku].sizes[size] = (totalItems[item.sku].sizes[size] || 0) + qty;
+        }
+      });
+    });
+  });
+
+  const items = sortItemsBySkuOrder(Object.values(totalItems));
+  const totalPairs = items.reduce((s, i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
+
+  if (totalPairs === 0) {
+    summaryPanel.style.display = 'none';
     return;
   }
-  // deliveries を SKU ごとにグループ化、products から model/colorway/sizeType を補完
-  const grouped = {};
-  deliveries.forEach(d => {
-    if (!grouped[d.sku]) {
-      let model = '', colorway = '', sizeType = 'unisex';
-      for (const p of (products || [])) {
-        const v = (p.variants || []).find(v => v.sku === d.sku);
-        if (v) {
-          model = p.model || '';
-          colorway = v.colorway || '';
-          sizeType = v.sizeType || p.sizeType || 'unisex';
-          break;
-        }
-      }
-      grouped[d.sku] = { sku: d.sku, model, colorway, sizeType, sizes: {} };
-    }
-    grouped[d.sku].sizes[d.size] = (grouped[d.sku].sizes[d.size] || 0) + d.quantity;
+
+  summaryPanel.style.display = 'block';
+  summaryCount.textContent = `${totalPairs}足`;
+  summaryTable.innerHTML = buildShipItemsTable(items, 'summary', false);
+}
+
+// 発送モードキャンセル
+function cancelShipMode() {
+  shipMode = false;
+  shipSelectedLocs = {};
+  shipAdjustments = {};
+  const summaryPanel = document.getElementById('ship-summary-panel');
+  if (summaryPanel) summaryPanel.style.display = 'none';
+  // チェックボックスを非表示に戻す
+  Object.keys(shipLocData).forEach(locId => {
+    const checkEl = document.getElementById(`ship-check-${locId}`);
+    if (checkEl) checkEl.style.display = 'none';
+    const cb = document.getElementById(`ship-cb-${locId}`);
+    if (cb) cb.checked = false;
+    const itemsEl = document.getElementById(`ship-items-${locId}`);
+    if (itemsEl) itemsEl.innerHTML = buildShipItemsTable(shipLocData[locId].items, locId, false);
   });
-  const items = Object.values(grouped);
-  // buildShipItemsTable は locId/adjustable を取るが locId は dummy、adjustable false で表示のみ
-  target.innerHTML = buildShipItemsTable(items, 'delivered', false);
+  const btn = document.getElementById('btn-ship-start');
+  if (btn) {
+    btn.textContent = '発送';
+    btn.disabled = false;
+    btn.classList.remove('btn-disabled');
+    btn.onclick = () => startShipMode();
+  }
 }
 
 function buildShipItemsTable(items, locId, adjustable) {
@@ -3303,6 +3432,8 @@ function shipAdjust(locId, sku, size, delta, max) {
   shipAdjustments[locId][sku][size] = val;
   const el = document.getElementById(`ship-val-${locId}|${sku}|${size}`);
   if (el) el.textContent = val;
+  // 発送商品サマリーを更新
+  updateShipSummary();
 }
 
 function startShipMode() {
@@ -3312,9 +3443,10 @@ function startShipMode() {
     if (checkEl) checkEl.style.display = 'inline';
   });
   const btn = document.getElementById('btn-ship-start');
-  btn.textContent = '拠点を選択してください';
-  btn.disabled = true;
-  btn.classList.add('btn-disabled');
+  btn.textContent = 'キャンセル';
+  btn.disabled = false;
+  btn.classList.remove('btn-disabled');
+  btn.onclick = () => cancelShipMode();
 }
 
 function toggleShipLoc(locId) {
@@ -3335,22 +3467,8 @@ function toggleShipLoc(locId) {
     delete shipAdjustments[locId];
     itemsEl.innerHTML = buildShipItemsTable(loc.items, locId, false);
   }
-  updateShipButton();
-}
-
-function updateShipButton() {
-  const hasSelected = Object.values(shipSelectedLocs).some(v => v);
-  const btn = document.getElementById('btn-ship-start');
-  if (hasSelected) {
-    btn.textContent = '確定';
-    btn.disabled = false;
-    btn.classList.remove('btn-disabled');
-    btn.onclick = () => confirmShipSelection();
-  } else {
-    btn.textContent = '拠点を選択してください';
-    btn.disabled = true;
-    btn.classList.add('btn-disabled');
-  }
+  // 発送商品サマリーを更新
+  updateShipSummary();
 }
 
 function confirmShipSelection() {
@@ -3501,8 +3619,24 @@ async function closeShipmentComplete() {
 // =============================================
 // 発送履歴
 // =============================================
+// 発送履歴のまとめ選択用
+let mergeSelectMode = false;
+let mergeSelected = {};
+
 async function renderShipmentHistory(container) {
   container.innerHTML = '<p>読み込み中...</p>';
+  await loadProducts();
+  mergeSelectMode = false;
+  mergeSelected = {};
+
+  // 商品マスタからmodel/colorway補完用マップ
+  const productInfoMap = {};
+  (products || []).forEach(p => {
+    (p.variants || []).forEach(v => {
+      productInfoMap[v.sku] = { model: p.model, colorway: v.colorway, sizeType: v.sizeType, price: v.price || 0 };
+    });
+  });
+
   try {
     const res = await fetch('/api/shipments');
     const shipments = await res.json();
@@ -3510,34 +3644,86 @@ async function renderShipmentHistory(container) {
       container.innerHTML = '<div class="no-orders" style="padding:20px">発送履歴はありません</div>';
       return;
     }
+
     let html = '';
+
+    // まとめボタン
+    if (shipments.length > 1) {
+      html += `<div class="ship-actions-bar">
+        <button id="btn-merge-mode" class="secondary-btn" onclick="toggleMergeMode()">発送をまとめる</button>
+        <button id="btn-merge-exec" class="primary-btn" style="display:none" onclick="executeMerge()">選択した発送をまとめる</button>
+      </div>`;
+    }
+
     [...shipments].reverse().forEach(s => {
       const dateJST = new Date(new Date(s.createdAt).getTime() + 9 * 60 * 60 * 1000);
       const dateStr = dateJST.toISOString().split('T')[0];
       const timeStr = dateJST.toISOString().substring(11, 16);
       const totalPairs = s.items.reduce((sum, i) => sum + i.quantity, 0);
+      // 合計販売金額を計算
+      let totalSalesAmount = 0;
+      s.items.forEach(i => {
+        const info = productInfoMap[i.sku] || {};
+        const price = i.price || info.price || 0;
+        totalSalesAmount += price * i.quantity;
+      });
       const locNames = s.locations.map(l => l.name).join(' + ');
-      html += `<div class="shipment-card">`;
-      html += `<div class="shipment-header" onclick="toggleShipmentDetail('${s.id}')">`;
+
+      html += `<div class="shipment-card" id="shipment-card-${s.id}">`;
+
+      // まとめ選択チェックボックス（非表示デフォルト）
+      html += `<span class="merge-check" id="merge-check-${s.id}" style="display:none;">
+        <input type="checkbox" id="merge-cb-${s.id}" onchange="toggleMergeSelect('${s.id}')">
+      </span>`;
+
+      // ヘッダー: 合計を上に表示
+      html += `<div class="shipment-header">`;
       html += `<div class="shipment-date">${dateStr} ${timeStr}</div>`;
-      html += `<div class="shipment-summary">${locNames} / ${totalPairs}足</div>`;
+      html += `<div class="shipment-summary">${locNames} / ${totalPairs}足 / $${totalSalesAmount.toLocaleString()}</div>`;
       html += `<div class="shipment-tracking-brief">`;
-      s.tracking.forEach(t => { html += `<span class="tracking-badge">${t.carrier}: ${t.trackingNumber}</span>`; });
+      s.tracking.forEach(t => {
+        html += `<span class="tracking-badge">${t.carrier}: ${t.trackingNumber}</span>`;
+      });
       html += `</div>`;
-      if (s.orderNumbers && s.orderNumbers.length > 0) html += `<div class="shipment-orders">Order: ${s.orderNumbers.join(', ')}</div>`;
-      html += `<span class="collapse-icon ship-collapse">▼</span></div>`;
-      html += `<div class="shipment-detail" id="shipment-detail-${s.id}" style="display:none;">`;
+      if (s.orderNumbers && s.orderNumbers.length > 0) {
+        html += `<div class="shipment-orders">Order: ${s.orderNumbers.join(', ')}</div>`;
+      }
+      // 支払状態ボタン + 追跡番号編集ボタン
+      const isPaid = s.paid;
+      html += `<div class="shipment-actions" style="margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;">`;
+      html += `<button class="small-btn ${isPaid ? 'paid-btn' : 'unpaid-btn'}" onclick="toggleShipmentPaid('${s.id}', ${!isPaid})">${isPaid ? '✅ 支払済み' : '❌ 未払い → 支払済みにする'}</button>`;
+      html += `<button class="small-btn" onclick="editShipmentTracking('${s.id}')">追跡番号を編集</button>`;
+      html += `</div>`;
+      html += `</div>`;
+
+      // 合計テーブル（常に表示）
+      // アイテムにmodel/colorway補完
+      s.items.forEach(i => {
+        if ((!i.model || !i.colorway) && productInfoMap[i.sku]) {
+          if (!i.model) i.model = productInfoMap[i.sku].model;
+          if (!i.colorway) i.colorway = productInfoMap[i.sku].colorway;
+          if (!i.sizeType) i.sizeType = productInfoMap[i.sku].sizeType;
+        }
+      });
+      html += buildShipmentDetailTable(s.items);
+
+      // 拠点内訳（プルダウン）
       if (s.locations.length > 1) {
+        html += `<details class="shipment-loc-details">
+          <summary class="shipment-loc-summary">拠点別内訳を表示</summary>`;
         s.locations.forEach(loc => {
           const locItems = s.items.filter(i => i.locationId === loc.id);
           if (locItems.length === 0) return;
-          html += `<div class="shipment-loc-group"><div class="shipment-loc-name">${loc.name}（${locItems.reduce((s,i)=>s+i.quantity,0)}足）</div>${buildShipmentDetailTable(locItems)}</div>`;
+          const locPairs = locItems.reduce((sum, i) => sum + i.quantity, 0);
+          html += `<div class="shipment-loc-group">
+            <div class="shipment-loc-name">${loc.name}（${locPairs}足）</div>
+            ${buildShipmentDetailTable(locItems)}
+          </div>`;
         });
-        html += `<div class="shipment-loc-group"><div class="shipment-loc-name"><strong>合計（${totalPairs}足）</strong></div>${buildShipmentDetailTable(s.items)}</div>`;
-      } else {
-        html += buildShipmentDetailTable(s.items);
+        html += `</details>`;
       }
-      html += `</div></div>`;
+
+      html += `</div>`;
     });
     container.innerHTML = html;
   } catch (e) {
@@ -3545,16 +3731,169 @@ async function renderShipmentHistory(container) {
   }
 }
 
+// 支払状態を切り替え
+async function toggleShipmentPaid(shipmentId, paid) {
+  try {
+    const res = await fetch(`/api/shipments/${shipmentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paid })
+    });
+    if (!res.ok) { alert('更新に失敗しました'); return; }
+    showToast(paid ? '支払済みに変更しました' : '未払いに変更しました');
+    // 履歴を再描画
+    const historyContent = document.getElementById('shipping-history-content');
+    if (historyContent) await renderShipmentHistory(historyContent);
+  } catch (e) {
+    alert('通信エラーが発生しました');
+  }
+}
+
+// 追跡番号編集
+async function editShipmentTracking(shipmentId) {
+  const res = await fetch('/api/shipments');
+  const shipments = await res.json();
+  const shipment = shipments.find(s => s.id === shipmentId);
+  if (!shipment) return;
+
+  const body = document.getElementById('shipping-modal-body');
+  document.getElementById('shipping-modal-title').textContent = '追跡番号を編集';
+  let html = '<div class="ship-tracking-section">';
+  html += `<div id="edit-tracking-list">`;
+  shipment.tracking.forEach((t, i) => {
+    html += `<div class="tracking-row" id="edit-tracking-row-${i}">
+      <select id="edit-carrier-${i}" class="ship-carrier-select">
+        <option value="DHL" ${t.carrier === 'DHL' ? 'selected' : ''}>DHL</option>
+        <option value="FedEx" ${t.carrier === 'FedEx' ? 'selected' : ''}>FedEx</option>
+        <option value="UPS" ${t.carrier === 'UPS' ? 'selected' : ''}>UPS</option>
+        <option value="EMS" ${t.carrier === 'EMS' ? 'selected' : ''}>EMS</option>
+        <option value="Other" ${!['DHL','FedEx','UPS','EMS'].includes(t.carrier) ? 'selected' : ''}>その他</option>
+      </select>
+      <input type="text" id="edit-tracking-${i}" value="${t.trackingNumber}" class="ship-tracking-input">
+      ${i > 0 ? `<button class="danger-btn-sm" onclick="document.getElementById('edit-tracking-row-${i}').remove()">✕</button>` : ''}
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<button class="secondary-btn" onclick="addEditTrackingRow()" style="margin-top:8px">+ 追跡番号を追加</button>`;
+  html += `</div>`;
+  html += `<div class="form-actions" style="margin-top:16px;">
+    <button class="primary-btn" onclick="saveEditTracking('${shipmentId}')">保存</button>
+    <button class="secondary-btn" onclick="closeShippingModal()">キャンセル</button>
+  </div>`;
+  body.innerHTML = html;
+  body.dataset.editTrackingCount = shipment.tracking.length;
+  document.getElementById('modal-shipping').classList.add('active');
+}
+
+function addEditTrackingRow() {
+  const list = document.getElementById('edit-tracking-list');
+  const body = document.getElementById('shipping-modal-body');
+  const idx = parseInt(body.dataset.editTrackingCount || '0');
+  const div = document.createElement('div');
+  div.className = 'tracking-row';
+  div.id = `edit-tracking-row-${idx}`;
+  div.innerHTML = `
+    <select id="edit-carrier-${idx}" class="ship-carrier-select">
+      <option value="DHL">DHL</option><option value="FedEx">FedEx</option>
+      <option value="UPS">UPS</option><option value="EMS">EMS</option>
+      <option value="Other">その他</option>
+    </select>
+    <input type="text" id="edit-tracking-${idx}" placeholder="追跡番号" class="ship-tracking-input">
+    <button class="danger-btn-sm" onclick="document.getElementById('edit-tracking-row-${idx}').remove()">✕</button>
+  `;
+  list.appendChild(div);
+  body.dataset.editTrackingCount = idx + 1;
+}
+
+async function saveEditTracking(shipmentId) {
+  const body = document.getElementById('shipping-modal-body');
+  const maxIdx = parseInt(body.dataset.editTrackingCount || '0');
+  const tracking = [];
+  for (let i = 0; i <= maxIdx; i++) {
+    const carrierEl = document.getElementById(`edit-carrier-${i}`);
+    const trackEl = document.getElementById(`edit-tracking-${i}`);
+    if (carrierEl && trackEl && trackEl.value.trim()) {
+      tracking.push({ carrier: carrierEl.value, trackingNumber: trackEl.value.trim() });
+    }
+  }
+  if (tracking.length === 0) { alert('追跡番号を1つ以上入力してください'); return; }
+  try {
+    await fetch(`/api/shipments/${shipmentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tracking })
+    });
+    closeShippingModal();
+    showToast('追跡番号を更新しました');
+    await showShippingTab('history');
+  } catch (e) { alert('保存に失敗しました'); }
+}
+
+// まとめモード
+function toggleMergeMode() {
+  mergeSelectMode = !mergeSelectMode;
+  mergeSelected = {};
+  const btn = document.getElementById('btn-merge-mode');
+  const execBtn = document.getElementById('btn-merge-exec');
+  if (mergeSelectMode) {
+    btn.textContent = 'キャンセル';
+    document.querySelectorAll('.merge-check').forEach(el => el.style.display = 'inline');
+  } else {
+    btn.textContent = '発送をまとめる';
+    if (execBtn) execBtn.style.display = 'none';
+    document.querySelectorAll('.merge-check').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.merge-check input').forEach(cb => cb.checked = false);
+  }
+}
+
+function toggleMergeSelect(shipmentId) {
+  const cb = document.getElementById(`merge-cb-${shipmentId}`);
+  mergeSelected[shipmentId] = cb.checked;
+  const selectedCount = Object.values(mergeSelected).filter(v => v).length;
+  const execBtn = document.getElementById('btn-merge-exec');
+  if (execBtn) execBtn.style.display = selectedCount >= 2 ? '' : 'none';
+}
+
+async function executeMerge() {
+  const ids = Object.entries(mergeSelected).filter(([_, v]) => v).map(([id]) => id);
+  if (ids.length < 2) { alert('2つ以上選択してください'); return; }
+  if (!confirm(`${ids.length}件の発送をまとめますか？`)) return;
+  try {
+    await fetch('/api/shipments/merge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ shipmentIds: ids })
+    });
+    showToast('発送をまとめました');
+    await showShippingTab('history');
+  } catch (e) { alert('エラーが発生しました'); }
+}
+
 function buildShipmentDetailTable(items) {
-  // アイテムをSKUでグルーピングし、sizeTypeも保持
+  // アイテムをSKUでグルーピングし、sizeTypeも保持。model/colorwayを商品マスタから補完
   const grouped = {};
   items.forEach(i => {
-    if (!grouped[i.sku]) grouped[i.sku] = { model: i.model, colorway: i.colorway, sizeType: i.sizeType || 'unisex', sizes: {} };
+    if (!grouped[i.sku]) {
+      let model = i.model || '', colorway = i.colorway || '', sizeType = i.sizeType || 'unisex';
+      // 商品マスタから補完
+      if (!model || !colorway) {
+        for (const p of (products || [])) {
+          const v = (p.variants || []).find(v => v.sku === i.sku);
+          if (v) {
+            if (!model) model = p.model;
+            if (!colorway) colorway = v.colorway;
+            sizeType = v.sizeType || sizeType;
+            break;
+          }
+        }
+      }
+      grouped[i.sku] = { model, colorway, sizeType, sizes: {} };
+    }
     grouped[i.sku].sizes[i.size] = (grouped[i.sku].sizes[i.size] || 0) + i.quantity;
   });
 
-  // オーダー管理と同じフォーマットで表示
-  const groupedArr = Object.entries(grouped).map(([sku, data]) => ({ sku, ...data }));
+  // オーダー管理と同じフォーマットで表示（SKU順ソート）
+  const groupedArr = sortItemsBySkuOrder(Object.entries(grouped).map(([sku, data]) => ({ sku, ...data })));
   const unisexItems = groupedArr.filter(g => g.sizeType !== 'womens');
   const womensItems = groupedArr.filter(g => g.sizeType === 'womens');
 

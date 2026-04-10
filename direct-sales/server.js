@@ -797,6 +797,73 @@ app.post('/api/shipments', (req, res) => {
   res.json(shipment);
 });
 
+// 発送記録を更新（追跡番号編集用）
+app.put('/api/shipments/:id', (req, res) => {
+  const shipments = readJSON(SHIPMENTS_FILE);
+  const idx = shipments.findIndex(s => s.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Shipment not found' });
+  // tracking, orderNumbers, paid を更新可能
+  if (req.body.tracking) shipments[idx].tracking = req.body.tracking;
+  if (req.body.orderNumbers) shipments[idx].orderNumbers = req.body.orderNumbers;
+  if (typeof req.body.paid !== 'undefined') shipments[idx].paid = req.body.paid;
+  writeJSON(SHIPMENTS_FILE, shipments);
+  res.json(shipments[idx]);
+});
+
+// 発送をまとめる（複数の発送を1つに統合）
+app.post('/api/shipments/merge', (req, res) => {
+  const { shipmentIds } = req.body; // ["id1", "id2", ...]
+  if (!shipmentIds || shipmentIds.length < 2) {
+    return res.status(400).json({ error: '2つ以上の発送を選択してください' });
+  }
+  const shipments = readJSON(SHIPMENTS_FILE);
+  const toMerge = shipments.filter(s => shipmentIds.includes(s.id));
+  if (toMerge.length < 2) return res.status(400).json({ error: '対象の発送が見つかりません' });
+
+  // 統合: items, locations, tracking, orderNumbers をマージ
+  const mergedItems = [];
+  const mergedLocations = [];
+  const mergedTracking = [];
+  const mergedOrderNumbers = [];
+  const locIdSet = new Set();
+  const trackSet = new Set();
+
+  toMerge.forEach(s => {
+    mergedItems.push(...s.items);
+    s.locations.forEach(l => {
+      if (!locIdSet.has(l.id)) { locIdSet.add(l.id); mergedLocations.push(l); }
+    });
+    s.tracking.forEach(t => {
+      const key = t.carrier + ':' + t.trackingNumber;
+      if (!trackSet.has(key)) { trackSet.add(key); mergedTracking.push(t); }
+    });
+    (s.orderNumbers || []).forEach(n => {
+      if (!mergedOrderNumbers.includes(n)) mergedOrderNumbers.push(n);
+    });
+  });
+
+  // 最古の日付を使用
+  const earliest = toMerge.reduce((min, s) => s.createdAt < min ? s.createdAt : min, toMerge[0].createdAt);
+
+  // 新しい統合発送レコードを作成
+  const merged = {
+    id: Date.now().toString(),
+    items: mergedItems,
+    locations: mergedLocations,
+    tracking: mergedTracking,
+    orderNumbers: mergedOrderNumbers,
+    createdAt: earliest
+  };
+
+  // 元の発送を削除して統合版を追加
+  const remaining = shipments.filter(s => !shipmentIds.includes(s.id));
+  remaining.push(merged);
+  // 日付順にソート
+  remaining.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  writeJSON(SHIPMENTS_FILE, remaining);
+  res.json(merged);
+});
+
 // =============================================
 // クーポン管理API
 // =============================================
