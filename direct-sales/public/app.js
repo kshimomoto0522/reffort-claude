@@ -650,9 +650,10 @@ async function showHistoryTab(tab) {
   const container = document.getElementById('history-content');
   container.innerHTML = '';
 
-  // 発送済アイテムをグルーピング
+  // 発送済アイテムをグルーピング（発送完了分のみ — 発送待ちは除外）
+  const completedShipments = shipments.filter(s => !s.pendingShipment);
   const allShippedItems = [];
-  shipments.forEach(s => s.items.forEach(i => allShippedItems.push(i)));
+  completedShipments.forEach(s => s.items.forEach(i => allShippedItems.push(i)));
   const shippedGrouped = groupShippedItems(allShippedItems);
 
   // 商品マスタからmodel/colorway補完用マップ
@@ -738,15 +739,116 @@ async function showHistoryTab(tab) {
     wrapper.appendChild(totalDiv);
     container.appendChild(wrapper);
 
+    // === Order Log: 注文日ごとの一覧表 ===
+    // 日付でグルーピング（JST基準）
+    const dateGroups = {};
+    pendingOrders.forEach(order => {
+      const dateJST = new Date(new Date(order.createdAt).getTime() + 9 * 60 * 60 * 1000);
+      const dateKey = dateJST.toISOString().split('T')[0]; // YYYY-MM-DD
+      if (!dateGroups[dateKey]) dateGroups[dateKey] = [];
+      dateGroups[dateKey].push(order);
+    });
+    // 日付キーを新しい順にソート
+    const sortedDateKeys = Object.keys(dateGroups).sort((a, b) => b.localeCompare(a));
+
+    // 年・月の選択肢を収集
+    const yearSet = new Set();
+    const monthSetByYear = {}; // { "2026": Set(["04","03",...]) }
+    sortedDateKeys.forEach(dk => {
+      const y = dk.substring(0, 4);
+      const m = dk.substring(5, 7);
+      yearSet.add(y);
+      if (!monthSetByYear[y]) monthSetByYear[y] = new Set();
+      monthSetByYear[y].add(m);
+    });
+    const yearOptions = [...yearSet].sort((a, b) => b.localeCompare(a));
+
+    // 年フィルターHTML
+    let yearFilterHtml = '';
+    yearOptions.forEach(y => {
+      yearFilterHtml += `<option value="${y}">${y}</option>`;
+    });
+    // 月フィルターHTML（初期表示は最新年の月）
+    const initialYear = yearOptions[0];
+    let monthFilterHtml = '<option value="all">All</option>';
+    if (initialYear && monthSetByYear[initialYear]) {
+      [...monthSetByYear[initialYear]].sort((a, b) => b.localeCompare(a)).forEach(m => {
+        const label = new Date(initialYear, parseInt(m) - 1).toLocaleDateString('en-US', { month: 'long' });
+        monthFilterHtml += `<option value="${m}">${label}</option>`;
+      });
+    }
+
+    // Order Logヘッダー + 年・月フィルター
+    const logSection = document.createElement('div');
+    logSection.className = 'order-log-section';
+    // 年月データをグローバルに保持（月フィルター更新用）
+    window._orderLogMonthsByYear = monthSetByYear;
+    logSection.innerHTML = `
+      <div class="order-log-header">
+        <h3>Order Log</h3>
+        <div class="order-log-filters">
+          <select id="order-log-year" onchange="updateOrderLogMonthFilter()">${yearFilterHtml}</select>
+          <select id="order-log-month" onchange="filterOrderLog()">${monthFilterHtml}</select>
+        </div>
+      </div>`;
+    container.appendChild(logSection);
+
+    // 各日付のテーブルを生成
+    const logBody = document.createElement('div');
+    logBody.id = 'order-log-body';
+    sortedDateKeys.forEach(dateKey => {
+      const groupOrders = dateGroups[dateKey];
+      // 日付表示
+      const [y, m, d] = dateKey.split('-');
+      const displayDate = new Date(y, parseInt(m) - 1, parseInt(d)).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric'
+      });
+      // この日のアイテムをSKUでグルーピング
+      const dayItems = [];
+      groupOrders.forEach(o => o.items.forEach(i => dayItems.push(i)));
+      const dayGrouped = groupItemsBySku(dayItems);
+      // price補完
+      dayGrouped.forEach(item => {
+        if (!item.price && productInfoMap[item.sku]) item.price = productInfoMap[item.sku].price;
+      });
+      const sorted = sortItemsBySkuOrder(dayGrouped);
+      const uItems = sorted.filter(g => g.sizeType !== 'womens');
+      const wItems = sorted.filter(g => g.sizeType === 'womens');
+
+      let dayPairs = 0, dayAmount = 0;
+      const dayWrapper = document.createElement('div');
+      dayWrapper.className = 'order-table-wrapper order-log-day';
+      dayWrapper.dataset.month = dateKey.substring(0, 7);
+      dayWrapper.innerHTML = `<div class="order-table-header"><h4>${displayDate}</h4></div>`;
+
+      if (uItems.length > 0) {
+        const { table, pairs, amount } = buildEditableTable(uItems, UNISEX_SIZES, 'SIZE (UNISEX)', false, 'history');
+        dayWrapper.appendChild(table);
+        dayPairs += pairs; dayAmount += amount;
+      }
+      if (wItems.length > 0) {
+        const { table, pairs, amount } = buildEditableTable(wItems, WOMENS_SIZES, "SIZE (WOMEN'S)", false, 'history');
+        dayWrapper.appendChild(table);
+        dayPairs += pairs; dayAmount += amount;
+      }
+      const dayTotal = document.createElement('div');
+      dayTotal.className = 'order-table-total';
+      dayTotal.innerHTML = `${dayPairs} pairs &middot; $${dayAmount.toLocaleString()}`;
+      dayWrapper.appendChild(dayTotal);
+      logBody.appendChild(dayWrapper);
+    });
+    container.appendChild(logBody);
+
   } else {
-    // Past Orders = 発送データから表示（shipments ベース）
-    if (shipments.length === 0) {
+    // Past Orders = 発送完了データから表示（発送待ちは除外）
+    const pastShipments = shipments.filter(s => !s.pendingShipment);
+    if (pastShipments.length === 0) {
       container.innerHTML = '<div class="no-orders">No past orders.</div>';
       return;
     }
 
     // 発送ごとに表示（新しい順）
-    [...shipments].reverse().forEach(s => {
+    [...pastShipments].reverse().forEach(s => {
       const dateJST = new Date(new Date(s.createdAt).getTime() + 9 * 60 * 60 * 1000);
       const dateStr = dateJST.toISOString().split('T')[0];
       const totalPairsShip = s.items.reduce((sum, i) => sum + i.quantity, 0);
@@ -777,30 +879,16 @@ async function showHistoryTab(tab) {
       const wrapper = document.createElement('div');
       wrapper.className = 'order-table-wrapper';
 
-      // 追跡番号を収集
-      let trackingHtml = '';
-      (s.tracking || []).forEach(t => {
-        const trackUrl = t.carrier && t.carrier.toUpperCase().includes('DHL')
-          ? `https://www.dhl.com/us-en/home/tracking/tracking-express.html?submit=1&tracking-id=${t.trackingNumber}`
-          : t.carrier && t.carrier.toUpperCase().includes('FEDEX')
-          ? `https://www.fedex.com/fedextrack/?trknbr=${t.trackingNumber}`
-          : t.carrier && t.carrier.toUpperCase().includes('UPS')
-          ? `https://www.ups.com/track?tracknum=${t.trackingNumber}`
-          : null;
-        const numHtml = trackUrl
-          ? `<a href="${trackUrl}" target="_blank" class="tracking-link">${t.trackingNumber}</a>`
-          : `<span>${t.trackingNumber}</span>`;
-        trackingHtml += `<div class="tracking-entry">${t.carrier}: ${numHtml}</div>`;
-      });
+      // 追跡番号（横並び表示）
+      const trackingHtml = buildTrackingDisplay(s.tracking || []);
 
       const paidStatus = s.paid
         ? '<span class="paid-badge">Paid</span>'
         : '<span class="unpaid-badge">Unpaid</span>';
       wrapper.innerHTML = `<div class="order-table-header">
         <h4>Shipped: ${dateStr} ${paidStatus}</h4>
-        <div></div>
       </div>
-      ${trackingHtml ? `<div class="tracking-info">${trackingHtml}</div>` : ''}`;
+      ${trackingHtml ? `<div class="tracking-info-inline">${trackingHtml}</div>` : ''}`;
 
       if (unisexItems.length > 0) {
         const { table, pairs, amount } = buildEditableTable(unisexItems, UNISEX_SIZES, 'SIZE (UNISEX)', false, 'history');
@@ -822,6 +910,65 @@ async function showHistoryTab(tab) {
       container.appendChild(wrapper);
     });
   }
+}
+
+// =============================================
+// 追跡番号表示（同一キャリアごとに横並び）
+// =============================================
+function buildTrackingDisplay(tracking) {
+  if (!tracking || tracking.length === 0) return '';
+  // キャリアごとにグルーピング
+  const byCarrier = {};
+  tracking.forEach(t => {
+    const c = t.carrier || 'Other';
+    if (!byCarrier[c]) byCarrier[c] = [];
+    byCarrier[c].push(t.trackingNumber);
+  });
+  // キャリアごとに1行で表示
+  function getTrackUrl(carrier, num) {
+    const c = carrier.toUpperCase();
+    if (c.includes('DHL')) return `https://www.dhl.com/us-en/home/tracking/tracking-express.html?submit=1&tracking-id=${num}`;
+    if (c.includes('FEDEX')) return `https://www.fedex.com/fedextrack/?trknbr=${num}`;
+    if (c.includes('UPS')) return `https://www.ups.com/track?tracknum=${num}`;
+    return null;
+  }
+  return Object.entries(byCarrier).map(([carrier, nums]) => {
+    const links = nums.map(num => {
+      const url = getTrackUrl(carrier, num);
+      return url ? `<a href="${url}" target="_blank" class="tracking-link">${num}</a>` : `<span>${num}</span>`;
+    }).join('&nbsp;&nbsp;');
+    return `<span class="tracking-inline">${carrier}: ${links}</span>`;
+  }).join('&nbsp;&nbsp;|&nbsp;&nbsp;');
+}
+
+// =============================================
+// Order Log 年月フィルター
+// =============================================
+function filterOrderLog() {
+  const year = document.getElementById('order-log-year').value;
+  const month = document.getElementById('order-log-month').value;
+  document.querySelectorAll('.order-log-day').forEach(el => {
+    const elMonth = el.dataset.month; // "YYYY-MM"
+    const elYear = elMonth.substring(0, 4);
+    const elMo = elMonth.substring(5, 7);
+    const yearMatch = elYear === year;
+    const monthMatch = month === 'all' || elMo === month;
+    el.style.display = (yearMatch && monthMatch) ? '' : 'none';
+  });
+}
+
+// 年フィルター変更時に月フィルターを更新
+function updateOrderLogMonthFilter() {
+  const year = document.getElementById('order-log-year').value;
+  const monthSelect = document.getElementById('order-log-month');
+  const months = window._orderLogMonthsByYear[year] || new Set();
+  let html = '<option value="all">All</option>';
+  [...months].sort((a, b) => b.localeCompare(a)).forEach(m => {
+    const label = new Date(year, parseInt(m) - 1).toLocaleDateString('en-US', { month: 'long' });
+    html += `<option value="${m}">${label}</option>`;
+  });
+  monthSelect.innerHTML = html;
+  filterOrderLog();
 }
 
 // =============================================
@@ -955,10 +1102,6 @@ async function loadSectionPasswords() {
     const map = {
       'pw-buyer': 'buyer',
       'pw-seller-top': 'seller-top',
-      'pw-order': 'order',
-      'pw-shipping': 'shipping',
-      'pw-product': 'product',
-      'pw-coupon': 'coupon',
       'pw-settings': 'settings',
       'pw-finance': 'finance'
     };
@@ -976,10 +1119,6 @@ async function saveSectionPasswords() {
   const data = {
     buyer: document.getElementById('pw-buyer').value.trim() || '0000',
     'seller-top': document.getElementById('pw-seller-top').value.trim() || '0000',
-    order: document.getElementById('pw-order').value.trim() || '0000',
-    shipping: document.getElementById('pw-shipping').value.trim() || '0000',
-    product: document.getElementById('pw-product').value.trim() || '0000',
-    coupon: document.getElementById('pw-coupon').value.trim() || '0000',
     settings: document.getElementById('pw-settings').value.trim() || '0000',
     finance: document.getElementById('pw-finance').value.trim() || '0000'
   };
@@ -1064,7 +1203,6 @@ function renderLocations() {
     item.innerHTML = `
       <div>
         <div class="loc-info">${loc.name}</div>
-        <div class="loc-pass">PASS: ${loc.password}</div>
       </div>
       <div class="loc-actions">
         <button class="small-btn" onclick="editLocation('${loc.id}')">編集</button>
@@ -1077,17 +1215,15 @@ function renderLocations() {
 
 async function addLocation() {
   const name = document.getElementById('loc-name').value.trim();
-  const password = document.getElementById('loc-password').value.trim();
-  if (!name || !password) { alert('拠点名とパスワードを入力してください'); return; }
+  if (!name) { alert('拠点名を入力してください'); return; }
   const res = await fetch('/api/settings/locations', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, password })
+    body: JSON.stringify({ name })
   });
   const loc = await res.json();
   currentSettings.locations.push(loc);
   document.getElementById('loc-name').value = '';
-  document.getElementById('loc-password').value = '';
   renderLocations();
 }
 
@@ -1096,15 +1232,12 @@ function editLocation(id) {
   if (!loc) return;
   const newName = prompt('拠点名', loc.name);
   if (newName === null) return;
-  const newPass = prompt('パスワード', loc.password);
-  if (newPass === null) return;
   fetch(`/api/settings/locations/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: newName, password: newPass })
+    body: JSON.stringify({ name: newName })
   }).then(() => {
     loc.name = newName;
-    loc.password = newPass;
     renderLocations();
   });
 }
@@ -1515,12 +1648,12 @@ function enterAdminEdit() {
   editKeyMap = {};
   editProductInfo = {};
 
-  // Current Ordersのデータを取得（発送済みを差し引いた残り）
+  // Current Ordersのデータを取得（発送済みを差し引いた残り。発送待ちは除外）
   const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
   const allItems = [];
   pendingOrders.forEach(o => o.items.forEach(i => allItems.push(i)));
   const orderGroupedRaw = groupItemsBySku(allItems);
-  const shipments = cachedShipments || [];
+  const shipments = (cachedShipments || []).filter(s => !s.pendingShipment);
   const allShippedItems = [];
   shipments.forEach(s => s.items.forEach(i => allShippedItems.push(i)));
   const allShippedGrouped = groupShippedItems(allShippedItems);
@@ -1922,32 +2055,15 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
   const grouped = groupItemsBySku(allItems);
   const purchasedGrouped = groupPurchaseItems(purchases);
 
-  // 発送済アイテムをグループ化
+  // 発送済アイテムをグループ化（発送完了分のみ — 発送待ちは除外）
+  const completedShipments = shipments.filter(s => !s.pendingShipment);
   const shippedItems = [];
-  shipments.forEach(s => s.items.forEach(i => shippedItems.push(i)));
+  completedShipments.forEach(s => s.items.forEach(i => shippedItems.push(i)));
   const shippedGrouped = groupShippedItems(shippedItems);
 
   // ======= SKU表示順の統一 =======
-  // Current Orders のSKU順を基準として、納品済・仕入済・拠点別すべて同じ順で並ぶように固定
-  // Current Orders にないSKUは products マスタの順で末尾に追加
-  const skuOrder = [];
-  grouped.forEach(g => { if (!skuOrder.includes(g.sku)) skuOrder.push(g.sku); });
-  (products || []).forEach(p => {
-    (p.variants || []).forEach(v => {
-      if (!skuOrder.includes(v.sku)) skuOrder.push(v.sku);
-    });
-  });
-  const sortBySkuOrder = (items) => {
-    return [...items].sort((a, b) => {
-      const ia = skuOrder.indexOf(a.sku);
-      const ib = skuOrder.indexOf(b.sku);
-      // どちらも見つからなければ元の順序を維持
-      if (ia === -1 && ib === -1) return 0;
-      if (ia === -1) return 1;
-      if (ib === -1) return -1;
-      return ia - ib;
-    });
-  };
+  // 全セクションでproductsマスタ順（sortItemsBySkuOrder）を使用
+  const sortBySkuOrder = sortItemsBySkuOrder;
 
   // 編集モードの場合は専用レンダリング
   if (adminEditMode) {
@@ -2022,9 +2138,9 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
     currentSettings.locations.forEach(loc => {
       const locPurchases = purchases.filter(p => p.locationId === loc.id);
       const locGrouped = groupPurchaseItems(locPurchases);
-      // この拠点の発送済みを差し引く
+      // この拠点の発送済みを差し引く（発送完了分のみ）
       const locShipped = [];
-      shipments.forEach(s => s.items.forEach(i => {
+      completedShipments.forEach(s => s.items.forEach(i => {
         if (i.locationId === loc.id) locShipped.push(i);
       }));
       const locShippedGrouped = groupShippedItems(locShipped);
@@ -3214,10 +3330,228 @@ async function showFinanceTab(tab) {
   const content = document.getElementById('finance-content');
 
   if (tab === 'overview') {
-    content.innerHTML = '<div class="placeholder-msg"><p>準備中です</p></div>';
+    await renderFinanceOverview(content);
   } else if (tab === 'history') {
     await renderPurchaseHistory(content);
   }
+}
+
+// =============================================
+// 収支管理：概要タブ（月別実績＋発送ごとの収支テーブル）
+// =============================================
+async function renderFinanceOverview(container) {
+  container.innerHTML = '<p>読み込み中...</p>';
+
+  try {
+    // 必要データを並列取得
+    await loadProducts();
+    await fetchExchangeRate();
+    const [shipmentsRes, settingsRes] = await Promise.all([
+      fetch('/api/shipments'), fetch('/api/settings')
+    ]);
+    const allShipments = await shipmentsRes.json();
+    const settings = await settingsRes.json();
+
+    // 収支管理は発送完了分のみ表示（発送待ちは除外）
+    const shipments = allShipments.filter(s => !s.pendingShipment);
+    if (shipments.length === 0) {
+      container.innerHTML = '<div class="no-orders" style="padding:20px">発送データがありません</div>';
+      return;
+    }
+
+    // 収支計算用パラメータ
+    const purchasePriceMap = {};
+    const supplierUrlMap = {};
+    products.forEach(p => {
+      p.variants.forEach(v => {
+        purchasePriceMap[v.sku] = v.purchasePrice || 0;
+        supplierUrlMap[v.sku] = v.supplierUrl || '';
+      });
+    });
+    const coupon = settings.couponPerPair || 0;
+    const customsUnit = settings.customsUnitPrice || 0;
+    const customsPerPair = Math.round(customsUnit * 0.155);
+    const shippingPerPair = settings.shippingPerPair || 0;
+    const fallbackRate = currentExchangeRate - 1; // exchangeRate未保存の発送用フォールバック
+
+    // 商品マスタ情報マップ
+    const productInfoMap = {};
+    products.forEach(p => {
+      p.variants.forEach(v => {
+        productInfoMap[v.sku] = { model: p.model, colorway: v.colorway, price: v.price, sizeType: v.sizeType };
+      });
+    });
+
+    // 発送を月でグルーピング（JST）
+    const monthGroups = {};
+    shipments.forEach(s => {
+      const dateJST = new Date(new Date(s.createdAt).getTime() + 9 * 60 * 60 * 1000);
+      const monthKey = dateJST.toISOString().substring(0, 7); // YYYY-MM
+      if (!monthGroups[monthKey]) monthGroups[monthKey] = [];
+      monthGroups[monthKey].push(s);
+    });
+
+    // 年・月フィルター選択肢
+    const sortedMonthKeys = Object.keys(monthGroups).sort((a, b) => b.localeCompare(a));
+    const yearSet = new Set();
+    const monthSetByYear = {};
+    sortedMonthKeys.forEach(mk => {
+      const y = mk.substring(0, 4);
+      const m = mk.substring(5, 7);
+      yearSet.add(y);
+      if (!monthSetByYear[y]) monthSetByYear[y] = new Set();
+      monthSetByYear[y].add(m);
+    });
+    const yearOptions = [...yearSet].sort((a, b) => b.localeCompare(a));
+    const initialYear = yearOptions[0];
+
+    // フィルターHTML
+    let yearHtml = '';
+    yearOptions.forEach(y => { yearHtml += `<option value="${y}">${y}</option>`; });
+    let monthHtml = '<option value="all">All</option>';
+    if (initialYear && monthSetByYear[initialYear]) {
+      [...monthSetByYear[initialYear]].sort((a, b) => b.localeCompare(a)).forEach(m => {
+        const label = new Date(initialYear, parseInt(m) - 1).toLocaleDateString('en-US', { month: 'long' });
+        monthHtml += `<option value="${m}">${label}</option>`;
+      });
+    }
+    window._financeMonthsByYear = monthSetByYear;
+
+    container.innerHTML = '';
+
+    // フィルターバー
+    const filterBar = document.createElement('div');
+    filterBar.className = 'order-log-header';
+    filterBar.innerHTML = `
+      <h3>月別実績</h3>
+      <div class="order-log-filters">
+        <select id="finance-year" onchange="updateFinanceMonthFilter()">${yearHtml}</select>
+        <select id="finance-month" onchange="filterFinanceOverview()">${monthHtml}</select>
+      </div>`;
+    container.appendChild(filterBar);
+
+    // 月ごとにセクション生成
+    const overviewBody = document.createElement('div');
+    overviewBody.id = 'finance-overview-body';
+
+    sortedMonthKeys.forEach(monthKey => {
+      const monthShipments = monthGroups[monthKey];
+      const [y, m] = monthKey.split('-');
+      const monthLabel = new Date(y, parseInt(m) - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
+      const monthSection = document.createElement('div');
+      monthSection.className = 'finance-month-section';
+      monthSection.dataset.year = y;
+      monthSection.dataset.month = m;
+
+      // --- 月合計：各発送の固定レートを使って合算 ---
+      // 発送ごとの収支を先に計算し、その合計を月合計とする
+      const shipmentResults = [];
+      const sortedShipments = [...monthShipments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      sortedShipments.forEach(s => {
+        const shipRate = s.exchangeRate ? (s.exchangeRate - 1) : fallbackRate;
+        const sItems = [];
+        s.items.forEach(i => {
+          const info = productInfoMap[i.sku] || {};
+          sItems.push({
+            sku: i.sku, size: i.size, quantity: i.quantity,
+            sizeType: i.sizeType || info.sizeType || 'unisex',
+            model: i.model || info.model || '',
+            colorway: i.colorway || info.colorway || '',
+            price: info.price || 0
+          });
+        });
+        const grouped = groupItemsBySku(sItems);
+        grouped.forEach(item => { if (!item.price && productInfoMap[item.sku]) item.price = productInfoMap[item.sku].price; });
+        const result = buildFinanceTable(sortItemsBySkuOrder(grouped), shipRate, purchasePriceMap, supplierUrlMap, coupon, customsPerPair, shippingPerPair);
+        shipmentResults.push({ shipment: s, result, rate: shipRate });
+      });
+
+      // 月合計 = 各発送のtotalsを合算
+      const monthTotals = { pairs: 0, amountUsd: 0, purchase: 0, couponTotal: 0, purchaseTotal: 0, customs: 0, shipping: 0, revenue: 0, profit: 0 };
+      shipmentResults.forEach(({ result }) => {
+        Object.keys(monthTotals).forEach(k => { monthTotals[k] += result.totals[k]; });
+      });
+
+      const monthHeader = document.createElement('div');
+      monthHeader.className = 'order-table-header';
+      monthHeader.innerHTML = `<h4>${monthLabel} — Monthly Total</h4>`;
+      monthSection.appendChild(monthHeader);
+
+      const monthTotalsDiv = buildFinanceTotals(monthTotals);
+      const monthWrapper = document.createElement('div');
+      monthWrapper.className = 'order-table-wrapper';
+      monthWrapper.appendChild(monthTotalsDiv);
+      monthSection.appendChild(monthWrapper);
+
+      // --- 各発送ごとのテーブル（事前計算済みshipmentResultsを使用）---
+      shipmentResults.forEach(({ shipment: s, result, rate: shipRate }) => {
+        const dateJST = new Date(new Date(s.createdAt).getTime() + 9 * 60 * 60 * 1000);
+        const dateStr = dateJST.toISOString().split('T')[0];
+        const shipPairs = s.items.reduce((sum, i) => sum + i.quantity, 0);
+
+        // 支払ステータス
+        const paidBadge = s.paid
+          ? '<span class="paid-badge">Paid</span>'
+          : '<span class="unpaid-badge">Unpaid</span>';
+
+        // 追跡番号（同一キャリアごとに横並び）
+        const trackingHtml = buildTrackingDisplay(s.tracking || []);
+
+        // 為替レート表示
+        const rateDisplay = s.exchangeRate
+          ? `USD/JPY: ¥${shipRate.toFixed(1)}（実勢 ¥${s.exchangeRate.toFixed(1)} - ¥1）`
+          : `USD/JPY: ¥${shipRate.toFixed(1)}（※発送時レート未記録）`;
+
+        const shipHeader = document.createElement('div');
+        shipHeader.className = 'order-table-header';
+        shipHeader.innerHTML = `<h4>Shipped: ${dateStr}（${shipPairs}足）${paidBadge}</h4>
+          ${trackingHtml ? `<div class="tracking-info-inline">${trackingHtml}</div>` : ''}
+          <div class="exchange-rate-info">${rateDisplay}</div>`;
+
+        const shipWrapper = document.createElement('div');
+        shipWrapper.className = 'order-table-wrapper';
+        shipWrapper.style.marginTop = '16px';
+        shipWrapper.appendChild(shipHeader);
+        shipWrapper.appendChild(result.table);
+        shipWrapper.appendChild(buildFinanceTotals(result.totals));
+        monthSection.appendChild(shipWrapper);
+      });
+
+      overviewBody.appendChild(monthSection);
+    });
+
+    container.appendChild(overviewBody);
+  } catch (e) {
+    container.innerHTML = '<p style="color:red;">読み込みエラー</p>';
+    console.error(e);
+  }
+}
+
+// 概要タブのフィルター
+function filterFinanceOverview() {
+  const year = document.getElementById('finance-year').value;
+  const month = document.getElementById('finance-month').value;
+  document.querySelectorAll('.finance-month-section').forEach(el => {
+    const elYear = el.dataset.year;
+    const elMonth = el.dataset.month;
+    const yearMatch = elYear === year;
+    const monthMatch = month === 'all' || elMonth === month;
+    el.style.display = (yearMatch && monthMatch) ? '' : 'none';
+  });
+}
+
+function updateFinanceMonthFilter() {
+  const year = document.getElementById('finance-year').value;
+  const monthSelect = document.getElementById('finance-month');
+  const months = window._financeMonthsByYear[year] || new Set();
+  let html = '<option value="all">All</option>';
+  [...months].sort((a, b) => b.localeCompare(a)).forEach(m => {
+    const label = new Date(year, parseInt(m) - 1).toLocaleDateString('en-US', { month: 'long' });
+    html += `<option value="${m}">${label}</option>`;
+  });
+  monthSelect.innerHTML = html;
+  filterFinanceOverview();
 }
 
 async function renderPurchaseHistory(container) {
@@ -3412,7 +3746,13 @@ async function renderShippingPage(container) {
 
 // SKU順ソート用ヘルパー（グローバルで使用）
 function sortItemsBySkuOrder(items) {
-  // productsマスタの順番を基準にソート
+  // モデル優先順位: MEXICO 66 → MEXICO 66 SD → その他
+  const MODEL_PRIORITY = ['MEXICO 66', 'MEXICO 66 SD'];
+  function getModelRank(model) {
+    const idx = MODEL_PRIORITY.indexOf(model);
+    return idx !== -1 ? idx : MODEL_PRIORITY.length;
+  }
+  // productsマスタの順番を基準にソート（同一モデル内の順序用）
   const skuOrder = [];
   (products || []).forEach(p => {
     (p.variants || []).forEach(v => {
@@ -3420,6 +3760,11 @@ function sortItemsBySkuOrder(items) {
     });
   });
   return [...items].sort((a, b) => {
+    // まずモデル優先順位で比較
+    const ma = getModelRank(a.model);
+    const mb = getModelRank(b.model);
+    if (ma !== mb) return ma - mb;
+    // 同一モデル内はproductsマスタ順
     const ia = skuOrder.indexOf(a.sku);
     const ib = skuOrder.indexOf(b.sku);
     if (ia === -1 && ib === -1) return 0;
@@ -3642,7 +3987,14 @@ function showShippingModal(locations) {
   let html = `<div class="ship-summary"><p><strong>${locNames}</strong> から <strong>${totalPairs}足</strong> を発送</p></div>`;
   html += `<div class="form-row"><label>オーダー番号（カンマ区切りで複数可）</label>`;
   html += `<input type="text" id="ship-order-nums" placeholder="例: 260329, 260330"></div>`;
-  html += `<div class="ship-tracking-section"><label>追跡番号</label>`;
+  // 発送待ちチェックボックス
+  html += `<div style="margin:12px 0;">
+    <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;">
+      <input type="checkbox" id="ship-pending-check" onchange="togglePendingShipment()" style="margin:0;">
+      発送待ち状態にする（追跡番号なしで登録）
+    </label>
+  </div>`;
+  html += `<div class="ship-tracking-section" id="ship-tracking-section"><label>追跡番号</label>`;
   html += `<div id="ship-tracking-list">${buildTrackingRow(0)}</div>`;
   html += `<button class="secondary-btn" onclick="addTrackingRow()" style="margin-top:8px">+ 追跡番号を追加</button></div>`;
   html += `<div class="form-actions" style="margin-top:16px;">`;
@@ -3680,16 +4032,26 @@ function closeShippingModal() {
   document.getElementById('modal-shipping').classList.remove('active');
 }
 
+// 発送待ちチェック切り替え（追跡番号セクションの表示/非表示）
+function togglePendingShipment() {
+  const checked = document.getElementById('ship-pending-check').checked;
+  const trackingSection = document.getElementById('ship-tracking-section');
+  trackingSection.style.display = checked ? 'none' : '';
+}
+
 async function finalizeShipment() {
+  const isPending = document.getElementById('ship-pending-check').checked;
   const tracking = [];
-  for (let i = 0; i < trackingRowCount; i++) {
-    const carrierEl = document.getElementById(`ship-carrier-${i}`);
-    const trackEl = document.getElementById(`ship-tracking-${i}`);
-    if (carrierEl && trackEl && trackEl.value.trim()) {
-      tracking.push({ carrier: carrierEl.value, trackingNumber: trackEl.value.trim() });
+  if (!isPending) {
+    for (let i = 0; i < trackingRowCount; i++) {
+      const carrierEl = document.getElementById(`ship-carrier-${i}`);
+      const trackEl = document.getElementById(`ship-tracking-${i}`);
+      if (carrierEl && trackEl && trackEl.value.trim()) {
+        tracking.push({ carrier: carrierEl.value, trackingNumber: trackEl.value.trim() });
+      }
     }
+    if (tracking.length === 0) { alert('追跡番号を入力してください'); return; }
   }
-  if (tracking.length === 0) { alert('追跡番号を入力してください'); return; }
   const orderNumsStr = document.getElementById('ship-order-nums').value.trim();
   const orderNumbers = orderNumsStr ? orderNumsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
   const locations = JSON.parse(document.getElementById('shipping-modal-body').dataset.locations);
@@ -3697,7 +4059,7 @@ async function finalizeShipment() {
     const shipRes = await fetch('/api/shipments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: shipItems, locations, tracking, orderNumbers })
+      body: JSON.stringify({ items: shipItems, locations, tracking, orderNumbers, exchangeRate: currentExchangeRate, pendingShipment: isPending })
     });
     const shipResult = await shipRes.json();
 
@@ -3807,7 +4169,8 @@ async function renderShipmentHistory(container) {
       });
       const locNames = s.locations.map(l => l.name).join(' + ');
 
-      html += `<div class="shipment-card" id="shipment-card-${s.id}">`;
+      const isPending = s.pendingShipment;
+      html += `<div class="shipment-card ${isPending ? 'shipment-pending' : ''}" id="shipment-card-${s.id}">`;
 
       // まとめ選択チェックボックス（非表示デフォルト）
       html += `<span class="merge-check" id="merge-check-${s.id}" style="display:none;">
@@ -3816,19 +4179,29 @@ async function renderShipmentHistory(container) {
 
       // ヘッダー: 合計を上に表示
       html += `<div class="shipment-header">`;
-      html += `<div class="shipment-date">${dateStr} ${timeStr}</div>`;
-      html += `<div class="shipment-summary">${locNames} / ${totalPairs}足 / $${totalSalesAmount.toLocaleString()}</div>`;
-      html += `<div class="shipment-tracking-brief">`;
-      s.tracking.forEach(t => {
-        html += `<span class="tracking-badge">${t.carrier}: ${t.trackingNumber}</span>`;
-      });
+      html += `<div class="shipment-date">${dateStr} ${timeStr}`;
+      if (isPending) html += ` <span class="pending-ship-badge">発送待ち</span>`;
+      else html += ` <span class="shipped-badge">発送完了</span>`;
       html += `</div>`;
+      html += `<div class="shipment-summary">${locNames} / ${totalPairs}足 / $${totalSalesAmount.toLocaleString()}</div>`;
+      if (s.tracking && s.tracking.length > 0) {
+        html += `<div class="shipment-tracking-brief">`;
+        s.tracking.forEach(t => {
+          html += `<span class="tracking-badge">${t.carrier}: ${t.trackingNumber}</span>`;
+        });
+        html += `</div>`;
+      }
       if (s.orderNumbers && s.orderNumbers.length > 0) {
         html += `<div class="shipment-orders">Order: ${s.orderNumbers.join(', ')}</div>`;
       }
-      // 支払状態ボタン + 追跡番号編集ボタン
+      // 発送状態切替ボタン + 支払状態ボタン + 追跡番号編集ボタン
       const isPaid = s.paid;
       html += `<div class="shipment-actions" style="margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;">`;
+      if (isPending) {
+        html += `<button class="small-btn shipped-btn" onclick="toggleShipmentPending('${s.id}', false)">発送完了にする</button>`;
+      } else {
+        html += `<button class="small-btn pending-btn" onclick="toggleShipmentPending('${s.id}', true)">発送待ちに戻す</button>`;
+      }
       html += `<button class="small-btn ${isPaid ? 'paid-btn' : 'unpaid-btn'}" onclick="toggleShipmentPaid('${s.id}', ${!isPaid})">${isPaid ? '✅ 支払済み' : '❌ 未払い → 支払済みにする'}</button>`;
       html += `<button class="small-btn" onclick="editShipmentTracking('${s.id}')">追跡番号を編集</button>`;
       html += `</div>`;
@@ -3882,6 +4255,23 @@ async function toggleShipmentPaid(shipmentId, paid) {
     // 履歴を再描画
     const historyContent = document.getElementById('shipping-history-content');
     if (historyContent) await renderShipmentHistory(historyContent);
+  } catch (e) {
+    alert('通信エラーが発生しました');
+  }
+}
+
+// 発送待ち状態を切り替え
+async function toggleShipmentPending(shipmentId, pending) {
+  try {
+    const res = await fetch(`/api/shipments/${shipmentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pendingShipment: pending })
+    });
+    if (!res.ok) { alert('更新に失敗しました'); return; }
+    showToast(pending ? '発送待ちに変更しました' : '発送完了にしました');
+    const content = document.getElementById('shipping-content');
+    if (content) await renderShipmentHistory(content);
   } catch (e) {
     alert('通信エラーが発生しました');
   }

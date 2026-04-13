@@ -588,37 +588,45 @@ body {
   white-space: nowrap;
 }
 
-/* 固定幅の列 */
+/* 列の最小幅を固定（大画面では自然に広がる） */
 .order-spreadsheet .col-no {
+  min-width: 32px;
   width: 32px;
 }
 .order-spreadsheet .col-product {
   text-align: left;
-  width: 140px;
+  min-width: 110px;
+  width: 110px;
 }
 .order-spreadsheet .col-color {
   text-align: left;
-  width: 110px;
+  min-width: 120px;
+  width: 120px;
 }
 .order-spreadsheet .col-sku {
-  width: 120px;
+  min-width: 110px;
+  width: 110px;
   color: #666;
   font-family: monospace;
   font-size: 12px;
 }
 .order-spreadsheet .col-qty {
-  width: 44px;
+  min-width: 36px;
+  width: 36px;
   font-weight: 700;
 }
 .order-spreadsheet .col-price {
-  width: 64px;
+  min-width: 56px;
+  width: 56px;
 }
 .order-spreadsheet .col-amount {
-  width: 72px;
+  min-width: 64px;
+  width: 64px;
   font-weight: 700;
 }
 .order-spreadsheet .col-size {
-  width: 56px;
+  min-width: 46px;
+  width: 46px;
   font-size: 10px;
 }
 .order-spreadsheet .col-size-group {
@@ -1148,7 +1156,7 @@ body {
 .finance-spreadsheet .col-qty { width: 36px; font-weight: 700; }
 .finance-spreadsheet .col-price { width: 52px; }
 .finance-spreadsheet .col-amount { width: 60px; font-weight: 700; }
-.finance-spreadsheet .col-size { width: 44px; font-size: 10px; }
+.finance-spreadsheet .col-size { min-width: 46px; width: 46px; font-size: 10px; }
 .finance-spreadsheet .col-size-group { background: #e8e8e8; }
 .finance-spreadsheet td.col-size { border: 1px dashed #ddd; }
 .finance-spreadsheet td.col-size.has-value { font-weight: 700; color: #1565c0; }
@@ -2567,6 +2575,95 @@ details[open] > .shipment-loc-summary::before {
   color: #fff !important;
   border: none !important;
 }
+/* 発送待ち・発送完了バッジ */
+.pending-ship-badge {
+  display: inline-block;
+  background: #f39c12;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.shipped-badge {
+  display: inline-block;
+  background: #27ae60;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.shipment-pending {
+  border-left: 4px solid #f39c12;
+}
+.shipped-btn {
+  background: #27ae60 !important;
+  color: #fff !important;
+  border: none !important;
+}
+.pending-btn {
+  background: #f39c12 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* =============================================
+   Order Log（注文日ごとの一覧表）
+   ============================================= */
+.order-log-section {
+  margin-top: 28px;
+}
+.order-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  margin-bottom: 12px;
+}
+.order-log-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+.order-log-filters {
+  display: flex;
+  gap: 6px;
+}
+.order-log-filters select {
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+}
+.order-log-day {
+  margin-top: 12px;
+}
+
+/* 追跡番号横並び表示 */
+.tracking-info-inline {
+  font-size: 13px;
+  color: #555;
+  padding: 4px 0;
+}
+.tracking-inline {
+  white-space: nowrap;
+}
+
+/* 収支管理 概要タブ */
+.exchange-rate-info {
+  font-size: 13px;
+  color: #666;
+  padding: 8px 4px;
+  margin-bottom: 8px;
+}
+.finance-month-section {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
 
 /* =============================================
    モバイル対応
@@ -2585,8 +2682,7 @@ details[open] > .shipment-loc-summary::before {
 }
 
 /* テーブルを最小幅で固定して縮小させない */
-.finance-spreadsheet table,
-.order-spreadsheet table {
+.finance-spreadsheet table {
   min-width: 800px;
 }
 

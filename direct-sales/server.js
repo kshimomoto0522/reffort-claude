@@ -759,7 +759,7 @@ app.get('/api/shipped-items', (req, res) => {
   const purchases = readJSON(PURCHASES_FILE);
   const shipments = readJSON(SHIPMENTS_FILE);
 
-  // 発送済の数量を集計 {sku: {size: qty}}
+  // 発送済の数量を集計 {sku: {size: qty}}（発送待ちも含む — 在庫からは差し引く）
   const shippedMap = {};
   shipments.forEach(s => {
     s.items.forEach(item => {
@@ -818,8 +818,10 @@ app.post('/api/shipments', (req, res) => {
     id: Date.now().toString(),
     items: req.body.items, // [{sku, model, colorway, size, quantity, sizeType, locationId, locationName}]
     locations: req.body.locations, // [{id, name}] 関連拠点
-    tracking: req.body.tracking, // [{carrier, trackingNumber}]
+    tracking: req.body.tracking || [], // [{carrier, trackingNumber}]
     orderNumbers: req.body.orderNumbers || [], // 関連オーダー番号
+    exchangeRate: req.body.exchangeRate || null, // 発送時点の為替レート（固定用）
+    pendingShipment: req.body.pendingShipment || false, // 発送待ち状態
     createdAt: new Date().toISOString()
   };
   shipments.push(shipment);
@@ -867,10 +869,11 @@ app.put('/api/shipments/:id', (req, res) => {
   const shipments = readJSON(SHIPMENTS_FILE);
   const idx = shipments.findIndex(s => s.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Shipment not found' });
-  // tracking, orderNumbers, paid を更新可能
+  // tracking, orderNumbers, paid, pendingShipment を更新可能
   if (req.body.tracking) shipments[idx].tracking = req.body.tracking;
   if (req.body.orderNumbers) shipments[idx].orderNumbers = req.body.orderNumbers;
   if (typeof req.body.paid !== 'undefined') shipments[idx].paid = req.body.paid;
+  if (typeof req.body.pendingShipment !== 'undefined') shipments[idx].pendingShipment = req.body.pendingShipment;
   writeJSON(SHIPMENTS_FILE, shipments);
   res.json(shipments[idx]);
 });
