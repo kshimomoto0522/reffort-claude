@@ -1743,6 +1743,24 @@ function mergeGroupedMax(groupA, groupB) {
   return Object.values(map);
 }
 
+// 仕入済み + 未完了指示を加算（二重計上なし前提）
+function mergeGroupedAdd(groupA, groupB) {
+  const map = {};
+  groupA.forEach(item => {
+    if (!map[item.sku]) map[item.sku] = { model: item.model, colorway: item.colorway, sku: item.sku, sizeType: item.sizeType, sizes: {} };
+    Object.entries(item.sizes).forEach(([s, q]) => {
+      map[item.sku].sizes[s] = (map[item.sku].sizes[s] || 0) + q;
+    });
+  });
+  groupB.forEach(item => {
+    if (!map[item.sku]) map[item.sku] = { model: item.model, colorway: item.colorway, sku: item.sku, sizeType: item.sizeType, sizes: {} };
+    Object.entries(item.sizes).forEach(([s, q]) => {
+      map[item.sku].sizes[s] = (map[item.sku].sizes[s] || 0) + q;
+    });
+  });
+  return Object.values(map);
+}
+
 // 商品リストのマージ（オーダー商品 + 拠点商品）
 function mergeProductLists(list1, list2) {
   const merged = list1.map(item => ({
@@ -1937,10 +1955,10 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
     return;
   }
 
-  // 指示済みアイテムを計算（ビルディング中のブロックも含む）
-  const instructedGrouped = getInstructedIncludingBuilding();
-  // 割り当て済み = max(指示済み, 仕入済み) — 拠点に直接追加した分も反映
-  const assignedGrouped = mergeGroupedMax(instructedGrouped, purchasedGrouped);
+  // 未完了指示アイテムを計算（ビルディング中のブロックも含む）
+  const pendingInstructed = getInstructedIncludingBuilding();
+  // 割り当て済み = 仕入済み + 未完了指示（加算。completedバッチはpurchasesに含まれるため二重計上なし）
+  const assignedGrouped = mergeGroupedAdd(purchasedGrouped, pendingInstructed);
   // 未指示 = オーダー - 割り当て済み
   const unassigned = calcRemaining(grouped, assignedGrouped);
 
@@ -2141,11 +2159,11 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
   }
 }
 
-// 指示済みアイテムを計算（全アクティブ指示のアイテムをグルーピング）
+// 未完了指示アイテムを計算（pendingバッチのみ。completedバッチはpurchasesに含まれるため除外）
 function calcInstructedItems(instructions) {
   const map = {};
   instructions.filter(i => i.status === 'active').forEach(inst => {
-    inst.batches.forEach(batch => {
+    inst.batches.filter(b => b.status === 'pending').forEach(batch => {
       batch.items.forEach(item => {
         if (!map[item.sku]) {
           map[item.sku] = { model: item.model, colorway: item.colorway, sku: item.sku, sizeType: item.sizeType, sizes: {} };
