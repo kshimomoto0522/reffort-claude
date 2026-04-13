@@ -91,31 +91,28 @@ app.post('/api/auth', (req, res) => {
   const { role, password } = req.body;
   const PASSWORDS = getSectionPasswords();
 
-  // バイヤー認証
-  if (role === 'buyer') {
-    if (PASSWORDS.buyer !== password) {
-      return res.status(401).json({ error: 'Wrong password' });
-    }
-    return res.json({ success: true, role: 'buyer' });
-  }
-
-  // セラー各セクション認証
-  if (PASSWORDS[role] && PASSWORDS[role] === password) {
+  // パスワード不要のセクション（セラーメニュー内の各ページ + 仕入拠点）
+  const noPasswordRoles = ['order', 'shipping', 'product', 'coupon'];
+  if (noPasswordRoles.includes(role)) {
     return res.json({ success: true, role });
   }
 
-  // 仕入拠点認証（拠点ID＋パスワードで認証）
+  // 仕入拠点認証（パスワード不要 — 拠点選択のみ）
   if (role === 'purchase') {
     const { locationId } = req.body;
     const settings = readJSON(SETTINGS_FILE, { locations: [] });
-    // 拠点IDが指定されていればその拠点で認証
     const location = locationId
-      ? settings.locations.find(l => l.id === locationId && l.password === password)
-      : settings.locations.find(l => l.password === password);
+      ? settings.locations.find(l => l.id === locationId)
+      : settings.locations[0];
     if (location) {
       return res.json({ success: true, role: 'purchase', locationId: location.id, locationName: location.name });
     }
-    return res.status(401).json({ error: 'Wrong password' });
+    return res.status(401).json({ error: '拠点が見つかりません' });
+  }
+
+  // パスワード必要なセクション（buyer, seller-top, settings, finance）
+  if (PASSWORDS[role] && PASSWORDS[role] === password) {
+    return res.json({ success: true, role });
   }
 
   return res.status(401).json({ error: 'Wrong password' });
@@ -533,6 +530,16 @@ function expireOldInstructions() {
     (inst.batches || []).forEach(b => {
       if (b.status === 'expired') { b.status = 'pending'; changed = true; }
     });
+    // completedAt未設定の完了指示にバッチのcompletedAtから補完
+    if (inst.status === 'completed' && !inst.completedAt) {
+      const completedAts = (inst.batches || [])
+        .filter(b => b.completedAt)
+        .map(b => new Date(b.completedAt).getTime());
+      if (completedAts.length > 0) {
+        inst.completedAt = new Date(Math.max(...completedAts)).toISOString();
+        changed = true;
+      }
+    }
   });
   if (changed) writeJSON(INSTRUCTIONS_FILE, instructions);
   return instructions;
@@ -544,12 +551,30 @@ app.get('/api/instructions', (req, res) => {
   res.json(instructions);
 });
 
-// 特定拠点のアクティブな仕入指示を取得（期限切れチェック付き）
+// 特定拠点のアクティブな仕入指示を取得（日次サイクル制御付き）
+// 仕入1完了後、次の仕入2は翌日0時(JST)まで表示しない
 app.get('/api/instructions/location/:locationId', (req, res) => {
   const instructions = expireOldInstructions();
-  const active = instructions.filter(i =>
-    i.locationId === req.params.locationId && i.status === 'active'
+  const locInsts = instructions.filter(i => i.locationId === req.params.locationId);
+
+  // 今日のJST 0:00をUTCで算出（JST = UTC+9）
+  const now = new Date();
+  const jstMs = now.getTime() + 9 * 60 * 60 * 1000;
+  const jstDate = new Date(jstMs);
+  jstDate.setUTCHours(0, 0, 0, 0);
+  const todayMidnightUTC = new Date(jstDate.getTime() - 9 * 60 * 60 * 1000);
+
+  // この拠点で今日(JST)完了した指示があるか確認
+  const completedToday = locInsts.some(i =>
+    i.status === 'completed' && i.completedAt && new Date(i.completedAt) >= todayMidnightUTC
   );
+
+  // 今日完了済みなら次の指示は明日まで表示しない
+  if (completedToday) {
+    return res.json([]);
+  }
+
+  const active = locInsts.filter(i => i.status === 'active');
   res.json(active);
 });
 
@@ -583,9 +608,10 @@ app.post('/api/instructions/:instructionId/batches/:batchId/complete', (req, res
   batch.status = 'completed';
   batch.completedAt = new Date().toISOString();
 
-  // 全バッチ完了なら指示全体も完了
+  // 全バッチ完了なら指示全体も完了（完了日時を記録）
   if (inst.batches.every(b => b.status === 'completed')) {
     inst.status = 'completed';
+    inst.completedAt = new Date().toISOString();
   }
 
   writeJSON(INSTRUCTIONS_FILE, instructions);
@@ -623,6 +649,45 @@ app.post('/api/instructions/:instructionId/batches/:batchId/complete', (req, res
   }
 
   res.json({ instruction: inst, batch });
+});
+
+// バッチ削除（仕入済みの場合はpurchasesからも削除）
+app.delete('/api/instructions/:instructionId/batches/:batchId', (req, res) => {
+  const instructions = readJSON(INSTRUCTIONS_FILE);
+  const inst = instructions.find(i => i.id === req.params.instructionId);
+  if (!inst) return res.status(404).json({ error: 'Instruction not found' });
+
+  const batchIdx = inst.batches.findIndex(b => b.id === req.params.batchId);
+  if (batchIdx === -1) return res.status(404).json({ error: 'Batch not found' });
+
+  const batch = inst.batches[batchIdx];
+
+  // バッチが完了済みの場合、対応するpurchaseレコードも削除
+  if (batch.status === 'completed') {
+    const purchases = readJSON(PURCHASES_FILE);
+    const filtered = purchases.filter(p => !(p.instructionId === inst.id && p.batchId === batch.id));
+    writeJSON(PURCHASES_FILE, filtered);
+  }
+
+  // バッチを削除
+  inst.batches.splice(batchIdx, 1);
+
+  // バッチが0件なら指示全体を削除
+  if (inst.batches.length === 0) {
+    const instIdx = instructions.findIndex(i => i.id === inst.id);
+    instructions.splice(instIdx, 1);
+  } else {
+    // 残りのバッチが全完了なら指示も完了（完了日時を記録）
+    if (inst.batches.every(b => b.status === 'completed')) {
+      inst.status = 'completed';
+      inst.completedAt = new Date().toISOString();
+    } else {
+      inst.status = 'active';
+    }
+  }
+
+  writeJSON(INSTRUCTIONS_FILE, instructions);
+  res.json({ success: true });
 });
 
 // 仕入指示の順番を変更（管理者用）

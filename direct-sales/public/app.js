@@ -121,21 +121,27 @@ function requestNotificationPermission() {
   }
 }
 
+// パスワード不要のセクション
+const NO_PASSWORD_ROLES = ['order', 'shipping', 'product', 'coupon'];
+
 // セラーメニューからログイン画面へ
 function showSellerLogin(target) {
   loginTarget = target;
 
-  // 仕入は拠点選択画面を表示
+  // 仕入は拠点選択画面を表示（パスワード不要だが拠点選択が必要）
   if (target === 'purchase') {
     showPurchaseLocations();
     return;
   }
 
+  // パスワード不要のセクションはログイン画面をスキップ
+  if (NO_PASSWORD_ROLES.includes(target)) {
+    currentRole = target;
+    autoLogin(target);
+    return;
+  }
+
   const titles = {
-    'seller-top': 'For Sellers',
-    order: 'オーダー管理',
-    product: '商品登録',
-    coupon: 'クーポン管理',
     settings: '詳細設定',
     finance: '収支管理'
   };
@@ -145,6 +151,28 @@ function showSellerLogin(target) {
   document.getElementById('login-error').textContent = '';
   showScreen('screen-login');
   setTimeout(() => document.getElementById('login-password').focus(), 100);
+}
+
+// パスワード不要セクション用の自動ログイン
+async function autoLogin(role) {
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role, password: '' })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    loginTarget = role;
+    // doLogin()と同じルーティング
+    switch (role) {
+      case 'order': startOrderPolling(); await showOrderAdmin(); break;
+      case 'shipping': await showShipping(); break;
+      case 'product': await showProductAdmin(); break;
+      case 'coupon': await showCouponAdmin(); break;
+      default: goTop();
+    }
+  } catch (e) { /* fallback: show login screen */ }
 }
 
 // 仕入拠点選択画面
@@ -160,15 +188,21 @@ async function showPurchaseLocations() {
       const btn = document.createElement('button');
       btn.className = 'menu-btn';
       btn.textContent = loc.name;
-      btn.onclick = () => {
+      btn.onclick = async () => {
         currentRole = 'purchase';
         loginTarget = 'purchase';
-        pendingPurchaseLocId = loc.id; // 選択した拠点IDを保持
-        document.getElementById('login-title').textContent = `仕入 - ${loc.name}`;
-        document.getElementById('login-password').value = '';
-        document.getElementById('login-error').textContent = '';
-        showScreen('screen-login');
-        setTimeout(() => document.getElementById('login-password').focus(), 100);
+        pendingPurchaseLocId = loc.id;
+        // パスワード不要 — 拠点選択で直接ログイン
+        try {
+          const res = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: 'purchase', password: '', locationId: loc.id })
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          showPurchasePage(data.locationId, data.locationName);
+        } catch (e) { alert('通信エラー'); }
       };
       list.appendChild(btn);
     });
@@ -176,10 +210,17 @@ async function showPurchaseLocations() {
   showScreen('screen-purchase-locations');
 }
 
-// バイヤーログイン表示
+// バイヤー/セラーログイン表示
 function showLogin(role) {
   currentRole = role;
   loginTarget = role;
+
+  // パスワード不要のセクションはスキップ
+  if (NO_PASSWORD_ROLES.includes(role)) {
+    autoLogin(role);
+    return;
+  }
+
   document.getElementById('login-title').textContent =
     role === 'buyer' ? 'Buyer Login' : 'Seller Login';
   document.getElementById('login-password').value = '';
@@ -635,8 +676,16 @@ async function showHistoryTab(tab) {
     });
     const grouped = groupItemsBySku(allItems);
 
-    // 発送済を差し引いた残りを表示
-    const currentItems = calcRemaining(grouped, shippedGrouped);
+    // 発送済を差し引いた残りを表示（バイヤー側はマイナスを除外）
+    const currentItemsRaw = calcRemaining(grouped, shippedGrouped);
+    // マイナス値を除外（発送超過分はバイヤーに見せない）
+    const currentItems = currentItemsRaw.map(item => {
+      const cleaned = { ...item, sizes: {} };
+      Object.entries(item.sizes).forEach(([size, qty]) => {
+        if (qty > 0) cleaned.sizes[size] = qty;
+      });
+      return cleaned;
+    }).filter(item => Object.keys(item.sizes).length > 0);
 
     if (currentItems.length === 0) {
       container.innerHTML = '<div class="no-orders">All orders have been shipped.</div>';
@@ -1466,11 +1515,16 @@ function enterAdminEdit() {
   editKeyMap = {};
   editProductInfo = {};
 
-  // Current Ordersのデータを取得
+  // Current Ordersのデータを取得（発送済みを差し引いた残り）
   const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
   const allItems = [];
   pendingOrders.forEach(o => o.items.forEach(i => allItems.push(i)));
-  const orderGrouped = groupItemsBySku(allItems);
+  const orderGroupedRaw = groupItemsBySku(allItems);
+  const shipments = cachedShipments || [];
+  const allShippedItems = [];
+  shipments.forEach(s => s.items.forEach(i => allShippedItems.push(i)));
+  const allShippedGrouped = groupShippedItems(allShippedItems);
+  const orderGrouped = calcRemaining(orderGroupedRaw, allShippedGrouped);
 
   // 商品情報を保存
   orderGrouped.forEach(item => {
@@ -1494,15 +1548,11 @@ function enterAdminEdit() {
   });
 
   // 各拠点の編集キーを登録
-  const shipments = cachedShipments || [];
-  const shippedItems = [];
-  shipments.forEach(s => s.items.forEach(i => shippedItems.push(i)));
-
   if (currentSettings.locations) {
     currentSettings.locations.forEach(loc => {
       const locPurchases = cachedPurchases.filter(p => p.locationId === loc.id);
       const locGrouped = groupPurchaseItems(locPurchases);
-      const locShipped = shippedItems.filter(i => i.locationId === loc.id);
+      const locShipped = allShippedItems.filter(i => i.locationId === loc.id);
       const locShippedGrouped = groupShippedItems(locShipped);
       const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
 
@@ -1550,8 +1600,17 @@ function cancelAdminEdit() {
 // +/- ボタンで値を変更
 function editAdjust(idx, delta) {
   editVals[idx] = Math.max(0, editVals[idx] + delta);
+  // 表示用とpopup内の両方を更新
   const el = document.getElementById(`ev-${idx}`);
-  if (el) el.textContent = editVals[idx];
+  if (el) el.textContent = editVals[idx] || '';
+  const elp = document.getElementById(`evp-${idx}`);
+  if (elp) elp.textContent = editVals[idx];
+  // セルの色を更新
+  const cell = document.getElementById(`ec-${idx}`);
+  if (cell) {
+    if (editVals[idx] > 0) cell.classList.add('has-value');
+    else cell.classList.remove('has-value');
+  }
 
   // 行のQTYを再計算
   const key = editKeys[idx];
@@ -1563,6 +1622,27 @@ function editAdjust(idx, delta) {
   });
   const qtyEl = document.getElementById(`eq-${key.type}-${key.id}-${key.sku}`);
   if (qtyEl) qtyEl.textContent = total;
+}
+
+// 編集セルのクリックで±ボタンを展開/折りたたみ
+let activeEditCell = null;
+function toggleEditCell(idx, event) {
+  const popup = document.getElementById(`ep-${idx}`);
+  if (!popup) return;
+
+  // 既に開いているpopupを閉じる
+  if (activeEditCell !== null && activeEditCell !== idx) {
+    const prev = document.getElementById(`ep-${activeEditCell}`);
+    if (prev) prev.style.display = 'none';
+  }
+
+  if (popup.style.display === 'none') {
+    popup.style.display = 'flex';
+    activeEditCell = idx;
+  } else {
+    popup.style.display = 'none';
+    activeEditCell = null;
+  }
 }
 
 // 編集内容を保存
@@ -1733,10 +1813,14 @@ function buildEditableAdminTable(items, type, id) {
         const idx = editKeyMap[k];
         if (idx !== undefined) {
           const qty = editVals[idx];
-          html += `<td class="col-size inst-cell"><div class="inst-picker">`;
-          html += `<button class="inst-minus" onclick="editAdjust(${idx},-1)">-</button>`;
-          html += `<span class="inst-val" id="ev-${idx}">${qty}</span>`;
-          html += `<button class="inst-plus" onclick="editAdjust(${idx},1)">+</button>`;
+          const hasValue = qty > 0 ? ' has-value' : '';
+          // クリックで±ボタンを展開、通常は数値のみ表示
+          html += `<td class="col-size inst-cell${hasValue}" id="ec-${idx}" onclick="toggleEditCell(${idx}, event)">`;
+          html += `<span class="inst-val-display" id="ev-${idx}">${qty || ''}</span>`;
+          html += `<div class="inst-picker-popup" id="ep-${idx}" style="display:none;">`;
+          html += `<button class="inst-minus" onclick="editAdjust(${idx},-1);event.stopPropagation();">-</button>`;
+          html += `<span class="inst-val" id="evp-${idx}">${qty}</span>`;
+          html += `<button class="inst-plus" onclick="editAdjust(${idx},1);event.stopPropagation();">+</button>`;
           html += `</div></td>`;
         } else {
           html += '<td class="col-size"></td>';
@@ -2028,8 +2112,13 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
           inst.batches.forEach(batch => {
             const batchDiv = document.createElement('div');
             batchDiv.className = 'inst-batch-section';
+            const isCompleted = batch.status === 'completed';
             const totalBatchPairs = batch.items.reduce((s, i) => s + Object.values(i.sizes).reduce((a,v)=>a+v,0), 0);
-            batchDiv.innerHTML = `<div class="inst-batch-label">${batch.name}（${totalBatchPairs}足）</div>`;
+            const statusBadge = isCompleted ? ' <span class="batch-done-badge">✅ 仕入済</span>' : '';
+            batchDiv.innerHTML = `<div class="inst-batch-label" style="display:flex;align-items:center;justify-content:space-between;">
+              <span>${batch.name}（${totalBatchPairs}足）${statusBadge}</span>
+              <button class="batch-delete-btn-sm" onclick="deleteBatch('${inst.id}','${batch.id}','${batch.name}',${isCompleted})">🗑 削除</button>
+            </div>`;
             const items = batch.items.map(bi => ({
               model: bi.model, colorway: bi.colorway, sku: bi.sku, sizeType: bi.sizeType, sizes: bi.sizes
             }));
@@ -3005,6 +3094,8 @@ async function renderPurchasePage() {
       if (!isCompleted) {
         html += `<button class="batch-complete-btn" onclick="completeBatch('${currentInst.id}','${batch.id}')">仕入完了にする</button>`;
       }
+      // 削除ボタン（完了・未完了問わず表示）
+      html += `<button class="batch-delete-btn" onclick="deleteBatch('${currentInst.id}','${batch.id}','${batch.name}', ${isCompleted})">🗑 ${batch.name} を削除</button>`;
       html += '</div>';
     });
 
@@ -3052,6 +3143,35 @@ async function completeBatch(instructionId, batchId) {
     }
     showToast('仕入完了しました');
     await renderPurchasePage();
+  } catch (e) {
+    alert('通信エラーが発生しました');
+  }
+}
+
+// バッチ削除
+async function deleteBatch(instructionId, batchId, batchName, isCompleted) {
+  const msg = isCompleted
+    ? `「${batchName}」を削除しますか？\n仕入済みデータも取り消されます。`
+    : `「${batchName}」を削除しますか？`;
+  if (!confirm(msg)) return;
+
+  try {
+    const res = await fetch(`/api/instructions/${instructionId}/batches/${batchId}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.error || 'エラーが発生しました');
+      return;
+    }
+    showToast(`${batchName} を削除しました`);
+    // 現在の画面に応じてリロード
+    const currentScreen = document.querySelector('.screen.active')?.id;
+    if (currentScreen === 'screen-order-admin') {
+      await showOrderAdmin();
+    } else {
+      await renderPurchasePage();
+    }
   } catch (e) {
     alert('通信エラーが発生しました');
   }
