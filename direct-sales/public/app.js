@@ -2130,19 +2130,27 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
     } else {
       const wrapper = document.createElement('div');
       wrapper.className = 'order-table-wrapper';
-      const result = buildUnassignedTable(unassigned);
+      const result = buildUnassignedTable(sortBySkuOrder(unassigned));
       wrapper.appendChild(result.table);
       body.appendChild(wrapper);
     }
   });
 
-  // ======= 仕入残り =======
-  const remaining = calcRemaining(grouped, purchasedGrouped);
+  // ======= 仕入残り（Current Orders - 仕入済残り、発送済み考慮後） =======
+  const remainingRaw = calcRemaining(currentOrderItems, purchasedRemaining);
+  // マイナスを0クランプ
+  const remaining = remainingRaw.map(item => {
+    const cleaned = { ...item, sizes: {} };
+    Object.entries(item.sizes).forEach(([size, qty]) => {
+      if (qty > 0) cleaned.sizes[size] = qty;
+    });
+    return cleaned;
+  }).filter(item => Object.keys(item.sizes).length > 0);
   const remainingPairs = remaining.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
   addCollapsible(container, `仕入残り（${remainingPairs}足）`, 'bg-orange', 'remaining', (body) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'order-table-wrapper';
-    const result = buildRemainingTable(remaining);
+    const result = buildRemainingTable(sortBySkuOrder(remaining));
     wrapper.appendChild(result.table);
     body.appendChild(wrapper);
   });
