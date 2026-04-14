@@ -51,6 +51,78 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+
+// =============================================
+// 画面状態の保存・復元（リロード時に同じ画面に留まる）
+// =============================================
+// 画面遷移を記録（主要な画面のみ）
+function saveNavState(page, extra) {
+  try {
+    sessionStorage.setItem('nav_page', page);
+    if (extra) sessionStorage.setItem('nav_extra', JSON.stringify(extra));
+    else sessionStorage.removeItem('nav_extra');
+  } catch(e) { /* sessionStorage使えない環境は無視 */ }
+}
+function clearNavState() {
+  try { sessionStorage.removeItem('nav_page'); sessionStorage.removeItem('nav_extra'); } catch(e) {}
+}
+
+// ページ読み込み時に前回の画面を復元
+async function restoreNavState() {
+  try {
+    const page = sessionStorage.getItem('nav_page');
+    if (!page) return false;
+    const extra = sessionStorage.getItem('nav_extra');
+    const extraData = extra ? JSON.parse(extra) : {};
+
+    switch (page) {
+      // バイヤー側
+      case 'buyer':
+        currentRole = 'buyer';
+        showBuyerMenu();
+        return true;
+      // セラートップ
+      case 'seller-top':
+        showSellerTop();
+        return true;
+      // セラー各画面（パスワード不要）
+      case 'order':
+        loginTarget = 'order';
+        startOrderPolling();
+        await showOrderAdmin();
+        return true;
+      case 'shipping':
+        loginTarget = 'shipping';
+        await showShipping();
+        return true;
+      case 'product':
+        loginTarget = 'product';
+        await showProductAdmin();
+        return true;
+      case 'coupon':
+        loginTarget = 'coupon';
+        await showCouponAdmin();
+        return true;
+      // セラー各画面（パスワード必要 — パスワード画面を表示）
+      case 'settings':
+        showSellerTop();
+        return true;
+      case 'finance':
+        showSellerTop();
+        return true;
+      // 仕入ページ
+      case 'purchase':
+        if (extraData.locId && extraData.locName) {
+          await showPurchasePage(extraData.locId, extraData.locName);
+          return true;
+        }
+        showSellerTop();
+        return true;
+      default:
+        return false;
+    }
+  } catch(e) { return false; }
+}
 function showModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
@@ -61,6 +133,7 @@ function goTop() {
   currentRole = null;
   loginTarget = null;
   stopOrderPolling();
+  clearNavState();
   showScreen('screen-top');
 }
 
@@ -69,6 +142,7 @@ function goTop() {
 // =============================================
 function showSellerTop() {
   showScreen('screen-seller-top');
+  saveNavState('seller-top');
   startOrderPolling(); // 新規オーダー監視を開始
 }
 
@@ -321,6 +395,7 @@ function onBuyerSelect() {
 }
 
 function showBuyerMenu() {
+  saveNavState('buyer');
   showScreen('screen-buyer-menu');
   // バイヤー選択セレクター表示
   const container = document.getElementById('buyer-selector');
@@ -1074,6 +1149,7 @@ function buildEditableTable(items, allSizes, sizeLabel, editing, mode) {
 // =============================================
 // =============================================
 async function showSettings() {
+  saveNavState('settings');
   showScreen('screen-settings');
   const res = await fetch('/api/settings');
   currentSettings = await res.json();
@@ -1321,6 +1397,7 @@ async function deleteBuyer(id) {
 // =============================================
 // =============================================
 async function showProductAdmin() {
+  saveNavState('product');
   showScreen('screen-product-admin');
   await loadProducts();
   renderAdminProducts();
@@ -1579,6 +1656,7 @@ async function fetchExchangeRate() {
 }
 
 async function showOrderAdmin() {
+  saveNavState('order');
   showScreen('screen-order-admin');
   await Promise.all([
     fetchExchangeRate(),
@@ -3184,6 +3262,7 @@ let purchaseLocationId = null;
 let purchaseLocationName = null;
 
 async function showPurchasePage(locId, locName) {
+  saveNavState('purchase', { locId, locName });
   purchaseLocationId = locId;
   purchaseLocationName = locName;
   document.getElementById('purchase-title').textContent = `仕入 - ${locName}`;
@@ -3350,6 +3429,7 @@ async function deleteBatch(instructionId, batchId, batchName, isCompleted) {
 let currentFinanceTab = 'overview';
 
 async function showFinance() {
+  saveNavState('finance');
   showScreen('screen-finance');
   await showFinanceTab('history');
 }
@@ -3687,6 +3767,7 @@ let shipAdjustments = {};
 let shipItems = [];
 
 async function showShipping() {
+  saveNavState('shipping');
   showScreen('screen-shipping');
   await showShippingTab('ship');
 }
@@ -4510,6 +4591,7 @@ function toggleShipmentDetail(id) {
 
 // クーポン管理画面を表示
 async function showCouponAdmin() {
+  saveNavState('coupon');
   showScreen('screen-coupon');
   await renderCouponAdmin();
 }
@@ -4774,3 +4856,11 @@ async function issueCoupon() {
     alert('通信エラーが発生しました');
   }
 }
+
+// =============================================
+// ページ読み込み時：前回の画面を復元
+// =============================================
+(async function initApp() {
+  const restored = await restoreNavState();
+  // 復元できなければトップ画面のまま（デフォルト）
+})();

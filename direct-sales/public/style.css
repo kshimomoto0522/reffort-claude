@@ -1123,6 +1123,7 @@ body {
   border-collapse: collapse;
   font-size: 12px;
   table-layout: fixed;
+  min-width: 1200px; /* スマホで横スクロール可能にする最小幅 */
 }
 
 .finance-spreadsheet thead {
@@ -1242,12 +1243,13 @@ body {
   transform: rotate(-90deg);
 }
 .collapsible-body {
-  overflow: hidden;
+  overflow-x: auto;  /* 横スクロール許可（テーブルがはみ出す場合） */
+  overflow-y: hidden; /* 縦は折りたたみアニメーション用 */
   transition: max-height 0.3s ease;
 }
 .collapsible-body.collapsed {
   max-height: 0 !important;
-  overflow: hidden;
+  overflow: hidden; /* 折りたたみ時は完全に非表示 */
 }
 .collapsible-header.bg-dark { background: #1a1a1a; }
 .collapsible-header.bg-orange { background: #e65100; }
@@ -2684,7 +2686,7 @@ details[open] > .shipment-loc-summary::before {
 
 /* テーブルを最小幅で固定して縮小させない */
 .finance-spreadsheet table {
-  min-width: 800px;
+  min-width: 1200px;
 }
 
 @media (max-width: 768px) {
