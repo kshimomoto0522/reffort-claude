@@ -1687,7 +1687,15 @@ function enterAdminEdit() {
       const locGrouped = groupPurchaseItems(locPurchases);
       const locShipped = allShippedItems.filter(i => i.locationId === loc.id);
       const locShippedGrouped = groupShippedItems(locShipped);
-      const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
+      const locRemainingRaw = calcRemaining(locGrouped, locShippedGrouped);
+      // マイナス在庫を除外
+      const locRemaining = locRemainingRaw.map(item => {
+        const cleaned = { ...item, sizes: {} };
+        Object.entries(item.sizes).forEach(([size, qty]) => {
+          if (qty > 0) cleaned.sizes[size] = qty;
+        });
+        return cleaned;
+      }).filter(item => Object.keys(item.sizes).length > 0);
 
       // オーダー全商品 + 拠点既存商品をマージ
       const allProducts = [...orderGrouped];
@@ -2144,7 +2152,15 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
         if (i.locationId === loc.id) locShipped.push(i);
       }));
       const locShippedGrouped = groupShippedItems(locShipped);
-      const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
+      const locRemainingRaw = calcRemaining(locGrouped, locShippedGrouped);
+      // マイナス在庫を除外（発送超過分は表示しない）
+      const locRemaining = locRemainingRaw.map(item => {
+        const cleaned = { ...item, sizes: {} };
+        Object.entries(item.sizes).forEach(([size, qty]) => {
+          if (qty > 0) cleaned.sizes[size] = qty;
+        });
+        return cleaned;
+      }).filter(item => Object.keys(item.sizes).length > 0);
       const locPairs = locRemaining.reduce((s,i) => s + Object.values(i.sizes).reduce((a,b)=>a+b,0), 0);
       totalPurchasedRemaining += locPairs;
       if (locPairs > 0) locPurchaseData.push({ loc, remaining: locRemaining, pairs: locPairs });

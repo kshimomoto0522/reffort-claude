@@ -759,17 +759,21 @@ app.get('/api/shipped-items', (req, res) => {
   const purchases = readJSON(PURCHASES_FILE);
   const shipments = readJSON(SHIPMENTS_FILE);
 
-  // 発送済の数量を集計 {sku: {size: qty}}（発送待ちも含む — 在庫からは差し引く）
-  const shippedMap = {};
+  // 発送済を拠点ごとに集計 {locId: {sku: {size: qty}}}
+  // 発送アイテムにはlocationIdが記録されているので、拠点別に正確に差し引く
+  const shippedByLoc = {};
   shipments.forEach(s => {
     s.items.forEach(item => {
-      if (!shippedMap[item.sku]) shippedMap[item.sku] = {};
-      shippedMap[item.sku][item.size] = (shippedMap[item.sku][item.size] || 0) + item.quantity;
+      const locId = item.locationId;
+      if (!locId) return; // locationIdがない場合はスキップ
+      if (!shippedByLoc[locId]) shippedByLoc[locId] = {};
+      if (!shippedByLoc[locId][item.sku]) shippedByLoc[locId][item.sku] = {};
+      shippedByLoc[locId][item.sku][item.size] = (shippedByLoc[locId][item.sku][item.size] || 0) + item.quantity;
     });
   });
 
-  // 仕入済を拠点ごとにグループ化し、発送済を差し引く
-  const locMap = {}; // {locId: {locName, items: {sku: {size: qty, model, colorway, sizeType, image}}}}
+  // 仕入済を拠点ごとにグループ化し、その拠点の発送済のみを差し引く
+  const locMap = {}; // {locId: {locName, items: {sku: {size: qty, model, colorway, sizeType}}}}
   purchases.forEach(p => {
     if (!locMap[p.locationId]) locMap[p.locationId] = { locationName: p.locationName, items: {} };
     p.items.forEach(item => {
@@ -781,20 +785,16 @@ app.get('/api/shipped-items', (req, res) => {
     });
   });
 
-  // 発送済を差し引く（拠点問わず全体から差し引く）
-  // 発送済は拠点をまたぐ場合があるので、全体の仕入済から差し引く
-  const remainingShipped = JSON.parse(JSON.stringify(shippedMap));
   const result = {};
   for (const [locId, locData] of Object.entries(locMap)) {
+    const locShipped = shippedByLoc[locId] || {};
     result[locId] = { locationName: locData.locationName, items: [] };
     for (const [sku, itemData] of Object.entries(locData.items)) {
       const remainingSizes = {};
       for (const [size, qty] of Object.entries(itemData.sizes)) {
-        // この拠点のこのSKU/サイズから発送済を差し引く
-        const shipped = (remainingShipped[sku] && remainingShipped[sku][size]) || 0;
-        const deduct = Math.min(shipped, qty);
-        const remaining = qty - deduct;
-        if (remainingShipped[sku]) remainingShipped[sku][size] = shipped - deduct;
+        // この拠点で発送済の数量のみ差し引く
+        const shipped = (locShipped[sku] && locShipped[sku][size]) || 0;
+        const remaining = Math.max(0, qty - shipped); // マイナスにならないようクランプ
         if (remaining > 0) remainingSizes[size] = remaining;
       }
       if (Object.keys(remainingSizes).length > 0) {
