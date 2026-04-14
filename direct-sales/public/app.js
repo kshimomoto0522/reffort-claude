@@ -2079,15 +2079,24 @@ function renderOrderAdmin(orders, purchases, rate, shipments) {
     return;
   }
 
-  // 未完了指示アイテムを計算（ビルディング中のブロックも含む）
-  const pendingInstructed = getInstructedIncludingBuilding();
-  // 割り当て済み = 仕入済み + 未完了指示（加算。completedバッチはpurchasesに含まれるため二重計上なし）
-  const assignedGrouped = mergeGroupedAdd(purchasedGrouped, pendingInstructed);
-  // 未指示 = オーダー - 割り当て済み
-  const unassigned = calcRemaining(grouped, assignedGrouped);
-
   // ======= Current Orders（発送済を差し引いた残り） =======
   const currentOrderItems = calcRemaining(grouped, shippedGrouped);
+
+  // 未完了指示アイテムを計算（ビルディング中のブロックも含む）
+  const pendingInstructed = getInstructedIncludingBuilding();
+  // 仕入済残り = 仕入済み - 発送完了（マイナスは0クランプ＝拠点間の差引誤差を吸収）
+  const purchasedRemainingRaw = calcRemaining(purchasedGrouped, shippedGrouped);
+  const purchasedRemaining = purchasedRemainingRaw.map(item => {
+    const cleaned = { ...item, sizes: {} };
+    Object.entries(item.sizes).forEach(([size, qty]) => {
+      if (qty > 0) cleaned.sizes[size] = qty;
+    });
+    return cleaned;
+  }).filter(item => Object.keys(item.sizes).length > 0);
+  // 割り当て済み = 仕入済残り + 未完了指示
+  const assignedRemaining = mergeGroupedAdd(purchasedRemaining, pendingInstructed);
+  // 未指示 = Current Orders - 割り当て済み（発送済み考慮後）
+  const unassigned = calcRemaining(currentOrderItems, assignedRemaining);
   // priceを補完（calcRemainingで欠ける場合）
   currentOrderItems.forEach(item => {
     if (!item.price) {
