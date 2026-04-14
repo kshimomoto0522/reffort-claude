@@ -2002,7 +2002,7 @@ function renderOrderAdminEditMode(container, orderGrouped, purchases, shippedIte
   addCollapsible(container, 'Current Orders', 'bg-dark', 'current', (body) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'order-table-wrapper';
-    wrapper.appendChild(buildEditableAdminTable(orderGrouped, 'order', ''));
+    wrapper.appendChild(buildEditableAdminTable(sortItemsBySkuOrder(orderGrouped), 'order', ''));
     body.appendChild(wrapper);
   });
 
@@ -2014,7 +2014,7 @@ function renderOrderAdminEditMode(container, orderGrouped, purchases, shippedIte
       const locShipped = shippedItems.filter(i => i.locationId === loc.id);
       const locShippedGrouped = groupShippedItems(locShipped);
       const locRemaining = calcRemaining(locGrouped, locShippedGrouped);
-      const mergedProducts = mergeProductLists(orderGrouped, locRemaining);
+      const mergedProducts = sortItemsBySkuOrder(mergeProductLists(orderGrouped, locRemaining));
       const locPairs = locRemaining.reduce((s, i) => s + Object.values(i.sizes).reduce((a, b) => a + b, 0), 0);
 
       addCollapsible(container, `${loc.name}（${locPairs}足）`, 'bg-blue', `loc-${loc.id}`, (body) => {
