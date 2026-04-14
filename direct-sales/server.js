@@ -272,21 +272,42 @@ app.post('/api/orders/adjust', (req, res) => {
     }
   });
 
-  // 増加処理：管理者調整オーダーを作成
+  // 増加処理：既存のpendingオーダーに追加（同じSKU+サイズがあれば数量加算、なければアイテム追加）
+  // 新規オーダー作成ではなく既存オーダーを修正することで、元の注文日のOrder Logに反映される
   if (additions.length > 0) {
-    const adminItems = additions.map(a => ({
-      sku: a.sku, model: a.model, colorway: a.colorway,
-      size: a.size, sizeType: a.sizeType, price: a.price,
-      quantity: a.delta
-    }));
-    orders.push({
-      id: Date.now().toString(),
-      items: adminItems,
-      totalPairs: adminItems.reduce((s, it) => s + it.quantity, 0),
-      totalAmount: adminItems.reduce((s, it) => s + it.quantity * it.price, 0),
-      buyerId: null, buyerName: 'Admin',
-      status: 'pending', shippedDate: null, shippedExchangeRate: null, paidAt: null,
-      createdAt: new Date().toISOString()
+    additions.forEach(a => {
+      // 同じSKUを持つpendingオーダーを探す（最初に見つかったものに追加）
+      let targetOrder = orders.find(o => o.status === 'pending' && o.items.some(it => it.sku === a.sku));
+      // なければ最初のpendingオーダーに追加
+      if (!targetOrder) targetOrder = orders.find(o => o.status === 'pending');
+
+      if (targetOrder) {
+        // 同じSKU+サイズのアイテムがあれば数量加算
+        const existing = targetOrder.items.find(it => it.sku === a.sku && it.size === a.size);
+        if (existing) {
+          existing.quantity += a.delta;
+        } else {
+          // なければ新規アイテムとして追加
+          targetOrder.items.push({
+            sku: a.sku, model: a.model, colorway: a.colorway,
+            size: a.size, sizeType: a.sizeType, price: a.price,
+            quantity: a.delta
+          });
+        }
+        targetOrder.totalPairs = targetOrder.items.reduce((s, it) => s + it.quantity, 0);
+        targetOrder.totalAmount = targetOrder.items.reduce((s, it) => s + it.quantity * it.price, 0);
+      } else {
+        // pendingオーダーが1つもない場合のみ新規作成（通常起きない）
+        orders.push({
+          id: Date.now().toString(),
+          items: [{ sku: a.sku, model: a.model, colorway: a.colorway, size: a.size, sizeType: a.sizeType, price: a.price, quantity: a.delta }],
+          totalPairs: a.delta,
+          totalAmount: a.delta * a.price,
+          buyerId: null, buyerName: 'Admin',
+          status: 'pending', shippedDate: null, shippedExchangeRate: null, paidAt: null,
+          createdAt: new Date().toISOString()
+        });
+      }
     });
   }
 
@@ -294,6 +315,32 @@ app.post('/api/orders/adjust', (req, res) => {
   const cleaned = orders.filter(o => o.items.length > 0);
   writeJSON(ORDERS_FILE, cleaned);
   res.json({ success: true });
+});
+
+// オーダー統合API（指定オーダーを別のオーダーに統合して削除）
+app.post('/api/orders/merge', (req, res) => {
+  const orders = readJSON(ORDERS_FILE);
+  const { sourceId, targetId } = req.body;
+  const source = orders.find(o => o.id === sourceId);
+  const target = orders.find(o => o.id === targetId);
+  if (!source || !target) return res.status(404).json({ error: 'Order not found' });
+
+  // sourceのアイテムをtargetに統合
+  source.items.forEach(item => {
+    const existing = target.items.find(it => it.sku === item.sku && it.size === item.size);
+    if (existing) {
+      existing.quantity += item.quantity;
+    } else {
+      target.items.push({ ...item });
+    }
+  });
+  target.totalPairs = target.items.reduce((s, it) => s + it.quantity, 0);
+  target.totalAmount = target.items.reduce((s, it) => s + it.quantity * it.price, 0);
+
+  // sourceを削除
+  const cleaned = orders.filter(o => o.id !== sourceId);
+  writeJSON(ORDERS_FILE, cleaned);
+  res.json({ success: true, targetPairs: target.totalPairs });
 });
 
 // 仕入数量調整API（管理者が編集モードで増減）
