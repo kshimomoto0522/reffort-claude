@@ -839,5 +839,206 @@
         "excludedSizes": []
       }
     ]
+  },
+  {
+    "id": "1776319889149_MEXICO_66_SLIP-ON",
+    "model": "MEXICO 66 SLIP-ON",
+    "displayOrder": 6,
+    "variants": [
+      {
+        "colorway": "BIRCH/MIDNIGHT",
+        "sku": "1183A360.205",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183A360_205_SR_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183A360_205.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "WHITE/TRICOLOR",
+        "sku": "1183A360.121",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183A360_121_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183A360_121.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "NAVY/OFF-WHITE",
+        "sku": "1183A360.401",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183A360_401_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183A360_401.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "BLACK/BLACK",
+        "sku": "1183A360.002",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183A360_002_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183A360_002.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "OFF-WHITE/BEET JUICE",
+        "sku": "1183A360.131",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183A360_131_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183A360_131.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "WHITE/GINGER PEACH",
+        "sku": "1183A360.132",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183A360_132_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183A360_132.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "YELLOW/BLACK",
+        "sku": "1183A746.751",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183A746_751_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183a746_751.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "WHITE/WHITE",
+        "sku": "1183C141.100",
+        "price": 115,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C141_100_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-slip-on/1183c141_100.html",
+        "purchasePrice": 10010,
+        "excludedSizes": []
+      }
+    ]
+  },
+  {
+    "id": "1776319889150_MEXICO_66_SD_VIN",
+    "model": "MEXICO 66 SD VIN",
+    "displayOrder": 7,
+    "variants": [
+      {
+        "colorway": "BIRCH/METROPOLIS",
+        "sku": "1183C015.200",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_200_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183c015_200.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "CREAM/BIRCH",
+        "sku": "1183C015.101",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_101_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183C015_101.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "WHITE/DIRECTOIRE BLUE",
+        "sku": "1183C015.104",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_104_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183C015_104.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "BIRCH/GREEN",
+        "sku": "1183C015.201",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_201_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183C015_201.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "BEIGE/BEET JUICE",
+        "sku": "1183C015.202",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_202_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183C015_202.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "CLAY CANYON/CREAM",
+        "sku": "1183C015.205",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_205_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183C015_205.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "OFF-WHITE/PURPLE SPECTRUM",
+        "sku": "1183C015.106",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_106_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183C015_106.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "PEACOAT/WHEAT YELLOW",
+        "sku": "1183C015.400",
+        "price": 150,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183C015_400_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66-sd-vin/1183C015_400.html",
+        "purchasePrice": 13860,
+        "excludedSizes": []
+      }
+    ]
+  },
+  {
+    "id": "1776319889150_MOAL_77_NM",
+    "model": "MOAL 77 NM",
+    "displayOrder": 8,
+    "variants": [
+      {
+        "colorway": "PAPER BAG/WHITE",
+        "sku": "1183B761.201",
+        "price": 240,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183B761_201_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/moal-77-nm/1183b761_201.html",
+        "purchasePrice": 24640,
+        "excludedSizes": []
+      },
+      {
+        "colorway": "BRONZE GREEN/WHITE",
+        "sku": "1183B761.301",
+        "price": 240,
+        "sizeType": "unisex",
+        "image": "https://asics.scene7.com/is/image/asics/1183B761_301_SB_FR_GLB?$otmag_zoom$&qlt=99,1",
+        "supplierUrl": "https://www.onitsukatiger.com/jp/ja-jp/product/moal-77-nm/1183B761_301.html",
+        "purchasePrice": 24640,
+        "excludedSizes": []
+      }
+    ]
   }
 ]

@@ -467,6 +467,91 @@ body {
 }
 
 /* =============================================
+   SKU検索（Place an Order画面）
+   ============================================= */
+.product-search-box {
+  position: relative;
+  margin: 0 0 20px;
+}
+.product-search-box input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  background: #fff;
+  box-sizing: border-box;
+  outline: none;
+}
+.product-search-box input:focus {
+  border-color: #1a1a1a;
+}
+.product-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+}
+.product-search-clear:hover {
+  color: #333;
+}
+.product-search-results {
+  border-top: 1px solid #eee;
+  padding: 0 4px;
+}
+.product-search-results .variant-item-search {
+  border-bottom: 1px solid #eee;
+  padding: 16px 4px;
+}
+.product-search-results .variant-item-search:last-child {
+  border-bottom: none;
+}
+.search-model-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.product-search-empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+@media (max-width: 600px) {
+  .product-search-results .variant-item-search .variant-thumb,
+  .product-search-results .variant-item-search .variant-thumb-placeholder {
+    width: 80px;
+    height: 80px;
+  }
+  .product-search-results .variant-item-search .variant-left {
+    gap: 12px;
+  }
+  .product-search-results .variant-item-search .variant-info h4 {
+    font-size: 16px;
+  }
+  .product-search-results .variant-item-search .variant-price {
+    font-size: 17px;
+  }
+  .product-search-results .variant-item-search .variant-add-btn {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+}
+
+/* =============================================
    サイズ選択
    ============================================= */
 .sku-text {

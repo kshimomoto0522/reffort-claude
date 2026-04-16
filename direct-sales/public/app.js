@@ -20,6 +20,36 @@ function sizeTypeLabel(sizeType) {
   return sizeType === 'womens' ? "Women's" : 'Unisex';
 }
 
+// =============================================
+// モデル優先順位（全画面共通）
+// MEXICO 66 → SD → SD VIN → SLIP-ON → TGRS → その他
+// 比較時はスペース・記号を除いて正規化するので "MEXICO66 SD" と "MEXICO 66 SD" は同一扱い
+// =============================================
+const MODEL_PRIORITY_LIST = [
+  'MEXICO 66',
+  'MEXICO 66 SD',
+  'MEXICO 66 SD VIN',
+  'MEXICO 66 SLIP-ON',
+  'MEXICO 66 TGRS'
+];
+function normalizeModelName(name) {
+  return String(name || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+function getModelPriority(modelName) {
+  const n = normalizeModelName(modelName);
+  const idx = MODEL_PRIORITY_LIST.findIndex(m => normalizeModelName(m) === n);
+  return idx === -1 ? MODEL_PRIORITY_LIST.length : idx;
+}
+// 商品リスト（products配列）の並び替え：モデル優先順位→displayOrder
+function sortProductsByPriority(list) {
+  return [...(list || [])].sort((a, b) => {
+    const pa = getModelPriority(a.model);
+    const pb = getModelPriority(b.model);
+    if (pa !== pb) return pa - pb;
+    return (a.displayOrder || 0) - (b.displayOrder || 0);
+  });
+}
+
 // グローバル状態
 let currentRole = null;
 let loginTarget = null; // ログイン後の遷移先
@@ -426,13 +456,17 @@ function showProducts() {
   showScreen('screen-products');
   renderProducts();
   updateCartBadge();
+  // 画面表示時は検索状態をリセット
+  const input = document.getElementById('product-search-input');
+  if (input) input.value = '';
+  applyProductSearchView('');
 }
 
 function renderProducts() {
   const grid = document.getElementById('product-list');
   grid.innerHTML = '';
-  // displayOrderでソート
-  const sorted = [...products].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  // モデル優先順位（MEXICO 66→SD→VIN→SLIP-ON→TGRS→その他）→displayOrder
+  const sorted = sortProductsByPriority(products);
   sorted.forEach(p => {
     const prices = p.variants.map(v => v.price);
     const minPrice = Math.min(...prices);
@@ -447,6 +481,102 @@ function renderProducts() {
       <div class="price-range">${priceText}</div>
     `;
     grid.appendChild(card);
+  });
+}
+
+// =============================================
+// SKU検索（バイヤーのPlace an Order画面）
+// =============================================
+// 完全一致・モデル前方一致・スペース区切り入力にも対応
+function matchesSkuQuery(sku, rawQuery) {
+  const q = (rawQuery || '').trim().toUpperCase();
+  if (!q) return true;
+  const skuU = String(sku || '').toUpperCase();
+  // そのまま前方一致 (例: "1183C015" → "1183C015.200" にマッチ)
+  if (skuU.startsWith(q)) return true;
+  // スペースを"."に置き換えて前方一致 (例: "1183C015 200" → "1183C015.200")
+  const qDot = q.replace(/\s+/g, '.');
+  if (skuU.startsWith(qDot)) return true;
+  // 区切りを全部外して前方一致 (例: "1183C015200" → "1183C015.200")
+  const qBare = q.replace(/[\s.]/g, '');
+  const skuBare = skuU.replace(/\./g, '');
+  if (qBare && skuBare.startsWith(qBare)) return true;
+  return false;
+}
+
+function filterProductsBySku() {
+  const input = document.getElementById('product-search-input');
+  const query = input ? input.value : '';
+  applyProductSearchView(query);
+}
+
+function clearProductSearch() {
+  const input = document.getElementById('product-search-input');
+  if (input) input.value = '';
+  applyProductSearchView('');
+  if (input) input.focus();
+}
+
+function applyProductSearchView(query) {
+  const grid = document.getElementById('product-list');
+  const results = document.getElementById('product-search-results');
+  const empty = document.getElementById('product-search-empty');
+  const clearBtn = document.getElementById('product-search-clear');
+  const q = (query || '').trim();
+
+  if (clearBtn) clearBtn.style.display = q ? 'flex' : 'none';
+
+  if (!q) {
+    if (grid) grid.style.display = '';
+    if (results) { results.style.display = 'none'; results.innerHTML = ''; }
+    if (empty) empty.style.display = 'none';
+    return;
+  }
+
+  // 検索モード：商品グリッド非表示、バリアント単位で表示
+  if (grid) grid.style.display = 'none';
+
+  // モデル優先順位 → variants順にフラット化
+  const sortedProducts = sortProductsByPriority(products);
+  const matches = [];
+  sortedProducts.forEach(p => {
+    (p.variants || []).forEach(v => {
+      if (matchesSkuQuery(v.sku, q)) {
+        matches.push({ product: p, variant: v });
+      }
+    });
+  });
+
+  if (!results) return;
+  results.innerHTML = '';
+
+  if (matches.length === 0) {
+    results.style.display = 'none';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  results.style.display = 'block';
+
+  matches.forEach(({ product, variant: v }) => {
+    const imgHtml = v.image
+      ? `<img src="${v.image}" alt="${v.colorway}" class="variant-thumb">`
+      : `<div class="variant-thumb-placeholder">&#128095;</div>`;
+    const item = document.createElement('div');
+    item.className = 'variant-item variant-item-search';
+    item.innerHTML = `
+      <div class="variant-left">
+        ${imgHtml}
+        <div class="variant-info">
+          <div class="search-model-name">${product.model}</div>
+          <h4>${v.colorway}</h4>
+          <div class="sku-label">${v.sku} &middot; ${sizeTypeLabel(v.sizeType)}</div>
+          <div class="variant-price">$${v.price}</div>
+        </div>
+      </div>
+      <button class="variant-add-btn" onclick="openSizeModal('${product.id}', '${v.sku}')">Add</button>
+    `;
+    results.appendChild(item);
   });
 }
 
@@ -3860,23 +3990,18 @@ async function renderShippingPage(container) {
 
 // SKU順ソート用ヘルパー（グローバルで使用）
 function sortItemsBySkuOrder(items) {
-  // モデル優先順位: MEXICO 66 → MEXICO 66 SD → その他
-  const MODEL_PRIORITY = ['MEXICO 66', 'MEXICO 66 SD'];
-  function getModelRank(model) {
-    const idx = MODEL_PRIORITY.indexOf(model);
-    return idx !== -1 ? idx : MODEL_PRIORITY.length;
-  }
+  // モデル優先順位（グローバルMODEL_PRIORITY_LIST使用）: MEXICO 66→SD→VIN→SLIP-ON→TGRS→その他
   // productsマスタの順番を基準にソート（同一モデル内の順序用）
   const skuOrder = [];
-  (products || []).forEach(p => {
+  sortProductsByPriority(products).forEach(p => {
     (p.variants || []).forEach(v => {
       if (!skuOrder.includes(v.sku)) skuOrder.push(v.sku);
     });
   });
   return [...items].sort((a, b) => {
     // まずモデル優先順位で比較
-    const ma = getModelRank(a.model);
-    const mb = getModelRank(b.model);
+    const ma = getModelPriority(a.model);
+    const mb = getModelPriority(b.model);
     if (ma !== mb) return ma - mb;
     // 同一モデル内はproductsマスタ順
     const ia = skuOrder.indexOf(a.sku);
