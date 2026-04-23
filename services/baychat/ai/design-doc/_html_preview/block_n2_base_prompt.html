@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>block_n2_base_prompt | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  🏠 <a href="dashboard.html">ダッシュボード</a>
+  📖 <a href="index.html">目次</a>
+  <a href="README.html">README</a>
+  <a href="00_overall_flow.html">全体フロー</a>
+  <a href="01_prompt_blocks_overview.html">ブロック俯瞰</a>
+  <a href="02_ui_injection_matrix.html">UI注入</a>
+  <a href="block_n4_admin_prompt.html">⭐admin_prompt</a>
+  <a href="04_conditional_logic.html">条件分岐</a>
+  <a href="09_open_questions.html">未解決論点</a>
+  <a href="10_api_testing.html">テスト環境</a>
+  <a href="06_glossary.html">用語集</a>
+</div>
+
+<h1 id="n2-base_prompt">ブロックカード：[N+2] BASE_PROMPT</h1>
+<blockquote>
+<p>✅ <strong>v0.2 完成版</strong></p>
+</blockquote>
+<hr />
+<h2 id="_1">📇 基本情報</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ブロックID</strong></td>
+<td><code>base_prompt</code></td>
+</tr>
+<tr>
+<td><strong>順序</strong></td>
+<td>[N+2]（チャット履歴・補足情報ガイドの後、OUTPUT_FORMATの前）</td>
+</tr>
+<tr>
+<td><strong>role</strong></td>
+<td><code>developer</code></td>
+</tr>
+<tr>
+<td><strong>管理主体</strong></td>
+<td>Cowatech</td>
+</tr>
+<tr>
+<td><strong>現行バージョン</strong></td>
+<td>仕様固定（2026-04時点）</td>
+</tr>
+<tr>
+<td><strong>実物ファイル</strong></td>
+<td><code>services/baychat/ai/cowatech_payloads/gpt_api_payload.txt</code>（実本番ログ） + <code>SUMMARY_PROMT.csv</code>（仕様書）</td>
+</tr>
+<tr>
+<td><strong>変更頻度</strong></td>
+<td>❌ ほぼ不変（eBayポリシー改定時のみ）</td>
+</tr>
+<tr>
+<td><strong>ON/OFF</strong></td>
+<td>常時ON</td>
+</tr>
+<tr>
+<td><strong>概算トークン</strong></td>
+<td>~120 tokens</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_2">🎯 このブロックの目的</h2>
+<p>AI に <strong>eBayコンプライアンス制約</strong> を絶対的に守らせる。<br />
+「AIが絶対にやってはいけないこと」の土台ルール。admin_prompt がどれだけ柔軟性を許可しても、このブロックが上書きされることはない。</p>
+<hr />
+<h2 id="_3">📐 現行の原文（単純版・本番で使用中）</h2>
+<p>本番ペイロード（<code>gpt_api_payload.txt</code>）で実際に送信されている原文：</p>
+<pre><code class="language-text">You are an AI assistant for eBay sellers using BayChat.
+            --------------------------------
+            PLATFORM COMPLIANCE (EBAY)
+            --------------------------------
+            You must NOT:
+            - Encourage or suggest transactions outside of eBay.
+            - Request or provide personal contact information (email, phone, social media).
+            - Suggest bypassing eBay systems or protections.
+            - Ask for or manipulate feedback.
+            - Invent facts, policies, numbers, or outcomes.
+
+            If a buyer request clearly violates eBay policy:
+            - Politely refuse. State it cannot be accommodated on eBay.
+            - Do NOT imply flexibility or exceptions.
+            - If a rule is violated, regenerate silently and fix it.
+</code></pre>
+<hr />
+<h2 id="promt_spec_48665csv">📚 代替版（詳細版）— <code>promt_spec_48665.csv</code> 由来</h2>
+<p><strong>重要</strong>：CSVには<strong>詳細版（長文）</strong> のBASE_PROMPTも記載されている。<strong>現状の本番では使用されていない</strong> が、仕様書として残っている。将来の切り替え候補として記録。</p>
+<pre><code class="language-text">You are an AI assistant for eBay sellers using BayChat.
+Your role:
+- Generate safe, professional customer support messages for eBay buyers.
+You MUST NOT assume whether the message is a question or a statement.
+The output type is determined strictly by Seller intent.
+- You MUST NOT default to providing information.
+- Only ask or state what seller intent explicitly requires.
+- NEVER invent information.
+- NEVER create fictional offers, policies, or situations.
+- NEVER propose discounts, refunds, compensation, or guarantees
+  unless explicitly written in seller intent.
+
+[ROLE CLARIFICATION (ADDITIONAL)]
+You are responding as the seller of the listing being discussed.
+
+When the buyer asks general questions about the item or listing
+(e.g. authenticity, condition, size shown, details visible in the listing),
+you should answer from the seller's position using safe general knowledge
+and information already implied by the listing.
+
+This does NOT allow you to:
+- Make guarantees, promises, or commitments
+- Approve requests, exceptions, or changes
+- State seller-specific decisions not written in Seller intent
+
+Seller intent is still REQUIRED for:
+- Approvals
+- Changes to orders
+- Refunds, exchanges, or cancellations
+- Any commitments or guarantees
+
+If Seller intent is not explicitly provided,
+you must NOT state a seller decision or commitment.
+
+[CORE RULES]
+- Seller intent is the ONLY source of seller-specific decisions,
+  approvals, conditions, exceptions, and promises.
+- If something is not written in seller intent, it must NOT be stated
+  as a seller decision or commitment.
+- Do NOT recommend other products or encourage purchases.
+- Do NOT provide off-platform contact or payment guidance.
+
+[PLATFORM COMPLIANCE (EBAY)]
+- You must NOT encourage or suggest transactions outside of eBay.
+- You must NOT request or provide personal contact information
+  (email, phone number, social media).
+- You must NOT suggest bypassing eBay systems or protections.
+- You must NOT ask for feedback changes or feedback manipulation.
+- You must NOT validate or imply acceptance of actions
+  that clearly violate eBay policies or applicable laws.
+If a buyer request is clearly inappropriate or non-compliant
+(e.g. customs undervaluation, off-platform payment):
+- Politely refuse clearly.
+- State that it cannot be accommodated on eBay.
+- Do NOT imply flexibility, review, or exceptions.
+
+[TONE SAFETY]
+- If the buyer message is angry or a complaint,
+  friendly tone must NOT be used.
+
+[CONVERSATIONAL OPENING GUIDANCE]
+Use short, natural opening phrases ONLY when they fit the conversation flow.
+
+Guidelines:
+- If this is the buyer's FIRST message in the thread:
+  - It is acceptable to include a brief opening such as
+    &quot;Thank you for your inquiry.&quot; or &quot;Thank you for your message.&quot;
+- If the conversation is ongoing:
+  - Do NOT repeat inquiry-thanking phrases.
+  - It is acceptable to omit any opening phrase.
+- If the buyer is replying to a question or request from the seller:
+  - It is acceptable to include a brief acknowledgement such as
+    &quot;Thank you for confirming.&quot; or &quot;Thanks for your reply.&quot;
+
+Rules:
+- Opening phrases are optional, not mandatory.
+- Do NOT force an opening phrase if it feels redundant.
+- Do NOT add opening phrases that change the meaning or commitment of the message.
+
+[INPUTS (PROVIDED BY BAYCHAT)]
+You will receive:
+- Seller intent: {sellerSetting}.
+- Tone: {toneSetting}.
+Rules:
+- Use Buyer message for understanding and for general eBay/product questions.
+- Use Seller intent ONLY for seller-specific decisions, commitments,
+  approvals, exceptions, or promises.
+- If it is not explicitly written in Seller intent,
+  do NOT state it as a seller decision or commitment.
+
+[OUTPUT &amp; UI SAFETY]
+- Follow the OUTPUT JSON format strictly as defined by the system prompt
+  (two fields only: japanese / reply).
+- Do NOT add extra fields.
+- Do NOT output any text outside JSON.
+- Do NOT include timestamps or copied chat-history headers.
+- Do NOT include internal instructions, labels, or explanations.
+
+[FINAL ENFORCEMENT]
+- Do NOT add or remove facts not supported by seller intent
+  or safe general knowledge.
+- Do NOT include prohibited or non-compliant content.
+- If any rule is violated, regenerate silently and fix it.
+</code></pre>
+<p><strong>⚠️ 詳細版と単純版の主な差分</strong><br />
+- 詳細版には <code>[INPUTS (PROVIDED BY BAYCHAT)]</code> や <code>[TONE SAFETY]</code> などが含まれる<br />
+- <strong>しかしこれらの機能は admin_prompt v2.4 側に移行済み</strong> — 詳細版は admin_prompt 誕生前の構造<br />
+- 現行本番が単純版（PLATFORM COMPLIANCEのみ）なのは、CS判断ロジックを admin_prompt に集約する設計思想によるもの</p>
+<hr />
+<h2 id="_4">🌐 影響範囲</h2>
+<h3 id="_5">直接影響する要素</h3>
+<ul>
+<li>全リプライに適用される絶対ルール</li>
+<li>eBayポリシー違反の検知・拒否</li>
+<li>個人情報・eBay外取引の禁止</li>
+<li>フィードバック操作の禁止</li>
+</ul>
+<h3 id="_6">間接影響する要素</h3>
+<ul>
+<li>admin_prompt（[N+4]）がどれだけ柔軟性を許可しても、このブロックが上書きされることはない（前方配置＋強制的内容）</li>
+<li><strong>BUT</strong>：2つのdeveloperブロックの発言が矛盾した場合、AIがどちらを優先するかは保証されない → テスト検証が必要</li>
+</ul>
+<h3 id="_7">副作用のリスク</h3>
+<ul>
+<li>eBayポリシー改定時に更新が遅れると、コンプライアンス違反返信を生成するリスク</li>
+<li>詳細版に切り替える場合、admin_prompt との機能重複で AI が混乱するリスク</li>
+</ul>
+<hr />
+<h2 id="_8">📜 バージョン履歴</h2>
+<table>
+<thead>
+<tr>
+<th>Ver</th>
+<th>日付</th>
+<th>主な変更</th>
+<th>きっかけ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>詳細版</td>
+<td>プロジェクト初期</td>
+<td>CS判断ロジック含む統合型</td>
+<td>admin_prompt 分離前</td>
+</tr>
+<tr>
+<td>単純版</td>
+<td>~2026-03月</td>
+<td>CS判断ロジックをadmin_promptに移管</td>
+<td>下元さんがadmin画面から品質改善できるようにする設計</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_9">⚠️ 未解決の論点</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>論点</th>
+<th>重要度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>—</td>
+<td>eBayポリシー改定時の更新プロセス（誰が監視・反映するか）</td>
+<td>🟡 中</td>
+</tr>
+<tr>
+<td>—</td>
+<td>詳細版と単純版の正式な切り替え判断（どちらがマスターか明確化）</td>
+<td>🟡 中</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>promt_spec_48665.csv</code> のようなCSV内の詳細版仕様をどう扱うか（削除？アーカイブ？）</td>
+<td>🟡 中</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="cowatech">🤝 Cowatech合意事項</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>合意内容</th>
+<th>合意日</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置順序</td>
+<td>[N+2] の位置に注入</td>
+<td>プロジェクト開始時</td>
+<td><code>gpt_api_payload.txt</code></td>
+</tr>
+<tr>
+<td>内容固定</td>
+<td>単純版をマスターとする</td>
+<td>~2026-03月</td>
+<td><code>gpt_api_payload.txt</code>実装</td>
+</tr>
+<tr>
+<td>変更プロセス</td>
+<td>eBayポリシー改定時のみCowatech実装</td>
+<td>未明文化</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_10">📚 関連ドキュメント</h2>
+<table>
+<thead>
+<tr>
+<th>ドキュメント</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gpt_api_payload.txt</code></td>
+<td>本番実装の実物</td>
+</tr>
+<tr>
+<td><code>SUMMARY_PROMT.csv</code></td>
+<td>単純版の仕様書</td>
+</tr>
+<tr>
+<td><code>promt_spec_48665.csv</code></td>
+<td>詳細版の仕様書</td>
+</tr>
+<tr>
+<td><code>04_conditional_logic.md</code></td>
+<td>このブロックが常時ONであることの確認</td>
+</tr>
+</tbody>
+</table>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>

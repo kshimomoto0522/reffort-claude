@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>API・テスト環境仕様 | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  🏠 <a href="dashboard.html">ダッシュボード</a>
+  📖 <a href="index.html">目次</a>
+  <a href="README.html">README</a>
+  <a href="00_overall_flow.html">全体フロー</a>
+  <a href="01_prompt_blocks_overview.html">ブロック俯瞰</a>
+  <a href="02_ui_injection_matrix.html">UI注入</a>
+  <a href="block_n4_admin_prompt.html">⭐admin_prompt</a>
+  <a href="04_conditional_logic.html">条件分岐</a>
+  <a href="09_open_questions.html">未解決論点</a>
+  <a href="10_api_testing.html">テスト環境</a>
+  <a href="06_glossary.html">用語集</a>
+</div>
+
+<h1 id="10-api">10. API・テスト環境仕様</h1>
+<blockquote>
+<p>✅ <strong>v0.2 完成版</strong><br />
+このファイルの役割：<strong>AI Replyの本番同等テスト環境</strong> を完全ドキュメント化する。Claude/Cowatech/社長が同じ理解でテスト実行・結果解釈できる状態を作る。</p>
+</blockquote>
+<hr />
+<h2 id="_1">🎯 テスト環境の全体像</h2>
+<pre><code>┌──────────────────────────────────────────────┐
+│  services/baychat/ai/testing/                         │
+│  ┌────────────────────────────────────────┐  │
+│  │  1. extract_cases.py                   │  │
+│  │     STG DBからテストケース抽出          │  │
+│  │          ↓                              │  │
+│  │  2. test_cases/*.json（50件規模）       │  │
+│  │          ↓                              │  │
+│  │  3. payload_builder.py                 │  │
+│  │     本番と同構造のmessages組立           │  │
+│  │          ↓                              │  │
+│  │  4. batch_test.py                      │  │
+│  │     マルチモデル×プロンプト版テスト     │  │
+│  │          ↓                              │  │
+│  │  5. ai_judge.py                        │  │
+│  │     5項目×5点自動採点                  │  │
+│  │          ↓                              │  │
+│  │  6. results/*.xlsx / *.html            │  │
+│  │     Excel+HTMLで結果可視化             │  │
+│  └────────────────────────────────────────┘  │
+└──────────────────────────────────────────────┘
+</code></pre>
+<hr />
+<h2 id="_2">📁 ディレクトリ構成（完全版）</h2>
+<pre><code>services/baychat/ai/testing/
+├── __pycache__/                    # Pythonキャッシュ
+├── test_cases/                     # 抽出テストケース
+│   └── extracted_YYYYMMDD_HHMMSS.json
+├── results/                        # テスト結果
+│   ├── test_*.xlsx                 # 採点結果Excel
+│   ├── comparison_*.html           # HTML比較レポート
+│   └── run_log_*.txt               # 実行ログ
+│
+├── payload_builder.py              # 本番同等ペイロード組立
+├── batch_test.py                   # メインエンジン
+├── ai_judge.py                     # AI審判（5項目×5点）
+├── db_connect.py                   # SSH+MariaDB接続
+├── extract_cases.py                # STG DB抽出
+│
+├── render_reply_comparison.py      # HTML：返信比較
+├── render_summary_view.py          # HTML：集計サマリ
+│
+├── _inspect_views.py               # 補助：HTMLビュー確認
+├── _speed_analysis.py              # 補助：速度分析
+├── _summarize_5models.py           # 補助：5モデル比較
+└── _summarize_results.py           # 補助：結果集計
+</code></pre>
+<hr />
+<h2 id="_3">🔧 主要スクリプト詳細</h2>
+<h3 id="1-payload_builderpy">1. payload_builder.py — 本番同等ペイロード組立</h3>
+<p><strong>何をするか</strong>：Cowatech本番APIペイロードを完全再現。8ブロック構造で messages を組立。</p>
+<p><strong>主要関数</strong>：</p>
+<pre><code class="language-python">payload_builder.build_payload(
+    messages,                      # chat history配列
+    tone=&quot;polite&quot;,                 # polite/friendly/apologetic
+    description=&quot;&quot;,                # {sellerSetting}置換用
+    include_forced_template=True   # 本番=True
+)
+</code></pre>
+<p><strong>組立順序</strong>：</p>
+<pre><code>[0]   developer : 商品情報JSON
+[1..] user/assistant/system : チャット履歴
+[N+1] developer : description_guide（descriptionあれば）
+[N+2] developer : BASE_PROMPT
+[N+3] developer : OUTPUT_FORMAT
+[N+4] developer : admin_prompt（{sellerSetting}/{toneSetting}置換後）
+[N+5] developer : FORCED_TEMPLATE（include_forced_template=True時）
+</code></pre>
+<hr />
+<h3 id="2-batch_testpy">2. batch_test.py — メインエンジン</h3>
+<p><strong>何をするか</strong>：テストケース×モデル×プロンプト版の全組み合わせで API呼び出し → AI採点 → Excel出力。</p>
+<p><strong>全フラグ一覧</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>フラグ</th>
+<th>内容</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--models</code></td>
+<td>モデル指定（複数可）</td>
+<td><code>--models gpt gemini claude</code></td>
+</tr>
+<tr>
+<td><code>--prompt-versions</code></td>
+<td>プロンプト版（複数可）</td>
+<td><code>--prompt-versions 2.3 2.4</code></td>
+</tr>
+<tr>
+<td><code>--cases</code></td>
+<td>テストケースJSONパス</td>
+<td><code>--cases testing/test_cases/extracted_*.json</code></td>
+</tr>
+<tr>
+<td><code>--judge</code></td>
+<td>AI審判（openai/claude/gemini）</td>
+<td><code>--judge claude</code></td>
+</tr>
+<tr>
+<td><code>--no-judge</code></td>
+<td>採点スキップ</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>--limit</code></td>
+<td>ケース数制限</td>
+<td><code>--limit 10</code></td>
+</tr>
+<tr>
+<td><code>--production-payload</code></td>
+<td><strong>本番モード</strong>（FORCED_TEMPLATE有効）</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>--no-forced-template</code></td>
+<td>FORCED_TEMPLATE除外</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>--tone</code></td>
+<td>固定tone</td>
+<td><code>--tone friendly</code></td>
+</tr>
+<tr>
+<td><code>--seller-name</code></td>
+<td>セラー名（テンプレ内）</td>
+<td><code>--seller-name myshop</code></td>
+</tr>
+<tr>
+<td><code>--description</code></td>
+<td>sellerSetting（admin指示文）</td>
+<td><code>--description "Be concise"</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>推奨実行例（本番同等モード）</strong>：</p>
+<pre><code class="language-bash">cd services/baychat/ai/testing
+python batch_test.py \
+  --models gpt gemini \
+  --prompt-versions 2.3 2.4 \
+  --production-payload \
+  --cases test_cases/extracted_20260415_182039.json \
+  --judge claude \
+  --limit 30
+</code></pre>
+<hr />
+<h3 id="3-ai_judgepy-ai">3. ai_judge.py — AI審判</h3>
+<p><strong>評価項目（5項目 × 5点 = 25点満点）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>5点</th>
+<th>3点</th>
+<th>1点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Accuracy（正確性）</td>
+<td>完全に正確・ポリシー準拠</td>
+<td>大部分正確だが細節に誤り</td>
+<td>誤情報・有害</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Tone（トーン）</td>
+<td>完全にプロ＆共感的</td>
+<td>共感やや不足</td>
+<td>無礼・冷淡・不適切</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Completeness（完全性）</td>
+<td>全質問・懸念に対応</td>
+<td>主要点は答えるが細節漏落</td>
+<td>主要質問を見落とし</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Action Clarity（アクション明確性）</td>
+<td>次のステップが明確</td>
+<td>ガイダンスあるが曖昧</td>
+<td>次のステップ不明</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Naturalness（自然さ）</td>
+<td>人間のCSのように自然</td>
+<td>多少AI的だが許容範囲</td>
+<td>テンプレ感強い</td>
+</tr>
+</tbody>
+</table>
+<p><strong>審判の出力形式</strong>：</p>
+<pre><code class="language-json">{
+  &quot;accuracy&quot;: 4,
+  &quot;tone&quot;: 5,
+  &quot;completeness&quot;: 3,
+  &quot;action_clarity&quot;: 4,
+  &quot;naturalness&quot;: 4,
+  &quot;total&quot;: 20,
+  &quot;critical_issues&quot;: [&quot;should mention return shipping label&quot;],
+  &quot;improvements&quot;: [&quot;add timeline for resolution&quot;],
+  &quot;summary_ja&quot;: &quot;返信は正確で親切だが、返品手続きの具体的なステップが不足している。&quot;
+}
+</code></pre>
+<hr />
+<h3 id="4-db_connectpy-sshmariadb">4. db_connect.py — SSH+MariaDB接続</h3>
+<p><strong>接続フロー</strong>：<br />
+1. SSH秘密鍵（<code>~/.ssh/id_ed25519_vps_baychat</code>）ロード<br />
+2. VPS踏み台にトンネル接続：<code>ssh -L 127.0.0.1:13306:RDSホスト:3306</code><br />
+3. localhost:13306 → VPS → RDS への通路確立<br />
+4. pymysql で接続（実はRDS）</p>
+<p><strong>必須.env変数</strong>：<br />
+| 変数名 | 用途 |<br />
+|-------|-----|<br />
+| <code>BAYCHAT_STG_DB_HOST</code> | RDSホスト |<br />
+| <code>BAYCHAT_STG_DB_PORT</code> | 3306（またはカスタム） |<br />
+| <code>BAYCHAT_STG_DB_USER</code> | DBユーザー |<br />
+| <code>BAYCHAT_STG_DB_PASSWORD</code> | DBパスワード |<br />
+| <code>VPS_HOST</code> | VPS固定IP（<code>.env.vps</code>に記載） |</p>
+<p><strong>使用例</strong>：</p>
+<pre><code class="language-python">with get_tunnel_and_connection(database=&quot;baychat_stg&quot;) as (tunnel, conn):
+    cursor = conn.cursor()
+    cursor.execute(&quot;SELECT * FROM view_chat_ebay LIMIT 5&quot;)
+    rows = cursor.fetchall()
+</code></pre>
+<hr />
+<h3 id="5-extract_casespy">5. extract_cases.py — テストケース抽出</h3>
+<p><strong>何をするか</strong>：STG DB <code>view_chat_ebay</code> から「最新メッセージ＝バイヤー発信＝セラーが返信する番」の会話を50件抽出。</p>
+<p><strong>カテゴリ分類ロジック</strong>（キーワード優先度順）：<br />
+| 優先度 | カテゴリ | キーワード例 |<br />
+|-------|--------|------------|<br />
+| 1 | cancel | "cancel", "placed by mistake", "by accident" |<br />
+| 2 | return | "return", "refund", "send it back", "RMA" |<br />
+| 3 | claim | "damaged", "broken", "wrong", "not as described" |<br />
+| 4 | tracking | "tracking", "shipment", "when will", "delivery", "customs" |<br />
+| 5 | discount | "discount", "offer", "negotiate", "best price" |<br />
+| 6 | general | 上記に該当しないもの |</p>
+<p><strong>実行例</strong>：</p>
+<pre><code class="language-bash">python extract_cases.py                    # 50件バランス抽出
+python extract_cases.py --limit 100        # 100件に変更
+python extract_cases.py --per-category 8   # カテゴリあたり8件（計48件）
+</code></pre>
+<p><strong>出力</strong>：<code>test_cases/extracted_YYYYMMDD_HHMMSS.json</code></p>
+<p><strong>妥当性フィルター</strong>：<br />
+- バイヤーメッセージ最低60文字（挨拶・感謝のみ除外）<br />
+- 単純応答（Thank you / OK / Got it）は meaningful=False → スキップ<br />
+- 複雑すぎる会話（20メッセージ超）スキップ</p>
+<hr />
+<h2 id="json">📄 テストケースJSONフォーマット</h2>
+<pre><code class="language-json">[
+  {
+    &quot;id&quot;: &quot;rafrra69_64efacd9&quot;,        // seller_hash + uuid
+    &quot;category&quot;: &quot;cancel&quot;,              // 6カテゴリ
+    &quot;buyer_ebay&quot;: &quot;rafrra69&quot;,          // バイヤーeID
+    &quot;buyer_message&quot;: &quot;Yo quiero mi reembolso...&quot;,  // LATESTメッセージ
+    &quot;num_messages&quot;: 32,                // 会話メッセージ総数
+    &quot;has_seller_history&quot;: true,        // セラー過去返信あり
+    &quot;input&quot;: [                         // OpenAI messages形式
+      {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: &quot;{\&quot;Title\&quot;: \&quot;...\&quot;, ...}&quot;},
+      {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;event: [日時] purchase_completed&quot;},
+      ...
+    ]
+  }
+]
+</code></pre>
+<hr />
+<h2 id="excel">📊 Excel結果フォーマット</h2>
+<h3 id="1">シート1：スコアサマリー</h3>
+<table>
+<thead>
+<tr>
+<th>カラム</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ケース</td>
+<td>テストケースID</td>
+</tr>
+<tr>
+<td>モデル</td>
+<td>使用モデル名</td>
+</tr>
+<tr>
+<td>プロンプト</td>
+<td>バージョン</td>
+</tr>
+<tr>
+<td>正確性〜自然さ</td>
+<td>5項目スコア</td>
+</tr>
+<tr>
+<td>合計(/25)</td>
+<td>合計スコア（条件付き書式）</td>
+</tr>
+<tr>
+<td>応答時間(秒)</td>
+<td>レイテンシ</td>
+</tr>
+<tr>
+<td>コスト(¥)</td>
+<td>円換算コスト</td>
+</tr>
+<tr>
+<td>サマリー</td>
+<td>審判の1行コメント</td>
+</tr>
+</tbody>
+</table>
+<p><strong>条件付き書式</strong>：<br />
+- 20点以上 = 🟢 緑<br />
+- 15〜20 = 🟡 黄<br />
+- 15未満 = 🔴 赤</p>
+<h3 id="2">シート2：詳細</h3>
+<ul>
+<li>AI返信テキスト（日本語・英語）</li>
+<li>採点理由</li>
+<li>critical_issues</li>
+<li>improvements</li>
+</ul>
+<h3 id="3">シート3：集計</h3>
+<ul>
+<li>モデル別・プロンプト版別の平均スコア比較</li>
+</ul>
+<hr />
+<h2 id="results">🧪 過去テスト履歴（results/）</h2>
+<h3 id="_4">重要なテスト結果</h3>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>概要</th>
+<th>スコア</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_gpt_v2.4_prodON_20260416_173251.xlsx</code></td>
+<td>本番モード（FORCED_TEMPLATE有効）</td>
+<td><strong>19.5/25</strong></td>
+</tr>
+<tr>
+<td><code>test_gpt_v2.4_prodOFF_20260416_173615.xlsx</code></td>
+<td>FORCED_TEMPLATE除去</td>
+<td><strong>21.5/25 (+2.0pt)</strong></td>
+</tr>
+<tr>
+<td><code>test_gpt5mini_gpt41nano_gpt5nano_v2.4_20260415_211256.xlsx</code></td>
+<td>v2.4 3モデル比較</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>test_gpt_gpt5mini_gpt5nano_gpt41nano_gemini_v2.3_20260415_190920.xlsx</code></td>
+<td>v2.3 5モデル比較</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="gpt_request_110json">📂 gpt_request_1〜10.json</h2>
+<p><strong>重要</strong>：<code>services/baychat/ai/gpt_request_*.json</code> は <strong>2026-03時点のステージング環境データ</strong>。<br />
+- セラー自動メッセージが含まれる（本番ではセラー自動メッセージはAIに渡らない仕様）<br />
+- 2026-03-20 に本番データを再依頼済み、到着待ち（CLAUDE.md参照）</p>
+<p><strong>サイズ・内容</strong>：<br />
+| ファイル | サイズ | メッセージ数 | 内容 |<br />
+|---------|-------|-----------|------|<br />
+| gpt_request_2.json | 12 KB | 8 | キャンセル→住所確認→解決 |<br />
+| gpt_request_3.json | 12 KB | 6 | 返品（サイズ合わず） |<br />
+| gpt_request_5.json | 11 KB | 5 | 発送日問い合わせ |<br />
+| gpt_request_9.json | 15 KB | 28 | 最長の会話 |</p>
+<hr />
+<h2 id="_5">🔧 補助スクリプト</h2>
+<table>
+<thead>
+<tr>
+<th>スクリプト</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compare_cases.py</code></td>
+<td>複数プロンプト版で同じケース実行・比較</td>
+</tr>
+<tr>
+<td><code>compare_models.py</code></td>
+<td>GPT / Gemini / Claude を同一条件で比較（APIキー未設定モデルはスキップ）</td>
+</tr>
+<tr>
+<td><code>run_all_tests.py</code></td>
+<td>gpt_request_*.json を固定プロンプト版で全実行</td>
+</tr>
+<tr>
+<td><code>render_reply_comparison.py</code></td>
+<td>ExcelからHTML比較レポート生成</td>
+</tr>
+<tr>
+<td><code>render_summary_view.py</code></td>
+<td>スコア集計をHTML棒グラフ化</td>
+</tr>
+<tr>
+<td><code>_speed_analysis.py</code></td>
+<td>レスポンス速度分析</td>
+</tr>
+<tr>
+<td><code>_summarize_results.py</code></td>
+<td>結果集計</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_6">⚠️ 注意事項</h2>
+<ul>
+<li><strong>DBスキーマ変更時</strong>：<code>extract_cases.py</code> の SQL を要修正</li>
+<li><strong>API仕様変更時</strong>：<code>payload_builder.py</code> を要修正</li>
+<li><strong>新モデル追加時</strong>：<code>batch_test.py</code> の モデル分岐を要追加</li>
+<li><strong>審判プロンプト変更時</strong>：過去の採点結果との比較不可に</li>
+</ul>
+<hr />
+<h2 id="_7">📚 関連ドキュメント</h2>
+<table>
+<thead>
+<tr>
+<th>ドキュメント</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>00_overall_flow.md</code></td>
+<td>本番実装との対応</td>
+</tr>
+<tr>
+<td><code>11_model_selection.md</code></td>
+<td>モデル選定経緯</td>
+</tr>
+<tr>
+<td><code>13_baychat_api_spec.md</code></td>
+<td>本番API仕様</td>
+</tr>
+<tr>
+<td><code>05_changelog.md</code></td>
+<td>テスト実行履歴記録</td>
+</tr>
+</tbody>
+</table>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>

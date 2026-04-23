@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>README | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  🏠 <a href="dashboard.html">ダッシュボード</a>
+  📖 <a href="index.html">目次</a>
+  <a href="README.html">README</a>
+  <a href="00_overall_flow.html">全体フロー</a>
+  <a href="01_prompt_blocks_overview.html">ブロック俯瞰</a>
+  <a href="02_ui_injection_matrix.html">UI注入</a>
+  <a href="block_n4_admin_prompt.html">⭐admin_prompt</a>
+  <a href="04_conditional_logic.html">条件分岐</a>
+  <a href="09_open_questions.html">未解決論点</a>
+  <a href="10_api_testing.html">テスト環境</a>
+  <a href="06_glossary.html">用語集</a>
+</div>
+
+<h1 id="baychat-ai-reply">BayChat AI Reply 設計図</h1>
+<blockquote>
+<p><strong>バージョン</strong>: v0.2（実データ完全統合版）<br />
+<strong>作成日</strong>: 2026-04-20<br />
+<strong>管理主体</strong>: 株式会社Reffort（Cowatechレビュー体制）<br />
+<strong>マスター言語</strong>: 日本語（技術用語は英日併記）<br />
+<strong>単一参照源</strong>: このフォルダ配下のMarkdown群が AI Reply の唯一の正式設計図。既存の19枚CSV（<code>cowatech_payloads/spec_sheets/</code>）は「参考資料」にデモート済み。</p>
+</blockquote>
+<hr />
+<h2 id="_1">📌 この設計図の目的</h2>
+<p><strong>社長・Claude・Cowatech の3者が、同じ情報源で議論・実装・改善を進められる共通言語を作る。</strong></p>
+<p>ゴール状態：<br />
+- ✅ AI Replyの全仕様（プロンプト本文・API構造・条件分岐・UI連動・tone別差分・event enum・スキーマ）が書いてある<br />
+- ✅ ClaudeがCowatechに仕様質問することがほぼゼロになる<br />
+- ✅ Cowatechが実装・更新するときの参照源・運用手順が整っている<br />
+- ✅ 既存CSV19枚は「過去の参考資料」にデモート済み</p>
+<hr />
+<h2 id="v0219">🗂️ ファイル構成（v0.2・全19ファイル）</h2>
+<pre><code>design-doc/
+├── README.md                              ← このファイル（目次・入口）
+│
+├── 📊 横断ビュー
+│   ├── 00_overall_flow.md                 ← 全体処理フロー（Mermaid図）
+│   ├── 01_prompt_blocks_overview.md       ← プロンプトブロック俯瞰表
+│   ├── 02_ui_injection_matrix.md          ← UI → プロンプト注入マトリクス
+│   ├── 04_conditional_logic.md            ← 条件分岐表（完全版）
+│
+├── 📇 ブロック詳細カード（7枚）
+│   └── 03_block_cards/
+│       ├── block_00_item_info.md          ← [0] 商品情報JSON
+│       ├── block_chat_history.md          ← [1..N] チャット履歴
+│       ├── block_n1_description_guide.md  ← [N+1] 補足情報ガイド
+│       ├── block_n2_base_prompt.md        ← [N+2] BASE_PROMPT
+│       ├── block_n3_output_format.md      ← [N+3] OUTPUT_FORMAT
+│       ├── block_n4_admin_prompt.md       ← [N+4] admin_prompt ⭐
+│       └── block_n5_forced_template.md    ← [N+5] FORCED_TEMPLATE
+│
+├── 🔧 運用・管理
+│   ├── 05_changelog.md                    ← 変更履歴
+│   ├── 07_cowatech_operation.md           ← Cowatech運用ルール
+│   ├── 08_migration_plan.md               ← CSV → 設計図の移行計画
+│   └── 09_open_questions.md               ← 未解決論点集約
+│
+├── 🔌 API・テスト・連携
+│   ├── 10_api_testing.md                  ← テスト環境完全仕様
+│   ├── 12_ebay_api_integration.md         ← eBay API連携仕様（42項目）
+│   └── 13_baychat_api_spec.md             ← BayChat → Cowatech I/F仕様
+│
+├── 🎯 モデル・QA・将来機能
+│   ├── 11_model_selection.md              ← モデル選定経緯・次期候補
+│   ├── 14_qa_testing.md                   ← QA観点・不具合履歴
+│   └── 15_summary_mode.md                 ← 要約モード仕様（将来機能）
+│
+└── 📖 参照
+    └── 06_glossary.md                     ← 用語集・FAQ
+</code></pre>
+<hr />
+<h2 id="v02">🚦 v0.2 完成度</h2>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>状態</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>README.md</td>
+<td>✅ 完成版</td>
+<td>v0.2</td>
+</tr>
+<tr>
+<td>00_overall_flow.md</td>
+<td>✅ 完成版</td>
+<td>Mermaid図＋非エンジニア解説</td>
+</tr>
+<tr>
+<td>01_prompt_blocks_overview.md</td>
+<td>✅ 完成版</td>
+<td>7ブロック俯瞰表</td>
+</tr>
+<tr>
+<td>02_ui_injection_matrix.md</td>
+<td>✅ 完成版</td>
+<td>UI → プロンプト注入表</td>
+</tr>
+<tr>
+<td>03_block_cards/block_00_item_info.md</td>
+<td>✅ 完成版</td>
+<td>実データ転記</td>
+</tr>
+<tr>
+<td>03_block_cards/block_chat_history.md</td>
+<td>✅ 完成版</td>
+<td>event enum完全リスト</td>
+</tr>
+<tr>
+<td>03_block_cards/block_n1_description_guide.md</td>
+<td>✅ 完成版</td>
+<td>原文＋条件分岐</td>
+</tr>
+<tr>
+<td>03_block_cards/block_n2_base_prompt.md</td>
+<td>✅ 完成版</td>
+<td>単純版＋詳細版両方転記</td>
+</tr>
+<tr>
+<td>03_block_cards/block_n3_output_format.md</td>
+<td>✅ 完成版</td>
+<td>schema完全定義</td>
+</tr>
+<tr>
+<td>03_block_cards/block_n4_admin_prompt.md</td>
+<td>✅ 完成版</td>
+<td>v2.4構造・バージョン履歴</td>
+</tr>
+<tr>
+<td>03_block_cards/block_n5_forced_template.md</td>
+<td>✅ 完成版</td>
+<td>tone別3バリエーション完全転記</td>
+</tr>
+<tr>
+<td>04_conditional_logic.md</td>
+<td>✅ 完成版</td>
+<td>全条件分岐・全パラメータ</td>
+</tr>
+<tr>
+<td>05_changelog.md</td>
+<td>✅ 完成版</td>
+<td>v0.2変更記録</td>
+</tr>
+<tr>
+<td>06_glossary.md</td>
+<td>✅ 完成版</td>
+<td>用語集・FAQ・略語集</td>
+</tr>
+<tr>
+<td>07_cowatech_operation.md</td>
+<td>✅ 完成版</td>
+<td>運用ルール</td>
+</tr>
+<tr>
+<td>08_migration_plan.md</td>
+<td>✅ 完成版</td>
+<td>CSV19枚移行マップ</td>
+</tr>
+<tr>
+<td>09_open_questions.md</td>
+<td>✅ 完成版</td>
+<td>Q1-Q24の論点集約</td>
+</tr>
+<tr>
+<td>10_api_testing.md</td>
+<td>✅ 完成版</td>
+<td>testing/完全ドキュメント</td>
+</tr>
+<tr>
+<td>11_model_selection.md</td>
+<td>✅ 完成版</td>
+<td>モデル選定経緯</td>
+</tr>
+<tr>
+<td>12_ebay_api_integration.md</td>
+<td>✅ 完成版</td>
+<td>eBay API 42項目</td>
+</tr>
+<tr>
+<td>13_baychat_api_spec.md</td>
+<td>✅ 完成版</td>
+<td>BayChat→Cowatech I/F</td>
+</tr>
+<tr>
+<td>14_qa_testing.md</td>
+<td>✅ 完成版</td>
+<td>QA観点・不具合履歴</td>
+</tr>
+<tr>
+<td>15_summary_mode.md</td>
+<td>✅ 完成版</td>
+<td>要約モード仕様（ドラフト段階）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_2">📖 読む順番（目的別）</h2>
+<h3 id="_3">🔹 初見で全体像を把握したい</h3>
+<ol>
+<li><code>README.md</code>（このファイル）</li>
+<li><code>00_overall_flow.md</code>（全体フロー図）</li>
+<li><code>01_prompt_blocks_overview.md</code>（7ブロック俯瞰）</li>
+</ol>
+<p><strong>所要時間：10分</strong></p>
+<h3 id="admin_prompt">🔹 admin_prompt を編集したい（社長の日常作業）</h3>
+<ol>
+<li><code>03_block_cards/block_n4_admin_prompt.md</code>（最重要）</li>
+<li><code>services/baychat/ai/prompt_admin_v2.4.md</code>（実物）</li>
+<li><code>14_qa_testing.md</code>（デグレチェック）</li>
+</ol>
+<h3 id="cowatech">🔹 Cowatech に新機能を依頼したい</h3>
+<ol>
+<li><code>07_cowatech_operation.md</code>（運用フロー）</li>
+<li>該当するブロックカード（<code>03_block_cards/</code>）</li>
+<li><code>09_open_questions.md</code>（既存論点確認）</li>
+</ol>
+<h3 id="_4">🔹 テストを実行したい</h3>
+<ol>
+<li><code>10_api_testing.md</code>（完全ガイド）</li>
+<li><code>11_model_selection.md</code>（モデル選定）</li>
+</ol>
+<h3 id="cowatech_1">🔹 Cowatech に質問したい</h3>
+<ol>
+<li><code>09_open_questions.md</code>（未解決論点）</li>
+<li>該当するブロックカード</li>
+<li><code>07_cowatech_operation.md</code>（Slack運用ルール）</li>
+</ol>
+<hr />
+<h2 id="_5">🎯 社長への最短アクセス</h2>
+<table>
+<thead>
+<tr>
+<th>疑問</th>
+<th>開くファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI Replyの仕組みは？</td>
+<td><code>00_overall_flow.md</code></td>
+</tr>
+<tr>
+<td>7つのブロックとは？</td>
+<td><code>01_prompt_blocks_overview.md</code></td>
+</tr>
+<tr>
+<td>社長が触れるのはどこ？</td>
+<td><code>block_n4_admin_prompt.md</code></td>
+</tr>
+<tr>
+<td>UI操作はどこに反映される？</td>
+<td><code>02_ui_injection_matrix.md</code></td>
+</tr>
+<tr>
+<td>今Cowatechに聞きたいことは？</td>
+<td><code>09_open_questions.md</code></td>
+</tr>
+<tr>
+<td>今の品質スコアは？</td>
+<td><code>block_n4_admin_prompt.md</code> → 品質ベンチマーク</td>
+</tr>
+<tr>
+<td>Gemini切替はいつ？</td>
+<td><code>11_model_selection.md</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_6">🛠️ 更新ルール（要点）</h2>
+<h3 id="_7">変更時の必須アクション</h3>
+<ol>
+<li>該当ファイルを編集</li>
+<li><code>05_changelog.md</code> に記録（いつ・誰が・なぜ・何を・影響範囲）</li>
+<li>関連ドキュメントのリンク・クロスリファレンス更新</li>
+<li>HTMLビューを再生成（<code>python _render_html.py</code>）</li>
+</ol>
+<h3 id="07_cowatech_operationmd">運用フェーズ別（<code>07_cowatech_operation.md</code>）</h3>
+<ul>
+<li><strong>〜1か月</strong>：直編集</li>
+<li><strong>1〜3か月</strong>：PR＆レビュー</li>
+<li><strong>3か月〜</strong>：PR＆月次同期</li>
+</ul>
+<hr />
+<h2 id="html">🌐 HTMLプレビュー</h2>
+<p>社長が読みやすいように、全Markdownを整形HTMLに変換している：</p>
+<ul>
+<li><strong>トップ（推奨）</strong>: <code>_html_preview/dashboard.html</code> — 社長ダッシュボード</li>
+<li><strong>目次</strong>: <code>_html_preview/index.html</code> — 全ページ一覧</li>
+</ul>
+<p><strong>生成コマンド</strong>：</p>
+<pre><code class="language-bash">cd services/baychat/ai/design-doc
+python _render_html.py
+</code></pre>
+<hr />
+<h2 id="v02_1">🔴 現在の最重要論点（v0.2時点）</h2>
+<p><strong>Cowatech確認待ちの高優先度論点（9件）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1</td>
+<td>FORCED_TEMPLATE除去時のTO/FROM注入経路</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>description・TO/FROMの「空/なし」判定ロジック</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>チャット履歴の件数・トークン上限</td>
+</tr>
+<tr>
+<td>Q5</td>
+<td>multi_language_reply schema名の参照有無</td>
+</tr>
+<tr>
+<td>Q6</td>
+<td>Gemini 2.5 Flash実装ロードマップ</td>
+</tr>
+<tr>
+<td>Q7</td>
+<td>whoPaysShipping欠損の原因</td>
+</tr>
+<tr>
+<td>Q8</td>
+<td>自動メッセージ/手動返信の区別ロジック</td>
+</tr>
+<tr>
+<td>Q9</td>
+<td>既存CSVのコード依存の有無</td>
+</tr>
+</tbody>
+</table>
+<p>詳細：<code>09_open_questions.md</code></p>
+<hr />
+<h2 id="_8">📞 関連ドキュメント（設計図外）</h2>
+<table>
+<thead>
+<tr>
+<th>ドキュメント</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>services/baychat/ai/CLAUDE.md</code></td>
+<td>BayChat部門の日常運営ルール</td>
+</tr>
+<tr>
+<td><code>services/baychat/ai/prompt_admin_v2.4.md</code></td>
+<td>現行admin_promptの実物</td>
+</tr>
+<tr>
+<td><code>services/baychat/ai/cowatech_payloads/gpt_api_payload.txt</code></td>
+<td>本番ペイロード一次資料</td>
+</tr>
+<tr>
+<td><code>services/baychat/ai/cowatech_payloads/baychat_api_payload.txt</code></td>
+<td>BayChatリクエスト一次資料</td>
+</tr>
+<tr>
+<td><code>services/baychat/ai/cowatech_payloads/spec_sheets/</code></td>
+<td>既存CSV19枚（参考資料）</td>
+</tr>
+<tr>
+<td><code>services/baychat/ai/handoff_20260420_design_doc_project.md</code></td>
+<td>本プロジェクトの背景</td>
+</tr>
+<tr>
+<td><code>services/baychat/ai/testing/</code></td>
+<td>本番同等テスト環境</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_9">🗓️ バージョン履歴</h2>
+<table>
+<thead>
+<tr>
+<th>バージョン</th>
+<th>日付</th>
+<th>主な変更</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v0.1</td>
+<td>2026-04-20</td>
+<td>叩き台（骨格・admin_promptサンプル完成）</td>
+</tr>
+<tr>
+<td><strong>v0.2</strong></td>
+<td><strong>2026-04-20</strong></td>
+<td><strong>実データ完全統合（5エージェント並列調査・全ブロックカード完成・新規7ファイル追加）</strong></td>
+</tr>
+<tr>
+<td>v1.0（予定）</td>
+<td>—</td>
+<td>Cowatechレビュー完了版</td>
+</tr>
+</tbody>
+</table>
+<p>詳細：<code>05_changelog.md</code></p>
+<hr />
+<p><em>この設計図は「作ること」が目的ではなく、「3者が意思疎通でき、継続管理できる基盤」が目的。形式より実用性を優先する。</em></p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>

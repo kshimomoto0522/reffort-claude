@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>UI注入マトリクス | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  🏠 <a href="dashboard.html">ダッシュボード</a>
+  📖 <a href="index.html">目次</a>
+  <a href="README.html">README</a>
+  <a href="00_overall_flow.html">全体フロー</a>
+  <a href="01_prompt_blocks_overview.html">ブロック俯瞰</a>
+  <a href="02_ui_injection_matrix.html">UI注入</a>
+  <a href="block_n4_admin_prompt.html">⭐admin_prompt</a>
+  <a href="04_conditional_logic.html">条件分岐</a>
+  <a href="09_open_questions.html">未解決論点</a>
+  <a href="10_api_testing.html">テスト環境</a>
+  <a href="06_glossary.html">用語集</a>
+</div>
+
+<h1 id="02-ui">02. UI → プロンプト注入マトリクス</h1>
+<blockquote>
+<p>このファイルの役割：<strong>BayChat画面のUI操作が、AIに送られるプロンプトのどこに差し込まれるか</strong>を一覧で見える化する。<br />
+「UIの〇〇を変えると、プロンプトの□□が変わって、AIの返信が△△になる」を1枚で把握するためのもの。</p>
+</blockquote>
+<hr />
+<h2 id="ui">🎛️ UI操作項目の全リスト</h2>
+<table>
+<thead>
+<tr>
+<th>UI項目</th>
+<th>場所</th>
+<th>取りうる値</th>
+<th>必須/任意</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TO（宛先）</td>
+<td>AI Reply生成画面</td>
+<td>バイヤーID / バイヤー氏名 / なし</td>
+<td>任意</td>
+</tr>
+<tr>
+<td>FROM（署名）</td>
+<td>AI Reply生成画面</td>
+<td>セラーID / セラー氏名 / 担当者名 / なし</td>
+<td>任意</td>
+</tr>
+<tr>
+<td>トーン</td>
+<td>AI Reply生成画面</td>
+<td>polite（丁寧）/ friendly（フレンドリー）/ apologetic（謝罪）</td>
+<td>必須</td>
+</tr>
+<tr>
+<td>補足情報</td>
+<td>AI Reply生成画面</td>
+<td>自由入力テキスト</td>
+<td>任意</td>
+</tr>
+<tr>
+<td>「AIで返信を生成」ボタン</td>
+<td>AI Reply生成画面</td>
+<td>クリックのみ</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>※上記は2026-04-20時点のUI。将来TO/FROM機能は再設計検討中（<code>handoff_20260416_results.md</code>参照）。</p>
+<hr />
+<h2 id="ui_1">🎯 注入マトリクス（UI項目 × プロンプトブロック）</h2>
+<table>
+<thead>
+<tr>
+<th>UI項目</th>
+<th>注入先ブロック</th>
+<th>注入箇所（プロンプト内の位置）</th>
+<th>置換プレースホルダ</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TO（宛先）</strong></td>
+<td>[N+5] FORCED_TEMPLATE</td>
+<td>冒頭 <code>Hello {buyer_name},</code><br/>末尾 <code>buyer_name: ...</code>の行</td>
+<td><code>{buyer_name}</code></td>
+<td>常時注入</td>
+</tr>
+<tr>
+<td><strong>FROM（署名）</strong></td>
+<td>[N+5] FORCED_TEMPLATE</td>
+<td>末尾 <code>{seller_name}</code> 行<br/>末尾 <code>seller_name: ...</code>の行</td>
+<td><code>{seller_name}</code></td>
+<td>常時注入</td>
+</tr>
+<tr>
+<td><strong>トーン</strong></td>
+<td>[N+4] admin_prompt</td>
+<td>INPUTSセクションの <code>Tone: {toneSetting}</code></td>
+<td><code>{toneSetting}</code></td>
+<td>常時注入</td>
+</tr>
+<tr>
+<td><strong>トーン</strong></td>
+<td>[N+5] FORCED_TEMPLATE</td>
+<td>tone別に3バリエーションから選択<br/>（polite/friendly/apologetic）</td>
+<td>テンプレート全体切替</td>
+<td>常時注入</td>
+</tr>
+<tr>
+<td><strong>補足情報</strong></td>
+<td>[N+4] admin_prompt</td>
+<td>SELLER INTENTセクション <code>Seller intent ({sellerSetting})</code><br/>INPUTSセクション <code>Seller intent: {sellerSetting}</code></td>
+<td><code>{sellerSetting}</code></td>
+<td>常時注入</td>
+</tr>
+<tr>
+<td><strong>補足情報</strong></td>
+<td>[N+1] 補足情報ガイド</td>
+<td>ブロック全体</td>
+<td><code>{{Tone}}</code> / <code>{{User input in sreen}}</code></td>
+<td><strong>descriptionが空でない場合のみ</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_1">📍 具体例：返品リクエストへの返信を生成する場合</h2>
+<h3 id="ui_2">セラーがUIで設定した値</h3>
+<ul>
+<li>TO: <code>michkuc_71</code>（バイヤーID）</li>
+<li>FROM: <code>rioxxrinaxjapan</code>（セラーID）</li>
+<li>トーン: <code>polite</code></li>
+<li>補足情報: （空）</li>
+</ul>
+<h3 id="ai">実際にAIに送られるペイロード（抜粋）</h3>
+<h4 id="n4-admin_prompt">[N+4] admin_prompt の末尾</h4>
+<pre><code>--------------------------------
+INPUTS
+--------------------------------
+- Seller intent: {sellerSetting}   ← ここは補足情報が空なので空文字に置換
+- Tone: polite                      ← ここにトーン値が注入
+</code></pre>
+<h4 id="n5-forced_templatepolite">[N+5] FORCED_TEMPLATE（polite版）</h4>
+<pre><code>The response MUST ABSOLUTELY adhere to the following format.
+  Do not add explanations, markdown, or extra text.
+
+  Hello michkuc_71,                 ← buyer_name が注入
+  {output_content}                   ← AIが生成した本文がここに入る
+
+  Best regards,
+   rioxxrinaxjapan                   ← seller_name が注入
+
+  Replace the placeholders with actual values.
+  seller_name: rioxxrinaxjapan       ← 念押しの再注入
+  buyer_name: michkuc_71              ← 念押しの再注入
+</code></pre>
+<hr />
+<h2 id="tonen5-forced_template">🔄 tone別の差分（[N+5] FORCED_TEMPLATE）</h2>
+<p>トーン選択によって FORCED_TEMPLATE の内容が大きく変わる。以下は公式仕様（<code>SUMMARY_PROMT.csv</code>より）：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>polite（丁寧）</th>
+<th>friendly（フレンドリー）</th>
+<th>apologetic（謝罪）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>冒頭挨拶</td>
+<td><code>Hello {buyer_name},</code></td>
+<td><code>Hello {buyer_name},</code></td>
+<td><code>Hello {buyer_name},</code></td>
+</tr>
+<tr>
+<td>本文前後の改行</td>
+<td>なし</td>
+<td><code>&lt;Break line here&gt;</code> 明示</td>
+<td><code>&lt;Break line here&gt;</code> 明示</td>
+</tr>
+<tr>
+<td>結句</td>
+<td><code>Best regards,</code></td>
+<td><code>Best,</code></td>
+<td><code>{greeting},</code>（条件分岐）</td>
+</tr>
+<tr>
+<td><code>{greeting}</code>の中身</td>
+<td>—</td>
+<td>—</td>
+<td>怒っている → <code>Sincerely</code><br/>それ以外 → <code>Kind regards</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>→ トーンを変えると、AIが出力する結句・改行の扱いまで変わる。</strong></p>
+<hr />
+<h2 id="_2">⚠️ 注入時の注意点</h2>
+<h3 id="1">1. 同じプレースホルダが複数箇所に出る</h3>
+<p><code>{buyer_name}</code> と <code>{seller_name}</code> は [N+5] FORCED_TEMPLATE の <strong>冒頭・本文・末尾注意書き</strong> の3箇所に登場。<br />
+- <strong>すべて同じ値に置換される</strong>ことをBayChat側で保証する必要あり<br />
+- 置換漏れがあると literal <code>{buyer_name}</code> がAIへのプロンプトに残り、AIが混乱する</p>
+<h3 id="2">2. 補足情報が空のときの扱い</h3>
+<p><code>{sellerSetting}</code> が空の場合の admin_prompt の挙動：<br />
+- <code>Seller intent: {sellerSetting}</code> → <code>Seller intent:</code> となる（空文字連結）<br />
+- admin_prompt v2.4 は「If not provided: the buyer's request IS the direction.」で空を許容するロジックを持つ<br />
+- <strong>空を明示的に"not provided"として扱う別実装にしたい場合は要Cowatech協議</strong></p>
+<h3 id="3-description">3. descriptionチェックのロジック不明</h3>
+<p><code>[N+1] 補足情報ガイド</code> を注入するかどうかの判定は：<br />
+- 「空文字列ならスキップ」？<br />
+- 「nullならスキップ」？<br />
+- 「trim後に空ならスキップ」？<br />
+- 「一定文字数以下ならスキップ」？<br />
+→ <strong>Cowatechに確認が必要（Q3）</strong></p>
+<h3 id="4-tofrom">4. TO/FROM「なし」選択時の挙動が不明</h3>
+<p>UIで「なし」を選んだ場合：<br />
+- [N+5] で <code>Hello ,</code> のようになる？<br />
+- それとも挨拶行自体がスキップされる？<br />
+- それとも <code>{buyer_name}</code> がそのまま残る？<br />
+→ <strong>Cowatechに確認が必要</strong></p>
+<hr />
+<h2 id="_3">🚨 このマトリクスを更新するタイミング</h2>
+<ul>
+<li>UI項目の追加・削除・変更</li>
+<li>プレースホルダの追加・変更</li>
+<li>注入先ブロックの変更</li>
+<li>条件分岐の追加</li>
+<li>tone別バリエーションの追加（新しいトーン追加時）</li>
+</ul>
+<p><strong>更新時は <code>05_changelog.md</code> と対応するブロックカード（<code>03_block_cards/</code>）も同時更新すること。</strong></p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>

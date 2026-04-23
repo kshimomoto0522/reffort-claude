@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>条件分岐表 | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  🏠 <a href="dashboard.html">ダッシュボード</a>
+  📖 <a href="index.html">目次</a>
+  <a href="README.html">README</a>
+  <a href="00_overall_flow.html">全体フロー</a>
+  <a href="01_prompt_blocks_overview.html">ブロック俯瞰</a>
+  <a href="02_ui_injection_matrix.html">UI注入</a>
+  <a href="block_n4_admin_prompt.html">⭐admin_prompt</a>
+  <a href="04_conditional_logic.html">条件分岐</a>
+  <a href="09_open_questions.html">未解決論点</a>
+  <a href="10_api_testing.html">テスト環境</a>
+  <a href="06_glossary.html">用語集</a>
+</div>
+
+<h1 id="04">04. 条件分岐表（完全版）</h1>
+<blockquote>
+<p>✅ <strong>v0.3 更新版（2026-04-23）</strong><br />
+このファイルの役割：<strong>「どのブロックが、どの条件で、ON/OFFされるか」「どの値が、どの条件で、何に置換されるか」</strong> を一覧で見える化する。<br />
+🆕 <strong>2026-04-23 更新</strong>：Cowatech prd反映（2026-04-22 23:58）を反映。FORCED_TEMPLATE廃止・プレースホルダ命名を <code>{buyerAccountEbay}/{sellerAccountEbay}</code> に統一。</p>
+</blockquote>
+<hr />
+<h2 id="_1">🚦 ブロック単位の条件分岐</h2>
+<table>
+<thead>
+<tr>
+<th>ブロック</th>
+<th>ON/OFF判定</th>
+<th>判定条件</th>
+<th>判定ロジック</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[0] 商品情報JSON</td>
+<td><strong>常時ON</strong></td>
+<td>—</td>
+<td>ItemIDから eBay API <code>GetItem</code> で取得</td>
+<td><code>gpt_api_payload.txt</code></td>
+</tr>
+<tr>
+<td>[1..N] チャット履歴</td>
+<td><strong>常時ON（履歴あれば）</strong></td>
+<td>履歴1件以上</td>
+<td>DB の view_chat_ebay から抽出</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>[N+1] 補足情報ガイド</td>
+<td><strong>条件付きON</strong></td>
+<td>descriptionが「空でない」</td>
+<td>🔴 判定詳細はCowatech確認待ち（Q3）</td>
+<td>本番実例で欠落→推測</td>
+</tr>
+<tr>
+<td>[N+2] BASE_PROMPT</td>
+<td><strong>常時ON</strong></td>
+<td>—</td>
+<td>固定テキスト</td>
+<td><code>gpt_api_payload.txt</code></td>
+</tr>
+<tr>
+<td>[N+3] OUTPUT_FORMAT</td>
+<td><strong>常時ON</strong></td>
+<td>—</td>
+<td>固定テキスト</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>[N+4] admin_prompt</td>
+<td><strong>常時ON</strong></td>
+<td>—</td>
+<td>admin画面登録テキスト（<code>{sellerSetting}</code> / <code>{toneSetting}</code> / 🆕<code>{buyerAccountEbay}</code> / 🆕<code>{sellerAccountEbay}</code> 置換後）を注入</td>
+<td>同上＋2026-04-22 prd反映</td>
+</tr>
+<tr>
+<td>~~[N+5] FORCED_TEMPLATE~~</td>
+<td><strong>❌ 廃止済み（2026-04-22）</strong></td>
+<td>—</td>
+<td>Cowatech stg+prdでブロック生成ロジック削除</td>
+<td>Slack thread_ts <code>1776427836.602699</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_2">🎚️ トーン選択による分岐</h2>
+<h3 id="2026-04-22admin_prompt">現行（2026-04-22以降）：admin_prompt 内で制御</h3>
+<p>トーン選択値 <code>{toneSetting}</code> はadmin_promptのINPUTSセクションに注入され、<br />
+TONE GUIDELINES / GREETING &amp; SIGNATURE POLICY セクションがAIに挙動を指示する。</p>
+<table>
+<thead>
+<tr>
+<th>トーン値</th>
+<th>挨拶</th>
+<th>結句</th>
+<th>特記事項</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>polite</code></td>
+<td><code>Hello {buyerAccountEbay},</code></td>
+<td><code>Best regards,\n{sellerAccountEbay}</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>friendly</code></td>
+<td><code>Hi {buyerAccountEbay},</code></td>
+<td><code>Best,\n{sellerAccountEbay}</code></td>
+<td>カジュアル調</td>
+</tr>
+<tr>
+<td><code>apologetic</code></td>
+<td><code>Hello {buyerAccountEbay},</code></td>
+<td>怒り判定で <code>Sincerely,</code> / <code>Kind regards,</code> → <code>\n{sellerAccountEbay}</code></td>
+<td>AI判定（admin_prompt内指示）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2026-04-22n5-forced_template">廃止済み（〜2026-04-22）：[N+5] FORCED_TEMPLATE での強制</h3>
+<ul>
+<li>tone別3バリエーション（polite/friendly/apologetic）を <code>SUMMARY_PROMT.csv</code> から注入</li>
+<li><code>{buyer_name}</code> / <code>{seller_name}</code> / <code>{output_content}</code> / <code>{greeting}</code> の4プレースホルダで制御</li>
+<li>詳細は <code>03_block_cards/block_n5_forced_template.md</code> を参照</li>
+</ul>
+<hr />
+<h2 id="2026-04-22">🔁 値の動的置換マトリクス（2026-04-22以降）</h2>
+<h3 id="baychat">BayChat が置換（ペイロード組立時）</h3>
+<table>
+<thead>
+<tr>
+<th>プレースホルダ</th>
+<th>注入先ブロック</th>
+<th>置換元</th>
+<th>空のときの挙動</th>
+<th>Cowatech確認状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{sellerSetting}</code></td>
+<td>[N+4] admin_prompt（2箇所）</td>
+<td>UI補足情報</td>
+<td>空文字連結。admin_prompt v2.4で空許容ロジックあり</td>
+<td>✅ 確認済み</td>
+</tr>
+<tr>
+<td><code>{toneSetting}</code></td>
+<td>[N+4] admin_prompt（1箇所・INPUTSセクション）</td>
+<td>UIトーンプルダウン</td>
+<td>必須UIのため空にならない</td>
+<td>✅ 確認済み</td>
+</tr>
+<tr>
+<td>🆕 <code>{buyerAccountEbay}</code></td>
+<td>[N+4] admin_prompt（GREETING &amp; SIGNATURE POLICY + INPUTS + FINAL CHECK）</td>
+<td>UI「TO（受取人）」プルダウン（ID / 氏名 / 担当者名 / <strong>なし</strong>）</td>
+<td>「なし」選択時は空文字で置換。admin_prompt「WHEN A PLACEHOLDER IS EMPTY」ルールで挨拶省略</td>
+<td>✅ <strong>2026-04-22 prd反映済み</strong></td>
+</tr>
+<tr>
+<td>🆕 <code>{sellerAccountEbay}</code></td>
+<td>[N+4] admin_prompt（同上）</td>
+<td>UI「FROM（送信者）」プルダウン（ID / 氏名 / 担当者名 / <strong>なし</strong>）</td>
+<td>同上（署名省略）</td>
+<td>✅ <strong>2026-04-22 prd反映済み</strong></td>
+</tr>
+<tr>
+<td><code>{{Tone}}</code></td>
+<td>[N+1] description_guide</td>
+<td>UIトーン</td>
+<td>必須UIのため空にならない</td>
+<td>🟡 要確認</td>
+</tr>
+<tr>
+<td><code>{{User input in sreen}}</code></td>
+<td>[N+1] description_guide</td>
+<td>UI補足情報</td>
+<td>空ならブロック全体スキップ想定</td>
+<td>🔴 未確認</td>
+</tr>
+<tr>
+<td>~~<code>{buyer_name}</code>~~</td>
+<td>~~[N+5] FORCED_TEMPLATE~~</td>
+<td>—</td>
+<td>❌ <strong>2026-04-22 廃止</strong>：<code>{buyerAccountEbay}</code> に統一</td>
+<td>—</td>
+</tr>
+<tr>
+<td>~~<code>{seller_name}</code>~~</td>
+<td>~~[N+5] FORCED_TEMPLATE~~</td>
+<td>—</td>
+<td>❌ <strong>2026-04-22 廃止</strong>：<code>{sellerAccountEbay}</code> に統一</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ai">AI が置換（生成時）</h3>
+<table>
+<thead>
+<tr>
+<th>プレースホルダ</th>
+<th>注入先ブロック</th>
+<th>置換元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>~~<code>{output_content}</code>~~</td>
+<td>~~[N+5] FORCED_TEMPLATE~~</td>
+<td>❌ <strong>廃止</strong>：AI出力は jpnLanguage/buyerLanguage フィールドに直接格納</td>
+</tr>
+<tr>
+<td>~~<code>{greeting}</code>~~</td>
+<td>~~[N+5] FORCED_TEMPLATE apologetic版~~</td>
+<td>❌ <strong>廃止</strong>：admin_prompt TONE GUIDELINES で AI判断を指示</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="api">🎯 APIパラメータの分岐</h2>
+<h3 id="_3">固定パラメータ（常時同じ）</h3>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>model</code></td>
+<td><code>gpt-4.1-mini-2025-04-14</code></td>
+<td>使用AIモデル</td>
+</tr>
+<tr>
+<td><code>temperature</code></td>
+<td><code>0.2</code></td>
+<td>出力安定性（低い=一貫）</td>
+</tr>
+<tr>
+<td><code>top_p</code></td>
+<td><code>1</code></td>
+<td>ニュークリアスサンプリング</td>
+</tr>
+<tr>
+<td><code>frequency_penalty</code></td>
+<td><code>0</code></td>
+<td>頻度ペナルティなし</td>
+</tr>
+<tr>
+<td><code>presence_penalty</code></td>
+<td><code>0</code></td>
+<td>存在ペナルティなし</td>
+</tr>
+<tr>
+<td><code>service_tier</code></td>
+<td><code>default</code></td>
+<td>サービス層</td>
+</tr>
+<tr>
+<td><code>parallel_tool_calls</code></td>
+<td><code>true</code></td>
+<td>並列ツール呼び出し許可</td>
+</tr>
+<tr>
+<td><code>store</code></td>
+<td><code>true</code></td>
+<td>リクエスト保存ON</td>
+</tr>
+<tr>
+<td><code>truncation</code></td>
+<td><code>disabled</code></td>
+<td>自動切り詰めOFF</td>
+</tr>
+<tr>
+<td><code>tool_choice</code></td>
+<td><code>auto</code></td>
+<td>ツール自動選択（ただし tools=[]）</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td><code>[]</code></td>
+<td>ツールなし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="null">null パラメータ（未使用・将来拡張用）</h3>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>値</th>
+<th>本来の用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_output_tokens</code></td>
+<td><code>null</code></td>
+<td>出力トークン上限</td>
+</tr>
+<tr>
+<td><code>max_tool_calls</code></td>
+<td><code>null</code></td>
+<td>ツール呼び出し上限</td>
+</tr>
+<tr>
+<td><code>instructions</code></td>
+<td><code>null</code></td>
+<td>システム指示</td>
+</tr>
+<tr>
+<td><code>safety_identifier</code></td>
+<td><code>null</code></td>
+<td>安全識別子</td>
+</tr>
+<tr>
+<td><code>prompt_cache_key</code></td>
+<td><code>null</code></td>
+<td>プロンプトキャッシュキー</td>
+</tr>
+<tr>
+<td><code>prompt_cache_retention</code></td>
+<td><code>null</code></td>
+<td>キャッシュ保持期間</td>
+</tr>
+<tr>
+<td><code>reasoning.effort</code></td>
+<td><code>null</code></td>
+<td>推論努力レベル</td>
+</tr>
+<tr>
+<td><code>reasoning.summary</code></td>
+<td><code>null</code></td>
+<td>推論サマリ</td>
+</tr>
+<tr>
+<td><code>previous_response_id</code></td>
+<td><code>null</code></td>
+<td>前回レスポンスID</td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td><code>null</code></td>
+<td>ユーザー識別子</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">出力形式（固定）</h3>
+<pre><code class="language-json">response_format: {
+  &quot;type&quot;: &quot;json_schema&quot;,
+  &quot;name&quot;: &quot;multi_language_reply&quot;,
+  &quot;strict&quot;: true,
+  &quot;verbosity&quot;: &quot;medium&quot;,
+  &quot;schema&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;jpnLanguage&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Answer in Japanese language&quot;},
+      &quot;buyerLanguage&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Answer in English language&quot;}
+    },
+    &quot;required&quot;: [&quot;jpnLanguage&quot;, &quot;buyerLanguage&quot;],
+    &quot;additionalProperties&quot;: false
+  }
+}
+</code></pre>
+<h3 id="_5">課金設定</h3>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>billing.payer</code></td>
+<td><code>developer</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="role">🧩 チャット履歴内の role 分岐</h2>
+<h3 id="_6">基本ルール</h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>role</th>
+<th>content形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>バイヤーのメッセージ</td>
+<td><code>user</code></td>
+<td><code>[{ISO timestamp}] {buyer's message}</code></td>
+</tr>
+<tr>
+<td>セラーのメッセージ（手動＋自動）</td>
+<td><code>assistant</code></td>
+<td><code>[{ISO timestamp}] {seller's message}</code></td>
+</tr>
+<tr>
+<td>eBayイベント</td>
+<td><code>system</code></td>
+<td><code>event: [{ISO timestamp}] {event content}</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="typechatdb">typeChat（DB内部種別）の変換</h3>
+<table>
+<thead>
+<tr>
+<th>typeChat</th>
+<th>変換先</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUCTION</code></td>
+<td><code>system</code>: <code>event: auction_won</code></td>
+<td>落札</td>
+</tr>
+<tr>
+<td><code>OfferOrder</code></td>
+<td><code>system</code>: <code>event: best_offer_created</code></td>
+<td>オファー成立</td>
+</tr>
+<tr>
+<td><code>Order</code></td>
+<td><code>system</code>: <code>event: purchase_completed</code></td>
+<td>注文完了</td>
+</tr>
+<tr>
+<td><code>OfferAccepted</code></td>
+<td><code>system</code>: <code>event: best_offer_accepted</code></td>
+<td>オファー承認</td>
+</tr>
+<tr>
+<td><code>Trouble</code></td>
+<td><code>system</code>: <code>event: (trouble詳細変換)</code></td>
+<td>下表</td>
+</tr>
+<tr>
+<td><strong><code>Task</code></strong></td>
+<td><strong>削除（AIに渡さない）</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong><code>eBay</code></strong></td>
+<td><strong>削除（AIに渡さない）</strong></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trouble">Trouble詳細変換（完全リスト）</h3>
+<p><strong>event enum一覧は <code>block_chat_history.md</code> を参照</strong>。要点：<br />
+- Dispute 8種（fraud / INR / transaction_issue / 他）<br />
+- CancelRequest 7種 + closed<br />
+- ReturnRequest 9種 + 2 status + closed<br />
+- ItemNotReceived 1種 + closed<br />
+- Case 1種（closed）</p>
+<hr />
+<h2 id="_7">🔀 将来の条件分岐候補（未実装）</h2>
+<h3 id="_8">モード分岐（将来の要約モード実装時）</h3>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th>プロンプトブロック</th>
+<th>出力schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>返信生成（現行）</td>
+<td>BASE+OUTPUT+admin+FORCED_TEMPLATE</td>
+<td><code>multi_language_reply</code></td>
+</tr>
+<tr>
+<td>要約（Call-1）</td>
+<td>要約専用プロンプト</td>
+<td><code>summary_output</code></td>
+</tr>
+<tr>
+<td>返信生成Call-2（将来）</td>
+<td>要約結果＋パターン選択</td>
+<td><code>multi_language_reply</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="cowatech">🚨 暗黙の条件分岐（Cowatech確認必要）</h2>
+<p>v0.2 時点で「暗黙に動作している」と推測される分岐：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>推測される条件分岐</th>
+<th>影響</th>
+<th>優先度</th>
+<th>対応論点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>descriptionが空なら [N+1] をスキップ</td>
+<td>トークン削減・ロジック簡素化</td>
+<td>🔴 高</td>
+<td>Q3</td>
+</tr>
+<tr>
+<td>B</td>
+<td>チャット履歴の件数制限（トークン or 直近N件）</td>
+<td>古い文脈の欠落リスク</td>
+<td>🔴 高</td>
+<td>Q4</td>
+</tr>
+<tr>
+<td>~~C~~</td>
+<td>~~TO/FROM「なし」選択時の挙動~~</td>
+<td>✅ <strong>2026-04-22 解決</strong>：UI値が空文字で置換され、admin_promptが挨拶・署名を省略</td>
+<td>—</td>
+<td>~~Q3~~</td>
+</tr>
+<tr>
+<td>D</td>
+<td>返品・Dispute系eventがあるときの特別処理</td>
+<td>クレーム対応品質</td>
+<td>🟡 中</td>
+<td>—</td>
+</tr>
+<tr>
+<td>E</td>
+<td>トークン上限超過時の切り詰めロジック</td>
+<td>長期履歴で発生</td>
+<td>🟡 中</td>
+<td>—</td>
+</tr>
+<tr>
+<td>F</td>
+<td><code>whoPaysShipping: "No data available"</code> 時の挙動</td>
+<td>送料誤回答リスク</td>
+<td>🟡 中</td>
+<td>—</td>
+</tr>
+<tr>
+<td>G</td>
+<td>typeChat <code>Task</code> / <code>eBay</code> を削除する判定タイミング</td>
+<td>AI文脈欠落リスク</td>
+<td>🟡 中</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_9">🔄 このファイルの更新タイミング</h2>
+<ul>
+<li>[ ] 新しい条件分岐の追加・変更</li>
+<li>[ ] プレースホルダの追加・変更</li>
+<li>[ ] トーン選択肢の追加（4番目のトーン追加時等）</li>
+<li>[ ] event enum の追加（eBay仕様変更時）</li>
+<li>[ ] APIパラメータの条件分岐追加</li>
+<li>[ ] モード分岐の実装（要約モード等）</li>
+</ul>
+<p><strong>更新時は <code>05_changelog.md</code> にも記録する。</strong></p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>
