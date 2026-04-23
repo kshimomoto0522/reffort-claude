@@ -22,3 +22,13 @@ __pycache__/
 *.log
 error_*.log
 run_log.txt
+
+# Node.js依存パッケージ（再インストール可・リポジトリに含めない）
+node_modules/
+package-lock.json
+yarn.lock
+
+# OS・エディタの一時ファイル
+.DS_Store
+Thumbs.db
+*.swp
