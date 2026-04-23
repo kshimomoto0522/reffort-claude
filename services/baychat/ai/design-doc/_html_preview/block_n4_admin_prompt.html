@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>block_n4_admin_prompt | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  <a href="README.html">🏠 一覧</a>
+  <a href="block_00_item_info.html">[0] 商品情報</a>
+  <a href="block_chat_history.html">[1..N] チャット履歴</a>
+  <a href="block_n1_description_guide.html">[N+1] 補足情報</a>
+  <a href="block_n2_base_prompt.html">[N+2] BASE</a>
+  <a href="block_n3_output_format.html">[N+3] OUTPUT</a>
+  <a href="block_n4_admin_prompt.html">[N+4] ⭐admin_prompt</a>
+  <a href="block_n5_forced_template.html">[N+5] 廃止</a>
+</div>
+
+<h1 id="n4-admin_prompt">[N+4] admin_prompt ⭐</h1>
+<p><strong>何のため</strong>：CS品質・トーン・会話の中身を決める中核。挨拶・署名制御（2026-04-22以降）もここで行う<br />
+<strong>管理者</strong>：Reffort（社長がadmin画面で直接編集・即反映）</p>
+<h2 id="_1">プレースホルダ</h2>
+<table>
+<thead>
+<tr>
+<th>プレースホルダ</th>
+<th>置換元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{sellerSetting}</code></td>
+<td>UI「補足情報」欄</td>
+</tr>
+<tr>
+<td><code>{toneSetting}</code></td>
+<td>UI「トーン」プルダウン</td>
+</tr>
+<tr>
+<td><code>{buyerAccountEbay}</code></td>
+<td>UI「TO（受取人）」プルダウン（ID / 氏名 / 担当者名 / なし）</td>
+</tr>
+<tr>
+<td><code>{sellerAccountEbay}</code></td>
+<td>UI「FROM（送信者）」プルダウン（ID / 氏名 / 担当者名 / なし）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">実物コード（バージョン別）</h2>
+<ul>
+<li><strong>本番稼働中</strong>：<a href="../../prompt_admin_v2.4.md"><code>../../prompt_admin_v2.4.md</code></a></li>
+<li><strong>次期ドラフト</strong>：<a href="../../prompt_admin_v2.6.md"><code>../../prompt_admin_v2.6.md</code></a>（社長がadmin画面にアップロード待ち）</li>
+<li><strong>admin画面アップロード用JSON</strong>：<a href="../../prompt_admin_v2.6.json"><code>../../prompt_admin_v2.6.json</code></a></li>
+</ul>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>

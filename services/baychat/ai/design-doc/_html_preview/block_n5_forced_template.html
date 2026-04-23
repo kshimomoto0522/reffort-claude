@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>block_n5_forced_template | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  <a href="README.html">🏠 一覧</a>
+  <a href="block_00_item_info.html">[0] 商品情報</a>
+  <a href="block_chat_history.html">[1..N] チャット履歴</a>
+  <a href="block_n1_description_guide.html">[N+1] 補足情報</a>
+  <a href="block_n2_base_prompt.html">[N+2] BASE</a>
+  <a href="block_n3_output_format.html">[N+3] OUTPUT</a>
+  <a href="block_n4_admin_prompt.html">[N+4] ⭐admin_prompt</a>
+  <a href="block_n5_forced_template.html">[N+5] 廃止</a>
+</div>
+
+<h1 id="n5-forced_template">[N+5] FORCED_TEMPLATE 🔴 廃止済み</h1>
+<p><strong>何のため</strong>（当時）：AIの出力を「Hello {buyer_name}, ... Best regards, {seller_name}」形式に強制<br />
+<strong>ステータス</strong>：<strong>2026-04-22 廃止</strong>（Cowatech stg+prd両環境で削除完了）<br />
+<strong>移管先</strong>：挨拶・署名の制御は [N+4] admin_prompt の GREETING &amp; SIGNATURE POLICY セクションに一元化</p>
+<h2 id="polite">廃止前の実物コード（参考・polite版）</h2>
+<pre><code class="language-text">The response MUST ABSOLUTELY adhere to the following format.
+  Do not add explanations, markdown, or extra text.
+
+  Hello {buyer_name},
+  {output_content}
+
+  Best regards,
+   {seller_name}
+
+  Replace the placeholders with actual values.
+  seller_name: {{user select in sreen}}
+  buyer_name: {{user select in sreen}}
+
+  ABSOLUTELY: Always ensure that the output of the .jpn Language
+  and the buyer Language adhere to the above format.
+</code></pre>
+<h2 id="_1">廃止理由</h2>
+<p>テストで除去により品質スコア +2.0pt 改善を確認（admin_prompt側のほうが状況判断で柔軟に挨拶・署名を扱える）。<br />
+現在は <code>{buyerAccountEbay}</code> / <code>{sellerAccountEbay}</code> を admin_prompt に注入する方式で動作。</p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>
