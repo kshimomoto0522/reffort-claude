@@ -96,7 +96,33 @@ design-doc/
 
 ## 📖 読む順番（目的別）
 
-### 🔹 初見で全体像を把握したい
+### 🤝 Cowatech：初回に読むもの（30分）
+
+このフォルダに初めてアクセスした方は、以下の順で読んでください。
+この4ファイルだけで、AI Reply の全体像と Reffort ⇔ Cowatech の連携ルールが把握できます。
+
+1. `README.md`（このファイル）
+2. `00_overall_flow.md`（AI Reply の全体処理フロー・図解あり）
+3. `01_prompt_blocks_overview.md`（プロンプトを構成する7ブロックの俯瞰表）
+4. `07_cowatech_operation.md`（Reffort との連携・更新・Slack運用ルール）
+
+### 🤝 Cowatech：実装・更新時に参照するもの
+
+BayChat本体の実装・修正に入るときは、以下を併せて確認してください。
+
+- 該当するブロックカード（`03_block_cards/` 配下の7ファイルから1つ選択）
+- `09_open_questions.md`（現在Reffortが抱えている未解決論点）
+- `13_baychat_api_spec.md`（BayChat⇔OpenAI API の I/F仕様）
+- `05_changelog.md`（直近の変更履歴）
+
+### 🤝 Cowatech：困ったとき
+
+- `06_glossary.md`（用語集・FAQ）
+- Slack `#baychat-ai導入` で質問してください（`07_cowatech_operation.md` のSlack運用ルール参照）
+
+---
+
+### 🔹 初見で全体像を把握したい（Reffort内向け）
 1. `README.md`（このファイル）
 2. `00_overall_flow.md`（全体フロー図）
 3. `01_prompt_blocks_overview.md`（7ブロック俯瞰）
