@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Reply グローエフェクト v3</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif;
+    background: #f0eff4;
+    color: #333;
+  }
+
+  .page-header { text-align: center; padding: 40px 20px 12px; }
+  .page-header h1 { font-size: 20px; color: #333; }
+  .page-header p { font-size: 12px; color: #999; margin-top: 4px; }
+
+  .patterns {
+    max-width: 960px; margin: 0 auto; padding: 24px 20px 60px;
+    display: flex; flex-direction: column; gap: 64px;
+  }
+
+  .section { display: flex; flex-direction: column; gap: 8px; }
+  .section-label {
+    display: flex; align-items: baseline; gap: 10px;
+    padding-left: 4px;
+  }
+  .section-label .tag {
+    font-size: 11px; font-weight: 800; color: #a855f7;
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .section-label .name { font-size: 17px; font-weight: 700; color: #222; }
+  .section-desc {
+    font-size: 12px; color: #888; line-height: 1.7;
+    padding-left: 4px; margin-bottom: 16px;
+  }
+
+  /* ===== カードの外枠（ボーダー役） ===== */
+  .ai-card-outer {
+    position: relative;
+    border-radius: 16px;
+    padding: 3px;
+    overflow: hidden;
+  }
+
+  /* ===== AI CARD本体 ===== */
+  .ai-card {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #7c3aed 100%);
+    border-radius: 13px;
+    padding: 24px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 1;
+  }
+
+  .ai-left { display: flex; align-items: center; gap: 18px; }
+  .ai-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 17px; font-weight: 800; color: #fff;
+  }
+  .ai-badge .icon {
+    padding: 4px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.2);
+    font-size: 12px; font-weight: 800;
+  }
+  .ai-text { font-size: 14px; color: rgba(255,255,255,0.85); font-weight: 500; }
+
+  .ai-right { display: flex; align-items: center; gap: 24px; }
+  .ai-price { color: #fff; text-align: right; }
+  .ai-price .plus { font-size: 13px; opacity: 0.6; }
+  .ai-price .yen { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .ai-price .mo { font-size: 14px; opacity: 0.6; }
+
+  .btn-add {
+    padding: 11px 30px; border-radius: 8px;
+    background: #fff; color: #7c3aed;
+    font-size: 14px; font-weight: 700;
+    border: none; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-add:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+
+  /* ============================================================
+     PATTERN A: 紫 × ピンク
+     ============================================================ */
+  @property --angle-a {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .pattern-a .ai-card-outer {
+    background: conic-gradient(
+      from var(--angle-a),
+      #7c3aed, #a855f7, #c084fc, #e879f9, #d946ef,
+      #c026d3, #a855f7, #8b5cf6, #7c3aed
+    );
+    animation: spin-a 3s linear infinite;
+  }
+  @keyframes spin-a {
+    to { --angle-a: 360deg; }
+  }
+
+  /* ============================================================
+     PATTERN B: 紫 × ブルー
+     ============================================================ */
+  @property --angle-b {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .pattern-b .ai-card-outer {
+    background: conic-gradient(
+      from var(--angle-b),
+      #7c3aed, #8b5cf6, #6366f1, #818cf8, #3b82f6,
+      #60a5fa, #818cf8, #a78bfa, #7c3aed
+    );
+    animation: spin-b 3s linear infinite;
+  }
+  @keyframes spin-b {
+    to { --angle-b: 360deg; }
+  }
+
+  /* ============================================================
+     PATTERN C: 紫 × ピンク × ブルー
+     ============================================================ */
+  @property --angle-c {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .pattern-c .ai-card-outer {
+    background: conic-gradient(
+      from var(--angle-c),
+      #7c3aed, #a855f7, #d946ef, #ec4899,
+      #a855f7, #7c3aed, #6366f1, #3b82f6,
+      #6366f1, #7c3aed
+    );
+    animation: spin-c 3s linear infinite;
+  }
+  @keyframes spin-c {
+    to { --angle-c: 360deg; }
+  }
+
+  @media (max-width: 700px) {
+    .ai-card { flex-direction: column; gap: 16px; text-align: center; padding: 20px 16px; }
+    .ai-left, .ai-right { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>AI Reply グローエフェクト v3</h1>
+  <p>紫ベースのオーロラボーダー 3パターン — カード縁に密着・ぼかしなし</p>
+</div>
+
+<div class="patterns">
+
+  <!-- PATTERN A -->
+  <div class="section pattern-a">
+    <div class="section-label">
+      <span class="tag">A</span>
+      <span class="name">紫 × ピンク</span>
+    </div>
+    <div class="section-desc">
+      紫からピンク・フューシャへ流れるグラデーションボーダー。<br>
+      華やかさがありつつ紫ベースを崩さない。女性的な印象も。
+    </div>
+    <div class="ai-card-outer">
+      <div class="ai-card">
+        <div class="ai-left">
+          <div class="ai-badge"><span class="icon">AI</span> AI Reply</div>
+          <span class="ai-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-right">
+          <div class="ai-price"><span class="plus">＋ </span><span class="yen">¥2,200</span><span class="mo">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATTERN B -->
+  <div class="section pattern-b">
+    <div class="section-label">
+      <span class="tag">B</span>
+      <span class="name">紫 × ブルー</span>
+    </div>
+    <div class="section-desc">
+      紫からインディゴ・ブルーへ流れるグラデーションボーダー。<br>
+      クールで信頼感がある。テック系・プロフェッショナルな印象。
+    </div>
+    <div class="ai-card-outer">
+      <div class="ai-card">
+        <div class="ai-left">
+          <div class="ai-badge"><span class="icon">AI</span> AI Reply</div>
+          <span class="ai-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-right">
+          <div class="ai-price"><span class="plus">＋ </span><span class="yen">¥2,200</span><span class="mo">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATTERN C -->
+  <div class="section pattern-c">
+    <div class="section-label">
+      <span class="tag">C</span>
+      <span class="name">紫 × ピンク × ブルー</span>
+    </div>
+    <div class="section-desc">
+      紫を軸にピンクとブルーの両方が混ざるグラデーション。<br>
+      A・Bの中間。最もカラフルだが紫が主役のまま。
+    </div>
+    <div class="ai-card-outer">
+      <div class="ai-card">
+        <div class="ai-left">
+          <div class="ai-badge"><span class="icon">AI</span> AI Reply</div>
+          <span class="ai-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-right">
+          <div class="ai-price"><span class="plus">＋ </span><span class="yen">¥2,200</span><span class="mo">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

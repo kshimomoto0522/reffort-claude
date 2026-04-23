@@ -1,0 +1,39 @@
+,,,,,,,,,,,,
+,Design xem chi tiết tai: ,https://www.figma.com/design/Yi1TGYU24WDTiU0BZUwXXX/-DuAn--BayChat?node-id=29282-87015&t=2wYvyD7CbfXWy2At-0,,,,,,,,,,
+,Admin,Phía adim bổ sung thêm chức năng cấu hình được thêm các nội dung gửi cho AI kèm theo thông tin từ phía seller gửi sang để tạo 1 câu hoàn chỉnh khi gửi câu trả lời đến buyer ,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,Seller,"Tại thông tin lịch sử chat bổ sung thêm tính năng trả lời dựa vào gợi ý của AI: 
+Chọn tính năng AI: Sẽ mở ra màn hình hỗ trợ trả lời thông qua AI
+",,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,Seller,"Thông tin màn hình hỗ trợ trả lời AI, sẽ có phần lịch sử tin nhắn của Buyer, Và phần thông tin Trả lời của AI
+Mặc định ngôn ngữ lựa chọn sẽ là: バイヤー言語
+Ngoài ra ngôn ngữ lựa chọn sẽ có thể chọn thêm ngôn ngữ  [英語]
+[返信を生成]: Tính năng tạo yêu cầu nhờ AI trả lời giúp với các phong cách trả lời được lựa chọn như: [丁寧] ; [フレンドリー]; [謝罪]
+Khi chưa bấm nút tạo câu trả lời thì input  vị trí 2 và 3 sẽ disable, khi bấm nút tạo câu trả lời sẽ có loading bằng logo baychat theo file khách gửi
+Nội dung câu trả lời sẽ được hiển thị xuống  vùng input vị trí thứ 2, và 3. Tại vị trí thứ 2 là ngôn ngữ tiếng Nhật, Vùng ngôn ngữ số 3. Là nội dung ngôn ngữ theo ngôn ngữ được lựa chọn tại phần chọn ngôn ngữ
+Tại vùng input số 1. Sẽ là vùng để Seller bổ  sung thêm nội dung cho câu trả lời. Vì có thể AI sẽ không thể trả lời được các thông tin chi tiết ví dụ như ngày sản xuất.....
+Ngoài ra nội dung trả lời của AI sẽ được bổ sung thêm theo cấu hình từ phía Admin nếu có",,,,,
+,,,,,,,"Dựa vào tin nhắn cuối cùng của seller để lấy lịch sử tin nhắn gửi cho AI hỗ trợ (nếu không có tin nhắn của seller thì lấy toàn bộ lịch sử). Sẽ có thể là 1 câu hỏi thông thường, hoặc là các loại type như quy định trong sheet: https://docs.google.com/spreadsheets/d/1eXuElyXIK6q-2CwHwTyYbdElT_IOM2iT_WTbS5FVuvs/edit?gid=0#gid=0 ",,,,,
+,,,,,,,"Các tính năng Lịch sử tin nhắn, dịch, Chèn ảnh, copy coupon sẽ hoạt động tương tự như tính năng trước đó đã có",,,,,
+,,,,,,,Button send sẽ gửi message với nội dung ở input vị trí 3,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,     
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,, 

@@ -1,0 +1,33 @@
+,NOTE: Dev fix xong thì chuyển trạng thái sang Done để còn nắm được thông tin,,,
+,,,,
+STT,Mô tả,Evidence,Trạng thái,Note
+1,"Kích thước của icon sao chép bị sai so với UI 
+=> đúng là 22 x 22",Image,Rejected,"AnhNTL: Bỏ icon coppy tại ô input số 2, không cần fix bug này nữa"
+2,"Kích thước của 3 icon phong cách trả lời bị sai so với UI
+- Phong các lịch sự => đúng là 86 x 38
+- Phong cách thân thiện => đúng là 142 x 38
+- Phong cách lời xin lỗi => đúng là 86 x 38",Image,Confirmed,"dev: https://prnt.sc/y2nNm6QsECNY, https://prnt.sc/GOl8hwyWF--r, https://prnt.sc/sMdMtuWuppwi"
+3,"Font size của text ""AI予測返信"" khi hover vào icon AI nhỏ hơn so với các text khác ",Image,Confirmed,"ThaoNTP: Theo design font size là 12px và fontweigh là regular. Đang đúng so với design. Vậy em muốn sửa thì sửa thành như thế nào?
+AnhNTL: Theo design thì font size là 12px nhưng mà em đang so sánh vs font size với text của các icon khác ý ạ 
+ThaoNTP: Vậy yêu cầu sửa lại design rồi dev sửa lại em nhé.
+Quyết: làm song song
+- code : Tân
+- design : Hoa <- TCOM member request Hoa sửa design giúp mình
+Dev: 
+- https://prnt.sc/BMwaX2kkJepH"
+4,"Kích thước của các ô input 1, 2, 3 nên co lại với màn hình nhỏ",Image,Confirmed,"ThaoNTP: Nên co lại với kích thước các ô input là bao nhiêu? Và đáp ứng với những màn nhỏ với kích thước từ bao nhiều. Nhờ em note rõ mong muốn để xử lý đúng mong muốn.
+AnhNTL: responsive như này
+Dev: https://prnt.sc/yy64UHnxFHBD"
+5,Câu trả lời AI hiển thị cả câu admin config,Image,Rejected,dev: cùng 1 promt nhưng output có thể sẽ khác nhau (do output từ Ai) nên việc có respone không đúng mong muốn thì có thể request lại
+6,Padding khung chat history trong popup AI giống với chat history bên ngoài,Image,Confirmed,- dev: https://prnt.sc/R-WY2TY3afmE
+7,"Font text trong tooltip AI đang là regular 
+=> mong muốn đổi thành medium",Image,Confirmed,- dev: https://prnt.sc/CcukymfqvILg
+8,Hiển thị sai ngôn ngữ buyer tại ô input số 3,Image,Confirmed,- dev: https://prnt.sc/s8T4DPa1zI1s
+9,"Lỗi UI trên điện thoại: sai gap giữa 3 icon phong cách trả lời
+=> đúng: gap = 14.5px",Image,Rejected,"- dev: 20px là pc
+- AnhNTL: đã sửa lại expect
+- dev: 
+ + nếu căn sang 2 lề: https://prnt.sc/tXpAwogSvKpk
+ + 375 x 812 ( ds ): https://prnt.sc/4vfDA2VRPj3k đã căn đều 2 lề
+=> nếu căn đều 2 lề thì không có chuyện khoảng cách 14.5px. mà đã căn sang 2 lề thì không có chuyện fix cứng khoảng cách"
+10,,,,

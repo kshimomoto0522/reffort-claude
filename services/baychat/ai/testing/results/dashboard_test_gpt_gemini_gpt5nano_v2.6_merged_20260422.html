@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>AI Reply v2.6 比較ダッシュボード</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    background: #fafafa;
+    color: #2d2d2d;
+    margin: 0;
+    line-height: 1.7;
+  }
+  .hero {
+    background: linear-gradient(135deg, #5a189a 0%, #9d4edd 100%);
+    color: white;
+    padding: 32px 40px;
+    text-align: center;
+  }
+  .hero h1 { margin: 0 0 8px; font-size: 24px; font-weight: 600; }
+  .hero .meta { font-size: 13px; opacity: 0.9; }
+  .hero .meta span { margin: 0 8px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    font-size: 20px;
+    margin: 36px 0 16px;
+  }
+  h2:first-of-type { margin-top: 0; }
+
+  /* 総合ボックス */
+  .overall {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+  .overall-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+  }
+  .overall-item { text-align: center; }
+  .overall-item .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+  .overall-item .value { font-size: 28px; font-weight: 700; color: #5a189a; }
+  .overall-item .sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+  /* モデル比較カード */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+  }
+  .card {
+    background: white;
+    border: 2px solid #e0d5ef;
+    border-radius: 12px;
+    padding: 20px 24px;
+    transition: border-color 0.2s;
+  }
+  .card.best { border-color: #9d4edd; box-shadow: 0 4px 12px rgba(157, 78, 221, 0.15); }
+  .card h3 {
+    margin: 0 0 4px;
+    color: #5a189a;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .card .badge-best {
+    display: inline-block;
+    background: #9d4edd;
+    color: white;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: 6px;
+    font-weight: 500;
+  }
+  .card .score-main {
+    font-size: 32px;
+    font-weight: 700;
+    color: #5a189a;
+    text-align: center;
+    margin: 12px 0 4px;
+  }
+  .card .score-main .grade { font-size: 20px; margin-left: 6px; }
+  .card .score-sub {
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .score-bar {
+    background: #f3e8ff;
+    border-radius: 8px;
+    height: 20px;
+    overflow: hidden;
+    margin: 10px 0;
+  }
+  .score-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #5a189a 0%, #c77dff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    transition: width 0.4s ease;
+  }
+  .card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed #e0d5ef;
+  }
+  .card-stat { text-align: center; font-size: 12px; }
+  .card-stat .label { color: #6b7280; }
+  .card-stat .value { color: #5a189a; font-weight: 600; font-size: 14px; margin-top: 2px; }
+
+  /* ケース別アコーディオン */
+  .accordion { margin-top: 12px; }
+  .case-item {
+    background: white;
+    border: 1px solid #e0d5ef;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .case-header {
+    padding: 14px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    user-select: none;
+  }
+  .case-header:hover { background: #faf5ff; }
+  .case-header .title { font-weight: 600; color: #5a189a; }
+  .case-header .category {
+    display: inline-block;
+    background: #f3e8ff;
+    color: #5a189a;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-left: 8px;
+    font-weight: 500;
+  }
+  .case-header .scores-mini { font-size: 12px; color: #6b7280; }
+  .case-header .caret { transition: transform 0.2s; color: #c77dff; font-size: 14px; margin-left: 10px; }
+  .case-item.open .caret { transform: rotate(180deg); }
+  .case-body {
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .case-item.open .case-body {
+    max-height: 10000px;
+    padding: 20px;
+    border-top: 1px dashed #e0d5ef;
+  }
+
+  .buyer-msg {
+    background: #faf5ff;
+    border-left: 4px solid #c77dff;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
+  .buyer-msg .label {
+    font-size: 11px;
+    color: #5a189a;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .buyer-msg .text { font-size: 13px; white-space: pre-wrap; }
+  .buyer-msg .ja {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 6px;
+    border-top: 1px dashed #e0d5ef;
+    padding-top: 6px;
+  }
+
+  .replies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .reply-card {
+    background: white;
+    border: 1.5px solid #e0d5ef;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .reply-card.winner { border-color: #9d4edd; background: #faf5ff; }
+  .reply-card h4 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #5a189a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reply-card .score {
+    font-size: 16px;
+    font-weight: 700;
+    color: #5a189a;
+  }
+  .reply-card .reply-text {
+    font-size: 12px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #2d2d2d;
+    margin: 8px 0;
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 8px;
+    background: #fafafa;
+    border-radius: 4px;
+  }
+  .reply-card .reply-ja {
+    font-size: 11px;
+    color: #6b7280;
+    white-space: pre-wrap;
+    margin-top: 6px;
+    padding: 8px;
+    background: #f3e8ff;
+    border-radius: 4px;
+  }
+  .reply-card .judge {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: #faf5ff;
+    border-left: 3px solid #9d4edd;
+    border-radius: 4px;
+  }
+
+  .proposals {
+    background: #faf5ff;
+    border-left: 5px solid #9d4edd;
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+  .proposals h3 {
+    margin: 0 0 10px;
+    color: #5a189a;
+    font-size: 15px;
+  }
+  .proposals ul { margin: 4px 0; padding-left: 20px; font-size: 13px; }
+  .proposals li { margin-bottom: 6px; }
+
+  .footer {
+    text-align: center;
+    color: #6b7280;
+    font-size: 11px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px dashed #e0d5ef;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🧪 AI Reply v2.6 モデル比較</h1>
+  <div class="meta">
+    <span>📅 2026-04-22 01:15</span>
+    <span>|</span>
+    <span>🎯 0ケース × 3モデル</span>
+    <span>|</span>
+    <span>🧩 GPT-4.1-Mini / Gemini 2.5 Flash / GPT-5-Nano</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <h2>📊 総合サマリー</h2>
+  <div class="overall">
+    <div class="overall-grid">
+      <div class="overall-item">
+        <div class="label">全体平均スコア</div>
+        <div class="value">0.0<span style="font-size:16px; color:#6b7280;"> / 25</span></div>
+        <div class="sub">▲ 0%</div>
+      </div>
+      <div class="overall-item">
+        <div class="label">総合最高モデル</div>
+        <div class="value" style="font-size:18px; padding-top:10px;">GPT-4.1-Mini</div>
+        <div class="sub">平均 0.0 / 25</div>
+      </div>
+      <div class="overall-item">
+        <div class="label">テスト総件数</div>
+        <div class="value">120</div>
+        <div class="sub">ケース × モデル</div>
+      </div>
+      <div class="overall-item">
+        <div class="label">合計コスト</div>
+        <div class="value">¥0.00</div>
+        <div class="sub">今回の実行分</div>
+      </div>
+    </div>
+  </div>
+<h2>🏆 モデル比較</h2>
+  <div class="cards">
+
+    <div class="card best">
+      <h3>GPT-4.1-Mini<span class="badge-best">最高</span></h3>
+      <div class="score-main">0.0<span style="font-size:14px; color:#6b7280;"> / 25</span> <span class="grade">▲</span></div>
+      <div class="score-sub">0% / 40件</div>
+      
+    <div class="score-bar">
+      <div class="score-bar-fill" style="width:0%">0%</div>
+    </div>
+      <div class="card-stats">
+        <div class="card-stat">
+          <div class="label">平均応答</div>
+          <div class="value">4.5秒</div>
+        </div>
+        <div class="card-stat">
+          <div class="label">総コスト</div>
+          <div class="value">¥0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card ">
+      <h3>Gemini 2.5 Flash</h3>
+      <div class="score-main">0.0<span style="font-size:14px; color:#6b7280;"> / 25</span> <span class="grade">▲</span></div>
+      <div class="score-sub">0% / 40件</div>
+      
+    <div class="score-bar">
+      <div class="score-bar-fill" style="width:0%">0%</div>
+    </div>
+      <div class="card-stats">
+        <div class="card-stat">
+          <div class="label">平均応答</div>
+          <div class="value">6.6秒</div>
+        </div>
+        <div class="card-stat">
+          <div class="label">総コスト</div>
+          <div class="value">¥0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card ">
+      <h3>GPT-5-Nano</h3>
+      <div class="score-main">0.0<span style="font-size:14px; color:#6b7280;"> / 25</span> <span class="grade">▲</span></div>
+      <div class="score-sub">0% / 40件</div>
+      
+    <div class="score-bar">
+      <div class="score-bar-fill" style="width:0%">0%</div>
+    </div>
+      <div class="card-stats">
+        <div class="card-stat">
+          <div class="label">平均応答</div>
+          <div class="value">2.8秒</div>
+        </div>
+        <div class="card-stat">
+          <div class="label">総コスト</div>
+          <div class="value">¥0.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+<h2>📋 ケース別詳細</h2>
+  <div class="accordion">
+  </div>
+
+  <div class="footer">
+    BayChat AI Reply v2.6 テストダッシュボード | 生成: 2026-04-22 01:15
+  </div>
+</div>
+
+<script>
+  function toggleCase(idx) {
+    const item = document.getElementById('case-' + idx);
+    item.classList.toggle('open');
+  }
+
+  // 最初のケースをデフォルトで開く
+  document.addEventListener('DOMContentLoaded', () => {
+    const first = document.getElementById('case-0');
+    if (first) first.classList.add('open');
+  });
+</script>
+
+</body>
+</html>

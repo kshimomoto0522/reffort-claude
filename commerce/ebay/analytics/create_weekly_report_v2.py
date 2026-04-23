@@ -11,7 +11,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 TRAFFIC_FILE = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\eBay-ListingsTrafficReport-Mar-15-2026-21_56_24-0700-13288691549.csv"
 ADS_FILE     = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\rioxxrinaxjapan_advertising_sales_report_20260315.csv"
 TRANS_FILE   = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\Transaction-Mar-16-2026-01_18_10-0700-13288723972.csv"
-OUTPUT       = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\ebay-analytics\eBay週次レポート_v2_20260315.xlsx"
+OUTPUT       = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\commerce\ebay\analytics\eBay週次レポート_v2_20260315.xlsx"
 
 # ===== 期間設定 =====
 PERIOD_LABEL = "2/13〜3/15（31日間）"

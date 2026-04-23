@@ -1,0 +1,7 @@
+,,dev check
+1,Ui giống ds,TRUE
+2,Logic hiển thị popup thông báo ai hoạt động đúng spec,TRUE
+3,Đẩy đúng lịch sử chat cho AI,TRUE
+4,Admin setting được mô tả cho câu trả lời AI,TRUE
+5,"Thông tin buyer name, seller name, phong cách câu trả lời, mô tả user có trong thông tin mô tả đưa cho Ai",TRUE
+6,Ngôn ngữ trả ra đúng spec,TRUE

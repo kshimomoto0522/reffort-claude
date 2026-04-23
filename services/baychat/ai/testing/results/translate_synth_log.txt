@@ -1,0 +1,94 @@
+[1] 40ケース読み込み完了
+[2] buyer_message 翻訳中 (40件)...
+  翻訳 10/40 完了
+  翻訳 20/40 完了
+  翻訳 30/40 完了
+  翻訳 40/40 完了
+[3] 各ケースの会話履歴を翻訳中...
+  ケース 1/40 (synth_A1_cam_stock): 1件
+  翻訳 1/1 完了
+  ケース 2/40 (synth_A2_jacket_sizing): 1件
+  翻訳 1/1 完了
+  ケース 3/40 (synth_A3_guitar_ship_time): 1件
+  翻訳 1/1 完了
+  ケース 4/40 (synth_A4_pokemon_condition): 5件
+  翻訳 5/5 完了
+  ケース 5/40 (synth_B1_ps5_ship_date): 1件
+  翻訳 1/1 完了
+  ケース 6/40 (synth_B2_kimono_address_change): 7件
+  翻訳 7/7 完了
+  ケース 7/40 (synth_B3_figure_cancel_mistake): 7件
+  翻訳 7/7 完了
+  ケース 8/40 (synth_B4_trading_card_combine): 7件
+  翻訳 7/7 完了
+  ケース 9/40 (synth_B5_watch_change_mind): 6件
+  翻訳 6/6 完了
+  ケース 10/40 (synth_C1_bag_tracking_req): 2件
+  翻訳 2/2 完了
+  ケース 11/40 (synth_C2_guitar_shipping_delay): 7件
+  翻訳 7/7 完了
+  ケース 12/40 (synth_C3_cam_customs_stuck): 6件
+  翻訳 6/6 完了
+  ケース 13/40 (synth_C4_retro_game_wrong_address): 8件
+  翻訳 8/8 完了
+  ケース 14/40 (synth_C5_kimono_delivery_missed): 6件
+  翻訳 6/6 完了
+  ケース 15/40 (synth_C6_car_part_deadline): 7件
+  翻訳 7/7 完了
+  ケース 16/40 (synth_D1_sneakers_arrival_thanks): 6件
+  翻訳 6/6 完了
+  ケース 17/40 (synth_D2_card_feedback_promise): 4件
+  翻訳 4/4 完了
+  ケース 18/40 (synth_D3_fishing_repeat): 4件
+  翻訳 4/4 完了
+  ケース 19/40 (synth_E1_denim_size_wrong): 1件
+  翻訳 1/1 完了
+  ケース 20/40 (synth_E2_ceramic_broken): 1件
+  翻訳 1/1 完了
+  ケース 21/40 (synth_E3_bag_authenticity): 6件
+  翻訳 6/6 完了
+  ケース 22/40 (synth_E4_shirt_color_diff): 7件
+  翻訳 7/7 完了
+  ケース 23/40 (synth_E5_audio_defective): 4件
+  翻訳 4/4 完了
+  ケース 24/40 (synth_E6_jewelry_not_received): 1件
+  翻訳 1/1 完了
+  ケース 25/40 (synth_F1_sneakers_return_size): 7件
+  翻訳 7/7 完了
+  ケース 26/40 (synth_F2_figure_exchange): 7件
+  翻訳 7/7 完了
+  ケース 27/40 (synth_F3_watch_partial_refund): 5件
+  翻訳 5/5 完了
+  ケース 28/40 (synth_F4_camera_case_inr): 8件
+  翻訳 8/8 完了
+  ケース 29/40 (synth_F5_game_return_shipping): 7件
+  翻訳 7/7 完了
+  ケース 30/40 (synth_F6_card_return_thanks): 7件
+  翻訳 7/7 完了
+  ケース 31/40 (synth_F7_guitar_return_howto): 1件
+  翻訳 1/1 完了
+  ケース 32/40 (synth_G1_watch_customs_refund): 7件
+  翻訳 7/7 完了
+  ケース 33/40 (synth_G2_train_wrong_item): 7件
+  翻訳 7/7 完了
+  ケース 34/40 (synth_G3_antique_long_silence): 8件
+  翻訳 8/8 完了
+  ケース 35/40 (synth_G4_cam_german): 9件
+  翻訳 9/9 完了
+  ケース 36/40 (synth_G5_perfume_spanish): 7件
+  翻訳 7/7 完了
+  ケース 37/40 (synth_H1_bag_price_offer): 1件
+  翻訳 1/1 完了
+  ケース 38/40 (synth_H2_cards_bulk): 1件
+  翻訳 1/1 完了
+  ケース 39/40 (synth_H3_watch_re_nego): 7件
+  翻訳 7/7 完了
+  ケース 40/40 (synth_H4_sneakers_reoffer): 1件
+  翻訳 1/1 完了
+[4] 保存完了: test_cases/synthetic_40cases_v1.json
+
+=== サンプル: ケース1 ===
+id: synth_A1_cam_stock
+buyer_message_ja: こんにちは、このLeica M3 Double Stroke 1957はまだ在庫がありますか？シャッターの状態がわかる写真をもっと送っていただけますか？
+history_ja (1件):
+  [0] こんにちは、このLeica M3 ダブルストローク 1957年モデルはまだありますか？シャッターの状態がわかる写真をもっと送っていただけますか？

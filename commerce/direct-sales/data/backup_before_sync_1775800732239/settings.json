@@ -1,0 +1,44 @@
+{
+  "customsUnitPrice": 3000,
+  "shippingPerPair": 2000,
+  "couponPerPair": 800,
+  "locations": [
+    {
+      "id": "loc-1775459467402",
+      "name": "山田",
+      "password": "0000"
+    },
+    {
+      "id": "loc-1775459495010",
+      "name": "瓦田",
+      "password": "0000"
+    },
+    {
+      "id": "loc-1775459506635",
+      "name": "日佐",
+      "password": "0000"
+    },
+    {
+      "id": "loc-1775459514506",
+      "name": "筑紫野",
+      "password": "0000"
+    },
+    {
+      "id": "loc-1775459524284",
+      "name": "城南",
+      "password": "0000"
+    },
+    {
+      "id": "loc-1775710576788",
+      "name": "大池",
+      "password": "0000"
+    }
+  ],
+  "buyers": [
+    {
+      "id": "buyer-1775459554150",
+      "name": "Brandon",
+      "phone": "+15169651644"
+    }
+  ]
+}

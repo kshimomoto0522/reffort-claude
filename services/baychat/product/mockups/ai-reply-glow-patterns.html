@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BayChat AI Reply - グローエフェクト パターン集</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #1a1a2e; color: #333; }
+
+  .page-header { text-align: center; padding: 40px 20px 20px; }
+  .page-header h1 { font-size: 22px; color: #fff; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: #999; }
+
+  .patterns-grid {
+    max-width: 1100px; margin: 0 auto; padding: 20px;
+    display: flex; flex-direction: column; gap: 60px;
+  }
+
+  .pattern-block {
+    background: #ffffff; border-radius: 16px;
+    padding: 40px 44px 48px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .pattern-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .pattern-label {
+    font-size: 12px; font-weight: 700; color: #a855f7; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .pattern-name { font-size: 18px; font-weight: 700; color: #333; }
+  .pattern-desc { font-size: 12px; color: #888; margin-bottom: 32px; line-height: 1.6; }
+
+  /* ========== 紫ベタ塗りカード ========== */
+  .ai-card-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+  }
+
+  .ai-card {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(135deg, #7c3aed, #9333ea);
+    border-radius: 14px;
+    padding: 22px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1;
+  }
+  .ai-card-left { display: flex; align-items: center; gap: 20px; }
+  .ai-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 16px; font-weight: 800; color: #fff;
+  }
+  .ai-badge .ai-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 4px 8px; border-radius: 6px;
+    background: rgba(255,255,255,0.2);
+    color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.5px;
+  }
+  .ai-card-text { font-size: 14px; color: rgba(255,255,255,0.85); }
+  .ai-card-right { display: flex; align-items: center; gap: 24px; }
+  .ai-price { text-align: right; color: #fff; }
+  .ai-price .plus { font-size: 14px; opacity: 0.7; }
+  .ai-price .amount { font-size: 28px; font-weight: 800; }
+  .ai-price .per { font-size: 14px; opacity: 0.7; }
+
+  .btn-add {
+    padding: 10px 28px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    background: #fff; color: #7c3aed; border: none;
+    transition: all 0.3s;
+  }
+  .btn-add:hover { background: #f3e8ff; transform: translateY(-1px); }
+
+  /* ========================================
+     A: アウターグロー（静的・強め）
+     ======================================== */
+  .glow-a .ai-card {
+    box-shadow:
+      0 0 30px rgba(124, 58, 237, 0.6),
+      0 0 60px rgba(168, 85, 247, 0.4),
+      0 0 100px rgba(124, 58, 237, 0.2);
+  }
+
+  /* ========================================
+     B: パルスグロー（大きく呼吸）
+     ======================================== */
+  .glow-b .ai-card {
+    animation: pulse-outer 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-outer {
+    0%, 100% {
+      box-shadow:
+        0 0 20px rgba(124, 58, 237, 0.5),
+        0 0 50px rgba(168, 85, 247, 0.3),
+        0 0 80px rgba(124, 58, 237, 0.15);
+    }
+    50% {
+      box-shadow:
+        0 0 40px rgba(124, 58, 237, 0.8),
+        0 0 80px rgba(168, 85, 247, 0.5),
+        0 0 120px rgba(124, 58, 237, 0.3);
+    }
+  }
+
+  /* ========================================
+     C: オーロラグロー（多色が外で回る）
+     ======================================== */
+  .glow-c .ai-card-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 26px;
+    background: conic-gradient(from 0deg, #7c3aed, #ec4899, #3b82f6, #06b6d4, #a855f7, #ec4899, #7c3aed);
+    animation: aurora-rotate 4s linear infinite;
+    filter: blur(20px);
+    opacity: 0.85;
+    z-index: 0;
+  }
+  @keyframes aurora-rotate {
+    0% { filter: blur(20px) hue-rotate(0deg); }
+    100% { filter: blur(20px) hue-rotate(360deg); }
+  }
+
+  /* ========================================
+     D: ブルームグロー（大きく膨張・収縮）
+     ======================================== */
+  .glow-d .ai-card-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border-radius: 34px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7, #ec4899, #7c3aed);
+    background-size: 300% 300%;
+    animation: bloom-bg 4s ease infinite, bloom-size 3s ease-in-out infinite;
+    filter: blur(30px);
+    opacity: 0.7;
+    z-index: 0;
+  }
+  @keyframes bloom-bg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes bloom-size {
+    0%, 100% { inset: -16px; opacity: 0.6; filter: blur(28px); }
+    50% { inset: -28px; opacity: 0.85; filter: blur(36px); }
+  }
+
+  /* ========================================
+     E: オーロラボーダー＋グロー
+     ======================================== */
+  .glow-e .ai-card-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 18px;
+    background: conic-gradient(from 0deg, #a855f7, #ec4899, #3b82f6, #06b6d4, #a855f7, #ec4899, #a855f7);
+    animation: border-spin 3s linear infinite;
+    z-index: 0;
+  }
+  .glow-e .ai-card-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 18px;
+    background: conic-gradient(from 0deg, #a855f7, #ec4899, #3b82f6, #06b6d4, #a855f7, #ec4899, #a855f7);
+    animation: border-spin 3s linear infinite;
+    filter: blur(24px);
+    opacity: 0.8;
+    z-index: -1;
+  }
+  @keyframes border-spin {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  /* ========================================
+     F: シマーウェーブ（光の波が走る）
+     ======================================== */
+  .glow-f .ai-card {
+    box-shadow:
+      0 0 30px rgba(124, 58, 237, 0.5),
+      0 0 60px rgba(168, 85, 247, 0.3);
+  }
+  .glow-f .ai-card-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -10px; bottom: -10px;
+    left: -50%; width: 50%;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255,255,255,0.08) 20%,
+      rgba(168,85,247,0.5) 40%,
+      rgba(236,72,153,0.4) 50%,
+      rgba(59,130,246,0.5) 60%,
+      rgba(255,255,255,0.08) 80%,
+      transparent 100%
+    );
+    border-radius: 30px;
+    filter: blur(8px);
+    z-index: 2;
+    animation: shimmer-wave 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes shimmer-wave {
+    0% { left: -50%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 150%; opacity: 0; }
+  }
+
+  @media (max-width: 700px) {
+    .ai-card { flex-direction: column; gap: 16px; text-align: center; }
+    .ai-card-left, .ai-card-right { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>AI Reply グローエフェクト パターン集</h1>
+  <p>紫ベタ塗りカードの外側につけるエフェクト候補 — 暗い背景で違いを確認しやすくしています</p>
+</div>
+
+<div class="patterns-grid">
+
+  <!-- A -->
+  <div class="pattern-block">
+    <div class="pattern-header">
+      <span class="pattern-label">A</span>
+      <span class="pattern-name">アウターグロー（静的）</span>
+    </div>
+    <div class="pattern-desc">カードの周りに紫の光がじわっと広がる。動きなし。<br>最もシンプルで落ち着いている。「光ってるけど主張しすぎない」。</div>
+    <div class="ai-card-wrapper glow-a">
+      <div class="ai-card">
+        <div class="ai-card-left">
+          <div class="ai-badge"><span class="ai-icon">AI</span> AI Reply</div>
+          <span class="ai-card-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-card-right">
+          <div class="ai-price"><span class="plus">＋</span><span class="amount">¥2,200</span><span class="per">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="pattern-block">
+    <div class="pattern-header">
+      <span class="pattern-label">B</span>
+      <span class="pattern-name">パルスグロー（呼吸する光）</span>
+    </div>
+    <div class="pattern-desc">カードの外の光が大きくなったり小さくなったりを繰り返す。<br>「生きている感じ」＝AI感を表現。</div>
+    <div class="ai-card-wrapper glow-b">
+      <div class="ai-card">
+        <div class="ai-card-left">
+          <div class="ai-badge"><span class="ai-icon">AI</span> AI Reply</div>
+          <span class="ai-card-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-card-right">
+          <div class="ai-price"><span class="plus">＋</span><span class="amount">¥2,200</span><span class="per">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="pattern-block">
+    <div class="pattern-header">
+      <span class="pattern-label">C</span>
+      <span class="pattern-name">オーロラグロー（虹色に回転する光）</span>
+    </div>
+    <div class="pattern-desc">紫・ピンク・青・シアンの光がカードの周りをぐるぐる回転。<br>最もカラフルで目を引く。「AI＝未来感」の王道。</div>
+    <div class="ai-card-wrapper glow-c">
+      <div class="ai-card">
+        <div class="ai-card-left">
+          <div class="ai-badge"><span class="ai-icon">AI</span> AI Reply</div>
+          <span class="ai-card-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-card-right">
+          <div class="ai-price"><span class="plus">＋</span><span class="amount">¥2,200</span><span class="per">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="pattern-block">
+    <div class="pattern-header">
+      <span class="pattern-label">D</span>
+      <span class="pattern-name">ブルームグロー（光が膨張・収縮）</span>
+    </div>
+    <div class="pattern-desc">紫〜ピンクの大きなぼかし光がカードの外で膨らんだり縮んだり。<br>存在感が最も強い。「特別なオプション」感。</div>
+    <div class="ai-card-wrapper glow-d">
+      <div class="ai-card">
+        <div class="ai-card-left">
+          <div class="ai-badge"><span class="ai-icon">AI</span> AI Reply</div>
+          <span class="ai-card-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-card-right">
+          <div class="ai-price"><span class="plus">＋</span><span class="amount">¥2,200</span><span class="per">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="pattern-block">
+    <div class="pattern-header">
+      <span class="pattern-label">E</span>
+      <span class="pattern-name">オーロラボーダー＋グロー</span>
+    </div>
+    <div class="pattern-desc">カードの縁にオーロラ色の線が回転＋外側にぼかしグロー。<br>ボーダーラインがくっきり見える＋光が溢れ出す。最もリッチ。</div>
+    <div class="ai-card-wrapper glow-e">
+      <div class="ai-card">
+        <div class="ai-card-left">
+          <div class="ai-badge"><span class="ai-icon">AI</span> AI Reply</div>
+          <span class="ai-card-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-card-right">
+          <div class="ai-price"><span class="plus">＋</span><span class="amount">¥2,200</span><span class="per">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="pattern-block">
+    <div class="pattern-header">
+      <span class="pattern-label">F</span>
+      <span class="pattern-name">シマーウェーブ（光の波が走る）</span>
+    </div>
+    <div class="pattern-desc">カードの上を紫〜ピンク〜青の光の帯が横切って走る。<br>きらめき感＋動きで目を引く。ベースのグローもあり。</div>
+    <div class="ai-card-wrapper glow-f">
+      <div class="ai-card">
+        <div class="ai-card-left">
+          <div class="ai-badge"><span class="ai-icon">AI</span> AI Reply</div>
+          <span class="ai-card-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-card-right">
+          <div class="ai-price"><span class="plus">＋</span><span class="amount">¥2,200</span><span class="per">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="height: 60px;"></div>
+</body>
+</html>

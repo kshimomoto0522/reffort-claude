@@ -1,0 +1,50 @@
+[1] 40シナリオ設計済み
+[2] GPT-4.1-Mini で履歴本文を生成中...
+  [ 1/40] A1_cam_stock (S1 / en) ... OK (2 msgs)
+  [ 2/40] A2_jacket_sizing (S1 / en) ... OK (2 msgs)
+  [ 3/40] A3_guitar_ship_time (S1 / en) ... OK (2 msgs)
+  [ 4/40] A4_pokemon_condition (S2 / en) ... OK (6 msgs)
+  [ 5/40] B1_ps5_ship_date (S1 / en) ... OK (2 msgs)
+  [ 6/40] B2_kimono_address_change (S2 / en) ... OK (8 msgs)
+  [ 7/40] B3_figure_cancel_mistake (S2 / en) ... OK (8 msgs)
+  [ 8/40] B4_trading_card_combine (S2 / en) ... OK (8 msgs)
+  [ 9/40] B5_watch_change_mind (S3 / en) ... OK (7 msgs)
+  [10/40] C1_bag_tracking_req (S1 / en) ... OK (3 msgs)
+  [11/40] C2_guitar_shipping_delay (S2 / en) ... OK (8 msgs)
+  [12/40] C3_cam_customs_stuck (S3 / en) ... OK (7 msgs)
+  [13/40] C4_retro_game_wrong_address (S2 / en) ... OK (9 msgs)
+  [14/40] C5_kimono_delivery_missed (S3 / en) ... OK (7 msgs)
+  [15/40] C6_car_part_deadline (S2 / en) ... OK (8 msgs)
+  [16/40] D1_sneakers_arrival_thanks (S4 / en) ... OK (7 msgs)
+  [17/40] D2_card_feedback_promise (S4 / en) ... OK (5 msgs)
+  [18/40] D3_fishing_repeat (S4 / en) ... OK (5 msgs)
+  [19/40] E1_denim_size_wrong (S1 / en) ... OK (2 msgs)
+  [20/40] E2_ceramic_broken (S1 / en) ... OK (2 msgs)
+  [21/40] E3_bag_authenticity (S2 / en) ... OK (7 msgs)
+  [22/40] E4_shirt_color_diff (S2 / en) ... OK (8 msgs)
+  [23/40] E5_audio_defective (S3 / en) ... OK (5 msgs)
+  [24/40] E6_jewelry_not_received (S1 / en) ... OK (2 msgs)
+  [25/40] F1_sneakers_return_size (S2 / en) ... OK (8 msgs)
+  [26/40] F2_figure_exchange (S2 / en) ... OK (8 msgs)
+  [27/40] F3_watch_partial_refund (S2 / en) ... OK (6 msgs)
+  [28/40] F4_camera_case_inr (S3 / en) ... OK (9 msgs)
+  [29/40] F5_game_return_shipping (S2 / en) ... OK (8 msgs)
+  [30/40] F6_card_return_thanks (S4 / en) ... OK (8 msgs)
+  [31/40] F7_guitar_return_howto (S1 / en) ... OK (2 msgs)
+  [32/40] G1_watch_customs_refund (S2 / en) ... OK (8 msgs)
+  [33/40] G2_train_wrong_item (S2 / en) ... OK (8 msgs)
+  [34/40] G3_antique_long_silence (S3 / en) ... OK (9 msgs)
+  [35/40] G4_cam_german (S2 / de) ... OK (10 msgs)
+  [36/40] G5_perfume_spanish (S2 / es) ... OK (8 msgs)
+  [37/40] H1_bag_price_offer (S1 / en) ... OK (2 msgs)
+  [38/40] H2_cards_bulk (S1 / en) ... OK (2 msgs)
+  [39/40] H3_watch_re_nego (S2 / en) ... OK (8 msgs)
+  [40/40] H4_sneakers_reoffer (S1 / en) ... OK (2 msgs)
+
+[3] 生成成功: 40/40件, 失敗: 0件
+[4] 保存完了: C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\services\baychat\ai\testing\test_cases\synthetic_40cases_v1.json
+
+=== シナリオ分布 ===
+  カテゴリ: {'discount': 6, 'general': 9, 'tracking': 7, 'cancel': 2, 'return': 7, 'claim': 9}
+  ステージ: {'S1': 12, 'S2': 18, 'S3': 6, 'S4': 4}
+  言語: {'en': 38, 'de': 1, 'es': 1}

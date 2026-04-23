@@ -1,0 +1,52 @@
+,Sample data (Link data) - item 356775942435,,,,,
+,,,,,,
+,Param,Ý nghĩa,Tân chọn,Quyết chọn,下元さんの選択,Tài liệu
+,Item.ItemID,Mã định danh duy nhất của sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ItemID
+,Item.Title,Tiêu đề sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Title
+,Item.Subtitle,Tiêu đề phụ (nếu có),TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.SubTitle
+,Item.Description,Mô tả chi tiết sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Description
+,Item.PrimaryCategory.CategoryID,ID danh mục chính,,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.PrimaryCategory.CategoryID
+,Item.PrimaryCategory.CategoryName,Tên danh mục chính,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.PrimaryCategory.CategoryName
+,Item.SecondaryCategory.CategoryID,ID danh mục phụ,,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.SecondaryCategory.CategoryID
+,Item.SecondaryCategory.CategoryName,Tên danh mục phụ,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.SecondaryCategory.CategoryName
+,Item.ListingType,Loại listing (đấu giá / giá cố định),TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ListingType
+,Item.ListingDuration,Thời gian đăng bán,TRUE,TRUE,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ListingDuration
+,Item.StartPrice,Giá khởi điểm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.StartPrice
+,Item.BuyItNowPrice,Giá mua ngay,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.BuyItNowPrice
+,Item.ReservePrice,Giá tối thiểu chấp nhận,,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ReservePrice
+,Item.Quantity,Số lượng sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Variations.Variation.Quantity
+,Item.QuantitySold,Số lượng đã bán,TRUE,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Variations.Variation.SellingStatus.QuantitySold
+,Item.SellingStatus.CurrentPrice,Giá hiện tại,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.SellingStatus.CurrentPrice
+,Item.SellingStatus.BidCount,Số lượt đấu giá,TRUE,TRUE,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Variations.Variation.SellingStatus.BidCount
+,Item.SellingStatus.ListingStatus,Trạng thái listing,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Variations.Variation.SellingStatus.ListingStatus
+,Item.SellingStatus.TimeLeft,Thời gian còn lại,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.TimeLeft
+,Item.ListingDetails.StartTime,Thời điểm bắt đầu đăng,,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ListingDetails.StartTime
+,Item.ListingDetails.EndTime,Thời điểm kết thúc,TRUE,,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ListingDetails.EndTime
+,Item.ListingDetails.ViewItemURL,Link xem sản phẩm,TRUE,,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ListingDetails.ViewItemURL
+,Item.Seller.UserID,Tên người bán,TRUE,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Seller.UserID
+,Item.Seller.FeedbackScore,Điểm đánh giá người bán,TRUE,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Seller.FeedbackScore
+,Item.Seller.PositiveFeedbackPercent,% đánh giá tích cực,TRUE,TRUE,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Seller.PositiveFeedbackPercent
+,Item.ShippingDetails.ShippingType,Loại vận chuyển,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ShippingDetails.ShippingType
+,Item.ShippingDetails.ShippingServiceOptions.ShippingService,Tên dịch vụ vận chuyển,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ShippingDetails.ShippingServiceOptions.ShippingService
+,Item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost,Chi phí vận chuyển,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost
+,Item.ShippingDetails.ShippingServiceOptions.ShippingServicePriority,Độ ưu tiên vận chuyển,,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ShippingDetails.ShippingServiceOptions.ShippingServicePriority
+,Item.ReturnPolicy.ReturnsAcceptedOption,Có chấp nhận trả hàng không,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ReturnPolicy.ReturnsAcceptedOption
+,Item.ReturnPolicy.RefundOption,Hình thức hoàn tiền,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ReturnPolicy.RefundOption
+,Item.ReturnPolicy.ReturnsWithinOption,Thời gian được trả hàng,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ReturnPolicy.ReturnsWithinOption
+,Item.ReturnPolicy.ShippingCostPaidByOption,Ai trả phí ship khi hoàn hàng,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ReturnPolicy.ShippingCostPaidByOption
+,Item.PictureDetails.PictureURL,Danh sách ảnh sản phẩm,TRUE,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.PictureDetails.PictureURL
+,Item.Country,Quốc gia của sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Country
+,Item.Location,Địa điểm sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Location
+,Item.PostalCode,Mã bưu điện,,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.PostalCode
+,Item.Currency,Đơn vị tiền tệ,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Currency
+,Item.HitCount,Số lượt xem,TRUE,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html
+,Item.WatchCount,Số người theo dõi,TRUE,,,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.WatchCount
+,Item.BestOfferDetails.BestOfferEnabled,Có bật trả giá không,,,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.BestOfferDetails.BestOfferEnabled
+,Item.BestOfferDetails.BestOfferCount,Số lượng offer,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.BestOfferDetails.BestOfferCount
+,Item.ItemSpecifics.NameValueList.Name,Tên thuộc tính sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ItemSpecifics.NameValueList.Name
+,Item.ItemSpecifics.NameValueList.Value,Giá trị thuộc tính sản phẩm,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ItemSpecifics.NameValueList.Value
+,Item.Variations.Variation.SKU,Mã SKU của biến thể,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Variations.Variation.SKU
+,Item.Variations.Variation.StartPrice,Giá của biến thể,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Variations.Variation.StartPrice
+,Item.Variations.Variation.Quantity,Số lượng biến thể,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.Variations.Variation.Quantity
+,Item.Variations.Variation.VariationSpecifics.NameValueList.Name,Tên thuộc tính biến thể,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ItemSpecifics.NameValueList
+,Item.Variations.Variation.VariationSpecifics.NameValueList.Value,Giá trị thuộc tính biến thể,TRUE,TRUE,TRUE,https://developer.ebay.com/devzone/xml/docs/reference/ebay/GetItem.html#Response.Item.ItemSpecifics.NameValueList

@@ -1,0 +1,50 @@
+o,,,,,,,,
+,,,,,,,,
+,typeChat,new,ghi chú,,,,,
+,AUCTION,event: auction_won,,,,,,
+,OfferOrder,event: best_offer_created,,,,,,
+,Order,event: purchase_completed,,,,,,
+,OfferAccepted,event: best_offer_accepted,,,,,,
+,Trouble,tin nhắn quy đổi,tham khảo bảng các loại trouble,,,,,
+,Task,bỏ,bỏ,,,,,
+,eBay,bỏ,bỏ,,,,,
+,Các typeChat còn lại,Tin nhắn,Tin nhắn cột messages bảng chat_ebay,,các loại trouble,,,
+,,,,,title,content,message quy đổi,new
+04/02/20206,Tin nhắn trống,bỏ,Tin nhắn cột messages bảng chat_ebay,,Dispute,Dispute closed,Dispute has been closed,event: dispute_closed
+,Tin nhắn mới nhất của buyer >= 15 kí tự,yêu cầu AI trả lời theo ngôn ngữ của buyer,,,Dispute,FRAUD,Dispute open with resaon fraud,event: dispute_open;reason=fraud
+,Tin nhắn mới nhất của buyer < 15,yêu cầu AI trả lời theo ngôn ngữ EN,,,Dispute,ITEM_NOT_RECEIVED,Dispute open with resaon buyer didn't receive the item,event: dispute_open;reason=buyer_did_not_receive
+,Không xác định được ngôn ngữ phù hợp,yêu cầu AI trả lời theo ngôn ngữ EN,,,Dispute,TRANSACTION_ISSUE,Dispute open with resaon transaction issue,event: dispute_open;reason=transaction_issue
+,,,,,Dispute,The buyer did not recognize the transaction,Dispute open with resaon the buyer did not recognize the transaction,event: dispute_open;reason=unrecognized_transaction
+,,,,,Dispute,The buyer had an issue with the transaction,Dispute open with resaon the buyer had an issue with the transaction,event: dispute_open;reason=buyer_transaction_issue
+,,,,,Dispute,The buyer hasn't received their item yet,Dispute open with resaon the buyer hasn't received their item yet,event: dispute_open;reason=buyer_did_not_receive
+,,,,,Dispute,The item doesn't match the description in your listing,Dispute open with resaon the item doesn't match the description in your listing,event: dispute_open;reason=item_not_as_described
+,,,,,Dispute,The transaction was cancelled,Dispute open with resaon the transaction was cancelled,event: dispute_open;reason=transaction_cancelled
+,,,,,OrderCancelRequest,FOUND_CHEAPER_PRICE,Request to cancel order with reason found better price,event: cancel_request;reason=found_better_price
+,,,,,OrderCancelRequest,ORDER_MISTAKE,Request to cancel order with reason order placed by mistake,event: cancel_request;reason=placed_by_mistake
+,,,,,OrderCancelRequest,UNKNOWN,Request to cancel order for unknown reason,event: cancel_request;reason=unknown
+,,,,,OrderCancelRequest,WONT_ARRIVE_IN_TIME,Request to cancel order with reason won't arrive on time,event: cancel_request;reason=wont_arrive_on_time
+,,,,,OrderCancelRequest,WRONG_PAYMENT_METHOD,Request to cancel order with reason wrong payment information,event: cancel_request;reason=wrong_payment_information
+,,,,,OrderCancelRequest,WRONG_SHIPPING_ADDRESS,Request to cancel order with reason wrong shipping address,event: cancel_request;reason=wrong_shipping_address
+,,,,,キャンセルリクエスト,Cancel closed,Cancel request has been closed,event: cancel_request_closed
+,,,,,キャンセルリクエスト,Found better price,Request to cancel order with found better price,event: cancel_request;reason=found_better_price
+,,,,,キャンセルリクエスト,None,Request to cancel order for unknown reason,event: cancel_request;reason=unknown
+,,,,,キャンセルリクエスト,Order placed by mistake,Request to cancel order with reason  order placed by mistake,event: cancel_request;reason=placed_by_mistake
+,,,,,キャンセルリクエスト,Won't arrive on time,Request to cancel order with reason won't arrive on time,event: cancel_request;reason=wont_arrive_on_time
+,,,,,キャンセルリクエスト,Wrong payment information,Request to cancel order with reason wrong payment information,event: cancel_request;reason=wrong_payment_information
+,,,,,キャンセルリクエスト,Wrong shipping address,Request to cancel order with reason wrong shipping address,event: cancel_request;reason=wrong_shipping_address
+,,,,,キャンセルリクエスト,Wrong shipping method,Request to cancel order with reason wrong shipping method,event: cancel_request;reason=wrong_shipping_method
+,,,,,ケース,Case closed,Case has been closed,event: case_closed
+,,,,,リターンリクエスト,Arrived damaged,Return request with reason arrived damaged,event: return_request;reason=arrived_damaged
+,,,,,リターンリクエスト,Changed mind,Return request with reason changed mind,event: return_request;reason=changed_mind
+,,,,,リターンリクエスト,Didn’t like item,Return request with reason didn’t like item,event: return_request;reason=didnt_like_item
+,,,,,リターンリクエスト,Doesn’t fit,Return request with reason doesn’t fit,event: return_request;reason=doesnt_fit
+,,,,,リターンリクエスト,Doesn’t match description or photos,Return request with reason doesn’t match description or photos,event: return_request;reason=doesnt_match_description
+,,,,,リターンリクエスト,Doesn’t work or defective,Return request with reason doesn’t work or defective,event: return_request;reason=defective
+,,,,,リターンリクエスト,Missing parts or accessories,Return request with reason missing parts or accessories,event: return_request;reason=missing_parts
+,,,,,リターンリクエスト,Ordered by mistake,Return request with reason ordered by mistake,event: return_request;reason=ordered_by_mistake
+,,,,,リターンリクエスト,Return closed,Return request has been closed,event: return_request_closed
+,,,,,リターンリクエスト,Wrong item sent,Return request with reason wrong item sent,event: return_request;reason=wrong_item
+,,,,,リターンリクエスト,バイヤーが返送済み,Return request item has been shipped by the buyer,event: return_request;status=item_shipped_by_buyer
+,,,,,リターンリクエスト,返送品到着済み,Return request item has been delivered to the seller,event: return_request;status=item_delivered_to_seller
+,,,,,未着リクエスト,Buyer didn't receive the item,Item not receive request with reason buyer didn't receive the item,event: item_not_received;reason=buyer_did_not_receive
+,,,,,未着リクエスト,Item not received closed,Item not receive request with reason item not received closed,event: item_not_received_closed

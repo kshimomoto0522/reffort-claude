@@ -1,0 +1,1956 @@
+[
+  {
+    "id": "synth_A1_cam_stock",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Vintage Cameras",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "First inquiry. Buyer asks if the item is still available and asks for more photos of the shutter condition.",
+    "buyer_ebay": "A1",
+    "buyer_message": "Hello, is this Leica M3 Double Stroke 1957 Rangefinder still available? Also, could you please provide additional photos showing the condition of the shutter? Thank you.",
+    "buyer_message_ja": "こんにちは、このLeica M3 ダブルストローク 1957年製レンジファインダーはまだありますか？また、シャッターの状態がわかる追加の写真をいただけますか？ありがとうございます。",
+    "history_ja": [
+      "こんにちは、このLeica M3 Double Stroke 1957レンジファインダーはまだ購入可能でしょうか？また、シャッターの状態がわかる追加の写真をいただけますか？よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"48293017564\", \"Title\": \"Leica M3 Double Stroke 1957 Rangefinder (Vintage Cameras)\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:Rangefinder\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3500.00\", \"CurrentPrice\": \"3500.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-15T09:12:00.000Z] Hello, is this Leica M3 Double Stroke 1957 Rangefinder still available? Also, could you please provide additional photos showing the condition of the shutter? Thank you."
+      }
+    ]
+  },
+  {
+    "id": "synth_A2_jacket_sizing",
+    "category": "general",
+    "stage": "S1",
+    "product_category": "Men's Clothing / Vintage",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "First inquiry. Buyer asks about exact chest and shoulder measurements since vintage sizes run different.",
+    "buyer_ebay": "A2",
+    "buyer_message": "Hi, could you please provide the exact chest and shoulder measurements of this vintage Levi's Type III Trucker Jacket? I know vintage sizing can vary quite a bit. Thanks.",
+    "buyer_message_ja": "こんにちは、このヴィンテージのLevi's Type III トラッカージャケットの正確な胸囲と肩幅のサイズを教えていただけますか？ヴィンテージのサイズはかなりばらつきがあることは承知しています。ありがとうございます。",
+    "history_ja": [
+      "こんにちは、このヴィンテージのリーバイス Type III トラッカージャケットの正確な胸囲と肩幅のサイズを教えていただけますか？ヴィンテージのサイズはかなりばらつきがあることは承知しています。よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"73829104562\", \"Title\": \"Vintage Levi's Type III Trucker Jacket (Size L)\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men's Clothing:Jackets\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"120.00\", \"CurrentPrice\": \"120.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T15:45:00.000Z] Hi, could you please provide the exact chest and shoulder measurements of this vintage Levi's Type III Trucker Jacket? I know vintage sizing can vary quite a bit. Thanks."
+      }
+    ]
+  },
+  {
+    "id": "synth_A3_guitar_ship_time",
+    "category": "general",
+    "stage": "S1",
+    "product_category": "Musical Instruments / Guitars",
+    "emotion": "mild_anxiety",
+    "language": "en",
+    "situation": "First inquiry. Buyer wants to know shipping time to the US West Coast and if the item is insured.",
+    "buyer_ebay": "A3",
+    "buyer_message": "Hi, I’m interested in the 1978 Fender Stratocaster Olympic White. Could you please let me know how long shipping to the US West Coast usually takes? Also, is the item insured during shipping? Thanks!",
+    "buyer_message_ja": "こんにちは、1978年製フェンダー ストラトキャスター オリンピックホワイトに興味があります。アメリカ西海岸への発送に通常どのくらい時間がかかるか教えていただけますか？また、発送時に保険はかけられていますか？ありがとうございます。",
+    "history_ja": [
+      "こんにちは、1978年製フェンダー・ストラトキャスター オリンピックホワイトに興味があります。アメリカ西海岸への発送には通常どのくらい時間がかかるか教えていただけますか？また、発送中に商品は保険に入っていますか？よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83746592017\", \"Title\": \"1978 Fender Stratocaster Olympic White (USA)\", \"PrimaryCategoryName\": \"Musical Instruments:Guitars:Electric Guitars\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3250.00\", \"CurrentPrice\": \"3250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T09:15:00.000Z] Hi, I’m interested in the 1978 Fender Stratocaster Olympic White. Could you please let me know how long shipping to the US West Coast usually takes? Also, is the item insured during shipping? Thanks!"
+      }
+    ]
+  },
+  {
+    "id": "synth_A4_pokemon_condition",
+    "category": "general",
+    "stage": "S2",
+    "product_category": "Collectible Card Games",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Buyer already asked one question about centering. Now asks for a scan of the back edges to confirm no whitening. This is pre-purchase negotiation, no purchase has been made yet.",
+    "buyer_ebay": "A4",
+    "buyer_message": "That’s great to hear, Emi. One last thing—could you confirm if the card’s corners show any minor wear or if they’re sharp as per PSA 9 standards?",
+    "buyer_message_ja": "それは良かったです、エミさん。最後にもう一つだけ、カードの角に多少の擦れなどはありますか？それともPSA 9の基準通りに角はシャープな状態でしょうか？",
+    "history_ja": [
+      "先ほどはセンタリングの詳細をご確認いただきありがとうございます。裏面の端の部分をアップでスキャンした画像をいただけますか？決定する前に、白化がないか確認したいです。",
+      "こんにちは、引き続きご関心をお寄せいただきありがとうございます。先ほど、裏面の端がはっきり見える高解像度のスキャン画像をアップロードしました。カードの端はきれいで白化は見られません。追加の角度や詳細が必要でしたらお知らせください。よろしくお願いします、ハルト",
+      "スキャン画像ありがとうございます、ハルト。画像で見る限り端は良さそうですね。カードは保護スリーブや特別なケースに入れて保管されていましたか？",
+      "再度こんにちは。はい、カードはグレーディング後、トップローダースリーブに入れた上で保護用バインダーに丁寧に保管しています。状態を保つために慎重に扱っています。何か他にご質問があればお手伝いします。よろしくお願いします、エミ",
+      "それは安心しました、エミ。最後にもう一点だけ確認させてください。カードの角に多少の擦れなどはありますか？それともPSA 9基準のようにシャープな状態でしょうか？"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"98765432109\", \"Title\": \"Pokemon Base Set Charizard 1st Edition PSA 9 (Collectible Card Games)\", \"PrimaryCategoryName\": \"Collectibles:Pokemon:TCG:Cards\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"15000.00\", \"CurrentPrice\": \"15000.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T10:15:00.000Z] Thanks for confirming the centering details earlier. Could you please provide a close-up scan of the back edges? I want to make sure there is no whitening before I decide."
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-10T15:20:00.000Z] Hello, thank you for your continued interest. I have just uploaded a high-resolution scan showing the back edges clearly. You can see the card’s edges are clean with no whitening visible. Please let me know if you need additional angles or details. Best regards, Haruto"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-11T08:05:00.000Z] Thanks for the scan, Haruto. The edges look good in the image. Could you also confirm if the card has been stored in a protective sleeve or any special casing?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-11T12:45:00.000Z] Hi again, yes, the card has been carefully stored in a top-loader sleeve inside a protective binder since grading. It has been handled with care to preserve its condition. If you have any further questions, I’m happy to assist. Regards, Emi"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-12T09:30:00.000Z] That’s great to hear, Emi. One last thing—could you confirm if the card’s corners show any minor wear or if they’re sharp as per PSA 9 standards?"
+      }
+    ]
+  },
+  {
+    "id": "synth_B1_ps5_ship_date",
+    "category": "tracking",
+    "stage": "S1",
+    "product_category": "Video Game Consoles",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Buyer just purchased. Asks when it will be shipped.",
+    "buyer_ebay": "B1",
+    "buyer_message": "Hi, I just completed my purchase. Can you please let me know when the PlayStation 5 will be shipped?",
+    "buyer_message_ja": "こんにちは、購入手続きを完了しました。PlayStation 5の発送予定日を教えていただけますか？",
+    "history_ja": [
+      "こんにちは、購入を完了しました。PlayStation 5の発送予定日を教えていただけますか？"
+    ],
+    "num_messages": 2,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"93746182015\", \"Title\": \"Sony PlayStation 5 Disc Edition (CFI-1200A01)\", \"PrimaryCategoryName\": \"Video Game Consoles:Video Game Consoles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"499.99\", \"CurrentPrice\": \"499.99\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_StandardShipping\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:25:30.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-12T09:17:45.000Z] Hi, I just completed my purchase. Can you please let me know when the PlayStation 5 will be shipped?"
+      }
+    ]
+  },
+  {
+    "id": "synth_B2_kimono_address_change",
+    "category": "general",
+    "stage": "S2",
+    "product_category": "Asian Antiques / Kimono",
+    "emotion": "slightly_anxious",
+    "language": "en",
+    "situation": "Bought 1 day ago. Realizes they entered an old address. Asks seller to change shipping address before shipment.",
+    "buyer_ebay": "B2",
+    "buyer_message": "Thank you for confirming. Please ensure the package goes to the new address. I’m a little worried about the timing and hope it hasn’t been shipped yet.",
+    "buyer_message_ja": "ご確認ありがとうございます。新しい住所に確実に発送してください。発送のタイミングが少し心配で、まだ発送されていないことを願っています。",
+    "history_ja": [
+      "こんにちは、注文時に古い配送先住所を入力してしまったことに気づきました。着物を発送する前に住所を変更することは可能でしょうか？",
+      "こんにちは、ご連絡ありがとうございます。ご心配お察しします。正しい配送先住所をできるだけ早くお知らせください。発送前に住所の変更が可能か確認いたします。よろしくお願いいたします。田中",
+      "ありがとうございます！こちらが新しい住所です：123 New Maple St, Springfield, IL 62704, USA。受け取りましたらご確認ください。",
+      "ご住所の更新ありがとうございます。記録いたしました。発送前に配送先情報を更新できるよう最善を尽くします。発送次第ご連絡いたします。よろしくお願いいたします。田中",
+      "ありがとうございます。念のため確認ですが、システム上で配送先住所は変更されていますか？ユニークなヴィンテージ品なので少し不安です。",
+      "ご心配お察しします。システム上で住所は更新済みです。着物は24時間以内に発送予定です。発送次第、追跡情報をお送りします。お待ちいただきありがとうございます。田中",
+      "ご確認ありがとうございます。必ず新しい住所に発送してください。発送済みでないか少し心配なので、タイミングも含めよろしくお願いします。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83746291025\", \"Title\": \"Vintage Silk Kimono Furisode with Crane Embroidery\", \"PrimaryCategoryName\": \"Collectibles:Asian Antiques:Kimono\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"325.00\", \"CurrentPrice\": \"325.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Kyoto\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-15T09:12:45.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-16T08:30:20.000Z] Hi, I just realized I entered an old shipping address on my order. Is there any way to update it before you ship the kimono?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-16T10:05:15.000Z] Hello, thank you for reaching out. We understand your concern. Please provide the correct shipping address as soon as possible, and we will check if the shipment can be updated before dispatch. Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-16T11:20:50.000Z] Thanks! Here is my updated address: 123 New Maple St, Springfield, IL 62704, USA. Please confirm if you got it."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-16T12:47:33.000Z] Thank you for the updated address. We have noted it and will do our best to update the shipping details before sending out your order. We will notify you once the package has been dispatched. Regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-17T07:15:12.000Z] I appreciate that. Just double-checking, has the shipping address been changed in your system? I’m a bit anxious since it’s a unique vintage piece."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-17T09:02:50.000Z] We understand your concern and confirm the address has been updated in our system. The kimono is scheduled to be shipped within the next 24 hours. We will send you the tracking details as soon as it ships. Thank you for your patience. Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-17T15:43:05.000Z] Thank you for confirming. Please ensure the package goes to the new address. I’m a little worried about the timing and hope it hasn’t been shipped yet."
+      }
+    ]
+  },
+  {
+    "id": "synth_B3_figure_cancel_mistake",
+    "category": "cancel",
+    "stage": "S2",
+    "product_category": "Anime Collectibles / Figures",
+    "emotion": "apologetic",
+    "language": "en",
+    "situation": "Buyer purchased by accident (clicked Buy It Now instead of Watch). Asks to cancel.",
+    "buyer_ebay": "B3",
+    "buyer_message": "I appreciate your understanding. I will prepare the item for return as soon as possible. Thank you again for your assistance and patience.",
+    "buyer_message_ja": "ご理解いただきありがとうございます。できるだけ早く返品の準備をします。改めてご協力とご辛抱に感謝します。",
+    "history_ja": [
+      "こんにちは、誤ってこの商品を購入してしまいました。注文をキャンセルすることは可能でしょうか？",
+      "こんにちは、お問い合わせありがとうございます。ご注文はすでに処理され発送済みのため、残念ながらこの段階でのキャンセルはできません。ただし、商品を受け取った後に返品は可能です。返品手続きについてご不明な点があればお知らせください。よろしくお願いいたします。山本 由紀",
+      "ご返信ありがとうございます。追跡情報はいつ頃受け取れますか？",
+      "荷物は昨日発送されており、追跡番号はJP123456789USです。配送業者のウェブサイトで追跡が可能です。追跡に問題があればお知らせください。",
+      "本日荷物を受け取りました。状態は完璧です。ご迷惑をおかけして申し訳ありませんが、返品を進めたいと思います。返品手順を送っていただけますか？",
+      "ご連絡ありがとうございます。返品手順をすぐにメールでお送りいたします。返品をスムーズに進めるため、商品は未使用で元の包装のままであることをお願いいたします。",
+      "ご理解いただきありがとうございます。できるだけ早く返品の準備をいたします。改めてご協力とご辛抱に感謝いたします。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927461502\", \"Title\": \"Bandai Soul of Chogokin GX-31 Dancouga (2014 Edition)\", \"PrimaryCategoryName\": \"Collectibles:Animation Art & Merchandise:Anime Collectibles:Figures\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"189.99\", \"CurrentPrice\": \"189.99\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_StandardShipping\", \"ShippingServiceCost\": \"15.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T08:30:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T12:15:00.000Z] Hi, I accidentally purchased this item. Is it possible to cancel the order?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-25T14:00:00.000Z] Hello, thank you for reaching out. Your order has already been processed and shipped, so unfortunately we cannot cancel it at this stage. However, you can return the item after receiving it. Please let me know if you need assistance with the return process. Best regards, Yamamoto Yuki."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-26T09:20:00.000Z] Thank you for your reply. When can I expect the tracking information?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-26T10:45:00.000Z] The package was shipped yesterday, and the tracking number is JP123456789US. You should be able to track it via the carrier's website. Please let me know if you have any trouble tracking the shipment."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-30T15:00:00.000Z] I received the package today. It’s in perfect condition. I’m sorry again for the confusion, but I would like to proceed with the return. Could you please send me the instructions?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-31T09:30:00.000Z] Thank you for letting us know. I will email you the return instructions shortly. Please ensure the item is unused and in its original packaging for a smooth return process."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-01T11:10:00.000Z] I appreciate your understanding. I will prepare the item for return as soon as possible. Thank you again for your assistance and patience."
+      }
+    ]
+  },
+  {
+    "id": "synth_B4_trading_card_combine",
+    "category": "general",
+    "stage": "S2",
+    "product_category": "Collectible Card Games",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Buyer bought 1 card and is considering buying 2 more from the seller's other listings. Asks if shipping can be combined.",
+    "buyer_ebay": "B4",
+    "buyer_message": "Thanks for the info. One last thing — can you confirm if the combined shipping cost of $12 applies no matter where I live in the US?",
+    "buyer_message_ja": "情報ありがとうございます。最後にもう一つだけ確認ですが、合計送料12ドルはアメリカ国内のどこに住んでいても同じですか？",
+    "history_ja": [
+      "こんにちは、トロピカルアイランドのカードを受け取りました。ありがとうございます。あなたの他のデュアルランドの出品も見ています。もしあと2枚カードを買ったら、送料をまとめて安くできますか？",
+      "こんにちは、ご連絡とご購入ありがとうございます！はい、複数枚のカードの送料をまとめてコストを抑えることが可能です。ご希望の追加カードを教えていただければ、まとめた送料を計算いたします。よろしくお願いいたします、山本優希",
+      "リバイズド版のデュアルランド、アンダーグラウンドシーとヴォルカニックアイランドに興味があります。トロピカルアイランドと同じくらいの状態でしょうか？",
+      "ご興味ありがとうございます。アンダーグラウンドシーとヴォルカニックアイランドのカードはどちらも、購入されたトロピカルアイランドと同様に非常に良い状態です。必要であれば詳細な写真もお送りできます。送料については、3枚すべての合計で12ドルになります。お会計を簡単にするためにまとめて出品を作成しましょうか？よろしくお願いいたします、山本優希",
+      "それは良さそうですね。お時間あるときに写真を送ってください。それと、まとめて発送した場合、カードはしっかり保護されますか？無事に届くか心配なので。",
+      "もちろんです！すぐに2枚のカードの写真をお送りします。発送については、丈夫なセミリジッドスリーブとプチプチ封筒を使い、各カードをしっかり保護しています。すべてのカードが説明通りの良い状態で届くよう丁寧に梱包しています。他にご質問があればお知らせください。よろしくお願いいたします、山本優希",
+      "情報ありがとうございます。最後にもう一つだけ確認ですが、まとめて発送の送料12ドルは、私がアメリカのどこに住んでいても同じ料金でしょうか？"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927504128\", \"Title\": \"MTG Dual Land Revised - Tropical Island\", \"PrimaryCategoryName\": \"Collectible Card Games:Magic: The Gathering:Single Cards\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"350.00\", \"CurrentPrice\": \"350.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_StandardShipping\", \"ShippingServiceCost\": \"8.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T10:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-01T09:33:00.000Z] Hi, I received the Tropical Island card, thanks. I’m looking at your other listings for dual lands. If I buy two more cards, can you combine shipping to save on costs?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-01T10:05:00.000Z] Hello, thank you for your message and your purchase! Yes, I can combine shipping for multiple cards to reduce the cost. Please let me know which additional cards you are interested in, and I will calculate the combined shipping fee for you. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-02T11:22:00.000Z] I’m interested in the Revised dual lands Underground Sea and Volcanic Island. Are they in similar condition as the Tropical Island?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-02T13:00:00.000Z] Thank you for your interest. Both the Underground Sea and Volcanic Island cards are in excellent condition, similar to the Tropical Island you purchased. I can send you detailed photos if needed. Regarding combined shipping, the total shipping cost for all three cards would be $12. Would you like me to create a combined listing for easier checkout? Regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-03T08:45:00.000Z] That sounds good. Please send the photos when you have time. Also, would the combined shipping protect the cards well? I want to make sure they arrive safely."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-03T09:30:00.000Z] Certainly! I will send you photos of the two cards shortly. Regarding shipping, I use sturdy semi-rigid sleeves and bubble mailers to ensure each card is well protected during transit. I take great care to package all cards to arrive in the same excellent condition as described. Please let me know if you have any other questions. Best, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-04T10:15:00.000Z] Thanks for the info. One last thing — can you confirm if the combined shipping cost of $12 applies no matter where I live in the US?"
+      }
+    ]
+  },
+  {
+    "id": "synth_B5_watch_change_mind",
+    "category": "cancel",
+    "stage": "S3",
+    "product_category": "Wristwatches / Divers",
+    "emotion": "hesitant",
+    "language": "en",
+    "situation": "Buyer purchased 2 days ago. Seller has already sent a shipping confirmation. Buyer asks if they can still cancel because they 'found a better deal locally'. A new development mid-conversation.",
+    "buyer_ebay": "B5",
+    "buyer_message": "Hello Tanaka, I actually found a better deal locally and was wondering if I can still cancel my order? I know you already shipped it but I’m a bit hesitant now.",
+    "buyer_message_ja": "田中さん、実は地元でより良い条件のものを見つけてしまい、注文をキャンセルできるか伺いたいです。すでに発送済みなのは承知していますが、少し迷っています。",
+    "history_ja": [
+      "こんにちは！セイコー プロスペックス SLA017 リミテッド 55周年記念モデルをご購入いただき、誠にありがとうございます。ご注文は処理され、EMS国際便で発送されました。追跡番号はご登録のメールアドレスに送信済みです。ご不明な点がございましたらお気軽にご連絡ください。よろしくお願いいたします。田中",
+      "田中さん、アップデートありがとうございます。お届け予定日を確認していただけますか？",
+      "こんにちは。EMS国際便の配送は通常5〜7営業日かかります。お届けは3月17日から19日頃になる見込みです。何かご不明な点があればお知らせください。よろしくお願いいたします。田中",
+      "了解しました、ありがとうございます！もう一つお聞きしたいのですが、この時計はまだ保証期間内でしょうか？",
+      "はい、この時計には購入日から2年間有効のセイコー公式メーカー保証が付いています。購入証明書は大切に保管してください。よろしくお願いいたします。田中",
+      "田中さん、こんにちは。実は地元でより良い条件のものを見つけてしまい、注文をキャンセルできるかお伺いしたいです。すでに発送済みなのは承知していますが、少し迷っています。"
+    ],
+    "num_messages": 7,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83726159402\", \"Title\": \"Seiko Prospex SLA017 Limited 55th Anniversary\", \"PrimaryCategoryName\": \"Wristwatches:Divers\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3200.00\", \"CurrentPrice\": \"3200.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T10:15:30.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-11T09:05:00.000Z] Hello! Thank you very much for your purchase of the Seiko Prospex SLA017 Limited 55th Anniversary. Your order has been processed and shipped via EMS International. The tracking number has been sent to your registered email. Please feel free to contact me if you have any questions. Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-13T14:22:45.000Z] Hi Tanaka, thanks for the update. Can you confirm the estimated delivery date?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-13T15:10:30.000Z] Hello, the EMS International shipment usually takes 5 to 7 business days to reach your location. You should expect delivery around March 17–19. Let me know if you need further assistance. Regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-15T11:30:00.000Z] Got it, thanks! One more thing, is the watch still under warranty?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-15T12:05:00.000Z] Yes, the watch comes with the official Seiko manufacturer warranty valid for 2 years from the purchase date. Please keep your proof of purchase safe. Best, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-17T18:45:20.000Z] Hello Tanaka, I actually found a better deal locally and was wondering if I can still cancel my order? I know you already shipped it but I’m a bit hesitant now."
+      }
+    ]
+  },
+  {
+    "id": "synth_C1_bag_tracking_req",
+    "category": "tracking",
+    "stage": "S1",
+    "product_category": "Women's Bags / LV",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Shipped 1 day ago. Buyer has not received tracking number notification and asks for it.",
+    "buyer_ebay": "C1",
+    "buyer_message": "Hello, I have not yet received the tracking number. Could you please provide it?",
+    "buyer_message_ja": "こんにちは、まだ追跡番号を受け取っていません。教えていただけますか？",
+    "history_ja": [
+      "こんにちは、ルイ・ヴィトン モノグラム スピーディ 30 ハンドバッグをご購入いただきありがとうございます。ご注文の商品は昨日、EMS国際便で発送いたしました。追跡番号は間もなくお知らせいたします。",
+      "こんにちは、まだ追跡番号を受け取っておりません。ご提供いただけますでしょうか？"
+    ],
+    "num_messages": 3,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927461502\", \"Title\": \"Louis Vuitton Monogram Speedy 30 Handbag\", \"PrimaryCategoryName\": \"Women’s Bags:Handbags:Louis Vuitton\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1150.00\", \"CurrentPrice\": \"1150.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T09:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-15T14:30:00.000Z] Hello, thank you for your purchase of the Louis Vuitton Monogram Speedy 30 Handbag. Your order was shipped yesterday via EMS International. I will send you the tracking number shortly."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-16T10:45:00.000Z] Hello, I have not yet received the tracking number. Could you please provide it?"
+      }
+    ]
+  },
+  {
+    "id": "synth_C2_guitar_shipping_delay",
+    "category": "tracking",
+    "stage": "S2",
+    "product_category": "Musical Instruments / Guitars",
+    "emotion": "anxious",
+    "language": "en",
+    "situation": "Shipped 8 days ago but tracking shows no update for 5 days. Buyer is worried and asks seller to check with the carrier.",
+    "buyer_ebay": "C2",
+    "buyer_message": "Thank you for checking. However, there is still no update, and it’s been over a week since shipment. I’m really anxious about receiving the guitar. Could you please escalate this or suggest what I can do?",
+    "buyer_message_ja": "ご確認ありがとうございます。しかし、出荷からすでに1週間以上経っているのにまだ更新がありません。ギターの受け取りが本当に不安です。こちらの件をエスカレーションしていただくか、私にできることを教えていただけますか？",
+    "history_ja": [
+      "こんにちは、私のギブソン・レスポールはいつ発送されるか確認したいのですが？",
+      "こんにちは、ご連絡ありがとうございます。お客様のギブソン・レスポール・スタンダード1959リイシューR9は3月6日にUSエクスペディテッドSpeedPAKで発送されました。追跡情報は間もなくお知らせいたします。よろしくお願いいたします、田中",
+      "追跡番号は受け取りましたが、3日間更新がありません。これは普通のことですか？",
+      "ご心配お察しします。輸送過程で追跡情報の更新が遅れることがあります。運送業者に確認し、情報が入り次第ご連絡いたします。お待ちいただきありがとうございます。田中",
+      "追跡情報が5日間更新されておらず、とても心配しています。運送業者に再度確認していただけますか？",
+      "再度ご連絡ありがとうございます。運送業者に確認したところ、荷物はまだ輸送中ですが、少し遅延が発生しているとのことです。間もなく動きがあり、追跡情報も更新される見込みです。ご理解いただき感謝します。田中",
+      "ご確認ありがとうございます。しかし、まだ更新がなく、発送から1週間以上経っています。ギターの受け取りが本当に不安です。こちらの件をエスカレーションしていただくか、私にできることを教えていただけますか？"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"57391826405\", \"Title\": \"Gibson Les Paul Standard 1959 Reissue R9\", \"PrimaryCategoryName\": \"Musical Instruments:Guitars:Electric Guitars\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"4500.00\", \"CurrentPrice\": \"4500.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-28T11:20:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-05T09:15:00.000Z] Hi, I just wanted to check when my Gibson Les Paul will be shipped?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-05T12:30:00.000Z] Hello, thank you for your message. Your Gibson Les Paul Standard 1959 Reissue R9 was shipped on March 6th via US Expedited SpeedPAK. You should receive tracking details shortly. Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-10T14:45:00.000Z] I received the tracking number but there has been no update for 3 days. Is this normal?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-10T16:00:00.000Z] I understand your concern. Sometimes tracking updates can be delayed due to transit processes. I will check with the carrier and get back to you with any information. Thank you for your patience. Best, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-15T10:20:00.000Z] It's been 5 days now with no tracking update, and I am getting worried. Could you please follow up with the carrier?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-15T12:00:00.000Z] Hello again, I contacted the carrier and they confirmed the package is still in transit but experiencing a slight delay. They expect it to move shortly and will update tracking accordingly. I appreciate your understanding. Regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-16T09:30:00.000Z] Thank you for checking. However, there is still no update, and it’s been over a week since shipment. I’m really anxious about receiving the guitar. Could you please escalate this or suggest what I can do?"
+      }
+    ]
+  },
+  {
+    "id": "synth_C3_cam_customs_stuck",
+    "category": "tracking",
+    "stage": "S3",
+    "product_category": "Vintage Cameras",
+    "emotion": "confused",
+    "language": "en",
+    "situation": "Item stuck at US customs for 10 days. Buyer reports customs is asking for an invoice. A new development — buyer needs seller's help with documentation.",
+    "buyer_ebay": "C3",
+    "buyer_message": "I’m a bit confused about what exactly customs wants. Can you help me understand what documents I should provide and how I should submit them? I really don’t want to lose the package.",
+    "buyer_message_ja": "税関が具体的に何を求めているのか少し混乱しています。どんな書類を用意して、どのように提出すればよいのか教えてもらえますか？荷物を失いたくありません。",
+    "history_ja": [
+      "こんにちは、Rolleiflex 2.8F TLRのご購入ありがとうございます。本日、US Expedited SpeedPAKにてカメラを発送いたしました。お届けまで7～14日ほどお待ちください。ご不明な点がありましたらお気軽にお問い合わせください。よろしくお願いいたします。山本優希",
+      "こんにちは、追跡を確認したところ、荷物がアメリカの税関で止まっているようです。通関に必要な書類はすべて揃っていますか？ご確認ください。",
+      "ご連絡ありがとうございます。発送時に標準的な商業インボイスを同封しております。税関で検査のために荷物が止まることがあり、その場合遅延が発生することがあります。運送会社に確認し、すぐにご報告いたします。よろしくお願いいたします。山本優希",
+      "税関で荷物が10日間止まっています。税関から直接インボイスのコピーを求められています。インボイスや必要な書類を送っていただけますか？",
+      "状況は理解しました。ご不便をおかけして申し訳ありません。本日中にインボイスのデジタルコピーとその他必要な書類を準備してお送りします。通関がスムーズに進むよう対応いたしますので、しばらくお待ちください。よろしくお願いいたします。山本優希",
+      "税関が具体的に何を求めているのか少し混乱しています。どの書類を用意すればよいのか、またどのように提出すればよいのか教えていただけますか？荷物を失いたくありません。"
+    ],
+    "num_messages": 7,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927104567\", \"Title\": \"Rolleiflex 2.8F TLR Medium Format Camera\", \"PrimaryCategoryName\": \"Cameras & Photo:Vintage Cameras:Medium Format\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1200.00\", \"CurrentPrice\": \"1200.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:20:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-10T15:00:00.000Z] Hello, thank you for your purchase of the Rolleiflex 2.8F TLR. I have shipped the camera today via US Expedited SpeedPAK. Please allow 7-14 days for delivery. If you have any questions, feel free to ask. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-20T10:45:00.000Z] Hi, I just checked the tracking and it seems the package is stuck at US customs. Can you confirm if everything was included for customs clearance?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-20T12:00:00.000Z] Thank you for letting me know. I included a standard commercial invoice with the shipment. Sometimes customs can hold items for inspection which can cause delays. I will check with the courier and update you shortly. Regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T09:30:00.000Z] Customs has been holding the package for 10 days now. They are asking me for an invoice copy directly. Can you send me the invoice or any documents they might need?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-25T11:15:00.000Z] I understand the situation and apologize for the inconvenience. I will prepare and send you a digital copy of the invoice and any other necessary documents by the end of the day to help clear customs. Please hold tight. Best, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-26T08:20:00.000Z] I’m a bit confused about what exactly customs wants. Can you help me understand what documents I should provide and how I should submit them? I really don’t want to lose the package."
+      }
+    ]
+  },
+  {
+    "id": "synth_C4_retro_game_wrong_address",
+    "category": "tracking",
+    "stage": "S2",
+    "product_category": "Retro Video Games",
+    "emotion": "panicked",
+    "language": "en",
+    "situation": "Just realized shipping address is wrong (moved last month). Tracking shows item already left JP. Asks if seller can contact the carrier to redirect.",
+    "buyer_ebay": "C4",
+    "buyer_message": "I just checked the tracking again and it shows the item has already left Japan. Is it even possible to redirect now? I’m panicking because I really need this game!",
+    "buyer_message_ja": "追跡を再度確認したところ、すでに日本を出発しているようです。今から転送は可能でしょうか？本当にこのゲームが必要なのでパニックになっています！",
+    "history_ja": [
+      "こんにちは！スーパーファミコンのニンテンドー64 クロノ・トリガーのカートリッジをご購入いただきありがとうございます。商品は大阪からEMS国際便で発送済みです。何かご不明な点がありましたらお知らせください。よろしくお願いいたします、田中",
+      "こんにちは、田中さん。追跡情報を受け取りました、ありがとうございます。ところで、通常配送にはどのくらい時間がかかりますか？",
+      "こんにちは！アメリカ向けのEMS国際便は通常7～14日ほどかかります。追跡情報を随時ご確認ください。もし遅延があればお気軽にご連絡ください。よろしくお願いいたします、田中",
+      "ありがとうございます。配送中なのは確認しました。ただ一つ、先月引っ越したばかりで、注文時の配送先住所が古いことに気づきました。住所の変更をお願いできますか？",
+      "ご連絡ありがとうございます。すでに発送済みのため、すぐにEMSに連絡して新しい住所への転送が可能か確認します。お手数ですが、新しい配送先の詳細を教えてください。",
+      "新しい住所はこちらです：123 New Lane, Springfield, IL 62704, USA。転送をお願いします。紛失が心配です！",
+      "住所をありがとうございます。EMSに連絡し、転送を依頼しました。24時間以内に返答があるとのことです。返答があり次第ご連絡いたします。",
+      "追跡を再度確認したところ、商品はすでに日本を出発していました。今から転送は可能でしょうか？本当にこのゲームが必要なのでパニックになっています！"
+    ],
+    "num_messages": 9,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"48291057623\", \"Title\": \"Super Famicom Nintendo 64 Chrono Trigger JP Cartridge\", \"PrimaryCategoryName\": \"Video Games & Consoles:Retro Video Games\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"85.00\", \"CurrentPrice\": \"85.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:22:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-10T15:00:00.000Z] Hello! Thank you for your purchase of the Super Famicom Nintendo 64 Chrono Trigger cartridge. Your item has been shipped via EMS International from Osaka. Please let me know if you need any further assistance. Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-20T09:45:00.000Z] Hi Tanaka, I got the tracking info, thanks. Just wondering how long the delivery usually takes?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-20T10:15:00.000Z] Hello! EMS International shipments to the US generally take about 7 to 14 days. Please keep an eye on the tracking for updates. If there are any delays, feel free to reach out. Regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-28T08:30:00.000Z] Thanks, I see it’s in transit. One thing though, I moved last month and just realized the shipping address on the order is old. Can you help me update it?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-28T09:00:00.000Z] Thanks for letting me know. Since the package is already shipped, I will contact EMS immediately to see if they can redirect the parcel to your new address. Please provide your updated shipping details."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-29T11:20:00.000Z] Here is my new address: 123 New Lane, Springfield, IL 62704, USA. Please try to redirect it, I’m worried it might get lost!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-29T12:00:00.000Z] Thank you for the address. I have contacted EMS and requested redirection. They said they will update me within 24 hours. I will inform you as soon as I hear back."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-02T14:40:00.000Z] I just checked the tracking again and it shows the item has already left Japan. Is it even possible to redirect now? I’m panicking because I really need this game!"
+      }
+    ]
+  },
+  {
+    "id": "synth_C5_kimono_delivery_missed",
+    "category": "tracking",
+    "stage": "S3",
+    "product_category": "Asian Antiques",
+    "emotion": "worried",
+    "language": "en",
+    "situation": "Tracking says 'delivered' but buyer did not receive. Suspects carrier left it at wrong address.",
+    "buyer_ebay": "C5",
+    "buyer_message": "I checked with my neighbors, and no one has seen or received the package. I fear the carrier might have left it at the wrong address. What can be done now? I’m really worried about losing such a valuable item.",
+    "buyer_message_ja": "近所の人にも確認しましたが、誰も荷物を見たり受け取ったりしていません。配送業者が間違った住所に置いてしまったのではないかと心配しています。今できることは何でしょうか？とても価値のある品なので失くしてしまうのが心配です。",
+    "history_ja": [
+      "こんにちは！明治時代のアンティーク絹の着物打掛をご購入いただき、ありがとうございます。ご注文はEMS国際便で発送いたしましたので、追跡情報は間もなくお知らせいたします。ご不明な点がございましたらお気軽にお問い合わせください。よろしくお願いいたします。山本優希",
+      "こんにちは、追跡を確認したところ、着物は昨日配達済みとなっているのですが、まだ受け取っていません。ご確認いただけますか？",
+      "お客様、お問い合わせありがとうございます。追跡状況にもかかわらずお荷物が届いていないとのことで申し訳ございません。すぐに運送業者に連絡し、配達状況を調査いたします。結果がわかり次第ご連絡いたしますので、しばらくお待ちください。よろしくお願いいたします。山本優希",
+      "何か進展はありますか？配達完了の確認はあるのに着物が見当たらず心配しています。",
+      "お待ちいただきありがとうございます。運送業者によると、ご指定の住所には配達済みとのことですが、誤って近隣の住所に置かれた可能性があるため現在確認中です。お手数ですがご近所の方にもお尋ねいただくことをおすすめします。引き続き調査を進め、ご報告いたします。よろしくお願いいたします。山本優希",
+      "ご近所の方に確認しましたが、誰も荷物を見たり受け取ったりしていません。運送業者が誤った住所に置いたのではないかと心配しています。今後どうすればよいでしょうか？とても価値のある品なので本当に心配です。"
+    ],
+    "num_messages": 7,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83920174652\", \"Title\": \"Antique Meiji Era Silk Kimono Uchikake\", \"PrimaryCategoryName\": \"Collectibles:Asian Antiques:Textiles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1250.00\", \"CurrentPrice\": \"1250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Kyoto\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T09:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-10T09:17:00.000Z] Hello! Thank you for your purchase of the Antique Meiji Era Silk Kimono Uchikake. We have shipped your order via EMS International and you should receive the tracking details shortly. Please feel free to reach out if you have any questions. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-20T14:30:00.000Z] Hi, I just checked the tracking and it says the kimono was delivered yesterday, but I haven’t received it yet. Could you help me check?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-20T15:00:00.000Z] Dear buyer, thank you for your message. I’m sorry to hear you have not received the package despite the tracking status. I will contact the carrier immediately to investigate the delivery. I’ll update you as soon as I hear back. Thank you for your patience. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-22T10:45:00.000Z] Any updates? I’m worried because the delivery confirmation is there but no sign of the kimono."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-22T11:15:00.000Z] Thank you for your patience. The carrier confirmed that the package was delivered to the address provided, but they are now verifying if it might have been left at a nearby address by mistake. I recommend checking with your neighbors as well. We will continue to follow up and keep you informed. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-24T09:20:00.000Z] I checked with my neighbors, and no one has seen or received the package. I fear the carrier might have left it at the wrong address. What can be done now? I’m really worried about losing such a valuable item."
+      }
+    ]
+  },
+  {
+    "id": "synth_C6_car_part_deadline",
+    "category": "tracking",
+    "stage": "S2",
+    "product_category": "Automotive Parts",
+    "emotion": "mild_frustration",
+    "language": "en",
+    "situation": "Buyer needed the part for a car show next weekend. Item is taking longer than estimated. Expresses frustration and asks for an updated ETA.",
+    "buyer_ebay": "C6",
+    "buyer_message": "This delay is really frustrating. I needed this spoiler for the car show next weekend. Can you give me an updated ETA? I’m worried it won’t arrive on time.",
+    "buyer_message_ja": "この遅延は本当にイライラします。来週末のカーショーにこのスポイラーが必要だったのです。最新の到着予定日を教えてもらえますか？間に合わないのではと心配しています。",
+    "history_ja": [
+      "こんにちは、来週末のカーショーまでにスポイラーを届けてもらいたいのですが、発送日を確認できますか？",
+      "こんにちは、ご連絡ありがとうございます。スポイラーは昨日、速達便で発送しましたので、5～7営業日以内に到着する予定です。進捗があり次第ご連絡いたします。よろしくお願いいたします。山本優希",
+      "まだ追跡情報が届いていません。教えてもらえますか？ショーが近づいています。",
+      "遅れて申し訳ありません。追跡番号を受け取りました：1Z999AA10123456784。配送業者のウェブサイトで追跡可能です。何かありましたらお知らせください。よろしくお願いいたします。山本優希",
+      "追跡情報を見ると、3日間動きがありません。来週末にイベントがあるので心配です。",
+      "ご心配おかけして申し訳ありません。配送業者に確認したところ、通関手続きのため少し遅れが出ているとのことです。48時間以内に輸送が再開される見込みです。ご不便をおかけして申し訳ありません。よろしくお願いいたします。山本優希",
+      "この遅れは本当に困ります。来週末のカーショーのためにこのスポイラーが必要でした。最新の到着予定を教えてもらえますか？間に合わないのではと心配しています。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927461502\", \"Title\": \"Nismo S-tune Rear Spoiler for Nissan Skyline R34\", \"PrimaryCategoryName\": \"Automotive:Auto Parts & Accessories:Exterior:Body Spoilers & Kits\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"550.00\", \"CurrentPrice\": \"550.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-10T14:22:10.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-10T09:15:32.000Z] Hi, I need the spoiler delivered before the car show next weekend. Can you confirm the shipping date?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-10T10:40:05.000Z] Hello, thank you for your message. We shipped the spoiler yesterday via expedited shipping, and it should arrive within 5-7 business days. We will keep you updated. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-14T08:30:45.000Z] I still haven't received any tracking info. Can you provide it? The show is getting closer."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-14T10:12:22.000Z] Apologies for the delay. We just received the tracking number: 1Z999AA10123456784. You can track it on the courier’s website. Please let me know if you need further assistance. Regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-18T11:45:00.000Z] The tracking shows no movement for 3 days now. This is worrying, the event is next weekend."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-18T13:05:18.000Z] I understand your concern. I contacted the courier for an update and was told there has been a slight delay due to customs clearance. We expect it to resume transit within 48 hours. We apologize for the inconvenience. Best, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-21T07:20:10.000Z] This delay is really frustrating. I needed this spoiler for the car show next weekend. Can you give me an updated ETA? I’m worried it won’t arrive on time."
+      }
+    ]
+  },
+  {
+    "id": "synth_D1_sneakers_arrival_thanks",
+    "category": "general",
+    "stage": "S4",
+    "product_category": "Sneakers / Athletic Shoes",
+    "emotion": "happy",
+    "language": "en",
+    "situation": "Sneakers arrived in perfect condition. Buyer thanks seller with a short message.",
+    "buyer_ebay": "D1",
+    "buyer_message": "Thanks again for the smooth transaction and fast shipping!",
+    "buyer_message_ja": "改めて、スムーズな取引と迅速な発送をありがとうございました！",
+    "history_ja": [
+      "こんにちは！あなたのナイキ エアジョーダン 1 レトロ ハイ OG シカゴ スニーカーが大阪から発送されたことをお知らせできて嬉しいです。何かご不明な点がありましたらお知らせください。よろしくお願いいたします、田中",
+      "ありがとうございます、田中さん。追跡情報によると、本日配達予定となっています。",
+      "それは良かったです！スニーカーが届いたらぜひお楽しみください。ご質問があればいつでもご連絡ください。",
+      "スニーカーを受け取りました。状態は完璧で、とても満足しています！",
+      "ご連絡ありがとうございます！無事に届き、スニーカーにご満足いただけて嬉しいです。新しいジョーダンをお楽しみください！",
+      "改めて、スムーズなお取引と迅速な発送に感謝します！"
+    ],
+    "num_messages": 7,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927104562\", \"Title\": \"Nike Air Jordan 1 Retro High OG Chicago\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"350.00\", \"CurrentPrice\": \"350.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_StandardShipping\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T08:15:30.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-11T09:20:15.000Z] Hello! I'm glad to inform you that your Nike Air Jordan 1 Retro High OG Chicago sneakers have been shipped from Osaka. Please let me know if you need any further assistance. Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-20T14:35:47.000Z] Thank you, Tanaka. The tracking shows it’s out for delivery today."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-20T15:05:00.000Z] Great to hear that! I hope you enjoy the sneakers once they arrive. Feel free to reach out if you have any questions."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-23T10:12:33.000Z] Just got the sneakers, they arrived in perfect condition. Really happy with the purchase!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-23T10:45:20.000Z] Thank you for letting me know! I'm glad everything arrived safely and that you're pleased with the sneakers. Enjoy your new Jordans!"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T13:50:00.000Z] Thanks again for the smooth transaction and fast shipping!"
+      }
+    ]
+  },
+  {
+    "id": "synth_D2_card_feedback_promise",
+    "category": "general",
+    "stage": "S4",
+    "product_category": "Collectible Card Games",
+    "emotion": "very_happy",
+    "language": "en",
+    "situation": "Card arrived perfectly packaged. Buyer says they'll leave positive feedback and will buy more.",
+    "buyer_ebay": "D2",
+    "buyer_message": "I'll definitely leave positive feedback and will be buying more from you in the future. Thanks again!",
+    "buyer_message_ja": "必ず良い評価を残しますし、今後もまた購入させていただきます。改めてありがとうございます！",
+    "history_ja": [
+      "こんにちは！遊☆戯☆王のブルーアイズ・ホワイト・ドラゴン 1stエディション LOBをご購入いただきありがとうございます。商品は発送済みで、現在配送中です。ご不明な点がございましたらお気軽にご連絡ください。よろしくお願いいたします。ケイ",
+      "ケイさん、こんにちは。カードは本日届き、完璧に梱包されていました。どうもありがとうございます！",
+      "こんにちは！カードが無事に届き、梱包にもご満足いただけて嬉しいです。もし他のコレクターズカードが必要な際は、いつでもお気軽にご連絡ください。ご支援ありがとうございます！ケイより",
+      "必ず良い評価を残しますし、今後もまた購入させていただきます。改めてありがとうございます！"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83746592017\", \"Title\": \"Yu-Gi-Oh! Blue-Eyes White Dragon 1st Edition LOB\", \"PrimaryCategoryName\": \"Collectible Card Games:Trading Card Games:Yu-Gi-Oh!\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"125.00\", \"CurrentPrice\": \"125.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_StandardShipping\", \"ShippingServiceCost\": \"10.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-15T14:22:10.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-15T14:30:00.000Z] Hello! Thank you for your purchase of the Yu-Gi-Oh! Blue-Eyes White Dragon 1st Edition LOB. Your item has been shipped and is on its way. Please let me know if you have any questions. Best regards, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-25T10:05:45.000Z] Hi Kei, the card arrived today and it was perfectly packaged. Thanks so much!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-25T11:15:30.000Z] Hello! I'm glad to hear that the card arrived safely and you are happy with the packaging. If you need any more collectible cards, feel free to reach out anytime. Thank you for your support! Best, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-01T09:45:00.000Z] I'll definitely leave positive feedback and will be buying more from you in the future. Thanks again!"
+      }
+    ]
+  },
+  {
+    "id": "synth_D3_fishing_repeat",
+    "category": "general",
+    "stage": "S4",
+    "product_category": "Fishing Reels",
+    "emotion": "happy",
+    "language": "en",
+    "situation": "Reel arrived. Buyer loves the quality and asks if seller has other Japanese fishing gear.",
+    "buyer_ebay": "D3",
+    "buyer_message": "Thanks again for the smooth transaction. By the way, do you have other Japanese fishing gear available?",
+    "buyer_message_ja": "改めてスムーズな取引をありがとうございました。ところで、他に日本の釣り具はありますか？",
+    "history_ja": [
+      "こんにちは！ダイワ ソルティスト15000をご購入いただきありがとうございます。ご質問やサポートが必要な場合は、どうぞお気軽にご連絡ください。よろしくお願いいたします。田中",
+      "田中さん、こんにちは。リールは昨日届きましたが、とても素晴らしいです。本当に高品質でありがとうございます！",
+      "リールにご満足いただけて嬉しいです！ダイワは素晴らしい製品を作っています。釣りをぜひお楽しみください！",
+      "スムーズなお取引を改めてありがとうございました。ところで、他に日本製の釣り具はありますか？"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"73529108462\", \"Title\": \"Daiwa Saltist 15000 Spinning Reel Japanese Model\", \"PrimaryCategoryName\": \"Sporting Goods:Fishing:Fishing Reels:Spinning Reels\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"289.99\", \"CurrentPrice\": \"289.99\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"35.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-28T10:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-01T08:30:00.000Z] Hello! Thank you for your purchase of the Daiwa Saltist 15000. If you have any questions or need assistance, feel free to reach out. Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-15T14:20:00.000Z] Hi Tanaka, the reel arrived yesterday and it looks amazing. Really high quality, thanks!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-15T15:10:00.000Z] I'm glad to hear that you are happy with the reel! Daiwa makes excellent products. Please enjoy your fishing trips!"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-20T11:00:00.000Z] Thanks again for the smooth transaction. By the way, do you have other Japanese fishing gear available?"
+      }
+    ]
+  },
+  {
+    "id": "synth_E1_denim_size_wrong",
+    "category": "return",
+    "stage": "S1",
+    "product_category": "Vintage Clothing",
+    "emotion": "frustrated",
+    "language": "en",
+    "situation": "Jeans arrived but the waist is clearly smaller than listed W34. Buyer is upset because vintage measurements should be accurate.",
+    "buyer_ebay": "E1",
+    "buyer_message": "I just received the jeans, but the waist is definitely smaller than W34 as listed. This is frustrating because vintage measurements are supposed to be accurate. What can you do about this?",
+    "buyer_message_ja": "ジーンズを受け取りましたが、ウエストが表記のW34より明らかに小さいです。ヴィンテージのサイズは正確なはずなので、これは非常に残念です。どう対応していただけますか？",
+    "history_ja": [
+      "ジーンズを受け取りましたが、ウエストが表記のW34より明らかに小さいです。ヴィンテージのサイズは正確であるはずなので、とても困っています。これについてどう対応してもらえますか？"
+    ],
+    "num_messages": 2,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927461503\", \"Title\": \"Vintage 1947 Levi's 501 Big E Selvedge Jeans (W34)\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Vintage Clothing:Vintage Pants\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"320.00\", \"CurrentPrice\": \"320.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_StandardShipping\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-12T09:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-01T14:22:00.000Z] I just received the jeans, but the waist is definitely smaller than W34 as listed. This is frustrating because vintage measurements are supposed to be accurate. What can you do about this?"
+      }
+    ]
+  },
+  {
+    "id": "synth_E2_ceramic_broken",
+    "category": "claim",
+    "stage": "S1",
+    "product_category": "Asian Antiques / Ceramics",
+    "emotion": "very_upset",
+    "language": "en",
+    "situation": "Vase arrived shattered. Buyer sent photos of the broken pieces and packaging. Very disappointed.",
+    "buyer_ebay": "E2",
+    "buyer_message": "Hello, I just received the Antique Imari Ware Porcelain Vase but it arrived completely shattered. I attached photos of the broken pieces and the packaging. I am very disappointed with this.",
+    "buyer_message_ja": "こんにちは、アンティーク伊万里焼の陶器の花瓶を受け取りましたが、完全に粉々に割れていました。破損した部品と梱包の写真を添付しました。非常に残念です。",
+    "history_ja": [
+      "こんにちは、先ほどアンティーク伊万里焼の磁器の花瓶を受け取りましたが、完全に粉々に壊れて届きました。破損した部品と梱包の写真を添付しました。非常に残念に思っています。"
+    ],
+    "num_messages": 2,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83746102958\", \"Title\": \"Antique Imari Ware Porcelain Vase Meiji Period\", \"PrimaryCategoryName\": \"Collectibles:Asian Antiques:Ceramics\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"350.00\", \"CurrentPrice\": \"350.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Kyoto\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T08:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T14:22:10.000Z] Hello, I just received the Antique Imari Ware Porcelain Vase but it arrived completely shattered. I attached photos of the broken pieces and the packaging. I am very disappointed with this."
+      }
+    ]
+  },
+  {
+    "id": "synth_E3_bag_authenticity",
+    "category": "claim",
+    "stage": "S2",
+    "product_category": "Luxury Bags / Hermès",
+    "emotion": "angry",
+    "language": "en",
+    "situation": "Bag arrived. Buyer had it authenticated by a third party who says it's a counterfeit. Has already exchanged 2 messages with seller. Demands immediate full refund.",
+    "buyer_ebay": "E3",
+    "buyer_message": "This has gone on too long. I demand an immediate full refund. I will escalate this if it’s not resolved today.",
+    "buyer_message_ja": "これは長引きすぎました。即時の全額返金を要求します。今日中に解決しなければ、問題をエスカレートさせます。",
+    "history_ja": [
+      "こんにちは。エルメスのバーキン30 トゴレザーバッグをご購入いただきありがとうございます。商品がお手元に届きましたら、ご質問やご不明点があればお知らせください。よろしくお願いいたします。ケイ",
+      "バッグを受け取りましたが、専門家による鑑定の結果、偽物だと言われました。これは受け入れられません。",
+      "ご心配の件、大変申し訳ございません。当店ではすべての商品に真贋保証をしております。詳細を確認させていただきたいので、鑑定報告書をご提供いただけますでしょうか。よろしくお願いいたします。ケイ",
+      "認定鑑定士による鑑定証明書を添付しました。明確にこのバッグは偽物と記載されています。直ちに全額返金を求めます。",
+      "証明書をお送りいただきありがとうございます。この件は真摯に受け止めております。品質保証チームに案件を引き継ぎ、48時間以内に今後の対応についてご連絡いたします。ご理解のほどよろしくお願いいたします。ケイ",
+      "この件は長引きすぎています。直ちに全額返金を要求します。本日中に解決しない場合は、問題をエスカレーションします。"
+    ],
+    "num_messages": 7,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927465102\", \"Title\": \"Hermès Birkin 30 Togo Leather Bag\", \"PrimaryCategoryName\": \"Luxury Bags / Hermès\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"11999.00\", \"CurrentPrice\": \"11999.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:20:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-11T09:15:00.000Z] Hello, thank you for your purchase of the Hermès Birkin 30 Togo Leather Bag. Please let me know if you have any questions or need assistance once it arrives. Best regards, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T16:40:00.000Z] I just received the bag, but after getting it authenticated by a specialist, they say it's a fake. This is unacceptable."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-26T10:05:00.000Z] I’m very sorry to hear about your concerns. We guarantee authenticity on all our items. Could you please provide the authentication report so we can review this issue in detail? Thank you, Kei."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-27T14:30:00.000Z] I’ve attached the authentication certificate from a certified expert. It clearly states the bag is counterfeit. I want a full refund immediately."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-28T11:55:00.000Z] Thank you for sending the certificate. We take these matters seriously. I will forward your case to our quality assurance team and get back to you within 48 hours with the next steps. We appreciate your patience. Best regards, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-30T08:20:00.000Z] This has gone on too long. I demand an immediate full refund. I will escalate this if it’s not resolved today."
+      }
+    ]
+  },
+  {
+    "id": "synth_E4_shirt_color_diff",
+    "category": "claim",
+    "stage": "S2",
+    "product_category": "Streetwear / Hoodies",
+    "emotion": "disappointed",
+    "language": "en",
+    "situation": "Hoodie arrived but the color is much darker than in photos. Buyer has asked once and is now pushing for a partial refund.",
+    "buyer_ebay": "E4",
+    "buyer_message": "15% seems a bit low considering the difference in color and my disappointment. I would like at least a 30% partial refund given the item is not as represented.",
+    "buyer_message_ja": "色の違いと失望を考えると、15％は少し低いように思います。商品が説明と異なるため、少なくとも30％の部分返金を希望します。",
+    "history_ja": [
+      "こんにちは、フーディーは受け取りましたが、写真よりも色がかなり暗く見えます。これは普通のことですか？",
+      "こんにちは、ご連絡ありがとうございます。写真の照明によって色の見え方が変わることがありますが、フーディーは掲載されているダークグリーンの色味と一致しているはずです。お手数ですが、受け取られた商品の写真を送っていただけますか？確認いたします。よろしくお願いします、Kei",
+      "こちらがフーディーの写真です。ご覧の通り、ほぼ非常に濃い緑色で、ほとんど黒に近いです。掲載写真の明るいダークグリーンとはかなり違います。",
+      "写真をありがとうございます。ご指摘の色の違いを確認しました。今回のロットは少し濃い染料で製造されております。ご不便をおかけして申し訳ありません。部分返金の対応が可能ですので、ご希望をお知らせください。よろしくお願いします、Kei",
+      "部分返金のご提案ありがとうございます。色が予想や掲載写真とかなり違うため、どの程度の返金をしていただけるのか教えていただきたいです。",
+      "購入価格の15%の返金を色の違いに対する補償としてご提案いたします。ご同意いただければ、すぐに手続きを進めます。ご連絡お待ちしております。よろしくお願いします、Kei",
+      "色の違いや私の失望を考えると、15%は少し低いように感じます。商品が説明と異なるため、少なくとも30%の部分返金を希望します。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83492017562\", \"Title\": \"Supreme Box Logo Hoodie FW20 Dark Green\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men's Clothing:Hoodies & Sweatshirts\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"280.00\", \"CurrentPrice\": \"280.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_StandardShipping\", \"ShippingServiceCost\": \"15.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-15T10:30:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-01T09:45:00.000Z] Hi, I received the hoodie but the color looks much darker than the photos in the listing. Is this normal?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-01T12:10:00.000Z] Hello, thank you for reaching out. The lighting in photos may affect the color appearance, but the hoodie should be consistent with the Dark Green shade listed. Could you please send a photo of the item you received so we can review it? Best, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-02T08:30:00.000Z] Here is a picture of the hoodie. As you can see, it's almost a very deep green, almost black. It’s quite different from the bright dark green shown in the listing pictures."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-02T11:00:00.000Z] Thank you for the photo. I see the color difference you’re mentioning. This batch was manufactured with a slightly darker dye. I apologize for the inconvenience. We can offer you a partial refund if that would help. Please let me know your preference. Regards, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-04T14:20:00.000Z] I appreciate the offer for a partial refund. Given the color is quite off from what I expected and the listing photos, I’d like to know how much of a refund you are willing to provide."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-04T17:45:00.000Z] We can offer a 15% refund on the purchase price to compensate for the color discrepancy. If you agree, we will process it immediately. Please let me know. Best regards, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-05T09:00:00.000Z] 15% seems a bit low considering the difference in color and my disappointment. I would like at least a 30% partial refund given the item is not as represented."
+      }
+    ]
+  },
+  {
+    "id": "synth_E5_audio_defective",
+    "category": "claim",
+    "stage": "S3",
+    "product_category": "Audio Equipment",
+    "emotion": "frustrated",
+    "language": "en",
+    "situation": "Amp arrived but right channel has distortion. Buyer had initial OK correspondence, now reports new development: defect found after 2 days of use.",
+    "buyer_ebay": "E5",
+    "buyer_message": "Actually, after two days, I noticed some distortion coming from the right channel. The left sounds fine but the right is crackling and sometimes cuts out. This is quite frustrating as I expected a flawless unit.",
+    "buyer_message_ja": "実は、使い始めて2日後に右チャンネルから歪みがあることに気づきました。左は問題ありませんが、右はノイズが入り、時々音が途切れます。完璧な製品を期待していただけに非常に残念です。",
+    "history_ja": [
+      "こんにちは。Luxman L-507uXII インテグレーテッドアンプをご購入いただきありがとうございます。商品がお手元に届きましたら、ご不明な点がありましたらお知らせください。よろしくお願いいたします。山本 祐樹",
+      "こんにちは、本日アンプを受け取りました。見た目も素晴らしく、設置もスムーズにできました。今のところ音も非常に良いです。ありがとうございます！",
+      "ご丁寧なフィードバックをありがとうございます。アンプが順調に動作していると聞いて安心しました。何かお手伝いが必要な場合は、どうぞお気軽にご連絡ください。よろしくお願いいたします。山本 祐樹",
+      "実は、使用して2日目に右チャンネルから歪みが出ていることに気づきました。左は問題ないのですが、右はノイズが入り、時々音が途切れます。完璧な製品を期待していただけに、とても残念です。"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927164508\", \"Title\": \"Luxman L-507uXII Integrated Amplifier\", \"PrimaryCategoryName\": \"Consumer Electronics:Home Audio & Video:Amplifiers & Receivers:Integrated Amplifiers\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3299.00\", \"CurrentPrice\": \"3299.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"65.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-15T10:23:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-16T08:30:00.000Z] Hello, thank you for your purchase of the Luxman L-507uXII Integrated Amplifier. Please let me know if you have any questions once you receive it. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-18T14:45:00.000Z] Hi, I received the amp today and it looks great. Setup was smooth and so far it sounds excellent. Thanks!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-19T09:10:00.000Z] Thank you for your kind feedback. I’m glad to hear the amplifier is working well so far. Please don’t hesitate to contact me if you need any assistance. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-21T17:20:00.000Z] Actually, after two days, I noticed some distortion coming from the right channel. The left sounds fine but the right is crackling and sometimes cuts out. This is quite frustrating as I expected a flawless unit."
+      }
+    ]
+  },
+  {
+    "id": "synth_E6_jewelry_not_received",
+    "category": "claim",
+    "stage": "S1",
+    "product_category": "Jewelry / Pearls",
+    "emotion": "panicked",
+    "language": "en",
+    "situation": "Tracking says delivered 5 days ago but buyer never received. High value item. First time contacting seller, clearly anxious.",
+    "buyer_ebay": "E6",
+    "buyer_message": "Hello, according to the tracking info, my Mikimoto necklace was delivered 5 days ago but I never received it. This is a very expensive item and I’m really worried. Can you please help?",
+    "buyer_message_ja": "こんにちは、追跡情報によると5日前にミキモトのネックレスが配達されたことになっていますが、私は受け取っていません。非常に高価な商品なのでとても心配しています。ご対応いただけますか？",
+    "history_ja": [
+      "こんにちは、追跡情報によると私のミキモトのネックレスは5日前に配達されたことになっていますが、私は受け取っていません。とても高価な品なので、とても心配しています。ご対応いただけますか？"
+    ],
+    "num_messages": 2,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927104562\", \"Title\": \"Mikimoto Pearl Akoya Necklace 7mm 18k Gold Clasp\", \"PrimaryCategoryName\": \"Jewelry:Pearls:Necklaces\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1299.99\", \"CurrentPrice\": \"1299.99\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:15:30.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T09:20:45.000Z] Hello, according to the tracking info, my Mikimoto necklace was delivered 5 days ago but I never received it. This is a very expensive item and I’m really worried. Can you please help?"
+      }
+    ]
+  },
+  {
+    "id": "synth_F1_sneakers_return_size",
+    "category": "return",
+    "stage": "S2",
+    "product_category": "Sneakers",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Buyer says the shoes don't fit — narrow toe box. Has already discussed once with seller and now formally requests a return.",
+    "buyer_ebay": "F1",
+    "buyer_message": "The shoes don't fit due to the narrow toe box. I am formally requesting the return as discussed.",
+    "buyer_message_ja": "靴はつま先部分が狭くて合いません。話し合った通り、正式に返品をお願いします。",
+    "history_ja": [
+      "こんにちは、靴を受け取りましたが、つま先部分がきつく感じます。990v6はこれが普通でしょうか？",
+      "こんにちは、ご連絡ありがとうございます。990v6は他のニューバランスのモデルと比べて、つま先部分がやや狭めになっています。もし快適に履けない場合は、60日以内の返品期間内であれば返品をご検討いただけます。返品方法のご案内が必要でしたらお知らせください。よろしくお願いいたします、田中",
+      "ご案内ありがとうございます。何度か履いてみましたが、やはり履き心地が良くありません。返品を進めたいと思います。",
+      "承知しました。返品承認の詳細をすぐにお送りします。靴は元の状態と包装のままでご返送ください。返品送料は出品ページの通り購入者様のご負担となります。ご協力ありがとうございます。よろしくお願いいたします、田中",
+      "返品の準備ができました。送り先住所やその他の指示を確認させていただけますか？",
+      "かしこまりました。以下の住所へお送りください：〒542-0081 大阪市中央区南2-5-8。元の請求書のコピーを同梱してください。商品を受け取り検品後、返金手続きをいたします。ご不明点があればお気軽にお問い合わせください。よろしくお願いいたします、田中",
+      "つま先部分が狭いため靴が合いません。お話しした通り、正式に返品をお願いしたいです。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927461502\", \"Title\": \"New Balance 990v6 Made in USA Grey\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"185.00\", \"CurrentPrice\": \"185.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"15.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-05T14:32:10.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T09:20:00.000Z] Hi, I received the shoes but they feel tight in the toe box. Is this normal for the 990v6?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-25T11:15:00.000Z] Hello, thank you for reaching out. The 990v6 does have a slightly narrow toe box compared to some other New Balance models. If they do not fit comfortably, you may consider returning them within the 60-day return window. Please let me know if you would like instructions for the return. Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-27T10:05:00.000Z] Thanks for the info. I tried wearing them a few times but they remain uncomfortable. I'd like to proceed with a return."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-27T12:30:00.000Z] Understood. I will send you the return authorization details shortly. Please ensure the shoes are in original condition and packaging. Buyer is responsible for return shipping costs as per the listing. I appreciate your cooperation. Regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-01T08:45:00.000Z] I have prepared the shoes for return. Can you please confirm the address and any other instructions?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-01T10:00:00.000Z] Certainly. Please send the shoes to: 2-5-8 Minami, Chuo-ku, Osaka 542-0081, Japan. Include a copy of the original invoice inside the package. Once we receive and inspect the item, we will process your refund. If you have any questions, feel free to ask. Best, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-04T14:15:00.000Z] The shoes don't fit due to the narrow toe box. I am formally requesting the return as discussed."
+      }
+    ]
+  },
+  {
+    "id": "synth_F2_figure_exchange",
+    "category": "return",
+    "stage": "S2",
+    "product_category": "Anime Collectibles",
+    "emotion": "politely_concerned",
+    "language": "en",
+    "situation": "Buyer received wrong variant (received 'Dress Ver' but ordered 'Swimsuit Ver'). Requests exchange. Polite but firm.",
+    "buyer_ebay": "F2",
+    "buyer_message": "I understand the process, but it’s been a week since I shipped the Dress Ver back and I haven’t received confirmation of its arrival yet. Could you please provide an update? I’m politely concerned as I was really looking forward to the Swimsuit Ver.",
+    "buyer_message_ja": "手続きは理解していますが、ドレスバージョンを返送してから1週間経ちましたが、到着確認の連絡がまだありません。状況を教えていただけますか？水着バージョンを楽しみにしていたので、丁寧にご確認をお願いしたいです。",
+    "history_ja": [
+      "こんにちは、ねんどろいどの喜多川マリンを受け取ったのですが、注文した水着バージョンではなくドレスバージョンが届いたようです。交換の手続きについて教えていただけますか？",
+      "こんにちは、ご連絡ありがとうございます。ご注文の混乱について大変申し訳ございません。喜多川マリンのねんどろいど水着バージョンを確実にお届けしたいと思います。お手数ですが、パッケージが未開封で商品が未使用であることをご確認いただけますか？確認が取れ次第、交換手続きについてご案内いたします。よろしくお願いいたします。山本優希",
+      "迅速なご返信ありがとうございます。パッケージはフィギュアの確認のために開封しましたが、商品自体は未使用で状態も完璧です。返送の指示をいただければ準備いたします。",
+      "ご確認ありがとうございます。ドレスバージョンのフィギュアは元のパッケージにしっかりと梱包してください。追跡可能な配送方法で以下の大阪倉庫までご返送ください。住所：〒542-0076 大阪市浪速区難波3-5-7。返品を受け取り次第、水着バージョンを速やかに発送いたします。返品送料は弊社規定によりお客様のご負担となります。発送後は追跡番号をお知らせください。よろしくお願いいたします。山本優希",
+      "本日EMSでドレスバージョンを返送し、追跡番号を別途メッセージでお送りしました。到着のご確認と、水着バージョン発送の予定時期について教えていただけますか？",
+      "ご連絡と追跡番号のご提供ありがとうございます。返品品が到着次第ご連絡し、水着バージョンの発送手続きをすぐに行います。通常、受領後2〜3営業日で発送いたします。ご理解のほどよろしくお願いいたします。山本優希",
+      "手続きは理解しましたが、ドレスバージョンを返送してから1週間経ちましたが、到着確認の連絡がまだありません。状況を教えていただけますか？水着バージョンを楽しみにしていたので、丁寧にご対応いただけると幸いです。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"92746318275\", \"Title\": \"Good Smile Company Nendoroid 1234 Marin Kitagawa\", \"PrimaryCategoryName\": \"Toys & Hobbies:Collectible Anime Figures:Nendoroids\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"59.99\", \"CurrentPrice\": \"59.99\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-20T14:15:30.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-10T09:30:45.000Z] Hello, I just received the Nendoroid Marin Kitagawa, but it appears to be the Dress Ver instead of the Swimsuit Ver that I ordered. Could you please advise on how to proceed with an exchange?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-10T11:00:00.000Z] Hello, thank you for reaching out. I’m very sorry to hear about the mix-up with your order. We definitely want to get you the correct Swimsuit Ver of the Marin Kitagawa Nendoroid. Could you please confirm that the package is unopened and the item is unused? Once confirmed, we will guide you through the exchange process. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-11T08:45:20.000Z] Thank you for your quick reply. The package was opened only to verify the figure, but the item itself is unused and in perfect condition. I can prepare it for return if you provide the instructions."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-11T10:15:10.000Z] Thank you for confirming. Please pack the Dress Ver figure securely in its original packaging. Use a trackable shipping method to return it to our Osaka warehouse at the following address: 3-5-7 Namba, Osaka 542-0076, Japan. Once we receive the return, we will ship the Swimsuit Ver promptly. Buyer covers the return shipping cost as per our policy. Please share the tracking number when shipped. Regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-15T14:05:55.000Z] I have shipped the Dress Ver back today via EMS and sent you the tracking number in a separate message. Could you please confirm once you receive it and advise on the expected timeline for sending the correct Swimsuit Ver?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-16T09:20:00.000Z] Hello, thank you for the update and for providing the tracking number. We will notify you as soon as the return package arrives and process the shipment of the Swimsuit Ver immediately. Typically, this takes 2-3 business days after receipt. We appreciate your patience. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-22T12:40:30.000Z] I understand the process, but it’s been a week since I shipped the Dress Ver back and I haven’t received confirmation of its arrival yet. Could you please provide an update? I’m politely concerned as I was really looking forward to the Swimsuit Ver."
+      }
+    ]
+  },
+  {
+    "id": "synth_F3_watch_partial_refund",
+    "category": "return",
+    "stage": "S2",
+    "product_category": "Wristwatches / Luxury",
+    "emotion": "disappointed",
+    "language": "en",
+    "situation": "Minor scratches not visible in photos. Buyer asks for $200 partial refund instead of return.",
+    "buyer_ebay": "F3",
+    "buyer_message": "Yes, please proceed with the $200 partial refund. I’m a bit disappointed about the scratches, but I appreciate your help.",
+    "buyer_message_ja": "はい、200ドルの部分返金でお願いします。傷があって少し残念ですが、ご対応に感謝します。",
+    "history_ja": [
+      "時計は受け取りましたが、写真では見えなかったベゼルの小さな傷に気づきました。こちらについてご対応いただけますか？",
+      "お問い合わせありがとうございます。傷があったとのことで申し訳ありません。写真はできる限り照明の下で撮影しましたが、細かい使用感は写りにくいことがあります。部分返金か返品による全額返金、どちらをご希望でしょうか？よろしくお願いいたします。田中",
+      "時計は気に入っているので返品はしたくありません。200ドルの部分返金は可能でしょうか？",
+      "ご理解いただきご希望をお知らせくださりありがとうございます。200ドルの部分返金で問題ないと思います。ご確認いただけましたら返金手続きを進めますので、ご連絡ください。よろしくお願いいたします。田中",
+      "はい、200ドルの部分返金をお願いします。傷があったのは少し残念ですが、ご対応いただき感謝しています。"
+    ],
+    "num_messages": 6,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"59384720145\", \"Title\": \"Omega Speedmaster Professional Moonwatch 3570.50\", \"PrimaryCategoryName\": \"Wristwatches:Luxury\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"4200.00\", \"CurrentPrice\": \"4200.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T10:15:30.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T14:22:10.000Z] I received the watch but noticed some minor scratches on the bezel that weren’t visible in the photos. Could you please advise on this?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-25T16:05:45.000Z] Hello, thank you for reaching out. I’m sorry to hear about the scratches. The photos showed the watch as best as possible under lighting, but minor wear can sometimes be hard to capture. Would you prefer a partial refund or a return for a full refund? Best regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-27T09:18:00.000Z] I’d rather not return it since I really like the watch. Would a $200 partial refund be possible?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-27T12:40:20.000Z] Thank you for your understanding and for letting us know your preference. A $200 partial refund sounds reasonable. I will initiate the refund once you confirm. Please let me know if that works for you. Regards, Tanaka"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-28T10:05:55.000Z] Yes, please proceed with the $200 partial refund. I’m a bit disappointed about the scratches, but I appreciate your help."
+      }
+    ]
+  },
+  {
+    "id": "synth_F4_camera_case_inr",
+    "category": "claim",
+    "stage": "S3",
+    "product_category": "Vintage Cameras",
+    "emotion": "cold_and_firm",
+    "language": "en",
+    "situation": "Item not received 18 days after delivery estimate. Buyer has opened an eBay case. New development that changes the tone.",
+    "buyer_ebay": "F4",
+    "buyer_message": "It has now been 18 days past the estimated delivery date. I want a full refund if the item cannot be located immediately.",
+    "buyer_message_ja": "予定配達日を18日も過ぎています。商品がすぐに見つからない場合は全額返金を希望します。",
+    "history_ja": [
+      "こんにちは、ハッセルブラッド500C/Mのご購入ありがとうございます。商品は昨日EMS国際便で発送されており、追跡番号はeBayのメッセージでお送りしています。ご不明な点がありましたらお知らせください。",
+      "まだカメラが届いていません。追跡情報ではまだ輸送中となっています。いつ頃配達される予定でしょうか？",
+      "遅延しており申し訳ありません。国際配送は税関の関係で時間がかかることがあります。EMSに確認し、すぐにご連絡いたします。",
+      "2週間以上経ちましたが追跡情報に更新がありません。荷物が紛失したのではないかと心配しています。",
+      "ご心配お察しします。EMSに連絡し、現在調査中です。進展があり次第すぐにお知らせします。",
+      "商品が届かず、EMSからも明確な更新がないため、購入保護のためにeBayにケースを開きました。",
+      "ご連絡ありがとうございます。eBayの手続きに全面的に協力し、配送業者とも引き続き調査を行います。解決まで少々お時間をいただければと思います。",
+      "予定配達日から18日が経過しました。もし商品がすぐに見つからない場合は全額返金を希望します。"
+    ],
+    "num_messages": 9,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927465012\", \"Title\": \"Hasselblad 500C/M Medium Format Camera Body\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:Medium Format\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"2450.00\", \"CurrentPrice\": \"2450.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Kyoto\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-15T09:30:00.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-16T10:00:00.000Z] Hello, thank you for your purchase of the Hasselblad 500C/M. Your item was shipped yesterday with EMS International, and the tracking number has been sent to your eBay messages. Please let me know if you need any assistance."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T12:15:00.000Z] I have not received the camera yet. The tracking says it’s still in transit. When can I expect delivery?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-25T14:00:00.000Z] I apologize for the delay. Sometimes international shipments take longer due to customs. I will check with EMS and update you shortly."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-30T09:45:00.000Z] It’s been over two weeks and no update on tracking. I’m concerned the package is lost."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-30T11:00:00.000Z] I understand your concern. I have contacted EMS and they are investigating the status. I will keep you informed as soon as I have news."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-02T15:30:00.000Z] Since the item is not received and no clear update from EMS, I have opened an eBay case to protect my purchase."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-02T16:00:00.000Z] Thank you for informing me. I will cooperate fully with eBay’s process and continue to investigate with the carrier. Please allow me some time to resolve this."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-05T10:00:00.000Z] It has now been 18 days past the estimated delivery date. I want a full refund if the item cannot be located immediately."
+      }
+    ]
+  },
+  {
+    "id": "synth_F5_game_return_shipping",
+    "category": "return",
+    "stage": "S2",
+    "product_category": "Video Game Consoles",
+    "emotion": "dissatisfied",
+    "language": "en",
+    "situation": "Console has issue. Buyer received return label but thinks return shipping cost should be covered fully. Argues the defect is seller's fault.",
+    "buyer_ebay": "F5",
+    "buyer_message": "I think this is unfair. The console was faulty on arrival, so I shouldn’t have to pay anything. Please reconsider covering the full return shipping.",
+    "buyer_message_ja": "これは不公平だと思います。到着時に本体が故障していたので、費用は一切支払うべきではありません。返品送料全額負担を再検討してください。",
+    "history_ja": [
+      "ゲーム機は届きましたが、正常に電源が入らないのです。助けてもらえますか？",
+      "こんにちは。PlayStation 2の問題についてお聞きし、申し訳なく思います。問題を解決したいと考えています。可能であれば、別の電源ケーブルで接続を試してみてください。問題が続く場合は、返品用のラベルをお送りします。",
+      "別のケーブルを試しましたが、やはりうまくいきません。返品用ラベルを送ってください。",
+      "お試しいただきありがとうございます。事前支払い済みの返品ラベルをメールでお送りしました。そちらを使ってゲーム機を返送し、検査と返金の手続きをお願いします。",
+      "ラベルは受け取りましたが、返品送料は自己負担と書かれています。欠陥はそちらの責任なので、返品送料は全額そちらで負担すべきだと思います。",
+      "ご懸念は理解いたします。当社の方針では、返品送料は購入者負担となっておりますが、検査後に販売者の過失が確認された場合は例外です。欠陥を確認次第、返品送料の返金についてご相談させていただきます。",
+      "これは不公平だと思います。ゲーム機は到着時から不良品だったので、私が費用を負担するべきではありません。返品送料全額の負担を再検討してください。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"73849201567\", \"Title\": \"Sony PlayStation 2 Original Slim (JP Region, Modded)\", \"PrimaryCategoryName\": \"Video Game Consoles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"95.00\", \"CurrentPrice\": \"95.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:22:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-24T10:15:00.000Z] The console arrived but it doesn't power on properly. Can you help?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-24T12:30:00.000Z] Hello, I’m sorry to hear about the issue with your PlayStation 2. We want to make this right. Please try connecting with a different power cable if possible. If the problem persists, I can provide a return label."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-26T09:00:00.000Z] I tried another cable, but still no luck. Please send me the return label."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-26T13:45:00.000Z] Thank you for trying. I have sent a prepaid return label to your email. Please use it to send the console back for inspection and refund."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-01T08:20:00.000Z] I received the label, but I see it says I have to pay for return shipping. Since the defect is your fault, I believe you should cover all return shipping costs."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-01T11:00:00.000Z] I understand your concern. Our policy states the buyer covers return shipping except in cases of seller error confirmed after inspection. Once we receive and verify the defect, we can discuss reimbursement of your return shipping cost."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-03T07:45:00.000Z] I think this is unfair. The console was faulty on arrival, so I shouldn’t have to pay anything. Please reconsider covering the full return shipping."
+      }
+    ]
+  },
+  {
+    "id": "synth_F6_card_return_thanks",
+    "category": "general",
+    "stage": "S4",
+    "product_category": "Collectible Card Games",
+    "emotion": "relieved",
+    "language": "en",
+    "situation": "Return was resolved smoothly. Buyer says thanks.",
+    "buyer_ebay": "F6",
+    "buyer_message": "Thank you so much for handling the return smoothly. I really appreciate your help and quick responses.",
+    "buyer_message_ja": "返品手続きをスムーズに対応していただき、本当にありがとうございました。ご助力と迅速な返信に感謝しています。",
+    "history_ja": [
+      "こんにちは、ブースターボックスを受け取ったのですが、箱の角に小さなへこみを見つけました。返品は可能でしょうか？",
+      "こんにちは、ご連絡ありがとうございます。へこみがあったとのことで申し訳ありません。返品は60日以内であれば承っております。返品をご希望でしたらお知らせください。手順をご案内いたします。よろしくお願いいたします、ケイ",
+      "はい、返品を希望します。返品の詳細を送ってください。",
+      "ご確認ありがとうございます。以下の住所に商品を返送してください：[販売者の返品先住所]。商品を受け取り検品後、全額返金いたします。返品送料はお客様のご負担となります。何かご不明点があればお知らせください。よろしくお願いいたします、ケイ",
+      "本日EMSで商品を返送しました。追跡番号はEMS123456789JPです。",
+      "返品されたブースターボックスを受け取り、返金処理を完了しました。数営業日以内に元のお支払い方法に返金が反映される予定です。他にご質問があればお知らせください。ご理解いただきありがとうございます。よろしくお願いいたします、ケイ",
+      "返品対応をスムーズにしていただき、ありがとうございました。ご助力と迅速な対応に心から感謝しています。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"87492013567\", \"Title\": \"Pokemon 151 Japanese Booster Box Sealed\", \"PrimaryCategoryName\": \"Collectible Card Games:Pokemon Trading Card Game:Booster Boxes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"350.00\", \"CurrentPrice\": \"350.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-28T10:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-05T08:23:45.000Z] Hi, I just received the booster box, but noticed a small dent on the corner of the box. Is there an option for return?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-05T09:10:30.000Z] Hello, thank you for reaching out. I'm sorry to hear about the dent. We do accept returns within 60 days. Please let me know if you would like to proceed with the return and I will provide instructions. Best regards, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-06T11:05:12.000Z] Yes, I would like to return it. Please send the return details."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-06T12:00:00.000Z] Thank you for confirming. Please ship the item back to the following address: [Seller's Return Address]. Once we receive and inspect the item, we will issue a full refund. Buyer pays for return shipping. Let me know if you need any further assistance. Regards, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-15T14:22:00.000Z] I have sent the package back today via EMS. Tracking number is EMS123456789JP."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-20T10:00:00.000Z] We have received the returned booster box and processed your refund. The amount should be credited to your original payment method within a few business days. Please let me know if you have any other questions. Thank you for your understanding. Best, Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-22T16:45:30.000Z] Thank you so much for handling the return smoothly. I really appreciate your help and quick responses."
+      }
+    ]
+  },
+  {
+    "id": "synth_F7_guitar_return_howto",
+    "category": "return",
+    "stage": "S1",
+    "product_category": "Musical Instruments / Guitars",
+    "emotion": "first_time_buyer",
+    "language": "en",
+    "situation": "First time using eBay returns. Item has a finish defect. Asks seller what to do — doesn't know the process.",
+    "buyer_ebay": "F7",
+    "buyer_message": "Hello, I just received the guitar but noticed a finish defect on the body. This is my first time using eBay returns. Could you please guide me on what to do next?",
+    "buyer_message_ja": "こんにちは、ギターを受け取ったばかりですが、ボディに仕上げの不良があるのに気付きました。eBayの返品は初めてなので、次にどうすればいいか教えていただけますか？",
+    "history_ja": [
+      "こんにちは、ギターを受け取ったばかりですが、ボディに仕上げの不具合があることに気付きました。eBayの返品を利用するのは初めてなので、次に何をすればよいか教えていただけますか？"
+    ],
+    "num_messages": 2,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83492017563\", \"Title\": \"Martin D-28 Standard Acoustic Guitar\", \"PrimaryCategoryName\": \"Musical Instruments:Guitars:Acoustic Guitars\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"2499.00\", \"CurrentPrice\": \"2499.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"50.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:23:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-03T09:45:12.000Z] Hello, I just received the guitar but noticed a finish defect on the body. This is my first time using eBay returns. Could you please guide me on what to do next?"
+      }
+    ]
+  },
+  {
+    "id": "synth_G1_watch_customs_refund",
+    "category": "claim",
+    "stage": "S2",
+    "product_category": "Wristwatches / Luxury",
+    "emotion": "angry",
+    "language": "en",
+    "situation": "Buyer paid $280 customs fees. Item has a condition issue. Now wants return + customs reimbursement + refund of original payment. Multi-issue complaint.",
+    "buyer_ebay": "G1",
+    "buyer_message": "No, I paid all fees upfront. You should reimburse me for customs and original payment once you get the watch back. If not, I will escalate the case. This is very disappointing!",
+    "buyer_message_ja": "いいえ、すべての料金は前払いしました。時計が戻り次第、関税と元の支払い分を返金してください。そうでなければ、事態をエスカレートさせます。非常に残念です！",
+    "history_ja": [
+      "時計は受け取りましたが、ベゼルに傷があるのに気づきました。新品のグランドセイコーにしては期待外れです。",
+      "こんにちは、ご連絡ありがとうございます。SBGA413の状態に問題があり申し訳ございません。傷の写真をお送りいただけますか？早急に対応したいと思います。よろしくお願いいたします。山本優希",
+      "写真をお送りします。傷はかなり目立ちます。また、事前に知らされていなかった280ドルの関税も支払わなければなりませんでした。",
+      "写真をありがとうございます。ご不便をおかけし誠に申し訳ございません。関税については残念ながらお客様の国で課されるもので、通常は購入者のご負担となっております（当店の出品説明にも記載しております）。商品が元の状態で返送され次第、時計代金の全額返金を承りますので返品をお受けいたします。",
+      "これは受け入れられません。280ドルの関税も含めて全額返金を求めます。完璧な時計を支払ったのにこれはひどいです。また、返品の送料もそちらで負担してください。",
+      "ご不満は理解しており、改めてお詫び申し上げます。eBayの規定および当店の出品条件により、関税や返品送料の返金はできませんが、返品手続きは円滑に進め、商品受領後に時計代金の全額返金をいたします。返品用の着払い伝票をお送りすることも可能ですので、ご希望をお知らせください。",
+      "いいえ、私はすべての費用を前払いしました。時計が戻り次第、関税と元の支払い分を返金すべきです。そうでなければ、問題をエスカレートさせます。非常に残念です！"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83947201528\", \"Title\": \"Grand Seiko SBGA413 Shunbun Spring Drive\", \"PrimaryCategoryName\": \"Wristwatches:Luxury\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"5800.00\", \"CurrentPrice\": \"5800.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"65.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Nagano\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:22:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T10:15:00.000Z] I received the watch but noticed a scratch on the bezel. This is not what I expected from a new Grand Seiko."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-25T14:40:00.000Z] Hello, thank you for reaching out. We apologize for the condition issue with your SBGA413. Could you please provide photos of the scratch? We want to resolve this promptly. Best regards, Yamamoto Yuki"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-26T09:05:00.000Z] Here are the photos. The scratch is quite visible. Also, I had to pay $280 customs fees which I was not informed about."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-26T12:30:00.000Z] Thank you for the photos. We sincerely apologize for the inconvenience. Regarding customs fees, unfortunately these are charged by your country and are normally the buyer's responsibility as stated in our listing. We are willing to accept a return for a full refund of the watch price once the item is received back in original condition."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-27T16:50:00.000Z] This is unacceptable. I want a full refund including the $280 customs fees. I paid for a perfect watch and this is a mess. Also, I want the return shipping covered by you."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-28T11:20:00.000Z] We understand your frustration and apologize again. While we cannot reimburse customs fees or return shipping as per eBay policies and our listing terms, we will ensure a smooth return process and full refund of the watch price upon receipt. Please let us know if you would like us to send a prepaid shipping label for the return."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-29T15:45:00.000Z] No, I paid all fees upfront. You should reimburse me for customs and original payment once you get the watch back. If not, I will escalate the case. This is very disappointing!"
+      }
+    ]
+  },
+  {
+    "id": "synth_G2_train_wrong_item",
+    "category": "claim",
+    "stage": "S2",
+    "product_category": "Model Trains",
+    "emotion": "annoyed",
+    "language": "en",
+    "situation": "Received wrong item (got 700 series instead of 500). Also shipment was delayed 10 days. Now requests cancellation AND wants compensation for hassle.",
+    "buyer_ebay": "G2",
+    "buyer_message": "This is really disappointing. I expect a full refund plus a decent compensation for the inconvenience and wasted time. Please confirm cancellation and compensation ASAP.",
+    "buyer_message_ja": "本当にがっかりしています。全額返金と、迷惑と時間の無駄に対する適切な補償を期待しています。キャンセルと補償をできるだけ早く確認してください。",
+    "history_ja": [
+      "本日商品を受け取りましたが、注文した500シリーズではなく700シリーズでした。また、10日遅れて届きました。",
+      "こんにちは、ご注文の商品に誤りと発送遅延があり、大変申し訳ございません。正確かつ迅速な配送を心がけております。状況を確認し、適切な対応をさせていただきますので、少々お待ちください。よろしくお願いいたします。— ケイ",
+      "ご返信ありがとうございます。正しい500シリーズのセットが必要です。早急に正しい商品を送っていただけますか？また、遅延により不便を被りました。",
+      "承知いたしました。正しい500シリーズのセットを追加料金なしで速達便にてすぐに発送いたします。さらに、ご迷惑をおかけしたお詫びとして一部返金もご提案させていただきます。この対応でよろしければご確認ください。— ケイ",
+      "正直なところ、この一連のトラブルと遅延のため、注文をキャンセルして全額返金を希望します。また、今回のご迷惑に対する補償も求めます。",
+      "キャンセルをご希望とのことで残念です。返品確認後、すぐにキャンセル手続きと返金を開始いたします。補償については可能な内容を確認し、改めてご連絡いたします。— ケイ",
+      "本当に残念です。全額返金に加え、今回の不便と時間の無駄に対する十分な補償を求めます。キャンセルと補償について早急にご確認ください。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83947510264\", \"Title\": \"Kato N-Gauge Shinkansen 500 Series 16-car Set\", \"PrimaryCategoryName\": \"Toys & Hobbies:Model Railroads & Trains:Model Train Sets\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"349.99\", \"CurrentPrice\": \"349.99\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"24.50\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-03-10T14:22:10.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-25T10:15:00.000Z] I received the item today but it’s the 700 series, not the 500 series I ordered. Also, it arrived 10 days late."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-25T12:30:00.000Z] Hello, I’m very sorry for the mix-up and the delay in shipping your order. We strive to provide accurate and timely deliveries. Please allow me to look into this and offer a suitable resolution. Thank you for your patience. — Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-26T09:45:00.000Z] Thanks for replying. I need the correct 500 series set. Can you send the right one quickly? Also, the delay caused me inconvenience."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-26T11:00:00.000Z] Understood. We can send the correct 500 series set immediately via expedited shipping at no extra cost. Additionally, we would like to offer a partial refund for the inconvenience. Please confirm if you would like us to proceed with this plan. — Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-27T08:20:00.000Z] Actually, after all this hassle and delay, I want to cancel my order and get a full refund. Also expect some compensation for the trouble caused."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-27T10:05:00.000Z] I’m sorry to hear that you wish to cancel. I will start the cancellation process and refund immediately once the item is returned. Regarding compensation, I will check what we can offer and get back to you shortly. — Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-27T15:40:00.000Z] This is really disappointing. I expect a full refund plus a decent compensation for the inconvenience and wasted time. Please confirm cancellation and compensation ASAP."
+      }
+    ]
+  },
+  {
+    "id": "synth_G3_antique_long_silence",
+    "category": "claim",
+    "stage": "S3",
+    "product_category": "Samurai / Nihonto",
+    "emotion": "frustrated",
+    "language": "en",
+    "situation": "Bought 6 weeks ago. Shipped but tracking has been stuck for 4 weeks at overseas customs. Buyer had given up, now reaches out angrily after long silence.",
+    "buyer_ebay": "G3",
+    "buyer_message": "I haven’t heard anything from you for over a week and the tracking still shows the same status. This is unacceptable. I want a refund or a replacement now.",
+    "buyer_message_ja": "1週間以上あなたからの連絡がなく、追跡情報も同じ状態のままです。これは受け入れられません。今すぐ返金か交換を希望します。",
+    "history_ja": [
+      "こんにちは。この度は江戸時代の拵え付き日本短刀をご購入いただき、誠にありがとうございます。ご注文はEMS国際便で発送済みで、追跡情報もお知らせしております。ご不明点がございましたらお知らせください。",
+      "こんにちは。追跡情報がほぼ2週間更新されていないことに気付きました。発送に何か問題がありますか？",
+      "お問い合わせありがとうございます。海外の税関での遅延が時折発生し、それが追跡情報の更新がない理由かもしれません。状況を注意深く確認し、随時ご報告いたします。",
+      "追跡情報が3週間以上も税関で止まったままです。非常に困っています。何か発送を早める手助けはできますか？",
+      "ご不便をおかけして申し訳ありません。税関の通関は当方の管理外ですが、配送業者に連絡して状況の確認を依頼いたします。ご理解とご辛抱に感謝いたします。",
+      "4週間も税関で止まったままで、更新もありません。正直、この配送は諦めかけています。",
+      "ご迷惑をおかけして大変申し訳ありません。直ちにEMSおよび税関当局にエスカレーションいたします。できるだけ早く解決できるよう努めます。",
+      "1週間以上ご連絡がなく、追跡状況も変わっていません。これは受け入れられません。今すぐ返金か交換を希望します。"
+    ],
+    "num_messages": 9,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927461502\", \"Title\": \"Japanese Tanto Dagger Edo Period with Koshirae\", \"PrimaryCategoryName\": \"Collectibles:Militaria:Edged Weapons:Japan\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1250.00\", \"CurrentPrice\": \"1250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"80.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Kyoto\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-20T10:15:30.000Z purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-20T11:00:00.000Z] Hello, thank you for your purchase of the Japanese Tanto Dagger Edo Period with Koshirae. We have shipped your order via EMS International and provided tracking information. Please let us know if you have any questions."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-01T14:20:15.000Z] Hi, I noticed the tracking hasn’t updated for almost two weeks. Is there any issue with the shipment?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-01T15:10:45.000Z] Thank you for reaching out. Occasionally shipments can be delayed at customs overseas, which might explain the lack of tracking updates. We will monitor the status closely and keep you informed."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-15T09:05:30.000Z] The tracking is still stuck at customs for over three weeks now. This is frustrating. Can you do anything to help expedite?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-15T10:00:00.000Z] I understand your frustration and apologize for the delay. Unfortunately, customs clearance is out of our control, but we can contact the shipping carrier to request an update. We appreciate your patience."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-01T16:45:00.000Z] It’s been four weeks stuck at customs and no updates. I’ve basically given up on this delivery."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-01T17:20:00.000Z] I'm very sorry for the inconvenience. We will escalate this with EMS and customs authorities immediately. We want to resolve this as soon as possible for you."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-10T12:30:00.000Z] I haven’t heard anything from you for over a week and the tracking still shows the same status. This is unacceptable. I want a refund or a replacement now."
+      }
+    ]
+  },
+  {
+    "id": "synth_G4_cam_german",
+    "category": "discount",
+    "stage": "S2",
+    "product_category": "Vintage Cameras",
+    "emotion": "polite_but_pushing",
+    "language": "de",
+    "situation": "German-speaking buyer negotiating price - 2nd round of negotiation. Writes in German. Pre-purchase stage, has not bought yet.",
+    "buyer_ebay": "G4",
+    "buyer_message": "Vielen Dank, Markus. Das Angebot mit dem Reinigungspinsel klingt fair. Wären Sie bereit, den Preis auf 1425 USD zu senken, wenn ich sofort kaufe?",
+    "buyer_message_ja": "マルクスさん、ありがとうございます。クリーニングブラシ付きのオファーは妥当だと思います。もしすぐに購入するなら、価格を1425ドルに下げていただけますか？",
+    "history_ja": [
+      "こんにちは、ご返信ありがとうございます。価格は理解しましたが、もう少し譲っていただけませんか？1400ドルなら私にとってはもっと現実的です。",
+      "こんにちは、ご連絡とContax G2へのご関心ありがとうございます。残念ながら、現在の価格はすでに市場価値に非常に近いため、これ以上値下げはできません。ただし、このキットは非常に良い状態であることは保証します。よろしくお願いいたします、マルクス。",
+      "こんにちはマルクス、早速のご返信ありがとうございます。送料を安くすることは可能でしょうか？あるいは、小さなアクセサリーを同梱していただけますか？",
+      "こんにちは、ご希望は理解しました。残念ながらEMS国際便の送料は固定されており、値下げはできません。代わりに、レンズ用のクリーニングブラシを無料でお付けします。これでご納得いただければ幸いです。よろしくお願いいたします、マルクス。",
+      "ありがとうございます、マルクス。クリーニングブラシのお申し出は公平だと思います。もしすぐに購入するなら、価格を1425ドルに下げていただけますか？"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83749261503\", \"Title\": \"Contax G2 Body with 45mm Planar Lens Kit\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:Rangefinder\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1450.00\", \"CurrentPrice\": \"1450.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-01T09:15:00Z] Guten Tag, vielen Dank für Ihre Antwort. Ich verstehe den Preis, aber könnten Sie mir vielleicht noch etwas entgegenkommen? 1400 USD wäre für mich eher machbar."
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-01T12:30:00Z] Guten Tag, vielen Dank für Ihre Nachricht und Ihr Interesse an der Contax G2. Leider liegt der aktuelle Preis bereits sehr nah am Marktwert und ich kann den Preis nicht weiter senken. Ich kann aber versichern, dass das Kit in einem hervorragenden Zustand ist. Viele Grüße, Markus."
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-02T08:45:00Z] Hallo Markus, danke für die schnelle Antwort. Wäre es möglich, die Versandkosten zu reduzieren? Oder vielleicht ein kleines Zubehör mit ins Paket zu legen?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-02T11:00:00Z] Hallo, ich verstehe Ihren Wunsch. Leider sind die Versandkosten für EMS International fest und ich kann diese nicht reduzieren. Als kleines Entgegenkommen lege ich Ihnen gerne eine Reinigungspinsel für die Objektive kostenfrei bei. Ich hoffe, das ist für Sie akzeptabel. Beste Grüße, Markus."
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-03T07:20:00Z] Vielen Dank, Markus. Das Angebot mit dem Reinigungspinsel klingt fair. Wären Sie bereit, den Preis auf 1425 USD zu senken, wenn ich sofort kaufe?"
+      }
+    ]
+  },
+  {
+    "id": "synth_G5_perfume_spanish",
+    "category": "return",
+    "stage": "S2",
+    "product_category": "Perfume / Fragrance",
+    "emotion": "worried",
+    "language": "es",
+    "situation": "Spanish-speaking buyer. Received perfume but suspects it's not authentic. Wants refund. Writes in Spanish.",
+    "buyer_ebay": "G5",
+    "buyer_message": "Ya envié el perfume de vuelta, pero aún no recibo confirmación ni reembolso. Estoy preocupado por esta demora.",
+    "buyer_message_ja": "香水はすでに返送しましたが、まだ確認も返金も受け取っていません。この遅れが心配です。",
+    "history_ja": [
+      "こんにちは、香水を受け取りましたが、本物かどうか疑問があります。箱が今まで見たものと違うように見えます。",
+      "こんにちは、お問い合わせありがとうございます。商品の本物かどうかご心配をおかけして申し訳ありません。当店のすべての商品は正規品であることを保証いたします。商品の写真と箱の写真を送っていただけますか？確認させていただきます。よろしくお願いいたします。山本 由紀",
+      "もちろんです。こちらが写真です。ボトルのラベルに違いがあり、香りも期待していたものと違います。",
+      "写真をありがとうございます。確認したところ、商品は正規品のようですが、香りについてご心配されるお気持ちは理解いたします。香りはロットによって多少変わることがあります。返金または交換のご希望はございますか？",
+      "満足しておらず、本物かどうかも不安なので、全額返金を希望します。",
+      "ご事情は理解いたしました。返金手続きを進めるために、商品を元の包装のままご返送ください。商品を受け取り確認後、全額返金をいたします。返品方法のご案内が必要でしょうか？",
+      "香水はすでに返送しましたが、まだ確認の連絡も返金もありません。この遅れが心配です。"
+    ],
+    "num_messages": 8,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83920174652\", \"Title\": \"Chanel No. 5 Eau de Parfum 100ml Vintage Formula\", \"PrimaryCategoryName\": \"Health & Beauty:Perfume & Fragrance:Women\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"150.00\", \"CurrentPrice\": \"150.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: 2026-02-12T06:15:00.000Z purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-10T14:22:00.000Z] Hola, recibí el perfume pero tengo dudas de que sea auténtico. La caja parece diferente a otras que he visto."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-10T16:45:00.000Z] Hola, gracias por contactarnos. Lamentamos que tenga dudas sobre la autenticidad. Le aseguramos que todos nuestros productos son originales. ¿Podría enviarnos fotos del producto y la caja para revisarlo mejor? Saludos, Yamamoto Yuki."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-11T10:30:00.000Z] Claro, aquí están las fotos. El frasco tiene diferencias en la etiqueta y el aroma no es igual al que esperaba."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-11T13:00:00.000Z] Gracias por las fotos. Tras revisarlas, el producto parece auténtico, pero entendemos su preocupación por el aroma. A veces las fragancias pueden variar ligeramente según lote. ¿Desea que le ayudemos con un reembolso o intercambio?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-12T09:15:00.000Z] Preferiría un reembolso completo, ya que no estoy satisfecho y temo que no sea genuino."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-03-12T11:40:00.000Z] Entiendo su situación. Para proceder con el reembolso, por favor devuelva el producto en su embalaje original. Una vez recibido y verificado, procesaremos el reembolso completo. ¿Necesita instrucciones para la devolución?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-15T15:05:00.000Z] Ya envié el perfume de vuelta, pero aún no recibo confirmación ni reembolso. Estoy preocupado por esta demora."
+      }
+    ]
+  },
+  {
+    "id": "synth_H1_bag_price_offer",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Luxury Bags / Chanel",
+    "emotion": "confident",
+    "language": "en",
+    "situation": "Listed at $7,500. Buyer offers $6,200 directly in a message (not through Best Offer feature). Pre-purchase.",
+    "buyer_ebay": "H1",
+    "buyer_message": "Hello, I’m interested in the Chanel Classic Flap Medium you have listed. Would you accept $6,200 for it? Thanks.",
+    "buyer_message_ja": "こんにちは、掲載されているシャネル クラシックフラップ ミディアムに興味があります。6200ドルでお譲りいただけますか？ありがとうございます。",
+    "history_ja": [
+      "こんにちは、掲載されているシャネル クラシック フラップ ミディアムに興味があります。6,200ドルでお譲りいただけますか？よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"98473620145\", \"Title\": \"Chanel Classic Flap Medium Caviar Leather Black GHW\", \"PrimaryCategoryName\": \"Luxury Bags:Designer Handbags:Chanel\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"7500\", \"CurrentPrice\": \"7500\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"75\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T09:15:00.000Z] Hello, I’m interested in the Chanel Classic Flap Medium you have listed. Would you accept $6,200 for it? Thanks."
+      }
+    ]
+  },
+  {
+    "id": "synth_H2_cards_bulk",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Collectible Card Games",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Buyer asks: 'If I buy 3 boxes, can you offer a discount?' Pre-purchase question about bulk discount.",
+    "buyer_ebay": "H2",
+    "buyer_message": "If I buy 3 boxes, can you offer a discount?",
+    "buyer_message_ja": "もし3箱購入したら割引はありますか？",
+    "history_ja": [
+      "もし3箱購入したら、割引してもらえますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927465102\", \"Title\": \"Magic: The Gathering Modern Horizons 3 Booster Box (Collectible Card Games)\", \"PrimaryCategoryName\": \"Toys & Hobbies:Collectible Card Games:Trading Card Game Booster Boxes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"130.00\", \"CurrentPrice\": \"130.00\", \"Quantity\": \"10\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"15.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-15T10:20:00.000Z] If I buy 3 boxes, can you offer a discount?"
+      }
+    ]
+  },
+  {
+    "id": "synth_H3_watch_re_nego",
+    "category": "discount",
+    "stage": "S2",
+    "product_category": "Wristwatches / Luxury",
+    "emotion": "persistent",
+    "language": "en",
+    "situation": "Seller declined first offer. Buyer counters with higher offer and pushes for a deal. Pre-purchase, still negotiating.",
+    "buyer_ebay": "H3",
+    "buyer_message": "I really want this watch and am willing to increase my offer to $51,500. I hope we can find a middle ground and close the deal today.",
+    "buyer_message_ja": "この時計が本当に欲しいので、オファーを51500ドルに上げます。お互いに妥協点を見つけて、今日中に取引を成立させたいです。",
+    "history_ja": [
+      "こんにちは、最初の48,000ドルのオファーをお断りされたのを拝見しました。もし早く取引を成立させられるなら、50,000ドルに上げることができます。ご検討いただけますか？",
+      "オファーとセイコー クレドール エイチIIへのご関心、ありがとうございます。50,000ドルは近いですが、この時計の希少性と状態を考慮し、現在は52,000ドルの提示価格で固く対応しています。その価格で進めたい場合はお知らせください。よろしくお願いいたします、ハルト",
+      "価値は理解していますが、現時点で出せるのは最大50,000ドルです。もし51,000ドルで折り合えれば、すぐに支払いをして購入を確定します。",
+      "迅速かつ真剣なご意向に感謝します。残念ながら、51,000ドルはこの特別な時計に対して受け入れられる金額にはまだ届きません。この時計は丁寧にメンテナンスされており、すべてのオリジナルの箱や書類も揃っています。ご理解いただければ幸いです。もしご意見が変わりましたら、どうぞお気軽にご連絡ください。よろしくお願いいたします、エミ",
+      "この時計が本当に欲しいので、オファーを51,500ドルに上げたいと思います。妥協点を見つけて、今日中に取引を成立させられればと思います。"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"73849201567\", \"Title\": \"Seiko Credor Eichi II Porcelain Dial Platinum\", \"PrimaryCategoryName\": \"Wristwatches:Luxury\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"52000\", \"CurrentPrice\": \"52000\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"120\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-01T10:15:00.000Z] Hello, I noticed you declined my initial offer of $48,000. I can increase it to $50,000 if we can close the deal quickly. Would you consider that?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-01T15:30:00.000Z] Thank you for your offer and your interest in the Seiko Credor Eichi II. While $50,000 is closer, we are currently firm on the listed price of $52,000 due to the watch's rarity and condition. Please let me know if you would like to proceed at that price. Best regards, Haruto"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-02T09:45:00.000Z] I understand the value, but $50,000 is the maximum I can do right now. If you can meet me halfway at $51,000, I’m ready to pay immediately and finalize the purchase."
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-02T13:20:00.000Z] I appreciate your promptness and serious intent. Unfortunately, $51,000 is still below what we can accept for this exceptional timepiece. The watch has been carefully maintained and includes all original packaging and papers. We hope you understand. Please feel free to contact me if you change your mind. Best regards, Emi"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-03T08:10:00.000Z] I really want this watch and am willing to increase my offer to $51,500. I hope we can find a middle ground and close the deal today."
+      }
+    ]
+  },
+  {
+    "id": "synth_H4_sneakers_reoffer",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Sneakers / Limited Edition",
+    "emotion": "casual",
+    "language": "en",
+    "situation": "Seller's Best Offer auto-declined buyer's previous attempt. Buyer now sends a message outside Best Offer asking 'what's your best price?' Pre-purchase.",
+    "buyer_ebay": "H4",
+    "buyer_message": "Hey, what’s your best price on these sneakers?",
+    "buyer_message_ja": "こんにちは、このスニーカーの最安値はいくらですか？",
+    "history_ja": [
+      "ねえ、このスニーカーの最安値はいくらですか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927465102\", \"Title\": \"Nike Air Force 1 Off-White Virgil Abloh 'The Ten' Volt\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Shoes:Athletic Sneakers\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1250.00\", \"CurrentPrice\": \"1250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-12T10:15:00.000Z] Hey, what’s your best price on these sneakers?"
+      }
+    ]
+  }
+]

@@ -1,0 +1,83 @@
+{
+  "model": "gpt-4.1-mini",
+  "input": [
+    {
+      "role": "developer",
+      "content": "{\"ItemID\":\"354304299792\",\"Title\":\"Onitsuka Tiger MEXICO 66 1183C102 200 BIRCH PEACOAT\",\"PrimaryCategoryName\":\"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\",\"ListingType\":\"FixedPriceItem\",\"StartPrice\":\"150.0\",\"BuyItNowPrice\":\"0.0\",\"Quantity\":\"290\",\"CurrentPrice\":\"150.0\",\"ListingStatus\":\"Active\",\"TimeLeft\":\"P9DT2H59M30S\",\"EndTime\":\"2026-03-29T05:29:59.000Z\",\"ViewItemURL\":\"https://www.ebay.com/itm/Onitsuka-Tiger-MEXICO-66-1183C102-200-BIRCH-PEACOAT-/354304299792\",\"ShippingType\":\"Flat\",\"ShippingService\":\"US_ExpeditedSppedPAK\",\"ShippingServiceCost\":\"30.0\",\"ReturnsAcceptedOption\":\"ReturnsAccepted\",\"RefundOption\":\"MoneyBack\",\"ReturnsWithinOption\":\"Days_60\",\"ShippingCostPaidByOption\":\"Seller\",\"Country\":\"JP\",\"Location\":\"YOKOHAMA\",\"Currency\":\"USD\",\"Variations\":[{\"SKU\":\"V0039-6.5-102\",\"StartPrice\":\"150.0\",\"Quantity\":\"38\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US6.5/JP25\"},{\"SKU\":\"V0039-7.5-79\",\"StartPrice\":\"150.0\",\"Quantity\":\"33\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US7.5/JP25.5\"},{\"SKU\":\"V0039-8-66\",\"StartPrice\":\"150.0\",\"Quantity\":\"13\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US8/JP26\"},{\"SKU\":\"V0039-8.5Z-77\",\"StartPrice\":\"150.0\",\"Quantity\":\"24\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US8.5/JP26.5\"},{\"SKU\":\"V0039-9-58\",\"StartPrice\":\"150.0\",\"Quantity\":\"15\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US9/JP27\"},{\"SKU\":\"V0039-9.5-74\",\"StartPrice\":\"150.0\",\"Quantity\":\"15\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US9.5/JP27.5\"},{\"SKU\":\"V0039-10-72\",\"StartPrice\":\"150.0\",\"Quantity\":\"24\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US10/JP28\"},{\"SKU\":\"V0039-11-87\",\"StartPrice\":\"150.0\",\"Quantity\":\"25\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US11/JP28.5\"},{\"SKU\":\"V0039-11.5-61\",\"StartPrice\":\"150.0\",\"Quantity\":\"15\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US11.5/JP29\"},{\"SKU\":\"V0039-12\",\"StartPrice\":\"150.0\",\"Quantity\":\"0\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US12/JP29.5\"},{\"SKU\":\"V0039-12.5-51\",\"StartPrice\":\"150.0\",\"Quantity\":\"8\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US12.5/JP30\"},{\"SKU\":\"V0039-4-27\",\"StartPrice\":\"150.0\",\"Quantity\":\"7\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US4/JP22.5\"},{\"SKU\":\"V0039-4.5-34\",\"StartPrice\":\"150.0\",\"Quantity\":\"12\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US4.5/JP23\"},{\"SKU\":\"V0039-5-34\",\"StartPrice\":\"150.0\",\"Quantity\":\"10\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US5/JP23.5\"},{\"SKU\":\"V0039-5.5-46\",\"StartPrice\":\"150.0\",\"Quantity\":\"24\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US5.5/JP24\"},{\"SKU\":\"V0039-6-50\",\"StartPrice\":\"150.0\",\"Quantity\":\"27\",\"SpecificName\":\"US Shoe Size (Men's)\",\"SpecificValue\":\"US6/JP24.5\"}],\"whoPaysShipping\":\"Buyer\"}"
+    },
+    {
+      "role": "system",
+      "content": "event: [2026-03-17T14:25:10.000Z] purchase_completed"
+    },
+    {
+      "role": "system",
+      "content": "event: [2026-03-17T18:03:40.000Z] cancel_request;reason=placed_by_mistake"
+    },
+    {
+      "role": "assistant",
+      "content": "[2026-03-18T01:08:51.000Z] Hello,\n\nCould you please let us know the reason for the cancellation?\n\nBest Regards,\nKei"
+    },
+    {
+      "role": "user",
+      "content": "[2026-03-18T01:09:46.000Z] I ordered it on accident."
+    },
+    {
+      "role": "assistant",
+      "content": "[2026-03-18T03:35:56.000Z] Hello.\n\nIf the items are in the same price range, you can change your order instead of canceling it.\n\nAre there any other items you'd like to purchase?\n\nThank you."
+    },
+    {
+      "role": "user",
+      "content": "[2026-03-18T15:16:24.000Z] Apologies. I did not mean to order any item. Could you please cancel the order?"
+    },
+    {
+      "role": "assistant",
+      "content": "[2026-03-19T01:47:21.000Z] Hello vipuv_81,\nUnderstood. The cancellation process has been completed. Please wait a moment for it to be reflected.\nBest regards,\n rioxxrinaxjapan"
+    },
+    {
+      "role": "system",
+      "content": "event: [2026-03-19T01:54:04.000Z] cancel_request_closed"
+    },
+    {
+      "role": "developer",
+      "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+    },
+    {
+      "role": "developer",
+      "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+    },
+    {
+      "role": "developer",
+      "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+    },
+    {
+      "role": "developer",
+      "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+    }
+  ],
+  "text": {
+    "format": {
+      "type": "json_schema",
+      "name": "multi_language_reply",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "jpnLanguage": {
+            "type": "string",
+            "description": "Answer in Japanese language"
+          },
+          "buyerLanguage": {
+            "type": "string",
+            "description": "Answer in English language"
+          }
+        },
+        "required": [
+          "jpnLanguage",
+          "buyerLanguage"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "service_tier": "default",
+  "temperature": 0.2
+}

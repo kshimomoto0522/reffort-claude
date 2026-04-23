@@ -1,0 +1,40 @@
+các loại trouble,,
+title,content,message quy đổi
+Dispute,Dispute closed,Dispute has been closed
+Dispute,FRAUD,Dispute open with resaon fraud
+Dispute,ITEM_NOT_RECEIVED,Dispute open with resaon buyer didn't receive the item
+Dispute,TRANSACTION_ISSUE,Dispute open with resaon transaction issue
+Dispute,The buyer did not recognize the transaction,Dispute open with resaon the buyer did not recognize the transaction
+Dispute,The buyer had an issue with the transaction,Dispute open with resaon the buyer had an issue with the transaction
+Dispute,The buyer hasn't received their item yet,Dispute open with resaon the buyer hasn't received their item yet
+Dispute,The item doesn't match the description in your listing,Dispute open with resaon the item doesn't match the description in your listing
+Dispute,The transaction was cancelled,Dispute open with resaon the transaction was cancelled
+OrderCancelRequest,FOUND_CHEAPER_PRICE,Request to cancel order with reason found better price
+OrderCancelRequest,ORDER_MISTAKE,Request to cancel order with reason order placed by mistake
+OrderCancelRequest,UNKNOWN,Request to cancel order for unknown reason
+OrderCancelRequest,WONT_ARRIVE_IN_TIME,Request to cancel order with reason won't arrive on time
+OrderCancelRequest,WRONG_PAYMENT_METHOD,Request to cancel order with reason wrong payment information
+OrderCancelRequest,WRONG_SHIPPING_ADDRESS,Request to cancel order with reason wrong shipping address
+キャンセルリクエスト,Cancel closed,Cancel request has been closed
+キャンセルリクエスト,Found better price,Request to cancel order with found better price
+キャンセルリクエスト,None,Request to cancel order for unknown reason
+キャンセルリクエスト,Order placed by mistake,Request to cancel order with reason  order placed by mistake
+キャンセルリクエスト,Won't arrive on time,Request to cancel order with reason won't arrive on time
+キャンセルリクエスト,Missing parts or accessories,Return request with reason missing parts or accessories
+キャンセルリクエスト,Wrong shipping method,Request to cancel order with reason wrong shipping method
+キャンセルリクエスト,Wrong shipping address,Request to cancel order with reason wrong shipping address
+ケース,Case closed,Case has been closed
+リターンリクエスト,Arrived damaged,Return request with reason arrived damaged
+リターンリクエスト,Changed mind,Return request with reason changed mind
+リターンリクエスト,Didn’t like item,Return request with reason didn’t like item
+リターンリクエスト,Doesn’t fit,Return request with reason doesn’t fit
+リターンリクエスト,Doesn’t match description or photos,Return request with reason doesn’t match description or photos
+リターンリクエスト,Doesn’t work or defective,Return request with reason doesn’t work or defective
+リターンリクエスト,Wrong payment information,Request to cancel order with reason wrong payment information
+リターンリクエスト,Ordered by mistake,Return request with reason ordered by mistake
+リターンリクエスト,Return closed,Return request has been closed
+リターンリクエスト,Wrong item sent,Return request with reason wrong item sent
+リターンリクエスト,バイヤーが返送済み,Return request item has been shipped by the buyer
+リターンリクエスト,返送品到着済み,Return request item has been delivered to the seller
+未着リクエスト,Buyer didn't receive the item,Item not receive request with reason buyer didn't receive the item
+未着リクエスト,Item not received closed,Item not receive request with reason item not received closed

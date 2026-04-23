@@ -1,0 +1,21 @@
+[
+  {
+    "name": "浜本　美保子",
+    "account_id": 4940456,
+    "removal_date": "2026-04-14",
+    "status": "completed",
+    "completed_date": "2026-04-17"
+  },
+  {
+    "name": "Kento",
+    "account_id": 6338765,
+    "removal_date": "2026-04-30",
+    "status": "pending"
+  },
+  {
+    "name": "井上慶成",
+    "account_id": 1842232,
+    "removal_date": "2026-04-25",
+    "status": "pending"
+  }
+]

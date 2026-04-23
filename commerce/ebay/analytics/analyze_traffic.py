@@ -5,7 +5,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 file = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\eBay-ListingsTrafficReport-Mar-15-2026-21_56_24-0700-13288691549.csv"
 ads_file = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\rioxxrinaxjapan_advertising_sales_report_20260315.csv"
-OUTPUT = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\ebay-analytics\result_traffic.txt"
+OUTPUT = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\commerce\ebay\analytics\result_traffic.txt"
 
 with open(file, encoding='utf-8-sig') as f:
     lines = f.readlines()

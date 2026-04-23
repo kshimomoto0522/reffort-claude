@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>要約モード プレビュー</title>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: -apple-system, 'Segoe UI', 'Yu Gothic UI', sans-serif;
+    max-width: 960px;
+    margin: 30px auto;
+    padding: 0 20px;
+    background: #fafafa;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+.meta-bar {
+    background: #5b21b6;
+    color: #f5f3ff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 20px;
+    font-size: 0.85em;
+}
+
+.message-card {
+    background: #fff;
+    border-left: 4px solid #7c3aed;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.message-card.seller { border-left-color: #a78bfa; }
+.message-header {
+    font-weight: bold;
+    color: #5b21b6;
+    margin-bottom: 12px;
+    font-size: 0.95em;
+}
+.bilingual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.lang-block {
+    background: #f5f3ff;
+    padding: 10px 14px;
+    border-radius: 6px;
+}
+.lang-label {
+    font-size: 0.75em;
+    color: #6b7280;
+    font-weight: bold;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+}
+.lang-body {
+    color: #1f2937;
+    white-space: pre-wrap;
+    font-size: 0.95em;
+}
+
+.attachments {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed #e5e7eb;
+}
+.attachments-label {
+    font-size: 0.85em;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+.attachments-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.attachments-grid img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+}
+.img-placeholder {
+    width: 120px;
+    height: 120px;
+    background: #ede9fe;
+    border: 1px dashed #a78bfa;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #5b21b6;
+    font-size: 0.8em;
+    text-align: center;
+    padding: 8px;
+}
+
+.summary-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+}
+.summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ede9fe;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+.summary-title { font-size: 1.15em; font-weight: bold; color: #5b21b6; }
+.complexity-badge {
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+.summary-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px 16px;
+    align-items: start;
+}
+.summary-label {
+    color: #6b7280;
+    font-weight: bold;
+    padding-top: 2px;
+    font-size: 0.9em;
+}
+.summary-value { color: #1f2937; }
+.summary-value ul { margin: 0; padding-left: 20px; }
+.summary-value li { margin-bottom: 4px; }
+.empty { color: #d1d5db; font-style: italic; }
+
+.decision-box {
+    margin-top: 16px;
+    background: #ede9fe;
+    border-left: 3px solid #7c3aed;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: #5b21b6;
+    font-size: 0.95em;
+}
+
+.patterns-section-title {
+    font-size: 1.05em;
+    margin: 32px 0 16px;
+    color: #5b21b6;
+    font-weight: bold;
+}
+
+.pattern-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+}
+.pattern-card.recommended {
+    border: 2px solid #7c3aed;
+    background: linear-gradient(to right, #f5f3ff 0%, #fff 40%);
+}
+.pattern-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.pattern-id {
+    background: #7c3aed;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+.rec-badge {
+    background: #5b21b6;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+}
+.stars {
+    color: #7c3aed;
+    margin-left: auto;
+    font-size: 1em;
+    letter-spacing: 0.1em;
+}
+.pattern-name {
+    margin: 4px 0 8px;
+    font-size: 1.05em;
+    color: #1f2937;
+}
+.pattern-desc {
+    color: #6b7280;
+    margin-bottom: 14px;
+    font-size: 0.95em;
+}
+.pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+.pros-cons-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9em;
+}
+.pros-cons-label {
+    font-size: 0.8em;
+    color: #6b7280;
+    font-weight: bold;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+}
+.pros-cons-col ul li { margin-bottom: 4px; color: #1f2937; }
+
+.rec-reason {
+    color: #6b7280;
+    font-size: 0.85em;
+    font-style: italic;
+    margin-bottom: 12px;
+    padding-left: 12px;
+    border-left: 2px solid #ede9fe;
+}
+
+.select-btn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+.select-btn:hover { background: #5b21b6; }
+
+@media (max-width: 640px) {
+    .bilingual, .pros-cons { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="meta-bar"><span class="meta-item">🤖 Gemini 2.5 Flash (サンプル)</span><span class="meta-item">⏱️ 1.8秒</span><span class="meta-item">💴 ¥0.510</span></div>
+
+        <div class="message-card buyer">
+            <div class="message-header">📩 バイヤーからのメッセージ</div>
+            <div class="bilingual">
+                <div class="lang-block">
+                    <div class="lang-label">🇺🇸 English</div>
+                    <div class="lang-body">Hello, I received my shoes 4 days ago but when I opened the box, I found a scratch on the sole. I&#x27;m attaching photos. I&#x27;d like a refund or a discount. I don&#x27;t want to ship them back since shipping is expensive for me. Thanks.</div>
+                </div>
+                <div class="lang-block">
+                    <div class="lang-label">🇯🇵 日本語訳</div>
+                    <div class="lang-body">こんにちは、4日前にシューズを受け取ったのですが、箱を開けたらソールに傷がありました。写真を添付しています。返金かディスカウントをお願いしたいです。送料が高いので返送はしたくありません。よろしくお願いします。</div>
+                </div>
+            </div>
+            
+    <div class="attachments">
+        <div class="attachments-label">📎 添付画像（2枚）</div>
+        <div class="attachments-grid"><div class="img-placeholder">📷 添付画像 1<br><small>シューズのソール傷 - 画像1.jpg</small></div><div class="img-placeholder">📷 添付画像 2<br><small>シューズのソール傷 - 画像2.jpg</small></div></div>
+    </div>
+    
+        </div>
+        
+
+<div class="summary-card">
+    <div class="summary-header">
+        <div class="summary-title">AIサマリー</div>
+        <span class="complexity-badge" style="background:#7c3aed">やや複雑</span>
+    </div>
+    <div class="summary-grid">
+        <div class="summary-label">感情</div>
+        <div class="summary-value">不満（強度4/5）</div>
+
+        <div class="summary-label">事実</div>
+        <div class="summary-value"><ul><li>商品到着後、シューズのソールに傷を発見</li><li>写真を添付済み</li><li>4日前に受け取ったと記載</li></ul></div>
+
+        <div class="summary-label">要望</div>
+        <div class="summary-value">全額返金またはディスカウント</div>
+
+        <div class="summary-label">制約</div>
+        <div class="summary-value">返送は希望していない（送料負担を避けたい旨示唆）</div>
+
+        <div class="summary-label">背景</div>
+        <div class="summary-value">推測：初めての購入でeBayの返品プロセスに不慣れ。悪評を付ける意志は薄く、柔軟な解決を求めている</div>
+    </div>
+    <div class="decision-box">決めること: 部分返金の金額確定（20%/25%/30%のいずれか）</div>
+</div>
+
+<div class="patterns-section-title">対応パターン（3件）</div>
+
+        <div class="pattern-card recommended">
+            <div class="pattern-header">
+                <span class="pattern-id">パターンA</span>
+                <span class="rec-badge">推奨</span>
+                <span class="stars">★★★★★</span>
+            </div>
+            <h3 class="pattern-name">部分返金（20-30%）で継続所有</h3>
+            <p class="pattern-desc">商品はバイヤー手元に残し、傷相当分の部分返金で合意する</p>
+            <div class="pros-cons">
+                <div class="pros-cons-col">
+                    <div class="pros-cons-label">メリット</div>
+                    <ul><li>◎ 送料負担なし</li><li>◎ 評価リスク最小</li><li>◎ 迅速解決</li></ul>
+                </div>
+                <div class="pros-cons-col">
+                    <div class="pros-cons-label">デメリット</div>
+                    <ul><li>△ 金額交渉の可能性</li><li>△ 傷の度合い次第で不十分</li></ul>
+                </div>
+            </div>
+            <div class="rec-reason">バイヤーの示唆に沿う・コスト最小・再発防止にも有効</div>
+            <button class="select-btn">このパターンで返信文を生成</button>
+        </div>
+        
+        <div class="pattern-card ">
+            <div class="pattern-header">
+                <span class="pattern-id">パターンB</span>
+                
+                <span class="stars">★★☆☆☆</span>
+            </div>
+            <h3 class="pattern-name">返品・全額返金</h3>
+            <p class="pattern-desc">商品を返送してもらい全額返金。送料はセラー負担</p>
+            <div class="pros-cons">
+                <div class="pros-cons-col">
+                    <div class="pros-cons-label">メリット</div>
+                    <ul><li>◎ eBay標準手続き</li><li>◎ バイヤー満足度高</li></ul>
+                </div>
+                <div class="pros-cons-col">
+                    <div class="pros-cons-label">デメリット</div>
+                    <ul><li>△ 往復送料負担</li><li>△ 商品が傷む可能性</li><li>△ リサイクル不能</li></ul>
+                </div>
+            </div>
+            <div class="rec-reason">コスト大・バイヤー希望と乖離</div>
+            <button class="select-btn">このパターンで返信文を生成</button>
+        </div>
+        
+        <div class="pattern-card ">
+            <div class="pattern-header">
+                <span class="pattern-id">パターンC</span>
+                
+                <span class="stars">★☆☆☆☆</span>
+            </div>
+            <h3 class="pattern-name">ディスカウントコード提供（次回購入）</h3>
+            <p class="pattern-desc">今回は現状維持、次回購入時のディスカウントコードを提供</p>
+            <div class="pros-cons">
+                <div class="pros-cons-col">
+                    <div class="pros-cons-label">メリット</div>
+                    <ul><li>◎ 今回コスト0</li><li>◎ リピーター化機会</li></ul>
+                </div>
+                <div class="pros-cons-col">
+                    <div class="pros-cons-label">デメリット</div>
+                    <ul><li>△ 不満未解決・悪評リスク</li><li>△ 初回購入者には弱い</li></ul>
+                </div>
+            </div>
+            <div class="rec-reason">現状不満への直接対応になっていない</div>
+            <button class="select-btn">このパターンで返信文を生成</button>
+        </div>
+        
+
+
+
+</body>
+</html>

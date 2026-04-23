@@ -4,13 +4,13 @@
     {
       "name": "mockup-server",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "3456", "-d", "baychat-product/mockups"],
+      "runtimeArgs": ["-m", "http.server", "3456", "-d", "services/baychat/product/mockups"],
       "port": 3456
     },
     {
       "name": "direct-sales",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["start", "--prefix", "direct-sales"],
+      "runtimeArgs": ["start", "--prefix", "commerce/direct-sales"],
       "port": 3000
     }
   ]

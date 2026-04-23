@@ -11,7 +11,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 # ===== データ読み込み =====
 traffic_file = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\eBay-ListingsTrafficReport-Mar-15-2026-21_56_24-0700-13288691549.csv"
 ads_file     = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\rioxxrinaxjapan_advertising_sales_report_20260315.csv"
-OUTPUT       = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\ebay-analytics\eBay週次レポート_20260315.xlsx"
+OUTPUT       = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\commerce\ebay\analytics\eBay週次レポート_20260315.xlsx"
 
 def to_f(s):
     try: return float(str(s).replace(',','').replace('%','').strip())

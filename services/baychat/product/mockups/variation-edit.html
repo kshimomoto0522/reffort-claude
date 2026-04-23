@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BayChat - 商品編集（バリエーション対応）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; background: #f5f5f5; color: #333; }
+
+  .container { max-width: 960px; margin: 30px auto; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); padding: 32px; }
+
+  /* --- ヘッダー部分 --- */
+  .product-header { display: flex; gap: 28px; margin-bottom: 28px; }
+  .product-image { width: 180px; height: 180px; border-radius: 6px; object-fit: contain; background: #fafafa; border: 1px solid #e0e0e0; flex-shrink: 0; }
+
+  .product-fields { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  .field-group label { font-size: 13px; font-weight: 600; color: #555; }
+  .field-group .note { font-size: 11px; color: #999; margin-left: 6px; font-weight: 400; }
+  .field-group input[type="text"],
+  .field-group input[type="number"] {
+    border: 1px solid #d0d0d0; border-radius: 4px; padding: 8px 10px; font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  .field-group input:focus { outline: none; border-color: #7c4dff; }
+  .field-group .input-with-unit { display: flex; align-items: center; gap: 6px; }
+  .field-group .unit { font-size: 14px; color: #777; }
+
+  .input-full { width: 100%; }
+  .input-medium { width: 200px; }
+  .input-price { width: 120px; text-align: right; padding-left: 24px !important; }
+
+  /* --- 親SKU行 --- */
+  .parent-row { display: flex; gap: 16px; align-items: flex-end; }
+  .parent-row .field-group { flex: 0 0 auto; }
+
+  /* --- 一括価格セクション --- */
+  .bulk-price-section {
+    background: #f8f6ff; border: 1px solid #e0d8f5; border-radius: 6px;
+    padding: 14px 18px; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .bulk-price-section label { font-size: 13px; font-weight: 600; color: #555; white-space: nowrap; }
+  .bulk-price-section .input-with-unit { position: relative; }
+  .bulk-price-section .unit { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #777; pointer-events: none; }
+  .bulk-price-section .input-price { padding-left: 24px !important; }
+  .bulk-price-section .bulk-note { font-size: 11px; color: #7c4dff; margin-left: auto; }
+  .btn-bulk {
+    background: #7c4dff; color: #fff; border: none; border-radius: 4px;
+    padding: 7px 16px; font-size: 12px; cursor: pointer; white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .btn-bulk:hover { background: #6a3de8; }
+
+  /* --- セパレータ --- */
+  .divider { border: none; border-top: 1px solid #e8e8e8; margin: 24px 0; }
+
+  /* --- バリエーションセクション --- */
+  .variation-section-title {
+    font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .variation-count { font-size: 12px; color: #999; font-weight: 400; }
+
+  .variation-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .variation-table thead th {
+    font-size: 12px; font-weight: 600; color: #777; text-align: left;
+    padding: 8px 10px; border-bottom: 2px solid #e8e8e8; white-space: nowrap;
+  }
+  .variation-table tbody tr { border-bottom: none; transition: background 0.15s; }
+  .variation-table tbody tr:hover { background: #fafafa; }
+  .variation-table td { padding: 10px; vertical-align: middle; }
+
+  .variation-label { font-size: 13px; color: #333; font-weight: 500; white-space: nowrap; }
+  .variation-sku { font-size: 13px; color: #666; font-family: 'Consolas', monospace; }
+  .sku-input { font-family: 'Consolas', monospace !important; }
+
+  .variation-table input[type="text"],
+  .variation-table input[type="number"] {
+    border: 1px solid #d0d0d0; border-radius: 4px; padding: 6px 8px; font-size: 13px;
+    width: 100%; transition: border-color 0.2s;
+  }
+  .variation-table input:focus { outline: none; border-color: #7c4dff; }
+
+  .col-variation { width: 50%; }
+  .col-sku { width: 20%; }
+  .col-price { width: 18%; }
+  .col-qty { width: 12%; }
+  .col-actions { width: 14%; text-align: center; }
+
+  .price-cell { position: relative; }
+  .price-cell .unit { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #999; pointer-events: none; }
+  .price-cell input { padding-left: 22px !important; }
+
+  /* --- オファー設定 --- */
+  .offer-section { margin-top: 20px; display: flex; align-items: center; gap: 10px; }
+  .offer-section label { font-size: 13px; color: #555; }
+  .toggle-switch {
+    position: relative; width: 40px; height: 22px; background: #ccc; border-radius: 11px;
+    cursor: pointer; transition: background 0.3s;
+  }
+  .toggle-switch.active { background: #7c4dff; }
+  .toggle-switch::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; background: #fff; border-radius: 50%;
+    transition: transform 0.3s;
+  }
+  .toggle-switch.active::after { transform: translateX(18px); }
+  .offer-note { font-size: 11px; color: #999; }
+
+  /* --- ボタン --- */
+  .actions { display: flex; gap: 12px; margin-top: 28px; }
+  .btn-save {
+    background: #7c4dff; color: #fff; border: none; border-radius: 6px;
+    padding: 10px 32px; font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-save:hover { background: #6a3de8; }
+  .btn-cancel {
+    background: #555; color: #fff; border: none; border-radius: 6px;
+    padding: 10px 32px; font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-cancel:hover { background: #444; }
+
+  /* --- 変更ハイライト --- */
+  .changed { background: #fffde7 !important; }
+  .variation-table input.changed-input { border-color: #ffc107; background: #fffef5; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 商品ヘッダー：画像 + タイトル・親SKU -->
+  <div class="product-header">
+    <img src="https://via.placeholder.com/180x180?text=ASICS" alt="商品画像" class="product-image">
+    <div class="product-fields">
+      <div class="field-group">
+        <label>商品</label>
+        <input type="text" class="input-full" value="ASICS HYPERSYNC 1203A879 020 Piedmont Grey Pure Silver Sports Style Shoes">
+      </div>
+      <div class="parent-row">
+        <div class="field-group">
+          <label>SKU<span class="note">（親SKU）</span></label>
+          <input type="text" class="input-medium" value="S05755">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 一括価格変更 -->
+  <div class="bulk-price-section">
+    <label>価格一括変更</label>
+    <div class="input-with-unit">
+      <input type="number" class="input-price" id="bulk-price" placeholder="129.0" step="0.01">
+      <span class="unit">$</span>
+    </div>
+    <button class="btn-bulk" onclick="applyBulkPrice()">全バリエーションに適用</button>
+    <span class="bulk-note">※ 全サイズの価格をまとめて変更できます</span>
+  </div>
+
+  <hr class="divider">
+
+  <!-- バリエーション一覧 -->
+  <div class="variation-section-title">
+    バリエーション編集 <span class="variation-count">(14)</span>
+  </div>
+
+  <table class="variation-table">
+    <thead>
+      <tr>
+        <th class="col-variation">バリエーション</th>
+        <th class="col-sku">SKU</th>
+        <th class="col-price">価格 ($)</th>
+        <th class="col-qty">数量</th>
+      </tr>
+    </thead>
+    <tbody id="variation-body">
+    </tbody>
+  </table>
+
+  <!-- オファー設定 -->
+  <div class="offer-section">
+    <div class="toggle-switch" id="offer-toggle" onclick="toggleOffer()"></div>
+    <label>オファー設定</label>
+    <span class="offer-note">※バリエーション出品は設定不可</span>
+  </div>
+
+  <!-- 保存・取消ボタン -->
+  <div class="actions">
+    <button class="btn-save">保 存</button>
+    <button class="btn-cancel">出品取消</button>
+  </div>
+</div>
+
+<script>
+  // バリエーションデータ（実際はAPIから取得）
+  const variations = [
+    { size: "US4.5/JP23",    sku: "S05755-4.5",  price: 129.00, qty: 1 },
+    { size: "US5/JP23.5",    sku: "S05755-5",     price: 129.00, qty: 1 },
+    { size: "US7.5/JP25.5",  sku: "S05755-7.5",   price: 129.00, qty: 1 },
+    { size: "US8/JP26",      sku: "S05755-8",     price: 129.00, qty: 1 },
+    { size: "US8.5/JP26.5",  sku: "S05755-8.5",   price: 129.00, qty: 1 },
+    { size: "US9/JP27",      sku: "S05755-9",     price: 129.00, qty: 1 },
+    { size: "US9.5/JP27.5",  sku: "S05755-9.5",   price: 129.00, qty: 1 },
+    { size: "US10/JP28",     sku: "S05755-10",    price: 129.00, qty: 1 },
+    { size: "US10.5/JP28.5", sku: "S05755-10.5",  price: 129.00, qty: 1 },
+    { size: "US11/JP29",     sku: "S05755-11",    price: 129.00, qty: 1 },
+    { size: "US11.5/JP29",   sku: "S05755-11.5",  price: 129.00, qty: 1 },
+    { size: "US12/JP29.5",   sku: "S05755-12",    price: 129.00, qty: 1 },
+    { size: "US13/JP30.5",   sku: "S05755-13",    price: 129.00, qty: 1 },
+    { size: "US14/JP31.5",   sku: "S05755-14",    price: 129.00, qty: 1 },
+  ];
+
+  // テーブル描画
+  const tbody = document.getElementById('variation-body');
+  variations.forEach((v, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="variation-label">US Shoe Size (Men's): ${v.size}</span></td>
+      <td><input type="text" value="${v.sku}" data-original="${v.sku}" onchange="markChanged(this)" class="sku-input"></td>
+      <td>
+        <div class="price-cell">
+          <span class="unit">$</span>
+          <input type="number" value="${v.price.toFixed(1)}" step="0.01" data-original="${v.price}" onchange="markChanged(this)">
+        </div>
+      </td>
+      <td>
+        <input type="number" value="${v.qty}" min="0" data-original="${v.qty}" onchange="markChanged(this)">
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // 一括価格適用
+  function applyBulkPrice() {
+    const bulkVal = document.getElementById('bulk-price').value;
+    if (!bulkVal) return;
+    document.querySelectorAll('.variation-table tbody tr').forEach(tr => {
+      const priceInput = tr.querySelector('.price-cell input');
+      priceInput.value = parseFloat(bulkVal).toFixed(1);
+      markChanged(priceInput);
+    });
+  }
+
+  // 変更ハイライト
+  function markChanged(input) {
+    const original = input.getAttribute('data-original');
+    if (input.value !== original) {
+      input.classList.add('changed-input');
+      input.closest('tr').classList.add('changed');
+    } else {
+      input.classList.remove('changed-input');
+      input.closest('tr').classList.remove('changed');
+    }
+  }
+
+  // オファートグル
+  function toggleOffer() {
+    document.getElementById('offer-toggle').classList.toggle('active');
+  }
+</script>
+
+</body>
+</html>

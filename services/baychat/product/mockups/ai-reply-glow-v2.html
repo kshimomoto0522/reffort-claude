@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Reply グローエフェクト v2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif;
+    background: #f0eff4;
+    color: #333;
+  }
+
+  .page-header { text-align: center; padding: 40px 20px 12px; }
+  .page-header h1 { font-size: 20px; color: #333; }
+  .page-header p { font-size: 12px; color: #999; margin-top: 4px; }
+
+  .patterns {
+    max-width: 960px; margin: 0 auto; padding: 24px 20px 60px;
+    display: flex; flex-direction: column; gap: 64px;
+  }
+
+  .section { display: flex; flex-direction: column; gap: 8px; }
+  .section-label {
+    display: flex; align-items: baseline; gap: 10px;
+    padding-left: 4px;
+  }
+  .section-label .tag {
+    font-size: 11px; font-weight: 800; color: #a855f7;
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .section-label .name { font-size: 17px; font-weight: 700; color: #222; }
+  .section-desc {
+    font-size: 12px; color: #888; line-height: 1.7;
+    padding-left: 4px; margin-bottom: 16px;
+  }
+
+  /* ===== AI CARD（実際の料金ページ再現） ===== */
+  .ai-card-area {
+    position: relative;
+    padding: 40px 12px;
+    display: flex; justify-content: center;
+  }
+
+  .ai-card {
+    position: relative;
+    width: 100%; max-width: 880px;
+    background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #7c3aed 100%);
+    border-radius: 16px;
+    padding: 24px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 2;
+  }
+
+  .ai-left { display: flex; align-items: center; gap: 18px; }
+  .ai-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 17px; font-weight: 800; color: #fff;
+  }
+  .ai-badge .icon {
+    padding: 4px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.2);
+    font-size: 12px; font-weight: 800;
+  }
+  .ai-text { font-size: 14px; color: rgba(255,255,255,0.85); font-weight: 500; }
+
+  .ai-right { display: flex; align-items: center; gap: 24px; }
+  .ai-price { color: #fff; text-align: right; }
+  .ai-price .plus { font-size: 13px; opacity: 0.6; }
+  .ai-price .yen { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .ai-price .mo { font-size: 14px; opacity: 0.6; }
+
+  .btn-add {
+    padding: 11px 30px; border-radius: 8px;
+    background: #fff; color: #7c3aed;
+    font-size: 14px; font-weight: 700;
+    border: none; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-add:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+
+  /* ============================================================
+     PATTERN A: オーロラボーダー（くっきりした虹色の枠が回る）
+     ============================================================ */
+  .pattern-a .ai-card-area::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 0; right: 0; bottom: 28px;
+    border-radius: 20px;
+    padding: 4px;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      #a855f7, #ec4899, #f43f5e, #f97316, #eab308,
+      #22c55e, #06b6d4, #3b82f6, #8b5cf6, #a855f7
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: spin-angle 3s linear infinite;
+    z-index: 1;
+  }
+  /* グロー（ぼかし版を重ねる） */
+  .pattern-a .ai-card-area::after {
+    content: '';
+    position: absolute;
+    top: 20px; left: -8px; right: -8px; bottom: 20px;
+    border-radius: 24px;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      #a855f7, #ec4899, #f43f5e, #f97316, #eab308,
+      #22c55e, #06b6d4, #3b82f6, #8b5cf6, #a855f7
+    );
+    filter: blur(18px);
+    opacity: 0.65;
+    animation: spin-angle 3s linear infinite;
+    z-index: 0;
+  }
+
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @keyframes spin-angle {
+    to { --angle: 360deg; }
+  }
+
+  /* ============================================================
+     PATTERN B: ネオングロー（大きく膨張する多色ライト）
+     ============================================================ */
+  .pattern-b .ai-card-area::before {
+    content: '';
+    position: absolute;
+    top: 8px; left: -16px; right: -16px; bottom: 8px;
+    border-radius: 28px;
+    background:
+      radial-gradient(ellipse at 20% 50%, #ec4899 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 50%, #3b82f6 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 30%, #a855f7 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, #06b6d4 0%, transparent 50%);
+    filter: blur(28px);
+    opacity: 0.8;
+    animation: neon-breathe 3s ease-in-out infinite;
+    z-index: 0;
+  }
+  @keyframes neon-breathe {
+    0%, 100% {
+      top: 12px; left: -12px; right: -12px; bottom: 12px;
+      opacity: 0.7; filter: blur(24px);
+    }
+    50% {
+      top: -4px; left: -28px; right: -28px; bottom: -4px;
+      opacity: 0.9; filter: blur(32px);
+    }
+  }
+
+  /* ============================================================
+     PATTERN C: レインボーシマー（光の帯が横切る＋グロー）
+     ============================================================ */
+  .pattern-c .ai-card-area::before {
+    content: '';
+    position: absolute;
+    top: 14px; left: -10px; right: -10px; bottom: 14px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #a855f7, #ec4899, #3b82f6, #a855f7);
+    background-size: 300% 300%;
+    filter: blur(22px);
+    opacity: 0.7;
+    animation: shift-bg 5s ease infinite;
+    z-index: 0;
+  }
+  @keyframes shift-bg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* シマー光の帯 */
+  .pattern-c .ai-card::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: -80%;
+    width: 60%;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(255,255,255,0.06) 38%,
+      rgba(255,255,255,0.25) 44%,
+      rgba(236,72,153,0.15) 48%,
+      rgba(59,130,246,0.15) 52%,
+      rgba(255,255,255,0.25) 56%,
+      rgba(255,255,255,0.06) 62%,
+      transparent 70%,
+      transparent 100%
+    );
+    border-radius: 16px;
+    z-index: 3;
+    animation: shimmer-sweep 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes shimmer-sweep {
+    0% { left: -80%; }
+    100% { left: 180%; }
+  }
+
+  @media (max-width: 700px) {
+    .ai-card { flex-direction: column; gap: 16px; text-align: center; padding: 20px 16px; }
+    .ai-left, .ai-right { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>AI Reply グローエフェクト — パターン比較 v2</h1>
+  <p>実際の料金ページの明るい背景上でもはっきり見えるエフェクト候補 3種</p>
+</div>
+
+<div class="patterns">
+
+  <!-- PATTERN A -->
+  <div class="section pattern-a">
+    <div class="section-label">
+      <span class="tag">A</span>
+      <span class="name">オーロラボーダー</span>
+    </div>
+    <div class="section-desc">
+      カードの周囲に虹色のボーダーラインがくっきり回転。<br>
+      さらに外側にぼかしグローが溢れ出す。上品かつ華やか。GitHub Copilot風。
+    </div>
+    <div class="ai-card-area">
+      <div class="ai-card">
+        <div class="ai-left">
+          <div class="ai-badge"><span class="icon">AI</span> AI Reply</div>
+          <span class="ai-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-right">
+          <div class="ai-price"><span class="plus">＋ </span><span class="yen">¥2,200</span><span class="mo">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATTERN B -->
+  <div class="section pattern-b">
+    <div class="section-label">
+      <span class="tag">B</span>
+      <span class="name">ネオングロー</span>
+    </div>
+    <div class="section-desc">
+      ピンク・青・紫・シアンの光がカードの外側で大きく呼吸するように膨張・収縮。<br>
+      最も派手でインパクトが強い。カラフルさ最大。
+    </div>
+    <div class="ai-card-area">
+      <div class="ai-card">
+        <div class="ai-left">
+          <div class="ai-badge"><span class="icon">AI</span> AI Reply</div>
+          <span class="ai-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-right">
+          <div class="ai-price"><span class="plus">＋ </span><span class="yen">¥2,200</span><span class="mo">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATTERN C -->
+  <div class="section pattern-c">
+    <div class="section-label">
+      <span class="tag">C</span>
+      <span class="name">レインボーシマー</span>
+    </div>
+    <div class="section-desc">
+      背面に紫〜ピンク〜青のグラデーショングロー＋カード上を光の帯がスーッと横切る。<br>
+      きらめき感が強く、動きで目を引く。Apple風の上品さ。
+    </div>
+    <div class="ai-card-area">
+      <div class="ai-card">
+        <div class="ai-left">
+          <div class="ai-badge"><span class="icon">AI</span> AI Reply</div>
+          <span class="ai-text">問い合わせはAIが素早く対応</span>
+        </div>
+        <div class="ai-right">
+          <div class="ai-price"><span class="plus">＋ </span><span class="yen">¥2,200</span><span class="mo">／月</span></div>
+          <button class="btn-add">追加する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

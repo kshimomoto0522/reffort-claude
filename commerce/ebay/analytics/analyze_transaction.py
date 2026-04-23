@@ -2,7 +2,7 @@ import csv, io, sys
 from collections import defaultdict
 
 # 文字コード問題を回避：結果をファイルに書き出す
-OUTPUT_FILE = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\ebay-analytics\result_transaction.txt"
+OUTPUT_FILE = r"C:\Users\KEISUKE SHIMOMOTO\Desktop\reffort\commerce\ebay\analytics\result_transaction.txt"
 
 file = r"C:\Users\KEISUKE SHIMOMOTO\Downloads\Transaction-Mar-16-2026-01_18_10-0700-13288723972.csv"
 

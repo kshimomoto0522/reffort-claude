@@ -1,0 +1,24 @@
+# APIキー・トークンなどの機密ファイル（全フォルダ共通）
+.env
+.env.*
+*.env
+*.env.*
+
+# Google API認証ファイル
+credentials*.json
+*-service-account*.json
+reffort-sheets-*.json
+
+# バックアップファイル（ローカル作業用・GitHub不要）
+*.bak
+*.backup_*
+
+# Pythonキャッシュ
+__pycache__/
+*.pyc
+*.pyo
+
+# ログ・一時ファイル
+*.log
+error_*.log
+run_log.txt

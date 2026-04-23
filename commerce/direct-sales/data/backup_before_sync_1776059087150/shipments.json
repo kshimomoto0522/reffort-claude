@@ -1,0 +1,325 @@
+[
+  {
+    "id": "1775802687496",
+    "items": [
+      {
+        "sku": "1183A592.200",
+        "size": "11/28.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183A592.200",
+        "size": "11.5/29",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.200",
+        "size": "11.5/29",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.001",
+        "size": "6/24.5",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "5/23.5",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "5.5/24",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "6/24.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "7.5/25.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "8/26",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "11.5/29",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459524284",
+        "locationName": "城南"
+      },
+      {
+        "sku": "1183C102.203",
+        "size": "7.5/25.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459514506",
+        "locationName": "筑紫野"
+      },
+      {
+        "sku": "1183C102.203",
+        "size": "8/26",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459514506",
+        "locationName": "筑紫野"
+      },
+      {
+        "sku": "1183C102.203",
+        "size": "8.5/26.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459514506",
+        "locationName": "筑紫野"
+      },
+      {
+        "sku": "1183A872.200",
+        "size": "6.5/25",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459514506",
+        "locationName": "筑紫野"
+      },
+      {
+        "sku": "1183A872.200",
+        "size": "7.5/25.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459514506",
+        "locationName": "筑紫野"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "8.5/26.5",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "10/28",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "11/28.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "5.5/24",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.751",
+        "size": "6/24.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.204",
+        "size": "9/27",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.204",
+        "size": "10/28",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.001",
+        "size": "6/24.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.001",
+        "size": "8/26",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.001",
+        "size": "9.5/27.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.001",
+        "size": "10/28",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183B566.021",
+        "size": "8/26",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183B566.021",
+        "size": "8.5/26.5",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183A592.200",
+        "size": "5/23.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183A872.200",
+        "size": "5/23.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183C102.751",
+        "model": "MEXICO 66",
+        "colorway": "YELLOW/BLACK",
+        "size": "6/24.5",
+        "quantity": 2,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459467402",
+        "locationName": "山田"
+      },
+      {
+        "sku": "1183C102.751",
+        "model": "MEXICO 66",
+        "colorway": "YELLOW/BLACK",
+        "size": "7.5/25.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459467402",
+        "locationName": "山田"
+      },
+      {
+        "sku": "1183B566.021",
+        "model": "MEXICO 66",
+        "colorway": "SILVER/OFF WHITE",
+        "size": "7.5/25.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459467402",
+        "locationName": "山田"
+      },
+      {
+        "sku": "1183A872.200",
+        "size": "5.5/24",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      },
+      {
+        "sku": "1183A872.200",
+        "size": "6/24.5",
+        "quantity": 1,
+        "sizeType": "unisex",
+        "locationId": "loc-1775459495010",
+        "locationName": "瓦田"
+      }
+    ],
+    "locations": [
+      {
+        "id": "loc-1775459524284",
+        "name": "城南"
+      },
+      {
+        "id": "loc-1775459514506",
+        "name": "筑紫野"
+      },
+      {
+        "id": "loc-1775459495010",
+        "name": "瓦田"
+      },
+      {
+        "id": "loc-1775459467402",
+        "name": "山田"
+      }
+    ],
+    "tracking": [
+      {
+        "carrier": "DHL",
+        "trackingNumber": "0000"
+      },
+      {
+        "carrier": "DHL",
+        "trackingNumber": "0123"
+      }
+    ],
+    "orderNumbers": [
+      "260410"
+    ],
+    "createdAt": "2026-04-10T02:56:05.421Z"
+  }
+]

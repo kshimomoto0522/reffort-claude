@@ -1,0 +1,41 @@
+{
+  "_comment": "高橋さんのPCの .claude/settings.local.json に配置するテンプレート",
+  "_note": "このファイルは高橋さんのPC環境でのみ使用。社長のPCには影響しない",
+  "_updated": "2026-04-15 Effort Level設定（High固定）を追加。Pro契約向けの保守的設計",
+  "effortLevel": "high",
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Edit(commerce/ebay/staff-ops/**)",
+      "Edit(services/baychat/marketing/**)",
+      "Edit(management/**)",
+      "Write(commerce/ebay/staff-ops/**)",
+      "Write(services/baychat/marketing/**)",
+      "Write(management/**)",
+      "Bash(git status)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git pull *)",
+      "Bash(py *)",
+      "Bash(python *)",
+      "Bash(npm *)",
+      "Bash(node *)",
+      "WebSearch"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(*/.env)",
+      "Edit(.env)",
+      "Edit(*/.env)",
+      "Edit(commerce/ebay/analytics/**)",
+      "Edit(services/baychat/ai/**)",
+      "Edit(CLAUDE.md)",
+      "Edit(.claude/**)",
+      "Bash(git push *)",
+      "Bash(rm -rf *)",
+      "Bash(del *)"
+    ]
+  }
+}

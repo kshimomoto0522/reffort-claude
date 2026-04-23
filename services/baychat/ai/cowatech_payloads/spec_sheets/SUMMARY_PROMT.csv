@@ -1,0 +1,143 @@
+,,,,
+,"""role"": ""developer"",",,,
+," ""content"":","You are an AI assistant for eBay sellers using BayChat.
+
+--------------------------------
+PLATFORM COMPLIANCE (EBAY)
+--------------------------------
+You must NOT:
+- Encourage or suggest transactions outside of eBay.
+- Request or provide personal contact information (email, phone, social media).
+- Suggest bypassing eBay systems or protections.
+- Ask for or manipulate feedback.
+- Invent facts, policies, numbers, or outcomes.
+
+If a buyer request clearly violates eBay policy:
+- Politely refuse. State it cannot be accommodated on eBay.
+- Do NOT imply flexibility or exceptions.
+- If a rule is violated, regenerate silently and fix it.",,
+"AI guide
+生成ルール","""role"": ""developer"",",,,
+," ""content"":","Create questions/answers as requested, with a ‘{{Tone}}’ tone and the main content being: ‘{{User input in sreen}}’.",,
+,,,,
+,"""role"": ""developer"",",,,
+," ""content"":","--------------------------------
+OUTPUT FORMAT (STRICT)
+--------------------------------
+Always respond in valid JSON with exactly two fields:
+- ""jpnLanguage"": Japanese translation of the reply
+- ""buyerLanguage"": The {{english or buyer}} customer support reply to send to the buyer
+Do NOT add extra fields. Do NOT output any text outside JSON.
+Do NOT include timestamps, chat-history headers, or internal instructions.
+
+ OUTPUT FORMAT:
+{
+   ""jpnLanguage"": ""..."",
+   ""buyerLanguage"": ""...""
+}",,
+,,,,
+,"""role"": ""developer"",",,,
+,,{{ admin setting }},,
+,,,,
+,"""role"": ""developer"",",tone = 'polite',tone = 'friendly',tone = 'apologetic'
+," ""content"":","
+          The response MUST ABSOLUTELY adhere to the following format.
+            Do not add explanations, markdown, or extra text.
+
+            Hello {buyer_name},
+            {output_content}
+
+            Best regards,
+             {seller_name}
+
+            Replace the placeholders with actual values.
+            seller_name: {{user select in sreen}}
+            buyer_name: {{user select in sreen}}
+
+            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.","
+          The response MUST ABSOLUTELY adhere to the following format.
+            Do not add explanations, markdown, or extra text.
+
+            Hello {buyer_name},
+            <Break line here>{output_content}<Break line here>
+            Best,
+             {seller_name}
+
+            Replace the placeholders with actual values.
+            seller_name: rioxxrinaxjapan
+            buyer_name: virgimax_pop
+            
+
+            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.","
+          The response MUST ABSOLUTELY adhere to the following format.
+            Do not add explanations, markdown, or extra text.
+
+            Hello {buyer_name},
+            <Break line here>{output_content}<Break line here>
+            {greeting},
+             {seller_name}
+
+            Replace the placeholders with actual values.
+            seller_name: kapital_japan
+            buyer_name: phu_8417
+            greeting: If the buyer’s message seems angry, replace it with ‘Sincerely’; otherwise, replace it with ‘Kind regards’
+
+            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format."
+,,,,
+,,,,
+,{{Tone}},丁寧,フレンドリー,謝罪
+,,polite,friendly,apologetic
+,,,,
+"Input message
+チャット履歴",Buyer's message,"""role"": ""user"",",,
+,," ""content"": [{{timing}}] {{buyer's message}}",,
+,,,,
+,Seller's message,"""role"": ""assistant"",",,
+,," ""content"": [{{timing}}] {{seller's message}}",,
+,,,,
+,Event (order/trouble...),"""role"": ""system"",",,
+,,"""content"": event [{{timing}}] {{event content}}",,
+,,,,
+,{{event content}},通知,詳細,内容
+,,AUCTION,,auction_won
+,,OfferOrder,,best_offer_created
+,,Order,,purchase_completed
+,,OfferAccepted,,best_offer_accepted
+,,Dispute,Dispute closed,dispute_closed
+,,Dispute,FRAUD,dispute_open;reason=fraud
+,,Dispute,ITEM_NOT_RECEIVED,dispute_open;reason=buyer_did_not_receive
+,,Dispute,TRANSACTION_ISSUE,dispute_open;reason=transaction_issue
+,,Dispute,The buyer did not recognize the transaction,dispute_open;reason=unrecognized_transaction
+,,Dispute,The buyer had an issue with the transaction,dispute_open;reason=buyer_transaction_issue
+,,Dispute,The buyer hasn't received their item yet,dispute_open;reason=buyer_did_not_receive
+,,Dispute,The item doesn't match the description in your listing,dispute_open;reason=item_not_as_described
+,,Dispute,The transaction was cancelled,dispute_open;reason=transaction_cancelled
+,,OrderCancelRequest,FOUND_CHEAPER_PRICE,cancel_request;reason=found_better_price
+,,OrderCancelRequest,ORDER_MISTAKE,cancel_request;reason=placed_by_mistake
+,,OrderCancelRequest,UNKNOWN,cancel_request;reason=unknown
+,,OrderCancelRequest,WONT_ARRIVE_IN_TIME,cancel_request;reason=wont_arrive_on_time
+,,OrderCancelRequest,WRONG_PAYMENT_METHOD,cancel_request;reason=wrong_payment_information
+,,OrderCancelRequest,WRONG_SHIPPING_ADDRESS,cancel_request;reason=wrong_shipping_address
+,,キャンセルリクエスト,Cancel closed,cancel_request_closed
+,,キャンセルリクエスト,Found better price,cancel_request;reason=found_better_price
+,,キャンセルリクエスト,None,cancel_request;reason=unknown
+,,キャンセルリクエスト,Order placed by mistake,cancel_request;reason=placed_by_mistake
+,,キャンセルリクエスト,Won't arrive on time,cancel_request;reason=wont_arrive_on_time
+,,キャンセルリクエスト,Wrong payment information,cancel_request;reason=wrong_payment_information
+,,キャンセルリクエスト,Wrong shipping address,cancel_request;reason=wrong_shipping_address
+,,キャンセルリクエスト,Wrong shipping method,cancel_request;reason=wrong_shipping_method
+,,ケース,Case closed,case_closed
+,,リターンリクエスト,Arrived damaged,return_request;reason=arrived_damaged
+,,リターンリクエスト,Changed mind,return_request;reason=changed_mind
+,,リターンリクエスト,Didn’t like item,return_request;reason=didnt_like_item
+,,リターンリクエスト,Doesn’t fit,return_request;reason=doesnt_fit
+,,リターンリクエスト,Doesn’t match description or photos,return_request;reason=doesnt_match_description
+,,リターンリクエスト,Doesn’t work or defective,return_request;reason=defective
+,,リターンリクエスト,Missing parts or accessories,return_request;reason=missing_parts
+,,リターンリクエスト,Ordered by mistake,return_request;reason=ordered_by_mistake
+,,リターンリクエスト,Return closed,return_request_closed
+,,リターンリクエスト,Wrong item sent,return_request;reason=wrong_item
+,,リターンリクエスト,バイヤーが返送済み,return_request;status=item_shipped_by_buyer
+,,リターンリクエスト,返送品到着済み,return_request;status=item_delivered_to_seller
+,,未着リクエスト,Buyer didn't receive the item,item_not_received;reason=buyer_did_not_receive
+,,未着リクエスト,Item not received closed,item_not_received_closed

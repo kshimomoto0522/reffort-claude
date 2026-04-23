@@ -1,0 +1,1282 @@
+[
+  {
+    "id": "prettypoodle1234_c0e079a9",
+    "category": "cancel",
+    "buyer_ebay": "prettypoodle1234",
+    "buyer_message": "When will I receive a refund? I live in Tennessee and the courier you used has sent the item back to you in Indianapolis. As you can see from the tracking information. It has been a month since I paid for the item.",
+    "buyer_message_ja": "いつ返金を受け取れますか？私はテネシーに住んでいますが、あなたが利用した宅配業者は商品をインディアナポリスのあなたの元へ送り返しています。追跡情報からもご確認いただけます。商品代金を支払ってから1ヶ月が経過しています。",
+    "num_messages": 20,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"PUMA Women's Speed ​​Cat Wedge 407878_01 Totally Taupe Chocolate\", \"SKU\": \"H01399-7-7\", \"orderID\": \"08-14203-08343\", \"CurrentPrice\": \"189.0\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-06T14:16:01.000Z] 商品が売れました！ PUMA Women's Speed ​​Cat Wedge 407878_01 Totally"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-27T21:38:16.000Z] Buyer didn't receive the item"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-27T21:41:28.000Z] The buyer hasn't received their item yet"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-06T14:46:09.000Z] Hello Reva Prescott ,  \nThank you for your purchase!\nThe item will be shipped by Feb 16 (Japan time)  , and you will receive a tracking number on ebay.  \n\nOrder details\nPUMA Women's Speed ​​Cat Wedge 407878_01 Totally Taupe Chocolate US7/UK4.5/JP23.5 \n\nYour feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. \n\nWe will regularly send a coupon to followers.\nPlease follow our shop!\nhttps://www.ebay.com/str/rioxrinaxshop\n\nIf you are searching for any particular products, please don't hesitate to reach out to us.\nWe don't mind if the item is already listed by other sellers on eBay. We have the ability to order anything.\nRest assured, we will do our best to provide you with a better deal.\n\nThank you once again for your purchase, and we wish you a delightful experience with your new item!\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-09T15:52:28.000Z] Hello Reva Prescott ,\nYour item has been shipped!\n\nShipping Company SpeedPAK (FedEx/DHL).\nTracking number EM1013086313851FE06010008F0N\n\nWe hope you will like the product!\nThis message has been sent automatically.\nIf you have made a separate inquiry, We will respond to you in order."
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-13T06:51:07.000Z] Hi. I just received a call about customs. I’d like to just cancel the order."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-13T06:51:13.000Z] Hello prettypoodle1234 ,\nThank you for contacting us.\nWe apologize for the inconvenience, but we are currently outside of business hours.\nIf you have sent an inquiry or replied, we will respond on the next business day.\nWe appreciate your understanding.\nThis message has been sent automatically.\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-13T06:52:35.000Z] FedEx called me due to customs, but I already paid an inflated price for the shoes AND shipping. I no longer want the item and would like a refund."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-13T14:10:47.000Z] Hello,\nThank you for your message.\n\nFor shipments to the United States, the USD 40 shown as shipping is not the actual shipping fee. It represents the customs duties that we prepay on your behalf. The customs duties have already been paid.\n\nWe have also confirmed with FedEx that there is no record of any additional tax charges.\n\nSince the item has already been shipped, we are unable to cancel the order at this time.\nIf you wish to return the item, please kindly receive the package first and then open a return request.\nPlease note that customs duties already paid are non-refundable.\n\nIf delivery is refused, the carrier may return or dispose of the package, and we may be charged significant fees and return shipping costs.\nIn such a case, we would not be able to issue a refund.\n\nThank you for your understanding and cooperation.\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-14T00:56:32.000Z] This is insane."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-14T00:56:38.000Z] Hello prettypoodle1234 ,\nThank you for contacting us.\nWe apologize for the inconvenience, but we are currently outside of business hours.\nIf you have sent an inquiry or replied, we will respond on the next business day.\nWe appreciate your understanding.\nThis message has been sent automatically.\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-14T00:57:36.000Z] Never have I ever experienced anything so unprofessional and blatantly messed up."
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-14T00:58:08.000Z] You should not be selling items and inflating prices if you know this is going on."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-14T01:31:22.000Z] Since last August, import duties have applied to items purchased from the United States. However, we use eBay’s mandatory DDP service (where the seller advances and prepays the customs duties before shipping). We have shipped thousands of items to the United States, and you are the only person who has ever claimed to have been charged customs duties. We have also confirmed with FedEx, and they clearly stated that there is no record of FedEx charging you any customs duties. We have evidence of this.\n\nWe do not understand why you are dissatisfied with us or why we are being blamed.\nIf you were truly charged customs duties by FedEx, please provide proof. We will file a claim with FedEx on your behalf.\nIf you cannot provide proof, then what you are saying is not factual. Please understand that if you refuse delivery, we have no obligation to issue a refund and will not bear any responsibility.\nEven if you ask eBay to step in, we will submit the evidence from FedEx."
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-17T12:11:04.000Z] I did not say I was charged customs duty. I DID however state that my initial ETA is nowhere near what was expected."
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-17T12:11:57.000Z] I informed you all that a report from FedEx called me regarding the shipment."
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-17T12:17:32.000Z] I cannot be the only customer you’ve had who has had FedEx contact them, via telephone, regarding items/orders imported. I only paid such an inflated price due to your high seller’s rating on eBay. So, please let’s not go there with me after I’ve paid as expected, yet the item I should have received is still stuck somewhere. I’m not here to argue with you, simply trying to understand what is going on. \n\nHave you noticed my rating and track record? [As both a buyer and seller.]"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-17T12:21:12.000Z] If you reread and comprehend, you’ll see that I never said anything about FedEx charging me extra. They called my cellphone asking me questions about customs and even brought up “our president.” I saw the package was stuck in Indiana and am not trying to have any issues over a pair of overpriced shoes."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-02-18T13:19:13.000Z] he estimated delivery date shown by eBay on the order was February 10–18.Your order was placed on February 6 Japan time, and since it was past the carrier’s pickup cutoff on Friday, we shipped the item on Monday the 9th.If you had responded to the customs clearance inquiry, you would have received the item within a few days, and it would have been delivered within the originally estimated delivery window you mentioned.\nThe situation became complicated only because you refused delivery and took unnecessary actions.Despite this, you sent us messages calling us unprofessional, telling us not to sell products, and accusing us of price gouging, which are completely unfounded and insulting.We have done nothing that deserves blame from you, nor have we violated any eBay policies or rules.\nYour rating and track record are irrelevant to us.In fact, if you truly have experience, we cannot understand why you would refuse a shipment that was scheduled to arrive within the estimated delivery window or send insulting messages.The confusion was caused by your own actions.\nWe will report you to eBay as a malicious buyer."
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-09T17:17:00.000Z] When will I receive a refund? I live in Tennessee and the courier you used has sent the item back to you in Indianapolis. As you can see from the tracking information. It has been a month since I paid for the item."
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "antonioto_0_fbc8a65e",
+    "category": "cancel",
+    "buyer_ebay": "antonioto_0",
+    "buyer_message": "Hello\n\nGreat, thanks again and have a great time!\n\nBest regards\n\nJoe",
+    "buyer_message_ja": "こんにちは\n\nありがとうございます。どうぞ素敵な時間をお過ごしください！\n\nよろしくお願いします。\nジョー",
+    "num_messages": 18,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"Onitsuka Tiger MEXICO 66 1183A201 003 BLACK YELLOW\", \"SKU\": \"V0294-9Z-11\", \"orderID\": \"04-14471-04757\", \"CurrentPrice\": \"150.0\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-06T03:42:34.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 1183A201 003 BLACK YELLO"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-06T03:48:18.000Z] Found better price"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-07T18:46:51.000Z] Cancel closed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-06T04:00:41.000Z] Hello antonioto_0 ,\nThank you for contacting us.\nWe apologize for the inconvenience, but we are currently outside of business hours.\nIf you have sent an inquiry or replied, we will respond on the next business day.\nWe appreciate your understanding.\nThis message has been sent automatically.\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-06T04:00:47.000Z] Hello. I am so sorry, I did a mistake with the size of the sneakers. You can send me the same shoe, but PLEASE NOTE that I need a size 8.5 US. May you please confirm if you have it on stock? Otherwise I would like kindly to cancel the order because the size I ordered is too big, sorry. Thank you very much and best regards!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-06T11:07:32.000Z] Hello,\nWe have stock available in US 8.5 / JP 26.5.\nMay we proceed with your order after changing the size?\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-07T10:17:27.000Z] Hello,  \nWe would appreciate it if we could receive a reply from you."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-07T17:58:18.000Z] Yes, please, send mit the right size as indicated. Many thanks and best regards!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-07T18:18:05.000Z] Hello,\n\nThank you for your reply.\n\nWe are pleased to inform you that we have US size 8.5 (JP 26.5) in stock, so we will go ahead and process the exchange for you.\n\nThank you for your patience.\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-07T21:32:33.000Z] Yes, please send me the size US 8.5 and thank you very much!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-07T21:32:39.000Z] Hello antonioto_0 ,\nThank you for contacting us.\nWe apologize for the inconvenience, but we are currently outside of business hours.\nIf you have sent an inquiry or replied, we will respond on the next business day.\nWe appreciate your understanding.\nThis message has been sent automatically.\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-07T21:34:38.000Z] SORRY, I am an idiot, I need SIZE US 8... Do you have this size in stock? If not, you may send me US 8.5. Please give me a short reply, thank you very much &amp; best regards!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-08T12:59:11.000Z] Hello,\nNoted. We have the item in stock, so we will change the size to US8 / JP26.\n\nWe will proceed with the process.\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-09T06:39:40.000Z] Hello Antonio Giuseppe Tozzi ,\nYour item has been shipped!\n\nShipping Company UPS (FedEx/DHL).\nTracking number 1ZHB70516734170167\n\nWe hope you will like the product!\nThis message has been sent automatically.\nIf you have made a separate inquiry, We will respond to you in order."
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-09T16:21:23.000Z] Hello\n\nThx for the email and all the info!\n\nSorry for my question but what size did you shipp..??\nAgain thank you very much for your outstandings support and best regards!\n\nAntonio G. Tozzi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-09T16:33:06.000Z] Great, thanks a lot and best regards!\n\nJoe aka Antonio G. Tozzi"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-09T16:50:53.000Z] Hello,\n\nThank you for your message.\n\nAs confirmed in our messages, we have shipped US 8 / JP 26.\n\nIf you have any questions, please feel free to contact us.\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-09T16:56:42.000Z] Hello\n\nGreat, thanks again and have a great time!\n\nBest regards\n\nJoe"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "dorotheenthal_49472cb7",
+    "category": "return",
+    "buyer_ebay": "dorotheenthal",
+    "buyer_message": "wo sind denn diese Schuhe jetzt? Ich hatte verstanden, dass die zu Ihnen zurück in Japan sind, und deshalb den Fall bei ebay gemeldet",
+    "buyer_message_ja": "この靴は今どこにありますか？日本のあなたのところに戻っていると理解していたので、eBayにケースを報告しました。",
+    "num_messages": 33,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"Onitsuka Tiger MEXICO 66 SD 1183B955 020 PURE SILVER CREAM\", \"SKU\": \"V0275-12.5-22\", \"orderID\": \"13-13940-93484\", \"CurrentPrice\": \"161.58\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-12-09T04:06:24.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 SD 1183B955 020 PURE SIL"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-01T08:05:15.000Z] Buyer didn't receive the item"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-10T19:14:50.000Z] system_message"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-09T05:06:19.000Z] Hello alex krings ,  \nThank you for your purchase!\nThe item will be shipped by Dec 16 (Japan time)  , and you will receive a tracking number on ebay.  \n\nOrder details\nOnitsuka Tiger MEXICO 66 SD 1183B955 020 PURE SILVER CREAM US12,5 / JP30 \n\nYour feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. \n\nWe will regularly send a coupon to followers.\nPlease follow our shop!\nhttps://www.ebay.com/str/rioxrinaxshop\n\nIf you are searching for any particular products, please don't hesitate to reach out to us.\nWe don't mind if the item is already listed by other sellers on eBay. We have the ability to order anything.\nRest assured, we will do our best to provide you with a better deal.\n\nThank you once again for your purchase, and we wish you a delightful experience with your new item!\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-09T06:45:10.000Z] DHL packages end up at DHL Express here; they don't work at all. The last package from Japan came via FedEx; it ended up at Hermes and worked perfectly."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-09T06:45:19.000Z] Hello dorotheenthal ,\nThank you for contacting us.\nWe apologize for the inconvenience, but we are currently outside of business hours.\nIf you have sent an inquiry or replied, we will respond on the next business day.\nWe appreciate your understanding.\nThis message has been sent automatically.\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-09T10:39:15.000Z] Hello,\n\nThank you for your message.\n\nWhile we are unable to accept specific courier requests, we usually ship to Germany via FedEx.\n\nBest regards,  \nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-11T14:26:28.000Z] Hello alex krings ,\nYour item has been shipped!\n\nShipping Company SpeedPAK (FedEx/DHL).\nTracking number EM1013080734930FE06040001E0N\n\nWe hope you will like the product!\nThis message has been sent automatically.\nIf you have made a separate inquiry, We will respond to you in order."
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-19T06:26:09.000Z] I paid the customs fees. And the Hermes delivery driver has a delivery release authorization. He claims to have been here, but I haven't received any notification. There's also a Hermes shop across the street where he could have left the package. Hermes tracking says the FedEx tracking number is invalid."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-19T06:26:16.000Z] Hello dorotheenthal ,\nThank you for contacting us.\nWe apologize for the inconvenience, but we are currently outside of business hours.\nIf you have sent an inquiry or replied, we will respond on the next business day.\nWe appreciate your understanding.\nThis message has been sent automatically.\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-19T12:10:14.000Z] Hello,\n\nThank you for contacting us.\n\nAre you saying that the package may have been lost?\nAccording to the tracking information, it is noted that the consignee refused delivery.\n\nWe will also contact FedEx from our side to check on this matter. However, the issue may be resolved more quickly if you contact FedEx directly as well.\nIf possible, please contact them using the tracking number below:\n\nTracking number: 886955279280\n\nThank you for your cooperation.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-19T13:00:53.000Z] The package isn't lost. FedEx handed it over to Hermes. I paid the customs fees online. And Hermes has permission to leave the package at my designated drop-off location. There's also a Hermes shop across the street from my house.\n\nBut they claim they were going to deliver the package to me, but I wasn't home. I also didn't receive a delivery notification. I'm trying to find out where the package is with Hermes.\n\nI will try it with the new tracking nr You gave me\n\nkeep funny and healthy ;D"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-19T13:37:52.000Z] They're trying to develop AI here in Germany,\n\nbut it learns from bots in the dead web ;D"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-19T15:21:18.000Z] We have contacted FedEx to confirm, but their response will most likely be after the weekend.\nWe apologize for the wait and appreciate your understanding."
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-20T12:12:49.000Z] Here in Cologne (we're the ones with the cathedral and the Three Wise Men) we say: I'm not on the run. ;D (meaning: I have time.)"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-22T11:06:09.000Z] I can't find out which parcel service has the package. It says, for example, \"On FedEx vehicle for delivery, HERMES GERMANY,\" but both say the tracking number is unknown to them. DHL doesn't have the package either."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-22T15:36:09.000Z] Hello,\n\nThank you for checking and getting back to us.\n\nWe have received a response from FedEx stating that the consignee refused to accept the shipment, and that the consignee is required to contact FedEx directly.\n\nAs this response differs from what you mentioned, we have requested FedEx to conduct a more detailed investigation into the matter.\n\nWe will keep you updated as soon as we receive further information.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-23T08:14:04.000Z] Hello, because the FedEx system says that the package number does not exist, could they perhaps give you a tracking number that is known here?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-23T10:55:30.000Z] Hello,\n\nThe only tracking number we have is the one we previously shared:\n886955279280.\nAs shown in the images we sent, we are able to track the shipment on our end.\n\nWe have not yet received a response from FedEx; however, the shipment status was updated to “In Transit” on December 22.\nWe will contact you again as soon as we hear back from FedEx.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-25T14:15:52.000Z] Hello,\n\nThank you for your patience.\nWe have received a response from FedEx and would like to update you.\n\nAccording to FedEx:\n“The shipment was returned to FedEx from Hermes, which was handling the local delivery, because the delivery address could not be confirmed and they were unable to contact the recipient, ALEX KRINGS.\nWe would kindly ask for a phone number or email address where we can reach the recipient, other than 02219725910.”\n\nThis is the information we received from FedEx.\nCould you please provide an alternative phone number or an email address other than 02219725910?\n\nThank you for your cooperation.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-26T10:54:40.000Z] lafol@hotmail.de .\nI paid the tax. So they can deliver the parcel to the HERMES shop in the same street: Weißenburgstr. 68 (späti2)"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-26T11:05:59.000Z] Hello,\n\nThank you for providing the information.\nWe have forwarded it to FedEx today.\n\nWe apologize for the wait, but please allow some time for them to process this request.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-08T09:16:07.000Z] Happy New Year, but nothing's happening with FedEx. Like I said: I've paid the customs fees and they can drop the package off at the Hermes shop across the street from me."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-01-08T13:09:53.000Z] Hello,\n\nHappy New Year.\n\nWe shared the email address you provided with FedEx and requested that they contact you directly. However, yesterday we were informed by FedEx that the package would be returned to Japan.\nAs the process had already progressed, we were unfortunately unable to stop the return.\n\nWe are currently checking with FedEx regarding the reason for the return.\nWe apologize for the delay and will contact you again as soon as we receive their response.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-09T06:39:47.000Z] FedEx uses Hermes for its deliveries here. Hermes has permission to leave packages at my address and has the access code to my front door. I also authorized them to leave the package at the Hermes shop across the street. They did nothing. I didn't receive any notification either. They've had my email address for 10 days; they even managed to send me the invoice for customs fees, which I paid immediately."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-01-09T10:50:30.000Z] Hello,\n\nThank you for contacting us.\nWe have followed up with FedEx again as we have not yet received a response from them.\n\nWe sincerely apologize for the inconvenience and kindly ask for a little more time.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-09T12:16:14.000Z] Cologne (the city where I live) has always been very Catholic (very Christian). Before Christmas, we have Advent, a time for reflection. Then comes Christmas, when we commemorate the birth of Jesus on the winter solstice, because Jesus gave us light in the form of love for our neighbor. Christmas then lasts at least until January 6th, when the Three Wise Men came to Jesus. (The relics of the Three Wise Men are kept here in Cologne Cathedral.) In the past, our calendar therefore ended on December 24th and the new one began on January 6th. This time is still called \"between the years.\"\n\nToday, nobody knows about love for one's neighbor anymore; Advent is spent at Christmas markets drinking mulled wine. Christmas Eve (before Christmas, gifts are demanded), and otherwise, the time between the years is used here to not work and to overeat. (Apparently, this is also the case here at FedEx.)\nHappy New Year!\nStay healthy and in funny mood\nAlexander"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-01-12T16:19:11.000Z] Hello,\n\nI am contacting you as I have received a response from FedEx.\nAs mentioned previously, the package is currently being returned to Japan. According to FedEx, the reason for the return is that HERMES was unable to confirm the delivery address.\n\nRegarding the tax refund, this matter cannot be handled by FedEx Japan, so we kindly ask that you contact FedEx Germany directly to file a request.\n\nIf you would like the item to be reshipped, we can do so once it has been returned to us.\nIn that case, you would need to cover the return shipping cost from Germany to Japan, as well as the shipping cost from Japan to Germany.\n\nThank you for your understanding.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-14T10:16:36.000Z] Bitte erstatten Sie mir meinen KAufpreis, damit ich Sie positiv bewerten kann. Danke Alex"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-01-14T12:45:13.000Z] Hello,\n\nThank you for your understanding.\nThe return shipping cost to Japan was EUR 45; however, we will refund the amount after deducting EUR 40 from the purchase price.\n\nOnce the item has arrived back to us, we will proceed with the refund.\nThank you for your cooperation.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-14T13:18:56.000Z] Hallo,\n\nIhr Angebot bei ebay war inklusive Versand\ndeshalb sind Sie für die Versandkosten verantwortlich.\n\nAuch wenn es ärgerlich ist, das Hermes zu blöd war ein Paket im eigenen Shop abzugeben oder die Abstellerlaubnis zu nutzen (nachdem ich den Zoll sofort bezahlt hatte), liegen die Versandkosten in ihrem Feld.\n(Ich bin jeden Tag zuhause, die hätten ja auch bei mir klingeln können)\n\nDanke für ihr Verständnis\n\nAlex\n\nHello,\n\nYour eBay offer included shipping, so you are responsible for the shipping costs.\n\nEven though it's annoying that Hermes was too incompetent to deliver the package to their own shop or use the delivery release option (after I immediately paid the customs fees), the shipping costs are your responsibility.\n\n(I'm home every day; they could have easily rung my doorbell.)\n\nThank you for your understanding.\n\nAlex\n\n\n\n\n________________________________"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-01-14T14:10:35.000Z] Hello,\n\nYes, the outbound shipping was of course free of charge.\nIf the item is returned after you receive the package and open a return request, we will also cover the return shipping cost.\nHowever, if the package is returned without being received, the return shipping cost can become quite high.\n\nWe contacted FedEx multiple times on our side; however, the only response we received was that Hermes was unable to reach the consignee.\nUnfortunately, we also had no direct way to contact Hermes ourselves.\n\nPlease understand that we did everything we could on our end to resolve the situation.\nThank you for your understanding.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-25T11:08:10.000Z] wo sind denn diese Schuhe jetzt? Ich hatte verstanden, dass die zu Ihnen zurück in Japan sind, und deshalb den Fall bei ebay gemeldet"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "edw539875_03e46500",
+    "category": "return",
+    "buyer_ebay": "edw539875",
+    "buyer_message": "If it was for the reason for not having the tags, when I recieved the shoes the tags were already not attached, so I made sure to include the tags in the box of shoes at the very top.",
+    "buyer_message_ja": "タグが付いていなかったことが理由なら、私が靴を受け取った時点でタグはすでに付いていなかったので、靴の箱の一番上にタグを入れておきました。",
+    "num_messages": 30,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"Onitsuka Tiger MEXICO 66 1183A201 003 BLACK YELLOW\", \"SKU\": \"V0294\", \"orderID\": \"11-13353-85110\", \"CurrentPrice\": \"146.25\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-07-23T11:36:13.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 1183A201 003 BLACK YELLO"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-07-23T11:36:13.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 1183A201 003 BLACK YELLO"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-07-29T07:35:38.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 1183C102 001 BLACK WHITE"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-07-29T07:35:38.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 1183C102 001 BLACK WHITE"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-05T07:25:40.000Z] Ordered by mistake"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-05T07:26:09.000Z] Ordered by mistake"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-05T07:26:42.000Z] Ordered by mistake"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-08T00:39:12.000Z] バイヤーが返送済み"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-08T00:39:12.000Z] バイヤーが返送済み"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-12T02:58:25.000Z] 返送品到着済み"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-12T02:58:26.000Z] 返送品到着済み"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-12T02:58:29.000Z] 返送品到着済み"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-12T18:11:20.000Z] Return closed"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-12T18:14:27.000Z] Return closed"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-12T18:15:23.000Z] Return closed"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-14T06:28:29.000Z] system_message"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-14T06:29:16.000Z] system_message"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-08-14T06:29:21.000Z] system_message"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-23T12:04:58.000Z] Hello,\nThank you for your purchase.\nI noticed that you've purchased two pairs, in US9 and US9.5. May I ask the reason for this?\nIf they are for different people, that's no problem at all. However, we cannot accept multiple purchases for the purpose of trying on different sizes, as the cost of return shipping is very high.\nI appreciate your understanding and look forward to your response.\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-23T12:07:56.000Z] I understand your concern, but they are for different people. Thanks for reaching out!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-23T12:10:13.000Z] Thank you for your quick reply!\nUnderstood — thank you for clarifying that they are for different people.  \n\nThe item will be shipped within 2-5 business days and you will receive a tracking number on ebay.  \nYour feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. \n\nWe will regularly send a coupon to followers.\nPlease follow our shop!\nhttps://www.ebay.com/str/rioxrinaxshop\n\nIf you are searching for any particular products, please don't hesitate to reach out to us.\nWe don't mind if the item is already listed by other sellers on eBay. We have the ability to order anything.\nRest assured, we will do our best to provide you with a better deal.\n\nThank you once again for your purchase, and we wish you a delightful experience with your new item!\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-29T10:07:55.000Z] Hello,  \nThank you so much for your purchase again!\n\nJust to confirm, I noticed that you previously purchased sizes US 9 and US 9.5,  \nbut this time you placed an order for sizes US 8.5 and US 9.\n\nCould you please confirm if this is correct?\n\nThank you for your attention.\n  \nBest regards,  \nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-29T10:08:44.000Z] Yes, this is correct!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-29T10:11:09.000Z] Thank you for your quick response!\nGot it!\n\nThe item will be shipped within 2-5 business days and you will receive a tracking number on ebay.  \nI'd really appreciate it if you could leave us positive feedback for your previous order!\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-30T22:25:11.000Z] Hello,\nDid you like the shoes?\nThank you once again for purchasing from us! \nWe have been selling shoes on eBay for five years. \nYour positive feedback and comments are a daily motivation for us. \nWe would greatly appreciate it if you could leave us positive feedback! \nWe look forward to doing business with you again.\n\nHow to leave feedback\n1. Go to \"Purchase history.\"\n2. Click the \"Leave Feedback\" button next to the item you would like to rate the service you received. \n\nBest regards,\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-08-05T13:30:22.000Z] Hello,\n\nI noticed that you have submitted a return request for three pairs.  \nCould you please let me know the reason for the return?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-08-06T00:34:29.000Z] The people they were meant for did not want them anymore."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-08-06T12:51:23.000Z] Hello,\n\nUnderstood.  \nWe will accept the return this time, but please note that due to the high cost of round-trip shipping, we will not be able to accept returns in the future.  \n\nAs an important note, please return all three pairs together in a single box.  \nWe will provide one shipping label for all of them.  \nKindly pack them as compactly as possible to fit securely in the box.  \n\nPlease also make sure to review the return policy when sending them back.\n\nBest regards,  \nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-08-13T08:23:58.000Z] Why was I not refunded the full price for the shoes?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-08-13T11:12:43.000Z] If it was for the reason for not having the tags, when I recieved the shoes the tags were already not attached, so I made sure to include the tags in the box of shoes at the very top."
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "eduherrer76_d1d9eb3d",
+    "category": "claim",
+    "buyer_ebay": "eduherrer76",
+    "buyer_message": "ケイさん、おはようございます。靴が到着を確認します。満足です。ありがとうございます。reviewも完了。お世話になっております。",
+    "buyer_message_ja": "ケイさん、おはようございます。靴の到着を確認しました。満足しています。ありがとうございます。レビューも完了しました。いつもお世話になっております。",
+    "num_messages": 7,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"Onitsuka Tiger MEXICO 66 SD 1183A872 752 YELLOW BLACK\", \"SKU\": \"V0347-7.5Z-20\", \"orderID\": \"18-13801-72824\", \"CurrentPrice\": \"152.15\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-11-10T11:34:15.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 SD 1183A872 752 YELLOW B"
+      },
+      {
+        "role": "user",
+        "content": "[2025-11-10T12:22:06.000Z] Hello. This is a 100%guaranteed official Onitsuka product right?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-11-10T12:40:48.000Z] excellent Kei. Thank you. I just wanted to make sure with you that the shoes are original. They are, right?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-11-10T13:07:53.000Z] We are the recipients of the eBay Japan Awards 2022 and 2023 Category Growth Award for Sneakers (Athletic Shoes) Corporate Division.\nRest assured, Our products are 100% authentic. Counterfeit products are illegal and not allowed on eBay.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-11-21T02:43:28.000Z] Hello,\nDid you like the shoes?\nThank you once again for purchasing from us! \nWe have been selling shoes on eBay for five years. \nYour positive feedback and comments are a daily motivation for us. \nWe would greatly appreciate it if you could leave us positive feedback! \nWe look forward to doing business with you again.\n\nHow to leave feedback\n1. Go to \"Purchase history.\"\n2. Click the \"Leave Feedback\" button next to the item you would like to rate the service you received. \n\nBest regards,\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-12-04T09:25:10.000Z] Hello Eduardo Herrera Jacobo ,\nThank you so much for leaving positive feedback!\nWe’re very happy to know that you liked our product.\nWe truly look forward to doing business with you again!\nBest regards,\nKei."
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-04T09:26:27.000Z] ケイさん、おはようございます。靴が到着を確認します。満足です。ありがとうございます。reviewも完了。お世話になっております。"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "olja_7021_68de443f",
+    "category": "claim",
+    "buyer_ebay": "olja_7021",
+    "buyer_message": "Gracias \nSi. La consulta fue principalmente porque el producto no tiene el sello de garantía de originalidad",
+    "buyer_message_ja": "ありがとうございます。\nはい。主に商品の保証シールがないことについての問い合わせでした。",
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"商品情報（要取得）\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-23T14:38:48.000Z] Hola Son originales??"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-23T17:37:53.000Z] Hello,\nThank you for your inquiry.\nYes, We are the recipients of the eBay Japan Awards 2022 and 2023 Category Growth Award for Sneakers (Athletic Shoes) Corporate Division.\nRest assured, Our products are 100% authentic. Counterfeit products are illegal and not allowed on eBay.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-23T22:31:49.000Z] Excelente! Muchas gracias!!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-24T12:49:38.000Z] You're very welcome!\n\nLooking forward to your order — thank you again!"
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-24T13:36:27.000Z] Gracias \nSi. La consulta fue principalmente porque el producto no tiene el sello de garantía de originalidad"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "se4176114_0ea0d34a",
+    "category": "tracking",
+    "buyer_ebay": "se4176114",
+    "buyer_message": "Can you mark it on the pictures I sent you??\n\nIts hard to sè waht you send as its blurry",
+    "buyer_message_ja": "送った写真にそれをマークしてもらえますか？\n送ってもらったものはぼやけていて見づらいです。",
+    "num_messages": 22,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"ASICS SKYHAND OG 1203A452 401 Dolphin Grey Pepper Sports Style Shoes\", \"SKU\": \"S04942-11\", \"orderID\": \"15-13561-18983\", \"CurrentPrice\": \"139.0\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-09-12T10:48:40.000Z] 商品が売れました！ ASICS SKYHAND OG 1203A452 401 Dolphin Grey Pepper"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-09-23T11:37:28.000Z] Doesn’t fit"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-10-16T04:40:30.000Z] system_message"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-12T10:59:08.000Z] Hello,  \nThank you for your purchase!\nThe item will be shipped within 2-5 business days and you will receive a tracking number on ebay.  \nYour feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. \n\nWe will regularly send a coupon to followers.\nPlease follow our shop!\nhttps://www.ebay.com/str/rioxrinaxshop\n\nIf you are searching for any particular products, please don't hesitate to reach out to us.\nWe don't mind if the item is already listed by other sellers on eBay. We have the ability to order anything.\nRest assured, we will do our best to provide you with a better deal.\n\nThank you once again for your purchase, and we wish you a delightful experience with your new item!\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-23T11:51:07.000Z] Hello,Could you let me know if the shoes were too big or too small for you?  Also, please note that any customs duties you may have paid are non-refundable.  Best regards,  Kei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-23T19:54:14.000Z] Where are you shipping from exactly"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T10:08:52.000Z] We ship our items from Japan."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T10:09:43.000Z] We would appreciate it if you could let us know how the shoes fit.\n\nYour feedback helps us improve our service for future customers."
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-24T10:12:12.000Z] Ok thanks, does it give that information in the description"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T10:31:05.000Z] If you're referring to the shipping origin — yes, the information is included in the description.  \nPlease refer to the attached image for confirmation."
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-24T10:37:19.000Z] Its hard to see what you have attached, can you send a clearer picture?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T10:53:25.000Z] Is this okay? Since it’s also written on the product page, if it’s hard to check there, please use the link I’ve sent to confirm directly."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T10:53:44.000Z] https://www.ebay.com/itm/ASICS-SKYHAND-OG-1203A452-401-Dolphin-Grey-Pepper-Sports-Style-Shoes-/357494682030"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-24T10:59:11.000Z] Where does it say location?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T11:05:26.000Z] It’s listed under the shipping section. Why is the location so important?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-24T11:11:14.000Z] Could you outline where it is located on the puctures I sent you please"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T11:37:06.000Z] Please respond to our questions as well."
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-24T11:50:06.000Z] Can you circle it in red instead of taking a close up screen shot, as i still cant see where it says the location"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-24T17:12:09.000Z] What is the purpose of you repeatedly asking for our location?We have already told you many times that we are based in Japan, and we even sent you a screenshot of the location stated in the item page.Our location is clearly written on the item page, so please check it yourself."
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-24T20:19:14.000Z] If it is clearly marked on the page, then circle it in red from the pictures I sent you as I cant it"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-25T18:19:35.000Z] Go ahead."
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-25T21:01:23.000Z] Can you mark it on the pictures I sent you??\n\nIts hard to sè waht you send as its blurry"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "rolanbuen_0_6a5d661a",
+    "category": "tracking",
+    "buyer_ebay": "rolanbuen_0",
+    "buyer_message": "color is lighter unlike your photo is more dark brown. i even paid duty $27.50 to fedex",
+    "buyer_message_ja": "写真より色が薄く、あなたの写真はもっと濃い茶色です。FedExに27.50ドルの関税も支払いました。",
+    "num_messages": 12,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"adidas Originals TOBACCO JP9651 Brown Desert Cardboard Gum\", \"SKU\": \"H00658-10.5-10\", \"orderID\": \"17-13548-73902\", \"CurrentPrice\": \"150.0\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-09-10T02:39:04.000Z] 商品が売れました！ adidas Originals TOBACCO JP9651 Brown Desert Card"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-08T05:10:30.000Z] it says free shipping now on checkout gone up to $216 Canadian $"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-08T13:05:39.000Z] free shipping total $207 but on checkout it is turning $216? why?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-08T15:47:32.000Z] Hello,\n\nThank you for contacting us.\n\nShipping to Canada is usually free.\n\nHowever, you have the option to select paid shipping upgrades at checkout.\n\nDid you select one of these options when placing your order?\n\nPlease confirm."
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-08T17:16:43.000Z] there are only two options. $216 &amp; $230…..you can check it…….thanks"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-09T12:31:52.000Z] Hello,\n\nThank you for checking.\n\nI have checked the details again, and there is no error in the listing information.\n\nThe difference in the total amount is likely due to fluctuations in the exchange rate.\n\nBest regards,  \nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-09T13:08:41.000Z] 👍"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-10T10:51:00.000Z] Hello,  \nThank you for your purchase!\nThe item will be shipped within 2-5 business days and you will receive a tracking number on ebay.  \nYour feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. \n\nWe will regularly send a coupon to followers.\nPlease follow our shop!\nhttps://www.ebay.com/str/rioxrinaxshop\n\nIf you are searching for any particular products, please don't hesitate to reach out to us.\nWe don't mind if the item is already listed by other sellers on eBay. We have the ability to order anything.\nRest assured, we will do our best to provide you with a better deal.\n\nThank you once again for your purchase, and we wish you a delightful experience with your new item!\n\nBest Regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-10T10:52:03.000Z] 👍👌"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-10T10:53:34.000Z] Just hoping it should be exactly the same as the one in your photo."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-09-20T23:48:11.000Z] Hello,\nDid you like the shoes?\nThank you once again for purchasing from us! \nWe have been selling shoes on eBay for five years. \nYour positive feedback and comments are a daily motivation for us. \nWe would greatly appreciate it if you could leave us positive feedback! \nWe look forward to doing business with you again.\n\nHow to leave feedback\n1. Go to \"Purchase history.\"\n2. Click the \"Leave Feedback\" button next to the item you would like to rate the service you received. \n\nBest regards,\nRioxxRina Japan Sneakers"
+      },
+      {
+        "role": "user",
+        "content": "[2025-09-21T00:41:54.000Z] color is lighter unlike your photo is more dark brown. i even paid duty $27.50 to fedex"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "ph-4125_a730c7ca",
+    "category": "discount",
+    "buyer_ebay": "ph-4125",
+    "buyer_message": "Hello ph-4125,\nThank you for your message. If you have any questions or need further assistance, please feel free to let us know.\nBest regards,\nkapital_japan",
+    "buyer_message_ja": "こんにちは ph-4125さん、\nメッセージありがとうございます。ご質問やさらなるサポートが必要な場合は、どうぞお気軽にお知らせください。\nよろしくお願いいたします。\nkapital_japan",
+    "num_messages": 36,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"商品情報（要取得）\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-01-30T11:27:08.000Z] オッファーが届きました！ オファー 907.0 USD / 販売価格 1009.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-11T11:09:07.000Z] オッファーが届きました！ オファー 909.0 USD / 販売価格 1009.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-11T11:40:53.000Z] オッファーが届きました！ オファー 910.0 USD / 販売価格 1009.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-11T16:02:29.000Z] オッファーが届きました！ オファー 911.0 USD / 販売価格 1009.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-03-17T12:12:17.000Z] オッファーが届きました！ オファー 999.0 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-03-17T12:16:10.000Z] カウンターオファーが届きました！ 999.5 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-03-23T18:17:25.000Z] オッファーが届きました！ オファー 999.0 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-03-31T12:53:49.000Z] カウンターオファーが届きました！ 1000.0 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-04T17:41:12.000Z] カウンターオファーが届きました！ 999.5 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-06T12:52:23.000Z] オッファーが届きました！ オファー 999.0 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-07T17:30:25.000Z] オッファーが届きました！ オファー 999.0 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-07T17:40:49.000Z] カウンターオファーが届きました！ 999.2 USD / 販売価格 1000.0 USD"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T10:54:36.000Z] do you like it?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T11:10:42.000Z] hi, have a nice day"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T11:14:20.000Z] please check it"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T12:54:31.000Z] do you like it?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T12:58:41.000Z] or it?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T13:09:07.000Z] more"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T13:09:45.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T13:10:37.000Z] hi, have a nice day"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T13:15:45.000Z] please check it"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T13:17:32.000Z] oh, thanks"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T13:17:43.000Z] this is new product"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-10T16:15:37.000Z] thanks"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-10T16:15:52.000Z] helo"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-11T09:23:50.000Z] hi, can you offer again?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-11T10:57:28.000Z] hi, have a nice day!"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-11T11:23:44.000Z] hi, can you offer again?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-11T11:34:36.000Z] ok"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-12T10:39:01.000Z] helo"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-03T19:50:21.000Z] Hi, Thank you for your inquiry!\nWe regret to inform you that this item is currently out of stock.\nHowever, please check back regularly as we are restoring our item inventory on a daily basis.\nAnd there is a wide selection of other similar items available in our store. Please visit and explore!\nhttps://www.ebay.com/usr/kapital_japan\nLooking forward to doing good business with you!\nCheers and thanks for choosing us:blush:"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-05T19:54:59.000Z] https://www.ebay.com/itm/406707432603?itmmeta=01KJ06Z10MM3HW4QNQP1E69RJ2&hash=item5eb1a6ec9b:g:z5sAAeSwtf5pTR8~"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-11T17:45:51.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-03-23T18:10:37.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-08T11:15:15.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-08T11:59:23.000Z] Hello ph-4125,\nThank you for your message. If you have any questions or need further assistance, please feel free to let us know.\nBest regards,\nkapital_japan"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "ajak7764_86d716d9",
+    "category": "discount",
+    "buyer_ebay": "ajak7764",
+    "buyer_message": "Hi, Thank you for your inquiry!\nWe regret to inform you that this item is currently out of stock.\nHowever, please check back regularly as we are restoring our item inventory on a daily basis.\nAnd there is a wide selection of other similar items available in our store. Please visit and explore!\nhttps://www.ebay.com/str/lamitiestore\nLooking forward to doing good business with you!\nCheers and thanks for choosing us:blush:",
+    "buyer_message_ja": "こんにちは、お問い合わせありがとうございます！\n申し訳ありませんが、こちらの商品は現在在庫切れです。\nただし、毎日商品在庫を補充しておりますので、定期的にご確認ください。\nまた、当店には他にも多くの類似商品がございます。ぜひご覧ください！\nhttps://www.ebay.com/str/lamitiestore\n今後とも良いお取引ができることを楽しみにしております！\nよろしくお願いいたします。",
+    "num_messages": 35,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"商品情報（要取得）\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-12-01T12:41:41.000Z] オッファーが届きました！ オファー 940.0 USD / 販売価格 1009.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-12-01T15:51:59.000Z] オッファーが届きました！ オファー 940.0 USD / 販売価格 1009.0 USD"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-12-01T15:53:59.000Z] system_event"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-04T10:07:39.000Z] system_event"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-02-04T10:08:55.000Z] system_event"
+      },
+      {
+        "role": "user",
+        "content": "[2025-11-25T18:15:40.000Z] こんにちは、この商品にはどのような色とサイズがありますか?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-11-26T11:41:32.000Z] ajak7764様\nお問い合わせありがとうございます。ご案内が遅くなり申し訳ございません。\n本商品はブラック、ホワイト、ネイビーの3色、サイズはS、M、L、XLをご用意しております。\nご不明点がございましたらお気軽にお知らせください。\n\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2025-11-26T12:55:36.000Z] สินค้าตัวนี้ราคาลดเท่าไหร่?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-11-26T13:33:50.000Z] 구매 방법을 알려주세요."
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-01T13:14:03.000Z] Sorry I cant accept that price"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-01T14:42:04.000Z] Hello ajak7764\r\nThank you for your purchase!\n\nWe Decline your offer :\nNew balance M990BT3_Brown US9.5 JP27.5 285413852172 New with box 1\r\n\r\nThank you once again for your purchase, and we wish you a delightful experience with your new item!\r\n\r\nBest Regards,\r\nKap"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-03T12:45:12.000Z] Hello ajak7764\nHave you received the goods yet?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-03T12:48:49.000Z] Hello,\nThank you for your inquiry.\n......."
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-05T19:39:11.000Z] Giảm được bao nhiêu tiền sản phẩm này?"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-06T17:45:51.000Z] Thank you for your inquiry. The discount amount on this product depends on current promotions and availability, but you may find special prices or deals on the product page or through announcements. Please check those for more details.\nIf you have any other questions, feel free to ask."
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-06T17:48:43.000Z] Tôi cần biết được số tiền giảm giá của sản phẩm này"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-09T12:07:32.000Z] Xin chào\najak7764\nĐể tôi kiểm tra số tiền giảm giá, vui lòng gửi link sản phẩm, mã hàng (Item number) hoặc số đơn hàng. Tôi sẽ kiểm tra và báo lại cho bạn.\n\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2025-12-09T18:26:24.000Z] Xin chào\najak7764\nĐể tôi kiểm tra số tiền giảm giá, vui lòng gửi link sản phẩm, mã hàng (Item number) hoặc số đơn hàng. Tôi sẽ kiểm tra và báo lại cho bạn.\n\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-10T11:02:02.000Z] Chúc bạn ngày mới vui vẻ. Chúng tôi đang có sản phẩm mới rất ưu đãi."
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-10T11:04:39.000Z] Xin chào ajak7764,\nSản phẩm này hiện đang có chương trình giảm giá đặc biệt, nhưng số tiền giảm cụ thể bạn có thể kiểm tra trên trang sản phẩm. Hãy xem để biết thêm chi tiết nhé.\n\nTrân trọng,\n\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-10T13:40:28.000Z] Xin chào ajak7764,\nSản phẩm này hiện đang có chương trình giảm giá đặc biệt, nhưng số tiền giảm cụ thể bạn có thể kiểm tra trên trang sản phẩm. Hãy xem để biết thêm chi tiết nhé.\n\nTrân trọng,\n\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-21T15:40:56.000Z] Xin chào ajak7764,\nSản phẩm này hiện đang có chương trình giảm giá đặc biệt, nhưng số tiền giảm cụ thể bạn có thể kiểm tra trên trang sản phẩm. Hãy xem để biết thêm chi tiết nhé.\n\nTrân trọng,\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-21T15:47:06.000Z] Xin chào ajak7764,\nSản phẩm này hiện đang có chương trình giảm giá đặc biệt, nhưng số tiền giảm cụ thể bạn có thể kiểm tra trên trang sản phẩm. Hãy xem để biết thêm chi tiết nhé.\n\nTrân trọng,\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-21T17:19:53.000Z] Xin chào ajak7764,\nSản phẩm này hiện đang có chương trình giảm giá đặc biệt, nhưng số tiền giảm cụ thể bạn có thể kiểm tra trên trang sản phẩm. Hãy xem để biết thêm chi tiết nhé.\n\nTrân trọng,\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-21T17:40:53.000Z] Xin chào ajak7764,\nSản phẩm này hiện đang có chương trình giảm giá đặc biệt, nhưng số tiền giảm cụ thể bạn có thể kiểm tra trên trang sản phẩm. Hãy xem để biết thêm chi tiết nhé.\n\nTrân trọng,\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-21T17:47:02.000Z] Xin chào ajak7764,\nSản phẩm này hiện đang có chương trình giảm giá đặc biệt, nhưng số tiền giảm cụ thể bạn có thể kiểm tra trên trang sản phẩm. Hãy xem để biết thêm chi tiết nhé.\n\nTrân trọng,\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-01-27T12:53:21.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-04T11:45:12.000Z] Thank you for your offer – we’ve accepted it and the item is now yours!\n\nBest regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-04T18:15:50.000Z] How about this shoe?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-04T19:03:26.000Z] https://www.ebay.com/str/lamitiestore"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-04T19:21:37.000Z] Xin chào ajak7764,\n\nCảm ơn bạn đã liên hệ. Nếu bạn có bất kỳ câu hỏi nào về sản phẩm, hãy cho tôi biết nhé.\nhttps://www.ebay.com/str/lamitiestore\nTrân trọng,\nkapital_japan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T12:22:37.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-06T12:39:37.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-12T10:37:41.000Z] hi"
+      },
+      {
+        "role": "user",
+        "content": "[2026-02-25T15:53:28.000Z] Hi, Thank you for your inquiry!\nWe regret to inform you that this item is currently out of stock.\nHowever, please check back regularly as we are restoring our item inventory on a daily basis.\nAnd there is a wide selection of other similar items available in our store. Please visit and explore!\nhttps://www.ebay.com/str/lamitiestore\nLooking forward to doing good business with you!\nCheers and thanks for choosing us:blush:"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "marcotitee_0563063b",
+    "category": "general",
+    "buyer_ebay": "marcotitee",
+    "buyer_message": "Thank You supermuch for your care in following the orders.\nKia Ora, Marco.",
+    "buyer_message_ja": "ご注文の対応を丁寧にしていただき、本当にありがとうございます。キアオラ、マルコ。",
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"MIZUNO WAITANGI II CL R1GA2001 09 White black Width 4E Rugby Football Cleats\", \"SKU\": \"S01183-11-2\", \"orderID\": \"17-13637-81619\", \"CurrentPrice\": \"139.0\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2025-10-02T01:29:42.000Z] 商品が売れました！ MIZUNO WAITANGI II CL R1GA2001 09 White black Wid"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-10-02T10:26:55.000Z] Hello.\nThank you so much for your purchase again!\nWe are happy you are back.\n\nJust to confirm, you previously purchased a US12 size, but this time you have ordered a US11 size. \nIs this order correct?\n\nBest Regards.\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-10-02T15:37:59.000Z] Dear Kei,\nThe boots size 12 were for me( I am a rugby coach).\nThe rugby boots size 11 are for my son (he plays in the Under 16 championship in Italy). The order is correct."
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-10-02T16:51:16.000Z] Hello,\nThank you for your reply.\n\nWow, that’s amazing!\nI understand, and I will proceed with the order.\n\nBest regards,\nKei"
+      },
+      {
+        "role": "user",
+        "content": "[2025-10-02T17:06:55.000Z] Thank You supermuch for your care in following the orders.\nKia Ora, Marco."
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  },
+  {
+    "id": "cba1171_ffbb277e",
+    "category": "general",
+    "buyer_ebay": "cba1171",
+    "buyer_message": "OK.. thanks\nYahoo Mail: Search, organise, conquer\nOn Mon, 28 Jul 2025 at 6:49, eBay - rioxxrinaxjapan",
+    "buyer_message_ja": "了解です。ありがとうございます。",
+    "num_messages": 4,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"Title\": \"商品情報（要取得）\", \"Currency\": \"USD\", \"Country\": \"JP\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-25T02:11:01.000Z] Oh Hello...Can I please order these Trainers in a Mens size 9 UK.....Thankyou."
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-25T03:15:54.000Z] Great stuff...👍👍\nYahoo Mail: Search, organise, conquer\nOn Thu, 24 Jul 2025 at 18:11, eBay - rioxxrinaxjapan"
+      },
+      {
+        "role": "assistant",
+        "content": "[2025-07-28T14:49:49.000Z] Hello, thank you for your inquiry.\nUnfortunately, both we and the manufacturer are out of stock, and there is no scheduled restock at this time.\nIf the stock becomes available again, it will be updated on the product page, so please check there."
+      },
+      {
+        "role": "user",
+        "content": "[2025-07-28T17:08:29.000Z] OK.. thanks\nYahoo Mail: Search, organise, conquer\nOn Mon, 28 Jul 2025 at 6:49, eBay - rioxxrinaxjapan"
+      },
+      {
+        "role": "developer",
+        "content": "You are an AI assistant for eBay sellers using BayChat.\n            --------------------------------\n            PLATFORM COMPLIANCE (EBAY)\n            --------------------------------\n            You must NOT:\n            - Encourage or suggest transactions outside of eBay.\n            - Request or provide personal contact information (email, phone, social media).\n            - Suggest bypassing eBay systems or protections.\n            - Ask for or manipulate feedback.\n            - Invent facts, policies, numbers, or outcomes.\n\n            If a buyer request clearly violates eBay policy:\n            - Politely refuse. State it cannot be accommodated on eBay.\n            - Do NOT imply flexibility or exceptions.\n            - If a rule is violated, regenerate silently and fix it."
+      },
+      {
+        "role": "developer",
+        "content": "\n            --------------------------------\n            OUTPUT FORMAT (STRICT)\n            --------------------------------\n            Always respond in valid JSON with exactly two fields:\n            - \"jpnLanguage\": Japanese translation of the buyerLanguage\n            - \"buyerLanguage\": The English customer support reply to send to the buyer\n            Do NOT add extra fields. Do NOT output any text outside JSON.\n            Do NOT include timestamps, chat-history headers, or internal instructions.\n\n            OUTPUT FORMAT:\n            {\n              \"jpnLanguage\": \"...\",\n              \"buyerLanguage\": \"...\"\n            }"
+      },
+      {
+        "role": "developer",
+        "content": "\n  --------------------------------\nROLE\n--------------------------------\nYou are an experienced eBay customer support professional, responding on behalf of the seller.\n\nYou have deep knowledge of eBay's platform, policies, and transaction flow — how orders\nprogress, what actions are available at each stage, and what standard CS practice looks\nlike in each situation.\n\nBefore writing your reply:\n1. Read the full conversation to understand the current state — what has been resolved,\n   what is still open, and what the buyer actually needs right now.\n2. Respond only to what is currently relevant. Do not revisit topics that have already\n   been addressed earlier in the conversation.\n3. Reply as a skilled CS professional would — naturally, concisely, and appropriately.\n\nYou MUST NOT:\n- Make commitments, approvals, or decisions unless seller intent supports it.\n- Introduce topics, judgments, or actions that go beyond what the buyer's current\n  message requires.\n- Invent facts, policies, numbers, or outcomes.\n- Recommend other products or encourage purchases.\n\n--------------------------------\nCONVERSATION STAGE DETECTION\n--------------------------------\nDetermine the stage by checking whether the seller has already sent any message\nin this conversation.\n\nSTAGE 1 — FIRST MESSAGE:\n- No seller message exists yet in the history.\n- Opening: \"Thank you for your message.\" or \"Thank you for your inquiry.\"\n- ONLY use this opening in Stage 1. Never in Stage 2 or 3.\n\nSTAGE 2 — ONGOING CONVERSATION:\n- At least one seller message already exists.\n- Use a brief, context-appropriate acknowledgement instead.\n  Examples: \"Understood.\" / \"Thank you for confirming.\" / \"Appreciated.\"\n- Do NOT use \"Thank you for your message\" here.\n\nSTAGE 3 — MULTIPLE UNREAD BUYER MESSAGES:\n- Buyer sent more than one message since the seller last replied.\n- Address ALL of them in order of relevance.\n\nOpening phrases are optional. Skip if it feels redundant.\n\n--------------------------------\nSELLER INTENT\n--------------------------------\nSeller intent ({sellerSetting}) defines the direction and decision for the reply.\n\n- If provided: weave it naturally into a complete CS response. Do not add facts or\n  commitments beyond what it states. Seller intent takes priority.\n- If a short word (e.g., \"OK\", \"No\", \"はい\", \"不可\"): expand into a full, natural\n  sentence that directly answers the buyer's question.\n- If not provided: respond based on what the buyer's current message actually requires.\n  Use judgment — but only act on what has been asked. Do not introduce decisions\n  the buyer did not request.\n\n--------------------------------\nTONE GUIDELINES\n--------------------------------\n\nPOLITE (丁寧):\n- Formal, professional, measured.\n- Close: \"Best regards,\" / \"Kind regards,\"\n\nFRIENDLY (フレンドリー):\n- Warm, approachable, conversational — still professional.\n- Close: \"Best,\" / \"Thanks again,\" / \"Cheers,\"\n\nAPOLOGY (謝罪):\n- Empathetic, takes responsibility, solution-focused.\n- Open with a genuine apology. Structure: Apology → issue → solution → reassurance.\n- Close: If the buyer seems angry → \"Sincerely,\"; otherwise → \"Kind regards,\"\n- If the buyer is angry or complaining, do NOT use FRIENDLY tone.\n\n--------------------------------\nRESPONSE STRUCTURE\n--------------------------------\n1) Acknowledgement (stage-appropriate, only if natural)\n2) Recap only when it genuinely improves clarity\n3) Answer / action\n4) Next step (if applicable)\n5) Close\n\nKeep replies natural and concise.\n\n--------------------------------\nINPUTS\n--------------------------------\n- Seller intent: {sellerSetting}\n- Tone: polite\n\nNote on output fields: Use exactly \"jpnLanguage\" and \"buyerLanguage\" as field names\n(matching BayChat's internal code).\n"
+      },
+      {
+        "role": "developer",
+        "content": "\n          The response MUST ABSOLUTELY adhere to the following format.\n            Do not add explanations, markdown, or extra text.\n\n            Hello {buyer_name},\n            <Break line here>{output_content}<Break line here>\n            Best regards,\n             {seller_name}\n\n            Replace the placeholders with actual values.\n            seller_name: rioxxrinaxjapan\n            buyer_name: vipuv_81\n            \n\n            ABSOLUTELY: Always ensure that the output of the .jpn Language and the buyer Language adhere to the above format.\n            "
+      }
+    ]
+  }
+]

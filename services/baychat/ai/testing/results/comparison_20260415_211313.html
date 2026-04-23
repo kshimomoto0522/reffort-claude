@@ -1,0 +1,4012 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BayChat AI Reply モデル比較レポート（フィードバック対応版）</title>
+<style>
+    body {
+        font-family: 'Yu Gothic UI', 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+        background: #f5f3ff;
+        color: #1f2937;
+        margin: 0; padding: 0;
+    }
+    .container { max-width: 1600px; margin: 0 auto; padding: 32px; }
+    header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 24px;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.25);
+    }
+    header h1 { margin: 0 0 4px; font-size: 24px; }
+    header .subtitle { opacity: 0.88; font-size: 14px; }
+
+    h2 {
+        color: #5b21b6;
+        border-bottom: 3px solid #7c3aed;
+        padding-bottom: 6px; margin-top: 32px;
+    }
+    h3 { color: #5b21b6; }
+
+    .summary-section {
+        background: white; padding: 24px; border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+
+    table.agg-table {
+        width: 100%; border-collapse: collapse; margin-top: 12px;
+        font-size: 13px;
+    }
+    table.agg-table th, table.agg-table td {
+        border: 1px solid #e5e7eb; padding: 8px 10px;
+        text-align: left; vertical-align: middle;
+    }
+    table.agg-table th {
+        background: #ede9fe; color: #5b21b6;
+        font-weight: 600; text-align: center;
+    }
+    table.agg-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.agg-table td.num.score { font-weight: 700; color: #5b21b6; font-size: 15px; }
+    table.agg-table td.model-name { white-space: nowrap; }
+
+    .badge-winner {
+        background: #7c3aed; color: white; padding: 2px 8px;
+        border-radius: 10px; font-size: 11px; margin-left: 4px;
+    }
+
+    .case-card {
+        background: white; margin-top: 20px; padding: 20px;
+        border-radius: 12px; border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .case-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .case-header h3 { margin: 0; font-size: 16px; }
+    .category-pill {
+        background: #ede9fe; color: #5b21b6;
+        padding: 3px 10px; border-radius: 10px; font-size: 12px;
+    }
+
+    .buyer-block {
+        background: #f5f3ff; padding: 14px;
+        border-left: 4px solid #7c3aed; border-radius: 8px;
+        margin-bottom: 14px;
+    }
+    .block-label {
+        font-size: 12px; font-weight: 700; color: #5b21b6;
+        margin-bottom: 8px;
+    }
+
+    /* 会話履歴全体のタイムライン */
+    .history-block {
+        margin-bottom: 16px; background: #fafafa;
+        border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px;
+    }
+    .history-header {
+        font-weight: 700; color: #5b21b6;
+        font-size: 13px; padding: 2px 0 8px;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 8px;
+    }
+    /* タイムライン：最大450pxでスクロール表示 */
+    .history-timeline {
+        max-height: 450px;
+        overflow-y: auto;
+        padding: 10px 4px 10px 4px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+    }
+    .history-timeline::-webkit-scrollbar {
+        width: 10px;
+    }
+    .history-timeline::-webkit-scrollbar-thumb {
+        background: #a78bfa;
+        border-radius: 5px;
+    }
+    .history-timeline::-webkit-scrollbar-track {
+        background: #f5f3ff;
+    }
+    .product-info {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px 12px; margin: 10px 0;
+        font-size: 12px;
+    }
+    .product-label {
+        display: block; color: #5b21b6;
+        font-weight: 700; margin-bottom: 6px; font-size: 11px;
+    }
+    .product-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 6px;
+    }
+    .msg {
+        margin: 6px 0; padding: 8px 12px;
+        border-radius: 8px; font-size: 12px;
+    }
+    .msg-role {
+        display: inline-block; font-weight: 700; font-size: 11px;
+        margin-bottom: 4px;
+    }
+    .msg-body {
+        white-space: pre-wrap; word-break: break-word;
+        font-size: 12px; line-height: 1.55;
+    }
+    .msg-system {
+        background: #eef2ff; border-left: 3px solid #6366f1; color: #4338ca;
+        font-size: 11px;
+    }
+    .msg-assistant {
+        background: #f0fdf4; border-left: 3px solid #22c55e;
+        margin-left: 30px;  /* セラー側はインデント */
+    }
+    .msg-assistant .msg-role { color: #15803d; }
+    .msg-user {
+        background: #ede9fe; border-left: 3px solid #7c3aed;
+    }
+    .msg-user .msg-role { color: #5b21b6; }
+    /* 最終バイヤーメッセージは強調 */
+    .msg-user-latest {
+        background: #fef3c7 !important;
+        border-left: 4px solid #f59e0b !important;
+        box-shadow: 0 0 0 2px #fbbf24 inset;
+    }
+    .msg-user-latest .msg-role { color: #b45309 !important; }
+    /* 履歴の日本語訳ブロック（各メッセージの下に小さく表示） */
+    .msg-body-ja {
+        margin-top: 6px; padding-top: 6px;
+        border-top: 1px dashed #e5e7eb;
+        font-size: 11px; line-height: 1.5;
+        color: #6b7280;
+        white-space: pre-wrap; word-break: break-word;
+    }
+    .msg-body-ja .ja-label {
+        display: inline-block; font-size: 10px;
+        color: #5b21b6; font-weight: 700;
+        margin-right: 4px;
+    }
+
+    /* ケース内勝者バッジ */
+    .case-winners { display: flex; gap: 4px; }
+    .case-winner-badge {
+        padding: 2px 8px; border-radius: 10px;
+        font-size: 10px; font-weight: 700; color: white;
+    }
+    .win-score { background: #7c3aed; }
+    .win-speed { background: #0ea5e9; }
+    .win-cost { background: #f59e0b; }
+
+    .bilingual {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .bilingual pre {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px; margin: 4px 0 0;
+        white-space: pre-wrap; word-break: break-word; font-size: 13px;
+        font-family: inherit; max-height: 260px; overflow-y: auto;
+    }
+    .lang-label {
+        font-size: 11px; color: #6b7280; font-weight: 600;
+    }
+
+    .reply-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+        gap: 12px;
+    }
+    .reply-card {
+        background: #f5f3ff; padding: 14px;
+        border-radius: 10px; border: 1px solid #a78bfa;
+    }
+    .reply-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px; flex-wrap: wrap; gap: 6px;
+    }
+    .model-badge {
+        background: #7c3aed; color: white; padding: 4px 10px;
+        border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+    .score-total { font-size: 12px; color: #6b7280; }
+    .score-total b { color: #5b21b6; font-size: 14px; }
+    .score-detail { margin-bottom: 10px; }
+    .score-pill {
+        display: inline-block; background: white; border: 1px solid #e5e7eb;
+        padding: 2px 8px; border-radius: 10px; font-size: 11px; margin: 2px 2px 0 0;
+    }
+    .score-pill b { color: #5b21b6; }
+    .judge-summary {
+        margin-top: 10px; padding: 8px 10px; background: white;
+        border: 1px dashed #a78bfa; border-radius: 6px;
+        font-size: 12px; color: #6b7280;
+    }
+
+    /* フィードバック入力欄 */
+    .feedback-block {
+        margin-top: 16px; padding: 14px;
+        background: #fefce8;  /* ここだけ淡いクリーム色で目立たせる（注意喚起ではなく「入力エリア」として） */
+        border: 2px dashed #a78bfa;
+        border-radius: 10px;
+    }
+    .feedback-label {
+        display: block; font-size: 13px; font-weight: 600;
+        color: #5b21b6; margin-bottom: 6px;
+    }
+    .feedback-label small {
+        font-weight: 400; color: #6b7280; font-size: 11px;
+    }
+    .feedback-input {
+        width: 100%; box-sizing: border-box; padding: 10px;
+        border: 1px solid #e5e7eb; border-radius: 6px;
+        font-family: inherit; font-size: 13px;
+        resize: vertical;
+    }
+    .feedback-input:focus {
+        outline: none; border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+
+    /* フローティングボタン */
+    .floating-download {
+        position: fixed; bottom: 24px; right: 24px;
+        background: #7c3aed; color: white;
+        padding: 14px 22px; border-radius: 30px; border: none;
+        font-size: 14px; font-weight: 600; cursor: pointer;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+        z-index: 1000;
+    }
+    .floating-download:hover { background: #5b21b6; }
+    .floating-status {
+        position: fixed; bottom: 80px; right: 24px;
+        background: white; border: 1px solid #a78bfa;
+        padding: 6px 12px; border-radius: 20px; font-size: 12px;
+        color: #5b21b6; z-index: 1000;
+    }
+
+    footer {
+        text-align: center; margin-top: 48px; padding-bottom: 80px;
+        color: #6b7280; font-size: 12px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>BayChat AI Reply モデル比較レポート</h1>
+        <div class="subtitle">
+            3モデル × 12ケース | 生成日時: 2026-04-15 21:13<br>
+            社長のフィードバックは各ケース下の入力欄に書いてください。自動保存されます。
+        </div>
+    </header>
+
+    <section class="summary-section">
+        <h2>📊 モデル別集計</h2>
+        
+    <table class="agg-table">
+        <thead>
+            <tr>
+                <th>モデル</th><th>件数</th><th>合計<br>(/25)</th>
+                <th>正確<br>性</th><th>トーン</th><th>完全<br>性</th>
+                <th>アクション</th><th>自然さ</th>
+                <th>応答<br>時間</th><th>1回<br>コスト</th><th>月額<br>推定</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="model-name"><strong>GPT-4.1-Nano | v2.4</strong> <span class="badge-winner">速度◎</span></td>
+            <td class="num">12</td>
+            <td class="num score">20.2</td>
+            <td class="num">4.8</td>
+            <td class="num">3.9</td>
+            <td class="num">3.8</td>
+            <td class="num">3.8</td>
+            <td class="num">3.9</td>
+            <td class="num">2.3秒</td>
+            <td class="num">¥0.062</td>
+            <td class="num">¥1,726</td>
+        </tr>
+        <tr>
+            <td class="model-name"><strong>GPT-5-Mini | v2.4</strong> <span class="badge-winner">品質◎</span></td>
+            <td class="num">12</td>
+            <td class="num score">22.1</td>
+            <td class="num">5.0</td>
+            <td class="num">4.1</td>
+            <td class="num">4.8</td>
+            <td class="num">4.3</td>
+            <td class="num">3.8</td>
+            <td class="num">4.8秒</td>
+            <td class="num">¥0.204</td>
+            <td class="num">¥5,648</td>
+        </tr>
+        <tr>
+            <td class="model-name"><strong>GPT-5-Nano | v2.4</strong> <span class="badge-winner">コスト◎</span></td>
+            <td class="num">12</td>
+            <td class="num score">21.1</td>
+            <td class="num">4.8</td>
+            <td class="num">4.2</td>
+            <td class="num">3.9</td>
+            <td class="num">3.9</td>
+            <td class="num">4.2</td>
+            <td class="num">3.5秒</td>
+            <td class="num">¥0.039</td>
+            <td class="num">¥1,070</td>
+        </tr></tbody>
+    </table>
+    
+        
+    <h3 style="margin-top:28px">📂 カテゴリ別スコア比較</h3>
+    <table class="agg-table">
+        <thead><tr><th>カテゴリ</th><th>GPT-4.1-Nano</th><th>GPT-5-Mini</th><th>GPT-5-Nano</th><th>勝者</th></tr></thead>
+        <tbody><tr><td><strong>cancel</strong></td><td class="num">19.0<br><small>(2件)</small></td><td class="num">21.5<br><small>(2件)</small></td><td class="num">21.0<br><small>(2件)</small></td><td><strong style="color:#5b21b6">GPT-5-Mini</strong></td></tr><tr><td><strong>return</strong></td><td class="num">21.0<br><small>(2件)</small></td><td class="num">22.5<br><small>(2件)</small></td><td class="num">17.5<br><small>(2件)</small></td><td><strong style="color:#5b21b6">GPT-5-Mini</strong></td></tr><tr><td><strong>claim</strong></td><td class="num">21.0<br><small>(2件)</small></td><td class="num">23.0<br><small>(2件)</small></td><td class="num">23.0<br><small>(2件)</small></td><td><strong style="color:#5b21b6">GPT-5-Mini</strong></td></tr><tr><td><strong>tracking</strong></td><td class="num">21.0<br><small>(2件)</small></td><td class="num">22.5<br><small>(2件)</small></td><td class="num">23.5<br><small>(2件)</small></td><td><strong style="color:#5b21b6">GPT-5-Nano</strong></td></tr><tr><td><strong>discount</strong></td><td class="num">20.5<br><small>(2件)</small></td><td class="num">21.0<br><small>(2件)</small></td><td class="num">21.5<br><small>(2件)</small></td><td><strong style="color:#5b21b6">GPT-5-Nano</strong></td></tr><tr><td><strong>general</strong></td><td class="num">18.5<br><small>(2件)</small></td><td class="num">22.0<br><small>(2件)</small></td><td class="num">20.0<br><small>(2件)</small></td><td><strong style="color:#5b21b6">GPT-5-Mini</strong></td></tr></tbody>
+    </table>
+    
+        
+    <h3 style="margin-top:28px">⏱ 速度ばらつき（差分TOP10）</h3>
+    <p style="font-size:13px;color:#6b7280">
+    同じケースでもモデルによって応答時間が大きく違うケースの一覧。
+    「モデル平均」だけでは見えない外れ値の傾向がわかる。
+    </p>
+    <table class="agg-table">
+        <thead><tr><th>ケース</th><th>最速モデル</th><th>最遅モデル</th><th>差分</th></tr></thead>
+        <tbody>
+        <tr>
+            <td>ca2015_trao_ca314a32</td>
+            <td>GPT-4.1-Nano <small>(1.7秒)</small></td>
+            <td>GPT-5-Mini <small>(11.6秒)</small></td>
+            <td class="num"><strong>+9.9秒</strong></td>
+        </tr>
+        <tr>
+            <td>prettypoodle1234_c0e079a9</td>
+            <td>GPT-4.1-Nano <small>(2.7秒)</small></td>
+            <td>GPT-5-Mini <small>(8.9秒)</small></td>
+            <td class="num"><strong>+6.2秒</strong></td>
+        </tr>
+        <tr>
+            <td>rolanbuen_0_6a5d661a</td>
+            <td>GPT-4.1-Nano <small>(3.0秒)</small></td>
+            <td>GPT-5-Mini <small>(6.2秒)</small></td>
+            <td class="num"><strong>+3.2秒</strong></td>
+        </tr>
+        <tr>
+            <td>olja_7021_68de443f</td>
+            <td>GPT-4.1-Nano <small>(2.2秒)</small></td>
+            <td>GPT-5-Mini <small>(5.0秒)</small></td>
+            <td class="num"><strong>+2.8秒</strong></td>
+        </tr>
+        <tr>
+            <td>abmb59_414435e1</td>
+            <td>GPT-4.1-Nano <small>(1.9秒)</small></td>
+            <td>GPT-5-Mini <small>(4.5秒)</small></td>
+            <td class="num"><strong>+2.6秒</strong></td>
+        </tr>
+        <tr>
+            <td>eduherrer76_d1d9eb3d</td>
+            <td>GPT-4.1-Nano <small>(1.7秒)</small></td>
+            <td>GPT-5-Mini <small>(3.9秒)</small></td>
+            <td class="num"><strong>+2.2秒</strong></td>
+        </tr>
+        <tr>
+            <td>antonioto_0_fbc8a65e</td>
+            <td>GPT-4.1-Nano <small>(1.1秒)</small></td>
+            <td>GPT-5-Nano <small>(3.3秒)</small></td>
+            <td class="num"><strong>+2.2秒</strong></td>
+        </tr>
+        <tr>
+            <td>ay-1144_04f6d20d</td>
+            <td>GPT-4.1-Nano <small>(2.1秒)</small></td>
+            <td>GPT-5-Nano <small>(4.2秒)</small></td>
+            <td class="num"><strong>+2.1秒</strong></td>
+        </tr>
+        <tr>
+            <td>racro_5039_bdd580bf</td>
+            <td>GPT-5-Mini <small>(3.5秒)</small></td>
+            <td>GPT-4.1-Nano <small>(5.1秒)</small></td>
+            <td class="num"><strong>+1.6秒</strong></td>
+        </tr>
+        <tr>
+            <td>spv332_dd858207</td>
+            <td>GPT-4.1-Nano <small>(1.7秒)</small></td>
+            <td>GPT-5-Mini <small>(2.8秒)</small></td>
+            <td class="num"><strong>+1.1秒</strong></td>
+        </tr></tbody>
+    </table>
+    
+    </section>
+
+    <h2>📌 全12ケース（返信内容 + フィードバック入力欄）</h2>
+    <p style="color:#6b7280">
+    各ケースの一番下に「社長の理想フィードバック」入力欄があります。書き込むと即座にブラウザに自動保存。
+    最下部の <strong>紫ボタン</strong> から全フィードバックをJSONでダウンロードできます。
+    </p>
+    
+    <article class="case-card" data-case-id="abmb59_414435e1">
+        <div class="case-header">
+            <h3>📩 abmb59_414435e1</h3>
+            <span class="category-pill">general</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> 商品情報（要取得）</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> — USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-07-28T20:40:05.000Z] Hi, i need a size 15.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、サイズ15が必要です。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-07-29T13:37:28.000Z] Hello,
+
+Thank you for your message.  
+I&#x27;m very sorry, but unfortunately, size 15 is not available for this item.  
+
+If there&#x27;s anything else you&#x27;re looking for, please feel free to let me know.  
+
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+メッセージありがとうございます。
+申し訳ありませんが、こちらの商品はサイズ15の取り扱いがございません。
+他にお探しのものがありましたら、どうぞお気軽にお知らせください。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-07-29T13:39:48.000Z] Ok, do you have any size mens 15 ?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> わかりました。メンズのサイズ15は他にありますか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-07-29T14:10:56.000Z] Hello,
+
+Thank you for your message.  
+In Japan, most shoes are not manufactured in US size 15.  
+
+However, if you can let me know the specific shoes you&#x27;re looking for,  
+I&#x27;d be happy to check the availability for you.  
+
+Best regards,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+メッセージありがとうございます。
+日本では、ほとんどの靴がUSサイズ15で製造されていません。
+ただし、具体的にお探しの靴があれば、在庫を確認いたしますのでお知らせください。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-07-29T14:12:34.000Z] I&#x27;m looking for soccer turfs like this one.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> このようなサッカーターフを探しています。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-07-30T13:20:54.000Z] Hello,  
+Thank you for your message.  
+
+I checked, but unfortunately in Japan, similar soccer turf models are only manufactured up to US 11.5.  
+If you can provide the model number or any additional details, I can look into it more thoroughly for you.  
+
+Best regards,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+メッセージありがとうございます。
+確認しましたが、残念ながら日本では類似のサッカーターフモデルはUS11.5までの製造となっています。
+モデル番号やその他の詳細を教えていただければ、さらに詳しく調べることができます。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-07-30T22:19:57.000Z] Ok but I can take any kind of soccer turfs size 15.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> わかりましたが、サイズ15のサッカーターフならどんなものでも構いません。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Ok but I can take any kind of soccer turfs size 15.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>わかりましたが、サイズ15のどんな種類のサッカー用ターフでも大丈夫です。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 4.5秒 ・ 💴 ¥0.210
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello abmb59,
+
+Understood. You want men&#x27;s US size 15 soccer turf shoes. Currently we do not have size 15 in stock, and size 15 is very difficult to source in Japan. We cannot provide one directly from our inventory at this time.
+
+If you would like, we can check availability from overseas suppliers (this is an inquiry only and not a guaranteed purchase). Please reply with &quot;Please check overseas availability&quot; if you want us to search.
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello abmb59,
+
+承知しました。ご希望はメンズUSサイズ15のサッカーターフ（屋外用スパイクではなくターフ用シューズ）ということで承りました。ただし、当店在庫および日本国内の一般的な流通では、メンズUSサイズ15は非常に稀で入手が困難です。現時点で当店の在庫から直接ご用意することはできません。
+
+ご希望でしたら、海外からの取り寄せ可否を確認して在庫調査を行うことは可能です（取り寄せ可否の確認は在庫次第であり、確約はできません）。取り寄せ調査をご希望の場合は「取り寄せを希望」とご返信ください。
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: サイズ15のサッカーターフシューズは在庫がなく、日本での入手も難しいことを正確に伝え、海外からの取り寄せ希望があれば対応可能と明確に案内している。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>15</b>/25 ・ ⏱ 1.9秒 ・ 💴 ¥0.060
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>3</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>2</b>/5</span><span class="score-pill">アクション <b>2</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello abmb59,
+
+Thank you for your message. Unfortunately, we cannot fulfill requests for specific sizes outside of eBay&#x27;s platform. We appreciate your understanding. If there&#x27;s anything else I can assist you with, please let me know.
+
+Best regards,
+セラー</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、abmb59さん,
+
+申し訳ありませんが、eBayのプラットフォームでは特定のサイズのリクエストにお応えできません。ご理解いただければ幸いです。ほかにお手伝いできることがあればお知らせください。
+
+よろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信は丁寧だが、購入者のサイズ15のサッカー用ターフの具体的な要望に十分に応えておらず、次の行動が不明瞭である。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>21</b>/25 ・ ⏱ 2.6秒 ・ 💴 ¥0.030
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello abmb59,
+
+I understand your request. However, given current stock and manufacturing standards in Japan, US size 15 soccer turf shoes are not available. If possible, please provide any alternative size formats (JP size or EU size) you can wear so I can re-check for a suitable model.</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、abmb59様
+
+ご希望の状況を理解しました。ただし、現在の在庫状況と日本国内の製造規格上、USサイズ15のサッカーターフシューズはご用意が難しい状況です。ご要望を詳しく伺いたいのですが、もし可能であれば別のサイズ表記（JPサイズやEUサイズ）も教えていただけますか？適合するモデルを再度確認します。</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 日本でのサイズ15のサッカーターフシューズの在庫がないことを正確に伝え、代替サイズの提供を促しているが、もう少し共感的な表現や代替案の提案があるとより良い。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="abmb59_414435e1"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="antonioto_0_fbc8a65e">
+        <div class="case-header">
+            <h3>📩 antonioto_0_fbc8a65e</h3>
+            <span class="category-pill">cancel</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Onitsuka Tiger MEXICO 66 1183A201 003 BLACK YELLOW</div>
+                    <div><b>SKU:</b> V0294-9Z-11</div>
+                    <div><b>Order ID:</b> 04-14471-04757</div>
+                    <div><b>Price:</b> 150.0 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-04-06T03:42:34.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 1183A201 003 BLACK YELLO</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-04-06T03:48:18.000Z] Found better price</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-04-07T18:46:51.000Z] Cancel closed</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-06T04:00:41.000Z] Hello antonioto_0 ,
+Thank you for contacting us.
+We apologize for the inconvenience, but we are currently outside of business hours.
+If you have sent an inquiry or replied, we will respond on the next business day.
+We appreciate your understanding.
+This message has been sent automatically.
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは antonioto_0様、
+お問い合わせありがとうございます。
+ご不便をおかけして申し訳ありませんが、現在営業時間外です。
+お問い合わせやご返信をいただいている場合は、翌営業日に対応いたします。
+ご理解のほどよろしくお願いいたします。
+このメッセージは自動送信されています。
+RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-06T04:00:47.000Z] Hello. I am so sorry, I did a mistake with the size of the sneakers. You can send me the same shoe, but PLEASE NOTE that I need a size 8.5 US. May you please confirm if you have it on stock? Otherwise I would like kindly to cancel the order because the size I ordered is too big, sorry. Thank you very much and best regards!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。申し訳ありません、スニーカーのサイズを間違えてしまいました。同じ靴を送っていただけますか？ただし、サイズはUS 8.5が必要です。お手数ですが在庫があるかご確認いただけますか？もし在庫がなければ、注文をキャンセルさせていただきたいです。注文したサイズは大きすぎました。申し訳ありません。どうぞよろしくお願いいたします。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-06T11:07:32.000Z] Hello,
+We have stock available in US 8.5 / JP 26.5.
+May we proceed with your order after changing the size?
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+US 8.5 / JP 26.5の在庫があります。
+サイズ変更後にご注文を進めてもよろしいでしょうか？
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-07T10:17:27.000Z] Hello,  
+We would appreciate it if we could receive a reply from you.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+ご返信をいただけますと幸いです。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-07T17:58:18.000Z] Yes, please, send mit the right size as indicated. Many thanks and best regards!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> はい、どうぞご指定の正しいサイズを送ってください。ありがとうございます。よろしくお願いいたします。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-07T18:18:05.000Z] Hello,
+
+Thank you for your reply.
+
+We are pleased to inform you that we have US size 8.5 (JP 26.5) in stock, so we will go ahead and process the exchange for you.
+
+Thank you for your patience.
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+ご返信ありがとうございます。
+USサイズ8.5（JP 26.5）の在庫がございますので、交換手続きを進めさせていただきます。
+お待ちいただきありがとうございます。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-07T21:32:33.000Z] Yes, please send me the size US 8.5 and thank you very much!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> はい、US 8.5のサイズを送ってください。どうもありがとうございます！</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-07T21:32:39.000Z] Hello antonioto_0 ,
+Thank you for contacting us.
+We apologize for the inconvenience, but we are currently outside of business hours.
+If you have sent an inquiry or replied, we will respond on the next business day.
+We appreciate your understanding.
+This message has been sent automatically.
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは antonioto_0様、
+お問い合わせありがとうございます。
+ご不便をおかけして申し訳ありませんが、現在営業時間外です。
+お問い合わせやご返信をいただいている場合は、翌営業日に対応いたします。
+ご理解のほどよろしくお願いいたします。
+このメッセージは自動送信されています。
+RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-07T21:34:38.000Z] SORRY, I am an idiot, I need SIZE US 8... Do you have this size in stock? If not, you may send me US 8.5. Please give me a short reply, thank you very much &amp;amp; best regards!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> すみません、私がバカでした。必要なのはUSサイズ8です。在庫はありますか？なければUS 8.5を送ってください。簡単な返信をお願いします。どうもありがとうございます。よろしくお願いいたします。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-08T12:59:11.000Z] Hello,
+Noted. We have the item in stock, so we will change the size to US8 / JP26.
+
+We will proceed with the process.
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+承知しました。在庫がありますので、サイズをUS8 / JP26に変更いたします。
+手続きを進めます。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-09T06:39:40.000Z] Hello Antonio Giuseppe Tozzi ,
+Your item has been shipped!
+
+Shipping Company UPS (FedEx/DHL).
+Tracking number 1ZHB70516734170167
+
+We hope you will like the product!
+This message has been sent automatically.
+If you have made a separate inquiry, We will respond to you in order.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは Antonio Giuseppe Tozzi様、
+商品を発送いたしました！
+配送会社：UPS（FedEx/DHL）
+追跡番号：1ZHB70516734170167
+商品を気に入っていただけることを願っております！
+このメッセージは自動送信されています。
+別途お問い合わせをいただいている場合は順次対応いたします。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-09T16:21:23.000Z] Hello
+
+Thx for the email and all the info!
+
+Sorry for my question but what size did you shipp..??
+Again thank you very much for your outstandings support and best regards!
+
+Antonio G. Tozzi</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは
+メールと情報をありがとうございます！
+質問で申し訳ないのですが、どのサイズを発送されましたか？
+改めて素晴らしいサポートに感謝いたします。よろしくお願いいたします！
+Antonio G. Tozzi</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-09T16:33:06.000Z] Great, thanks a lot and best regards!
+
+Joe aka Antonio G. Tozzi</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 素晴らしいです。どうもありがとうございます。よろしくお願いいたします！
+JoeことAntonio G. Tozzi</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-09T16:50:53.000Z] Hello,
+
+Thank you for your message.
+
+As confirmed in our messages, we have shipped US 8 / JP 26.
+
+If you have any questions, please feel free to contact us.
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+
+メッセージありがとうございます。
+
+メッセージでご確認いただいた通り、USサイズ8 / JPサイズ26を発送いたしました。
+
+ご不明な点がございましたら、お気軽にお問い合わせください。
+
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-04-09T16:56:42.000Z] Hello
+
+Great, thanks again and have a great time!
+
+Best regards
+
+Joe</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+
+ありがとうございます。どうぞ素敵な時間をお過ごしください！
+
+よろしくお願いいたします。
+Joe</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hello
+
+Great, thanks again and have a great time!
+
+Best regards
+
+Joe</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは
+
+ありがとうございます。どうぞ素敵な時間をお過ごしください！
+
+よろしくお願いします
+ジョー</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    スコア <b>20</b>/25 ・ ⏱ 2.3秒 ・ 💴 ¥0.170
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>3</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>2</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello antonioto_0,
+
+Great, thanks again and have a great time!
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello antonioto_0,
+
+Great, thanks again and have a great time!
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信内容は正確で完全に買い手のメッセージに応えていますが、『seller』という不自然な署名があり、やや機械的に感じられます。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>20</b>/25 ・ ⏱ 1.1秒 ・ 💴 ¥0.060
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>3</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>2</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello
+
+Great, thanks again and have a great time!
+
+Best regards
+Joe aka Antonio G. Tozzi</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは antonioto_0 様,
+
+ありがとうございます。良い一日をお過ごしください！
+
+よろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信内容は正確で全てのポイントに対応していますが、買い手のメッセージをそのまま繰り返すだけで、自然な応答としては不十分です。より丁寧でプロフェッショナルな締めくくりが望まれます。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>25</b>/25 ・ ⏱ 3.3秒 ・ 💴 ¥0.040
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>5</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>5</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello antonioto_0,
+
+Thank you for your message. We appreciate your note. If there’s anything else you’d like to confirm or need assistance with, please let us know.
+
+Best regards,
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre> antonioto_0 様、
+
+ありがとうございました。ご挨拶をいただき、光栄です。
+
+Best regards,
+seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の感謝のメッセージに対し、丁寧で適切な返信がされており、全ての評価基準で高評価です。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="antonioto_0_fbc8a65e"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="ay-1144_04f6d20d">
+        <div class="case-header">
+            <h3>📩 ay-1144_04f6d20d</h3>
+            <span class="category-pill">return</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> ASICS ATTACK EXCOUNTER 2 1073A002 104 White Black Table Tennis Shoes</div>
+                    <div><b>SKU:</b> S04137-8-9</div>
+                    <div><b>Order ID:</b> 14-13933-03153</div>
+                    <div><b>Price:</b> 124.0 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-12-08T01:56:12.000Z] 商品が売れました！ ASICS ATTACK EXCOUNTER 2 1073A002 104 White Black</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-12-15T18:56:27.000Z] Doesn’t fit</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-01-09T05:03:55.000Z] system_message</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-12-08T01:57:45.000Z] Hello, I bought this item for personal use.
+Could you please write the correct value on the customs declaration and mark it as “Personal Use / Gift”?
+Please include the invoice inside or attach it outside if possible.
+Thank you!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、この商品は個人使用のために購入しました。
+税関申告書に正しい金額を記入し、「個人使用／ギフト」と記載していただけますか？
+可能であれば、請求書を商品に同梱するか、外側に添付してください。
+よろしくお願いいたします！</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-08T01:57:58.000Z] Hello ay-1144 ,
+Thank you for contacting us.
+We apologize for the inconvenience, but we are currently outside of business hours.
+If you have sent an inquiry or replied, we will respond on the next business day.
+We appreciate your understanding.
+This message has been sent automatically.
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは ay-1144様、
+お問い合わせありがとうございます。
+ご不便をおかけして申し訳ありませんが、現在営業時間外です。
+お問い合わせやご返信をいただいた場合は、翌営業日に対応いたします。
+ご理解のほどよろしくお願いいたします。
+このメッセージは自動送信されています。
+RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-08T02:56:18.000Z] Hello Simay Aydın ,  
+Thank you for your purchase!
+The item will be shipped by Dec 15 (Japan time)  , and you will receive a tracking number on ebay.  
+
+Order details
+ASICS ATTACK EXCOUNTER 2 1073A002 104 White Black Table Tennis Shoes US8/JP26 
+
+Your feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. 
+
+We will regularly send a coupon to followers.
+Please follow our shop!
+https://www.ebay.com/str/rioxrinaxshop
+
+If you are searching for any particular products, please don&#x27;t hesitate to reach out to us.
+We don&#x27;t mind if the item is already listed by other sellers on eBay. We have the ability to order anything.
+Rest assured, we will do our best to provide you with a better deal.
+
+Thank you once again for your purchase, and we wish you a delightful experience with your new item!
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは Simay Aydın様、
+ご購入ありがとうございます！
+商品は12月15日（日本時間）までに発送予定で、追跡番号はeBayでご確認いただけます。
+
+注文内容
+ASICS ATTACK EXCOUNTER 2 1073A002 104 ホワイトブラック 卓球シューズ US8/JP26
+
+お客様のフィードバックは非常に重要です。商品を受け取りましたら、ぜひポジティブな評価をいただけると幸いです。
+
+フォロワーの皆様には定期的にクーポンをお送りしています。
+ぜひ当店をフォローしてください！
+https://www.ebay.com/str/rioxrinaxshop
+
+特定の商品をお探しの場合は、お気軽にお問い合わせください。
+eBayで他の出品者が既に出品している商品でも構いません。何でもお取り寄せ可能です。
+より良い条件でご提供できるよう努めますのでご安心ください。
+
+改めてご購入ありがとうございます。新しい商品で素敵な体験をお楽しみください！
+
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-08T18:17:57.000Z] Hello,
+We’re sorry, but we cannot intentionally lower the declared value or mark the item as a gift, as that would constitute aiding in tax evasion. However, the declared value will exclude eBay fees and shipping costs, making the actual declared amount 56 USD.
+
+The handling of invoices may vary depending on the destination country,  
+but if it is required for customs clearance, we will attach the invoice to the outside of the package.  
+
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+申し訳ありませんが、申告価格を意図的に低くしたり、ギフトとして表示することは脱税幇助にあたるためできません。ただし、申告価格はeBayの手数料や送料を除いた金額となり、実際の申告額は56米ドルとなります。
+
+請求書の取り扱いは配送先の国によって異なりますが、通関に必要な場合は請求書を荷物の外側に添付いたします。
+
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-12-08T18:22:08.000Z] Hello,
+I didn’t mean to ask for a price reduction on the invoice, it was a misunderstanding. I only meant that it would be nice if it said personal use. No problem, you may proceed as you mentioned. Thank you very much. It will be a New Year’s gift for my father, and I would really appreciate it if you could ship it early. Have a good day.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+請求書の価格を下げてほしいという意味ではなく、誤解でした。個人使用と記載されていれば良いということでした。問題ありませんので、ご案内の通りに進めてください。ありがとうございます。これは父へのお年玉の贈り物なので、できるだけ早く発送していただけると大変助かります。良い一日をお過ごしください。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-09T10:54:02.000Z] Hello,
+
+I’m sorry for the misunderstanding.
+
+Understood — I’ll proceed as mentioned.
+
+We will do our best to ship your order as early as possible.
+
+Sincerely,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+誤解があり申し訳ありません。
+承知しました。ご案内の通りに進めます。
+できるだけ早く発送できるよう努めます。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-09T22:56:37.000Z] Hello Simay Aydın ,
+Your item has been shipped!
+
+Shipping Company SpeedPAK (FedEx/DHL).
+Tracking number EM1013080595819FE06040060G0N
+
+We hope you will like the product!
+This message has been sent automatically.
+If you have made a separate inquiry, We will respond to you in order.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは Simay Aydın様、
+商品は発送されました！
+
+配送会社 SpeedPAK（FedEx/DHL）
+追跡番号 EM1013080595819FE06040060G0N
+
+商品を気に入っていただけることを願っております！
+このメッセージは自動送信されています。
+別途お問い合わせをいただいている場合は順次対応いたします。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-12-12T19:00:15.000Z] Hello,
+Could you please send the inovice to me? Thank you.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+請求書を送っていただけますか？ありがとうございます。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-15T18:16:17.000Z] Hello,
+
+Could you please confirm if the attached document is acceptable?
+
+Thank you for checking.
+
+Best regards,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+添付の書類が問題ないかご確認いただけますか？
+ご確認ありがとうございます。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-12-15T18:59:50.000Z] Hello,
+The product is stuck at customs and I cannot receive it. There are too many procedures, and I would have to pay costs almost three times the price of the shoes. I would like to return it. I would really appreciate it if you accept the return; otherwise, I will have to leave it at customs. If the return shipping cost is not covered, I can pay for it myself.
+I&#x27;m sorry. Thank you for your understanding.
+Simay Aydın</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+商品が税関で止まっており受け取れません。手続きが多すぎて、靴の価格のほぼ3倍の費用がかかります。返品したいです。返品を受け付けていただけると大変助かります。そうでなければ税関に放置するしかありません。返品送料が負担されない場合は自分で支払います。
+申し訳ありません。ご理解のほどよろしくお願いいたします。
+Simay Aydın</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-16T14:16:08.000Z] Hello,
+
+Thank you for your message.
+
+If you wish to return the item, please first accept the delivery and pay the customs duties.  
+Returns can only be accepted after the item has been received and shipped back using the return label we provide.
+
+Please note that customs duties paid cannot be refunded, even in the case of a return.
+
+If you refuse to pay the customs duties, the package may be discarded.  
+In that case, we will not be responsible for any refunds.
+
+Thank you for your understanding.
+
+Best regards,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+メッセージありがとうございます。
+返品をご希望の場合は、まず商品を受け取り、関税をお支払いください。
+返品は商品を受け取り後、当方が提供する返品ラベルを使って返送された場合のみ受け付けます。
+
+関税は返品の場合でも返金できませんのでご了承ください。
+
+関税を支払わずに受け取りを拒否された場合、荷物は廃棄される可能性があります。
+その場合、返金はできませんのでご了承ください。
+
+ご理解のほどよろしくお願いいたします。
+
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-12-16T18:53:42.000Z] Hello,
+
+I already want to return the item since I was unable to collect it from customs.
+I am in contact with the FedEx team here where the shoes are located, and they said: “If the sender gives approval to FedEx in their own country through the FedEx system, the return process will be initiated.”
+
+If you can give this approval, FedEx here will ship the shoes back, and we can deduct any additional costs from the refund.
+
+Is it possible to proceed this way?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+税関で受け取れなかったため、すでに返品を希望しています。
+靴がある場所のFedExチームと連絡を取っており、彼らの話では「発送元が自国のFedExシステムで承認を出せば、返品手続きが開始される」とのことです。
+
+もしこの承認をいただければ、こちらのFedExが靴を返送し、追加費用は返金から差し引くことができます。
+
+この方法で進めることは可能でしょうか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-18T13:23:55.000Z] Hello,
+
+Today is the deadline for uploading the return label, so we have uploaded the label accordingly.
+Please note that a refund cannot be processed unless this label is used.
+
+Therefore, we kindly ask that you pay the import duties and complete receipt of the package.
+
+Thank you for your understanding.
+
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+本日が返品ラベルのアップロード期限のため、ラベルをアップロードしました。
+このラベルを使用しない限り、返金はできませんのでご了承ください。
+
+そのため、関税をお支払いのうえ、荷物の受け取りを完了していただきますようお願いいたします。
+
+ご理解のほどよろしくお願いいたします。
+
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-19T13:55:17.000Z] Hello,
+
+Please reply by 5:00 PM Japan time (in approximately 3 hours).
+If the import duties are not paid, the package may be returned or discarded.
+In such cases, the costs incurred may be approximately $250, and we may need to charge this amount to you.
+
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+
+日本時間の午後5時までにご返信ください（約3時間後です）。
+輸入関税が支払われない場合、荷物は返送または廃棄される可能性があります。
+その場合、発生する費用は約250ドルとなり、その金額をお客様に請求させていただくことがあります。
+
+よろしくお願いいたします。
+ケイ</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-12-19T19:56:47.000Z] Hello Kei,
+
+You can ignore this matter; there will be no refund. Thank you for your help.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちはケイさん、
+
+この件は無視して構いません。返金はありません。ご対応ありがとうございました。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hello Kei,
+
+You can ignore this matter; there will be no refund. Thank you for your help.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちはケイさん、
+
+この件は無視して構いません。返金はありません。ご協力ありがとうございました。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    スコア <b>22</b>/25 ・ ⏱ 3.2秒 ・ 💴 ¥0.200
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello ay-1144,
+
+Thank you for letting us know. Understood — no refund is needed. We will close this case on our side. Thank you for your cooperation.
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello ay-1144,
+
+ご連絡ありがとうございます。了解しました。返金は不要とのこと、承知しました。こちらでこの件をクローズいたします。ご協力ありがとうございました。
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信は正確かつ完全に対応しており、丁寧なトーンで書かれているが、購入者名の誤使用やもう少し親しみやすい表現が望ましい。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 2.1秒 ・ 💴 ¥0.070
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello ay-1144,
+
+Thank you for your message. We acknowledge your decision and will not take further action.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちはay-1144、
+
+ご連絡ありがとうございます。ご理解いただきありがとうございます。今後のご要望については、それ以上の対応はいたしません。
+
+よろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: AIの返信は正確かつ簡潔で、買い手の意思を尊重しているが、名前の呼び方が不自然で、もう少し丁寧な締めくくりが望ましい。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>14</b>/25 ・ ⏱ 4.2秒 ・ 💴 ¥0.050
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>3</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>2</b>/5</span><span class="score-pill">アクション <b>2</b>/5</span><span class="score-pill">自然さ <b>3</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello ay-1144,
+Thank you for your message. We understand you want to return the item due to customs issues. We will proceed with the return: once the item is delivered back using the return label, a refund will be issued minus any non-refundable duties already paid. Please note that duties and taxes are not refundable. We will prepare the return process accordingly.
+Best regards,
+Kei</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>ay-1144様、
+この度はご連絡ありがとうございます。現在の状況を踏まえ、今後の対応方針をお伝えします。
+返品をご希望とのことで承知しました。返品手続きは、商品到着後に返送ラベルを使用して返送いただく形で進めます。関税等の費用は返金対象外となる点をご了承ください。ご希望どおり、返送手続きの準備をこちらで進めます。
+どうぞよろしくお願いいたします。
+敬具,
+seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者が返品や返金を希望しない旨を伝えているにもかかわらず、AIの返信は返品手続きを進める内容となっており、購入者の意図を正しく反映していません。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="ay-1144_04f6d20d"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="ca2015_trao_ca314a32">
+        <div class="case-header">
+            <h3>📩 ca2015_trao_ca314a32</h3>
+            <span class="category-pill">return</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> PUMA Mostro Camo 401540_02 PUMA Black-Cast Iron</div>
+                    <div><b>SKU:</b> H00281-10</div>
+                    <div><b>Order ID:</b> 18-13797-58178</div>
+                    <div><b>Price:</b> 150.0 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-11-09T13:56:05.000Z] 商品が売れました！ PUMA Mostro Camo 401540_02 PUMA Black-Cast Iron</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-11-19T15:26:55.000Z] Changed mind</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-11-22T05:59:48.000Z] バイヤーが返送済み</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-11-26T10:37:12.000Z] 返送品到着済み</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-11-27T18:45:57.000Z] system_message</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-10T11:26:59.000Z] Hello,  
+Thank you for your purchase!
+The item will be shipped within 2-5 business days and you will receive a tracking number on ebay.  
+Your feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. 
+
+We will regularly send a coupon to followers.
+Please follow our shop!
+https://www.ebay.com/str/rioxrinaxshop
+
+If you are searching for any particular products, please don&#x27;t hesitate to reach out to us.
+We don&#x27;t mind if the item is already listed by other sellers on eBay. We have the ability to order anything.
+Rest assured, we will do our best to provide you with a better deal.
+
+Thank you once again for your purchase, and we wish you a delightful experience with your new item!
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+ご購入ありがとうございます！
+商品は2～5営業日以内に発送され、ebayで追跡番号をお知らせします。
+お客様のフィードバックは非常に重要です。商品を受け取られましたら、ぜひポジティブな評価をいただけると幸いです。
+
+フォロワーの皆様には定期的にクーポンをお送りしています。
+ぜひ当店をフォローしてください！
+https://www.ebay.com/str/rioxrinaxshop
+
+特定の商品をお探しの場合は、お気軽にお問い合わせください。
+eBayの他の出品者が既に出品している商品でも構いません。何でもお取り寄せ可能です。
+より良い条件でご提供できるよう努めますのでご安心ください。
+
+改めましてご購入ありがとうございました。新しい商品で素敵な体験をお祈りしています！
+
+よろしくお願いいたします。
+ケイ</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-10T13:09:35.000Z] No problem, I&#x27;ll leave you a very good review of the purchase.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 問題ありません。購入に対して非常に良い評価を残します。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-10T13:24:00.000Z] Thank you very much!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> どうもありがとうございます！</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-20T10:35:45.000Z] Hello,
+
+Please note that if you have paid customs duties,
+those fees are unfortunately not refundable.
+
+While we prepare the return label,
+I would like to make a small suggestion:
+
+Would you be willing to keep the item
+if I offer you a 20 USD partial refund?
+
+The round-trip shipping cost is quite high,
+so it would help us a lot if you could keep the product instead.
+
+I would appreciate it if you could consider this option.
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+
+関税をお支払い済みの場合、その料金は残念ながら返金不可となりますのでご了承ください。
+
+返品ラベルを準備している間に、ひとつご提案があります。
+
+もし20ドルの部分返金をお受けいただけるなら、商品をそのままお持ちいただけませんか？
+
+往復の送料がかなり高額なため、商品をお手元に残していただけると大変助かります。
+
+ご検討いただけますと幸いです。
+よろしくお願いいたします。
+ケイ</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-20T10:41:10.000Z] No, I don&#x27;t want to keep the item. I want a full refund. The customs fees cost me $28, so it&#x27;s not a big deal if I don&#x27;t get a refund for that. But I don&#x27;t want to keep the item. Thank you.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> いいえ、商品は保持したくありません。全額返金を希望します。関税は28ドルかかりましたが、それは返金されなくても構いません。しかし商品は保持したくありません。ありがとうございます。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-20T10:55:14.000Z] Understood.
+
+The return label has been uploaded.
+
+Please check the return policy and proceed with the return.
+
+We look forward to serving you again.
+
+Best regards,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 承知しました。
+
+返品ラベルをアップロードしました。
+
+返品ポリシーをご確認のうえ、返品手続きをお願いいたします。
+
+またのご利用をお待ちしております。
+
+よろしくお願いいたします。
+ケイ</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-27T10:13:25.000Z] Hello,
+We have checked the returned item, and the contents are not the same as what we originally shipped to you.
+
+Could you please explain what happened?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+返品された商品を確認しましたが、元々お送りした内容と異なっています。
+
+何があったのかご説明いただけますか？</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-27T10:16:18.000Z] What? How come? What are you talking about? I don&#x27;t understand.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> え？どういうことですか？何を言っているのかわかりません。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-27T10:18:21.000Z] What is this photo ?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> これは何の写真ですか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-27T11:10:21.000Z] This is the photo of the label inside the shoe.
+The item we shipped to you was the size you ordered: US10 / UK9 / JP28.
+
+However, the returned shoes have a different size label,
+and the shoe tag is also missing.
+
+This does not match the item we originally sent.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> これは靴の内側のラベルの写真です。
+お送りした商品はご注文のサイズ（US10 / UK9 / JP28）でした。
+
+しかし返品された靴はサイズラベルが異なり、靴のタグもありません。
+これは元々お送りした商品と一致しません。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-27T11:22:15.000Z] Well, in over 10 years on eBay, this is the first time I&#x27;ve seen anything like this. The way the shoe arrived is exactly how I returned it. There weren&#x27;t two pairs of shoes in the box. The shoe arrived, I tried it on, it was my size, but I didn&#x27;t like the color, so I returned it. I even paid the customs fees. You should ask FedEx to investigate whether they accidentally switched the box or the shoe, or if something happened with Canadian or Japanese customs. I didn&#x27;t even keep the shoe for four days; I returned it exactly as it arrived. I didn&#x27;t do anything else.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ええと、eBayで10年以上取引していますが、こんなことは初めてです。靴が届いた状態は、私が返品した状態と全く同じです。箱の中に靴が2足入っていたことはありません。靴が届き、試着したらサイズは合いましたが色が気に入らなかったので返品しました。関税も支払いました。FedExに箱や靴が誤って入れ替わった可能性や、カナダや日本の税関で何かあったか調査してもらうべきです。靴は4日も持っていません。届いたままの状態で返品しました。他には何もしていません。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-27T14:51:04.000Z] If the item had been returned in the same condition as when it was delivered,
+the original tags attached to the shoes should also have been included.
+
+Additionally, the shoes you returned do not have any Japanese size notation.
+All shoes sold in Japan must display the size in centimeters (cm),
+which clearly shows that the pair you returned is not a Japan-market product.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 商品が配送時と同じ状態で返品されていた場合、靴に付いていた元のタグも含まれているはずです。
+
+さらに、返品された靴には日本のサイズ表記がありません。
+日本で販売される靴は必ずセンチメートル（cm）でサイズ表示がされており、返品された靴は日本市場向けの商品ではないことが明らかです。</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-11-27T15:33:56.000Z] Sir, honestly, I don&#x27;t know what to tell you. I&#x27;m telling you the shoe arrived like this. You&#x27;re telling me the shoe isn&#x27;t Japanese or American or whatever. I&#x27;ve bought hundreds of items on eBay, I&#x27;ve returned several, and I&#x27;ve never had a problem with anyone or any store. The shoe arrived like this, I returned it like this. Do what you have to do. I, for one, am going to file a complaint with eBay. Instead of asking FedEx to investigate, you&#x27;re accusing me of returning an improperly made shoe. I only wore this shoe for one day; I wasn&#x27;t going to go out with the tags stuck on it. So frankly, your unfounded accusations are starting to annoy me. I&#x27;m going to file a complaint with eBay. Good evening.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 正直に申し上げますと、何と言えばよいのかわかりません。靴はこの状態で届きました。あなたは靴が日本製でもアメリカ製でもないと言っています。私はeBayで何百もの商品を購入し、何度か返品もしましたが、誰とも店とも問題になったことはありません。靴はこの状態で届き、私はこの状態で返品しました。あなたはFedExに調査を依頼する代わりに、私が不適切な靴を返品したと非難しています。私はこの靴を1日だけ履きました。タグが付いたまま外出するつもりはありませんでした。正直なところ、根拠のない非難にはうんざりしています。私はeBayに苦情を申し立てます。では、失礼します。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Sir, honestly, I don&#x27;t know what to tell you. I&#x27;m telling you the shoe arrived like this. You&#x27;re telling me the shoe isn&#x27;t Japanese or American or whatever. I&#x27;ve bought hundreds of items on eBay, I&#x27;ve returned several, and I&#x27;ve never had a problem with anyone or any store. The shoe arrived like this, I returned it like this. Do what you have to do. I, for one, am going to file a complaint with eBay. Instead of asking FedEx to investigate, you&#x27;re accusing me of returning an improperly made shoe. I only wore this shoe for one day; I wasn&#x27;t going to go out with the tags stuck on it. So frankly, your unfounded accusations are starting to annoy me. I&#x27;m going to file a complaint with eBay. Good evening.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>正直に言うと、何と言えばいいかわかりません。靴はこの状態で届きました。あなたは靴が日本製でもアメリカ製でもないと言っています。私はeBayで何百もの商品を購入し、何度か返品もしましたが、誰とも店とも問題になったことはありません。靴はこの状態で届き、私はこの状態で返品しました。あなたはやるべきことをしてください。私はeBayに苦情を申し立てるつもりです。FedExに調査を依頼する代わりに、私が不良品の靴を返品したと非難しています。この靴は一日だけ履きました。タグを付けたまま外出するつもりはありませんでした。正直なところ、根拠のない非難にはうんざりしています。eBayに苦情を申し立てます。おやすみなさい。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 11.6秒 ・ 💴 ¥0.300
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello ca2015_trao,
+
+We are sorry for the frustration this situation has caused. Our inspection found differences in the returned pair (size labeling and missing tag) compared with what we shipped, which is why we asked for clarification. We accept your statement that you returned the shoes exactly as you received them.
+
+We will proceed by treating this matter through eBay’s dispute process and by requesting an investigation with the carrier (FedEx). The outcome of those investigations will determine whether a full refund is issued. If you can provide any additional evidence (photos of the package or item when you received it, the tracking number, or any other relevant documentation), please add them to the eBay case — that will help expedite the investigation.
+
+We apologize again for the trouble. We will follow the eBay case process and communicate the result through eBay.
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello ca2015_trao,
+
+ご不快な思いをさせてしまい申し訳ございません。当店が検品した結果、返送された靴のサイズ表記やタグの有無などが出荷時の状態と一致しないため、確認をお願いしております。お客様は商品を到着時のまま返送したとおっしゃっていますので、そのご主張を尊重いたします。今後の対応として、当店はこの事案をeBayの係争解決プロセスにて正式に扱い、配送会社（FedEx）およびeBayへ調査の申し立てを行い、調査結果に基づいて返金またはその他の対応を決定いたします。お客様から追加で提出可能な情報（受け取り時の外箱の写真、開封時の状態の写真や動画、追跡番号など）がございましたら、eBayのケースに添えてご提出いただけますと調査がスムーズになります。
+
+このたびはご迷惑をおかけし重ねてお詫び申し上げます。調査の結果が出次第、eBayを通じてご連絡いたします。
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返送品の相違点を説明しつつ、バイヤーの主張を認めて調査を進める旨を伝えています。次の対応も明確で、全体的に正確かつ適切な返信です。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>19</b>/25 ・ ⏱ 1.7秒 ・ 💴 ¥0.070
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>3</b>/5</span><span class="score-pill">アクション <b>3</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello ca2015_trao,
+
+Thank you for your understanding. We will proceed with an investigation regarding this matter. We apologize for the inconvenience, and if you have any further questions, please let us know.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちはca2015_traoさん、
+
+ご理解いただきありがとうございます。今回の件については、こちらで調査を進めさせていただきます。ご不便をおかけして申し訳ありませんが、何か他にご質問があればお知らせください。
+
+よろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: AIの返信は正確で丁寧だが、買い手の不満に対する共感が不足しており、調査の具体的な次のステップが明確でないため、改善の余地がある。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>21</b>/25 ・ ⏱ 5.0秒 ・ 💴 ¥0.050
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello ca2015_trao,
+
+We understand your frustration and apologize for the confusion. Based on the evidence, we need to review the returned item against what was shipped. We will proceed with the return/refund process per eBay policy. If you have any additional information or photos that show the condition you received, please share them so we can resolve this quickly.
+
+Thank you for your patience. Best regards, 
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>ca2015_trao様
+
+大変申し訳ございません。今回の件でご不安とご不便をお掛けしていることを深くお詫びします。現状、返品品の状態と元発送品に相違が認められるため、こちらで調査を進めざるを得ません。eBayのポリシーに基づき、公正な解決を図るための情報提供をお願いいたします。
+
+よろしければ、現状のご対応を維持しつつ、返金手続きの進行を進めさせていただきます。追加の情報やご質問がありましたらお知らせください。なお、今後の対応については、適切なサポートを受けられるよう最善を尽くします。
+
+よろしくお願いいたします。
+
+seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: AIの返信は正確で丁寧ですが、買い手の不満に対する共感がやや不足しており、次の対応についての説明ももう少し明確にすると良いです。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="ca2015_trao_ca314a32"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="eduherrer76_d1d9eb3d">
+        <div class="case-header">
+            <h3>📩 eduherrer76_d1d9eb3d</h3>
+            <span class="category-pill">claim</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Onitsuka Tiger MEXICO 66 SD 1183A872 752 YELLOW BLACK</div>
+                    <div><b>SKU:</b> V0347-7.5Z-20</div>
+                    <div><b>Order ID:</b> 18-13801-72824</div>
+                    <div><b>Price:</b> 152.15 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-11-10T11:34:15.000Z] 商品が売れました！ Onitsuka Tiger MEXICO 66 SD 1183A872 752 YELLOW B</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-10T12:22:06.000Z] Hello. This is a 100%guaranteed official Onitsuka product right?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。これは100％保証された公式のオニツカ製品ですよね？</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-10T12:40:48.000Z] excellent Kei. Thank you. I just wanted to make sure with you that the shoes are original. They are, right?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 素晴らしいです、ケイさん。ありがとうございます。靴が本物であることを確認したかっただけです。本物ですよね？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-10T13:07:53.000Z] We are the recipients of the eBay Japan Awards 2022 and 2023 Category Growth Award for Sneakers (Athletic Shoes) Corporate Division.
+Rest assured, Our products are 100% authentic. Counterfeit products are illegal and not allowed on eBay.
+
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 私たちはeBay Japan Awards 2022年および2023年のスニーカー（運動靴）部門の企業部門成長賞を受賞しています。ご安心ください、当社の製品は100％本物です。偽造品は違法であり、eBayでは許可されていません。よろしくお願いいたします。ケイ</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-11-21T02:43:28.000Z] Hello,
+Did you like the shoes?
+Thank you once again for purchasing from us! 
+We have been selling shoes on eBay for five years. 
+Your positive feedback and comments are a daily motivation for us. 
+We would greatly appreciate it if you could leave us positive feedback! 
+We look forward to doing business with you again.
+
+How to leave feedback
+1. Go to &quot;Purchase history.&quot;
+2. Click the &quot;Leave Feedback&quot; button next to the item you would like to rate the service you received. 
+
+Best regards,
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、靴は気に入りましたか？改めてご購入いただきありがとうございます！私たちは5年間eBayで靴を販売しています。お客様のポジティブなフィードバックやコメントは私たちの毎日の励みです。ぜひポジティブなフィードバックをいただけると幸いです！またのご利用を心よりお待ちしております。フィードバックの残し方1. 「購入履歴」へ行く2. 評価したい商品の横にある「フィードバックを残す」ボタンをクリックするよろしくお願いいたします。RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-12-04T09:25:10.000Z] Hello Eduardo Herrera Jacobo ,
+Thank you so much for leaving positive feedback!
+We’re very happy to know that you liked our product.
+We truly look forward to doing business with you again!
+Best regards,
+Kei.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、Eduardo Herrera Jacoboさん、ポジティブなフィードバックをいただきありがとうございます！当社の製品を気に入っていただけてとても嬉しいです。またのご利用を心よりお待ちしております。よろしくお願いいたします。ケイ</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-12-04T09:26:27.000Z] ケイさん、おはようございます。靴が到着を確認します。満足です。ありがとうございます。reviewも完了。お世話になっております。</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ケイさん、おはようございます。靴の到着を確認しました。満足しています。ありがとうございます。レビューも完了しました。お世話になっております。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>ケイさん、おはようございます。靴が到着を確認します。満足です。ありがとうございます。reviewも完了。お世話になっております。</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>ケイさん、おはようございます。靴の到着を確認しました。満足しています。ありがとうございます。レビューも完了しました。お世話になっております。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 3.9秒 ・ 💴 ¥0.160
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello eduherrer76,
+Thank you for confirming the shoes arrived and for leaving a review. We&#x27;re glad you&#x27;re satisfied. We appreciate your purchase and look forward to serving you again.
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello eduherrer76,
+靴の到着とレビューの投稿、ありがとうございます。ご満足いただけて大変うれしく思います。今後ともどうぞよろしくお願いいたします。
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の満足とレビュー完了の報告に対し、正確かつ丁寧に感謝を伝えているが、もう少し自然で親しみやすい表現に改善できる。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>22</b>/25 ・ ⏱ 1.7秒 ・ 💴 ¥0.060
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello eduherrer76,
+
+Thank you for confirming the shoes have arrived and for completing the review. I&#x27;m glad you&#x27;re satisfied. I appreciate your support.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、eduherrer76様、
+
+靴の到着とレビューの完了を確認いたしました。ご満足いただけて幸いです。お世話になっております。
+
+今後ともどうぞよろしくお願いいたします。
+
+ベスト regards,
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の満足とレビュー完了への感謝を適切に伝えているが、呼びかけがやや機械的で、もう少し自然な表現に改善できる。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>25</b>/25 ・ ⏱ 3.4秒 ・ 💴 ¥0.030
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>5</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>5</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello eduherrer76,
+
+Thank you for letting us know. We&#x27;re glad to hear the shoes arrived and that you’re satisfied. We also appreciate you leaving the review.
+
+If there is anything else we can assist you with, please let us know. Thanks again for your business.
+
+Best regards,
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは eduherrer76,
+
+ご連絡ありがとうございます。靴の到着をご確認いただき、ご満足いただけたとのこと、大変嬉しく思います。レビューのご対応、心より感謝いたします。
+
+今後ともよろしくお願いいたします。
+
+Best regards,
+seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の満足とレビュー完了の報告に対し、丁寧で適切な返信ができている。次の対応も明確で自然な文章。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="eduherrer76_d1d9eb3d"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="mobirush_a71669a7">
+        <div class="case-header">
+            <h3>📩 mobirush_a71669a7</h3>
+            <span class="category-pill">general</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> 商品情報（要取得）</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> — USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-06-23T17:15:41.000Z] Blue shibuya size 24.5 ready?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ブルー渋谷、サイズ24.5は在庫ありますか？</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-06-24T15:07:24.000Z] Yes, we currently have it in stock!
+There are only a few left, so please place your order soon.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> はい、現在在庫があります！
+残りわずかですので、お早めにご注文ください。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-06-24T15:07:30.000Z] https://www.ebay.com/itm/355667682547?var=624770009974</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> https://www.ebay.com/itm/355667682547?var=624770009974</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-07T15:06:27.000Z] This item ready?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> この商品は在庫ありますか？</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-07T15:07:34.000Z] Shibuya Blue size 24.5</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 渋谷ブルー サイズ24.5</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-11-07T17:20:58.000Z] Yes, we currently have it in stock!
+There are only a few left, so please place your order soon.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> はい、現在在庫があります！残りわずかですので、お早めにご注文ください。</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-11-07T17:21:12.000Z] https://www.ebay.com/itm/355667682547?var=624770009974</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> https://www.ebay.com/itm/355667682547?var=624770009974</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>https://www.ebay.com/itm/355667682547?var=624770009974</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>https://www.ebay.com/itm/355667682547?var=624770009974</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    スコア <b>21</b>/25 ・ ⏱ 2.3秒 ・ 💴 ¥0.150
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello mobirush,
+The Shibuya Blue in size 24.5 is currently in stock. There are only a few left, so please place your order soon.
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello mobirush,
+Blue Shibuya サイズ 24.5 は在庫があります。数が少ないため、ご注文はお早めにお願いします。
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 在庫状況について正確に回答しているが、もう少し丁寧な表現や注文方法の案内があるとより良い。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>22</b>/25 ・ ⏱ 1.8秒 ・ 💴 ¥0.050
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello mobirush,
+
+Thank you for your message. The item is currently available in stock. Please place your order soon. You can purchase it through this link: https://www.ebay.com/itm/355667682547?var=624770009974
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、mobirushさん,
+
+ご質問ありがとうございます。現在、在庫がございますので、ご安心ください。ご注文はお早めにどうぞ。こちらのリンクからご購入いただけます： https://www.ebay.com/itm/355667682547?var=624770009974
+
+よろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 在庫があることを正確に伝え、購入リンクも案内しているが、もう少し親しみやすく丁寧な表現が望ましい。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>19</b>/25 ・ ⏱ 2.2秒 ・ 💴 ¥0.030
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>3</b>/5</span><span class="score-pill">アクション <b>3</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello mobirush,
+Thank you for reaching out. The item is in stock. If you have any specific questions about the listing at the link, please let me know.</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、mobirush。
+ご連絡ありがとうございます。こちらの商品は在庫があります。リンクのアイテムについて特にご質問があればお知らせください。</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 商品の在庫があることを伝えているが、購入促進や具体的な次の行動の案内が不足しているため、もう少し丁寧で具体的な対応が望ましい。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="mobirush_a71669a7"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="nokiafan_blau_915321b7">
+        <div class="case-header">
+            <h3>📩 nokiafan_blau_915321b7</h3>
+            <span class="category-pill">discount</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> 商品情報（要取得）</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> — USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-06T00:14:13.000Z] Guten Tag und ein gesundes und efolgreiches neues Jahr, gibt es die Möglichkeit, die Schuhe für 100€ zu verkaufen? Zoll, Steuern und Abgaben sind in Deutschland ca. 50€. Das wären gesamt 150€. Ich würde mich sehr freuen! Danke im Voraus für ihr Entgegenkommen! VG Fred Hübner</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、新年あけましておめでとうございます。靴を100ユーロで販売していただくことは可能でしょうか？ドイツでは関税、税金、手数料が約50ユーロかかります。合計で150ユーロになります。ご検討いただけると大変嬉しいです。どうぞよろしくお願いいたします。フレッド・ヒューブナー</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-06T11:36:14.000Z] Hello,
+
+Thank you for your interest and for making an offer.
+I&#x27;m sorry, but the price listed is the best we can offer at this moment. 
+We appreciate your understanding.
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+ご関心とご提案ありがとうございます。
+申し訳ありませんが、現在の価格が最善のご提供価格となっております。
+ご理解のほどよろしくお願いいたします。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-06T17:44:59.000Z] Hallo, danke für die ehrliche Antwort. Schade, gern hätte ich die Schuhe gekauft! Doch beiden hohen Abgeaben, Steuern etc., wäre ein Kauf zu teuer. VG Fred</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。正直なご回答ありがとうございます。残念ですが、ぜひ靴を購入したかったです。しかし高い関税や税金などのため、購入は難しいです。よろしくお願いいたします。フレッド</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-06T20:27:28.000Z] Falls sie eine Möglichkeit für einen Verkauf an mich sehen, würde ich mich sehr über eine Info freuen! VG Fred</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> もし私に販売していただける可能性がありましたら、ご連絡いただけると幸いです。よろしくお願いいたします。フレッド</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-06T20:29:13.000Z] こんにちは。率直なご回答ありがとうございます。それは残念ですね。私もその靴を買いたかったのですが、手数料や税金などが高くて買えないんです。よろしくお願いいたします。フレッド
+
+もし私に売っていただける可能性があるようでしたら、情報をいただければ大変助かります。よろしくお願いいたします。フレッド</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。率直なご回答ありがとうございます。それは残念ですね。私もその靴を買いたかったのですが、手数料や税金などが高くて買えないんです。よろしくお願いいたします。フレッド
+
+もし私に売っていただける可能性があるようでしたら、情報をいただければ大変助かります。よろしくお願いいたします。フレッド</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-01-06T20:33:05.000Z] Hello, thank you for the honest answer. That&#x27;s a shame, I would have loved to buy the shoes! But with the high fees, taxes, etc., buying them would be too expensive. Best regards, Fred
+
+If you see any possibility of selling them to me, I would be very grateful for the information! Best regards, Fred</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。正直なご回答ありがとうございます。残念ですが、ぜひ靴を購入したかったです。しかし高い手数料や税金などのため、購入は難しいです。よろしくお願いいたします。フレッド
+
+もし私に販売していただける可能性がありましたら、ご連絡いただけると幸いです。よろしくお願いいたします。フレッド</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hello, thank you for the honest answer. That&#x27;s a shame, I would have loved to buy the shoes! But with the high fees, taxes, etc., buying them would be too expensive. Best regards, Fred
+
+If you see any possibility of selling them to me, I would be very grateful for the information! Best regards, Fred</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、正直なご回答ありがとうございます。残念ですが、その靴を買いたかったです！しかし高額な手数料や税金などで、購入は高くつきすぎます。よろしくお願いします、フレッド
+もし私に売る可能性があれば、ぜひ教えてください。よろしくお願いします、フレッド</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    スコア <b>20</b>/25 ・ ⏱ 3.1秒 ・ 💴 ¥0.170
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>3</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello nokiafan_blau,
+Thank you for your messages and for your interest. I’m sorry, but I cannot accept €100 for the shoes. The listed price is the best I can offer at this time. I appreciate your understanding and I&#x27;m sorry we couldn&#x27;t make this work.
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello nokiafan_blau,
+ご連絡ありがとうございます。ご希望の100€での販売については、当方ではお受けできません。ご期待に沿えず申し訳ありませんが、現在の出品価格が最善の条件です。ご理解いただけますと幸いです。
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信は正確で丁寧ですが、購入者の名前を使わずやや機械的であり、次の対応についての案内がもう少し明確だとより良いです。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>20</b>/25 ・ ⏱ 2.3秒 ・ 💴 ¥0.060
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>3</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello nokiafan_blau,
+
+Thank you for your understanding. I&#x27;m sorry, but I cannot accommodate your request under the current conditions. I understand your situation, but please consider future transactions within the eBay platform. If there&#x27;s anything else I can assist you with, please let me know.
+
+Best regards,
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、nokiafan_blauさん、
+
+ご理解いただきありがとうございます。申し訳ありませんが、こちらの条件ではご希望に添えない状況です。ご事情をお察ししますが、今後もeBayのプラットフォーム内での取引をご検討ください。何か他にお手伝いできることがあればお知らせください。
+
+よろしくお願いいたします。</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信は正確で丁寧ですが、購入者の名前を間違えている点と次のアクションがやや不明瞭なため、改善の余地があります。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>20</b>/25 ・ ⏱ 2.8秒 ・ 💴 ¥0.040
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>3</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello nokiafan_blau,
+
+Thank you for your message. We cannot adjust the listing price. We are only able to sell at the listed price in line with eBay policies. I appreciate your understanding. If price or terms change in the future, please check the listing again.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、nokiafan_blau様
+
+ご連絡ありがとうございます。現状の出品価格については変えられません。eBayのポリシーに従い、リスト価格での販売のみ対応しています。ご理解いただけますと幸いです。もし今後、価格や条件が変更される場合は、再度出品状況を確認してください。
+
+よろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信は正確で丁寧ですが、購入者の名前を間違えている点や、購入者の負担に対する共感が不足しています。もう少し親身な対応が望まれます。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="nokiafan_blau_915321b7"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="olja_7021_68de443f">
+        <div class="case-header">
+            <h3>📩 olja_7021_68de443f</h3>
+            <span class="category-pill">claim</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> 商品情報（要取得）</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> — USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-07-23T14:38:48.000Z] Hola Son originales??</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。本物ですか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-07-23T17:37:53.000Z] Hello,
+Thank you for your inquiry.
+Yes, We are the recipients of the eBay Japan Awards 2022 and 2023 Category Growth Award for Sneakers (Athletic Shoes) Corporate Division.
+Rest assured, Our products are 100% authentic. Counterfeit products are illegal and not allowed on eBay.
+
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、お問い合わせありがとうございます。はい、私たちはeBay Japan Awards 2022年および2023年のスニーカー（運動靴）部門の企業部門成長賞を受賞しています。ご安心ください、当社の製品は100％本物です。偽造品は違法であり、eBayでは許可されていません。よろしくお願いいたします。ケイ</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-07-23T22:31:49.000Z] Excelente! Muchas gracias!!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 素晴らしい！どうもありがとうございます！！</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-07-24T12:49:38.000Z] You&#x27;re very welcome!
+
+Looking forward to your order — thank you again!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> どういたしまして！ご注文をお待ちしております。改めてありがとうございます！</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-07-24T13:36:27.000Z] Gracias 
+Si. La consulta fue principalmente porque el producto no tiene el sello de garantía de originalidad</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ありがとうございます。はい。主に商品の保証シールがないため確認したかったのです。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Gracias 
+Si. La consulta fue principalmente porque el producto no tiene el sello de garantía de originalidad</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>ありがとうございます。
+はい。主に商品の正規保証シールがないことについての問い合わせでした。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 5.0秒 ・ 💴 ¥0.190
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>5</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello olja_7021,
+Thank you for your message.
+I understand your concern about the missing authenticity seal. Please rest assured that our products are 100% authentic. Counterfeit items are prohibited on eBay, and our store has received the eBay Japan Awards 2022 and 2023 for growth in the Sneakers category.
+If you would like additional details (more photos, close-ups of tags or the box, etc.), please let me know and I will provide them.
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello olja_7021,
+ご連絡ありがとうございます。
+保証の刻印（シール）が付いていない点でご不安になられたこと、よくわかりました。当店の商品は100%正規品であることを改めてご安心ください。模倣品はeBayで禁止されており、当店はeBay Japan Awards 2022および2023のスニーカー部門成長賞を受賞しております。
+何か他に気になる点（写真の追加、タグや箱の詳細確認など）があればお知らせください。
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の保証シールに関する懸念に対し、商品の正規性を丁寧に説明し、追加の写真提供を提案している。全体的に適切で親切な対応である。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>20</b>/25 ・ ⏱ 2.2秒 ・ 💴 ¥0.050
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>3</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello, olja_7021,
+
+Thank you for your question about the originality seal. Please note that some authentic products may not include a warranty seal. Rest assured, our items are genuine. If you have any other questions, feel free to ask.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、olja_7021さん、
+
+保証書の有無についてのご質問ありがとうございます。商品の保証書が付属していない場合もございますが、正規品であることには自信を持っております。何か他にご不明な点があればお知らせください。
+
+よろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の保証シールに関する不安に対し、真贋について安心させる回答をしているが、説明や次の対応がもう少し明確だとより良い。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>21</b>/25 ・ ⏱ 3.6秒 ・ 💴 ¥0.040
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello olja_7021,
+
+Thanks for checking in. Regarding the concern about the authenticity seal: we cannot modify or add a separate authenticity seal, and we confirm the item is handled as a genuine product. Please review the listing description for details about authenticity. If you’d like to pursue a return according to our stated policy, please let us know and we’ll proceed accordingly.</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>オルハさん、こんにちは。
+ご連絡ありがとうございます。元のご質問は「正規保証シールが見つからない」という点についてでしたね。現時点では、eBayのポリシーに沿い、保証シールの有無を追加で提供したり変更することはできません。商品は公式に販売されており、正規品として取り扱っております。もし疑問がある場合は、購入ページの説明とオリジナル性に関する記載をご確認ください。必要であれば、返金・返品ポリシーに基づく対応を検討しますのでご希望をお知らせください。</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の本物保証シールがないことへの不安に対し、商品は本物であることを伝えつつ返品対応も案内しているが、もう少し共感的な表現や返品ポリシーの案内を明確にすると良い。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="olja_7021_68de443f"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="prettypoodle1234_c0e079a9">
+        <div class="case-header">
+            <h3>📩 prettypoodle1234_c0e079a9</h3>
+            <span class="category-pill">cancel</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> PUMA Women&#x27;s Speed ​​Cat Wedge 407878_01 Totally Taupe Chocolate</div>
+                    <div><b>SKU:</b> H01399-7-7</div>
+                    <div><b>Order ID:</b> 08-14203-08343</div>
+                    <div><b>Price:</b> 189.0 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-02-06T14:16:01.000Z] 商品が売れました！ PUMA Women&#x27;s Speed ​​Cat Wedge 407878_01 Totally</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-02-27T21:38:16.000Z] Buyer didn&#x27;t receive the item</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-02-27T21:41:28.000Z] The buyer hasn&#x27;t received their item yet</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-02-06T14:46:09.000Z] Hello Reva Prescott ,  
+Thank you for your purchase!
+The item will be shipped by Feb 16 (Japan time)  , and you will receive a tracking number on ebay.  
+
+Order details
+PUMA Women&#x27;s Speed ​​Cat Wedge 407878_01 Totally Taupe Chocolate US7/UK4.5/JP23.5 
+
+Your feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. 
+
+We will regularly send a coupon to followers.
+Please follow our shop!
+https://www.ebay.com/str/rioxrinaxshop
+
+If you are searching for any particular products, please don&#x27;t hesitate to reach out to us.
+We don&#x27;t mind if the item is already listed by other sellers on eBay. We have the ability to order anything.
+Rest assured, we will do our best to provide you with a better deal.
+
+Thank you once again for your purchase, and we wish you a delightful experience with your new item!
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、Reva Prescott様。
+ご購入いただきありがとうございます！
+商品は日本時間の2月16日までに発送されます。発送後、eBayにて追跡番号をお知らせいたします。
+
+ご注文内容
+PUMA レディース スピードキャット ウェッジ 407878_01 トータリータウプチョコレート US7/UK4.5/JP23.5
+
+お客様のフィードバックは私たちにとって非常に重要です。商品を受け取りましたら、ぜひポジティブなフィードバックをお寄せいただけると幸いです。
+
+フォロワーの皆様には定期的にクーポンをお送りしております。
+ぜひ当店をフォローしてください！
+https://www.ebay.com/str/rioxrinaxshop
+
+特定の商品をお探しの場合は、お気軽にお問い合わせください。
+eBayの他のセラーが出品している商品でも構いません。私たちはあらゆる商品をお取り寄せ可能です。
+より良い条件でご提供できるよう全力を尽くしますのでご安心ください。
+
+改めまして、ご購入ありがとうございました。新しい商品で素敵な体験をお楽しみください！
+
+敬具
+Kei</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-02-09T15:52:28.000Z] Hello Reva Prescott ,
+Your item has been shipped!
+
+Shipping Company SpeedPAK (FedEx/DHL).
+Tracking number EM1013086313851FE06010008F0N
+
+We hope you will like the product!
+This message has been sent automatically.
+If you have made a separate inquiry, We will respond to you in order.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、Reva Prescott様。
+商品は発送されました！
+
+配送会社：SpeedPAK（FedEx/DHL）
+追跡番号：EM1013086313851FE06010008F0N
+
+商品を気に入っていただけることを願っております！
+このメッセージは自動送信されています。
+別途お問い合わせをいただいている場合は順次対応いたします。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-13T06:51:07.000Z] Hi. I just received a call about customs. I’d like to just cancel the order.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。税関からの連絡を受けました。注文をキャンセルしたいです。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-02-13T06:51:13.000Z] Hello prettypoodle1234 ,
+Thank you for contacting us.
+We apologize for the inconvenience, but we are currently outside of business hours.
+If you have sent an inquiry or replied, we will respond on the next business day.
+We appreciate your understanding.
+This message has been sent automatically.
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、prettypoodle1234様。
+お問い合わせありがとうございます。
+ご不便をおかけして申し訳ありませんが、現在営業時間外です。
+お問い合わせやご返信をいただいている場合は、翌営業日に対応いたします。
+ご理解のほどよろしくお願いいたします。
+このメッセージは自動送信されています。
+RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-13T06:52:35.000Z] FedEx called me due to customs, but I already paid an inflated price for the shoes AND shipping. I no longer want the item and would like a refund.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> FedExから税関の件で連絡がありましたが、靴と送料にすでに高額を支払っています。もう商品は不要なので返金を希望します。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-02-13T14:10:47.000Z] Hello,
+Thank you for your message.
+
+For shipments to the United States, the USD 40 shown as shipping is not the actual shipping fee. It represents the customs duties that we prepay on your behalf. The customs duties have already been paid.
+
+We have also confirmed with FedEx that there is no record of any additional tax charges.
+
+Since the item has already been shipped, we are unable to cancel the order at this time.
+If you wish to return the item, please kindly receive the package first and then open a return request.
+Please note that customs duties already paid are non-refundable.
+
+If delivery is refused, the carrier may return or dispose of the package, and we may be charged significant fees and return shipping costs.
+In such a case, we would not be able to issue a refund.
+
+Thank you for your understanding and cooperation.
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+メッセージありがとうございます。
+
+アメリカ向けの発送に関して、表示されている送料40ドルは実際の送料ではなく、私たちが代わりに前払いしている関税の金額です。関税はすでに支払済みです。
+
+FedExにも確認しましたが、追加の税金請求の記録はありませんでした。
+
+商品はすでに発送済みのため、現在キャンセルはできません。
+返品をご希望の場合は、まず商品をお受け取りいただき、その後返品リクエストをお願いいたします。
+なお、すでに支払った関税は返金対象外です。
+
+配達拒否をされた場合、運送会社が商品を返送または処分することがあり、その際に高額な手数料や返送料が発生する可能性があります。
+その場合、返金はできませんのでご了承ください。
+
+ご理解とご協力をお願いいたします。
+
+敬具
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-14T00:56:32.000Z] This is insane.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> これはひどい。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-02-14T00:56:38.000Z] Hello prettypoodle1234 ,
+Thank you for contacting us.
+We apologize for the inconvenience, but we are currently outside of business hours.
+If you have sent an inquiry or replied, we will respond on the next business day.
+We appreciate your understanding.
+This message has been sent automatically.
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、prettypoodle1234様。
+お問い合わせありがとうございます。
+ご不便をおかけして申し訳ありませんが、現在営業時間外です。
+お問い合わせやご返信をいただいている場合は、翌営業日に対応いたします。
+ご理解のほどよろしくお願いいたします。
+このメッセージは自動送信されています。
+RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-14T00:57:36.000Z] Never have I ever experienced anything so unprofessional and blatantly messed up.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> これほどまでにプロフェッショナルでなく、明らかに問題がある対応を受けたことは一度もありません。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-14T00:58:08.000Z] You should not be selling items and inflating prices if you know this is going on.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> このような状況を知っているなら、商品を販売したり価格をつり上げたりすべきではありません。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-02-14T01:31:22.000Z] Since last August, import duties have applied to items purchased from the United States. However, we use eBay’s mandatory DDP service (where the seller advances and prepays the customs duties before shipping). We have shipped thousands of items to the United States, and you are the only person who has ever claimed to have been charged customs duties. We have also confirmed with FedEx, and they clearly stated that there is no record of FedEx charging you any customs duties. We have evidence of this.
+
+We do not understand why you are dissatisfied with us or why we are being blamed.
+If you were truly charged customs duties by FedEx, please provide proof. We will file a claim with FedEx on your behalf.
+If you cannot provide proof, then what you are saying is not factual. Please understand that if you refuse delivery, we have no obligation to issue a refund and will not bear any responsibility.
+Even if you ask eBay to step in, we will submit the evidence from FedEx.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 昨年8月以降、アメリカからの購入品に対して輸入関税が適用されています。しかし、当店ではeBayの必須DDPサービス（販売者が関税を前払いする仕組み）を利用しています。これまで何千件もアメリカへ発送しており、関税を請求されたと主張されたのはお客様が初めてです。FedExにも確認済みで、FedExが関税を請求した記録は一切ありません。証拠もございます。
+
+なぜ当店に不満を持たれ、責められているのか理解できません。
+もし本当にFedExから関税を請求されたのであれば、証拠を提示してください。お客様に代わってFedExにクレームを申し立てます。
+証拠がない場合は、事実と異なる内容となりますのでご了承ください。
+配達拒否された場合、当店は返金義務を負わず責任も負いかねます。
+eBayに介入を求められても、FedExの証拠を提出いたします。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-17T12:11:04.000Z] I did not say I was charged customs duty. I DID however state that my initial ETA is nowhere near what was expected.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 関税を請求されたとは言っていません。ですが、最初の予定到着日は期待していたものとは全く違います。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-17T12:11:57.000Z] I informed you all that a report from FedEx called me regarding the shipment.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> FedExからの連絡があったとお伝えしました。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-17T12:17:32.000Z] I cannot be the only customer you’ve had who has had FedEx contact them, via telephone, regarding items/orders imported. I only paid such an inflated price due to your high seller’s rating on eBay. So, please let’s not go there with me after I’ve paid as expected, yet the item I should have received is still stuck somewhere. I’m not here to argue with you, simply trying to understand what is going on. 
+
+Have you noticed my rating and track record? [As both a buyer and seller.]</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> FedExから電話で連絡があったのは私だけではないはずです。私はeBayでの高評価を信じて高額を支払いました。だから、支払ったのに商品がまだどこかに止まっている状況で、私に責任を押し付けるのはやめてください。私は争いたいわけではなく、ただ何が起きているのか理解したいだけです。
+
+私の評価や実績はご存知でしょうか？（購入者としても販売者としても）</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-02-17T12:21:12.000Z] If you reread and comprehend, you’ll see that I never said anything about FedEx charging me extra. They called my cellphone asking me questions about customs and even brought up “our president.” I saw the package was stuck in Indiana and am not trying to have any issues over a pair of overpriced shoes.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> よく読み理解すれば、FedExに追加料金を請求されたとは一言も言っていないことがわかります。FedExから携帯に電話があり、税関について質問され、「当社の社長」についても話が出ました。荷物がインディアナ州で止まっているのを見て、過剰な価格の靴でトラブルを起こしたくないだけです。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-02-18T13:19:13.000Z] he estimated delivery date shown by eBay on the order was February 10–18.Your order was placed on February 6 Japan time, and since it was past the carrier’s pickup cutoff on Friday, we shipped the item on Monday the 9th.If you had responded to the customs clearance inquiry, you would have received the item within a few days, and it would have been delivered within the originally estimated delivery window you mentioned.
+The situation became complicated only because you refused delivery and took unnecessary actions.Despite this, you sent us messages calling us unprofessional, telling us not to sell products, and accusing us of price gouging, which are completely unfounded and insulting.We have done nothing that deserves blame from you, nor have we violated any eBay policies or rules.
+Your rating and track record are irrelevant to us.In fact, if you truly have experience, we cannot understand why you would refuse a shipment that was scheduled to arrive within the estimated delivery window or send insulting messages.The confusion was caused by your own actions.
+We will report you to eBay as a malicious buyer.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> eBayの注文画面に表示されていた推定配達日は2月10日から18日でした。ご注文は日本時間の2月6日にいただきましたが、金曜日の運送業者の集荷締切を過ぎていたため、2月9日（月）に発送いたしました。もし通関に関する問い合わせにご対応いただいていれば、数日以内に商品を受け取ることができ、最初にお伝えした推定配達期間内に配達されていたはずです。状況が複雑になったのは、お客様が受け取りを拒否し、不必要な行動を取ったためです。それにもかかわらず、お客様からは当方をプロ意識がないと非難し、商品を販売しないようにと言い、価格の吊り上げを疑うメッセージをいただきましたが、これらは全く根拠のない侮辱的な内容です。当方はお客様から非難されるようなことは一切しておらず、eBayの規約やルールにも違反しておりません。お客様の評価や実績は当方には関係ありません。もし本当に経験があるのであれば、推定配達期間内に届く予定の荷物を拒否したり、侮辱的なメッセージを送ったりする理由が理解できません。混乱はお客様自身の行動によるものです。悪質な購入者としてeBayに報告いたします。</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-03-09T17:17:00.000Z] When will I receive a refund? I live in Tennessee and the courier you used has sent the item back to you in Indianapolis. As you can see from the tracking information. It has been a month since I paid for the item.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> いつ返金されますか？私はテネシー州に住んでいますが、あなたが利用した宅配業者は商品をインディアナポリスにあるあなたの元に返送しています。追跡情報からもわかる通り、商品代金を支払ってから1ヶ月が経過しています。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>When will I receive a refund? I live in Tennessee and the courier you used has sent the item back to you in Indianapolis. As you can see from the tracking information. It has been a month since I paid for the item.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>いつ返金を受け取れますか？私はテネシーに住んでいますが、あなたが利用した宅配業者は商品をインディアナポリスのあなたの元へ送り返しています。追跡情報からもわかる通りです。商品代金を支払ってからもう1ヶ月経っています。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 8.9秒 ・ 💴 ¥0.290
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello prettypoodle1234,
+
+Thank you for contacting us. I have reviewed your request regarding a refund. We will proceed with issuing a refund once the returned package has been received back at our location in Indianapolis by the carrier. After we confirm receipt of the return, we will process the refund according to eBay’s procedures.
+
+Please note the refund must clear through eBay and the payment provider, so it may take several business days (or longer, depending on the buyer’s bank/card issuer) before the funds appear in your account. Once we have confirmed the return arrival, we will notify you immediately.
+
+If you have any additional tracking details or information you’d like us to consider, please reply and include them.
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello prettypoodle1234,
+
+ご連絡ありがとうございます。ご注文の返金について確認しました。お荷物が運送会社により返品され、出品者の保管地（インディアナポリス）に到着したことを確認できれば、返金手続きを進めます。現在の状況では、返品の到着と受領が完了次第、eBayのルールに従って購入代金を返金いたします。返金処理にはeBayと決済プロバイダの処理時間がかかるため、実際に購入者様の口座へ入金されるまで数営業日〜最大でクレジットカード会社等の処理期間が必要になる場合があります。
+
+返品到着の確認が取れ次第、こちらから改めてご連絡いたします。何か追加でお知らせいただける追跡情報やご不明点があればお知らせください。
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返送品の到着確認後に返金処理を行う旨を正確に伝えており、次のステップも明確である。トーンはやや事務的で、もう少し共感を示すと良い。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>18</b>/25 ・ ⏱ 2.7秒 ・ 💴 ¥0.080
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>3</b>/5</span><span class="score-pill">完全性 <b>3</b>/5</span><span class="score-pill">アクション <b>3</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello prettypoodle1234,
+
+Thank you for your message. We have confirmed that the package is being returned to us in Indianapolis. We will proceed with the refund process and will contact you with further details soon. Please wait a little longer.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>prettypoodle1234様,
+
+ご連絡ありがとうございます。ご返金についてご案内いたします。お荷物はインディアナ州に返送されていることを確認しております。現時点では、返金処理を進めさせていただきます。詳細については追ってご連絡いたしますので、今しばらくお待ちください。
+
+どうぞよろしくお願いいたします。
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返品された商品が当方に戻っていることを伝え、返金手続きを進める旨を伝えていますが、返金の具体的な時期や謝罪がなく、やや不十分です。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>17</b>/25 ・ ⏱ 4.3秒 ・ 💴 ¥0.050
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>4</b>/5</span><span class="score-pill">トーン <b>3</b>/5</span><span class="score-pill">完全性 <b>3</b>/5</span><span class="score-pill">アクション <b>3</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello prettypoodle1234,
+
+We understand you want a refund. As soon as we receive and inspect the returned item, we will process the refund. Please initiate the return from eBay if you haven’t already, and keep the tracking information until the return is completed. We’ll update you once the return is received and the refund is issued.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello prettypoodle1234,
+
+この度はご不便をおかけして申し訳ございません。ご注文の返金をご希望とのことですので、現状の手続きとしては、返品リクエストを受け付け次第、返金処理を進めさせていただきます。商品が当店に到着し、返品が確認でき次第、返金を実行します。配送状況についての追加説明も併せてご提供しますので、今しばらくお待ちください。
+
+Best regards,
+seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返金手続きについて簡潔に説明しているが、購入者の不満や遅延への共感が不足しており、もう少し丁寧で具体的な対応が望まれる。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="prettypoodle1234_c0e079a9"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="racro_5039_bdd580bf">
+        <div class="case-header">
+            <h3>📩 racro_5039_bdd580bf</h3>
+            <span class="category-pill">discount</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> 商品情報（要取得）</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> — USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-09T07:13:54.000Z] good day..may I ask if there is a mizuno morelia elite that is made in japan that has k.leather?..</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。お尋ねしたいのですが、日本製のミズノモレリアエリートでカンガルーレザーを使用したものはありますか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-09-09T12:33:20.000Z] Hello,
+
+Thank you for your inquiry.
+
+Unfortunately, we only carry the Mizuno Morelia Elite made in Vietnam.
+
+However, we do have a similar model made in Japan that uses kangaroo leather.
+
+We will send you the product page, so please take a look and consider purchasing it.
+
+Thank you.
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+お問い合わせありがとうございます。
+申し訳ありませんが、当店ではベトナム製のミズノモレリアエリートのみ取り扱っております。
+しかし、日本製でカンガルーレザーを使用した類似モデルがございます。
+商品ページをお送りいたしますので、ご覧いただきご検討ください。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-09-09T12:33:26.000Z] https://www.ebay.com/itm/355841338665</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> https://www.ebay.com/itm/355841338665</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-10T11:40:18.000Z] thank you for your reply..i have seen your item morelia sala IN JAPAN..but the price is a bit high if possible can you give a discount?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ご返信ありがとうございます。日本でMorelia Salaという商品を見ましたが、価格が少し高いです。もし可能であれば、値引きしていただけますか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-09-10T12:14:54.000Z] Hello,
+
+Thank you for your message.
+
+Could you please let us know the model number of the item you&#x27;re interested in?
+
+Best regards,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+メッセージありがとうございます。
+ご興味のある商品のモデル番号を教えていただけますか？
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-09-10T12:53:50.000Z] https://www.ebay.com/itm/356040696011?var=625083091713</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> https://www.ebay.com/itm/356040696011?var=625083091713</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>https://www.ebay.com/itm/356040696011?var=625083091713</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>https://www.ebay.com/itm/356040696011?var=625083091713</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>22</b>/25 ・ ⏱ 3.5秒 ・ 💴 ¥0.170
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello racro_5039,
+
+Thank you for sharing the link. I understand you’re asking about a discount. Our listing price is final at this time, so I’m unable to offer an additional discount. If you’d like, I can point out other available inventory or similar models at different price points — let me know if that would help.
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello racro_5039,
+
+リンクを確認しました。値段のご相談について承知しました。当店では現在の出品価格が最終価格のため、追加の割引はご案内できません。もしご希望であれば、他の在庫や類似モデルの価格帯をご案内できます。ご希望があればお知らせください。
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 価格交渉に対して丁寧に断りつつ、他の選択肢を提案しており、全体的に適切な対応だが、署名や呼称の部分で改善の余地がある。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    スコア <b>21</b>/25 ・ ⏱ 5.1秒 ・ 💴 ¥0.060
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello racro_5039,
+
+Thank you for sharing the link. Regarding the price of this item, unfortunately, we cannot offer discounts outside of eBay policies. We appreciate your understanding. If you have any other questions, please let us know.
+
+Best regards,
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは、racro_5039さん、
+
+リンクをありがとうございます。こちらの商品の価格についてご相談ですね。現在の価格からの割引はeBayのポリシーにより対応できませんが、ご検討いただけると幸いです。何か他にご質問がありましたらお知らせください。
+
+どうぞよろしくお願いいたします。
+seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 価格交渉に対してeBayの方針により割引不可と丁寧に回答しているが、もう少し親しみやすさや今後の案内があるとより良い。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 4.0秒 ・ 💴 ¥0.040
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello racro_5039,
+
+Thank you for sharing the link. We cannot offer discounts or deviations from the listed price on eBay. Please refer to the current listing price on the item page. If you have any other questions or would like to discuss a different listing, please let us know.
+
+Best regards,
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは ra cro_5039 様, 
+
+このリンクのアイテムについてのご要望をありがとうございます。しかし、eBay上での取引条件を超える価格交渉や割引の提供は、当社のポリシーによりお受けできません。現在の出品価格に関してはeBayの出品ページの通りとなります。もし他にご質問や別の出品についてのご希望がございましたら、お知らせください。 
+
+よろしくお願いします。</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 価格交渉の依頼に対し、eBayの価格変更不可を正確に伝え、次の対応も明確に示しているが、もう少し丁寧で親しみやすいトーンに改善できる。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="racro_5039_bdd580bf"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="rolanbuen_0_6a5d661a">
+        <div class="case-header">
+            <h3>📩 rolanbuen_0_6a5d661a</h3>
+            <span class="category-pill">tracking</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> adidas Originals TOBACCO JP9651 Brown Desert Cardboard Gum</div>
+                    <div><b>SKU:</b> H00658-10.5-10</div>
+                    <div><b>Order ID:</b> 17-13548-73902</div>
+                    <div><b>Price:</b> 150.0 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2025-09-10T02:39:04.000Z] 商品が売れました！ adidas Originals TOBACCO JP9651 Brown Desert Card</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-08T05:10:30.000Z] it says free shipping now on checkout gone up to $216 Canadian $</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> チェックアウト時に「送料無料」と表示されていますが、216カナダドルに上がっています。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-08T13:05:39.000Z] free shipping total $207 but on checkout it is turning $216? why?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 送料無料で合計207ドルのはずが、チェックアウト時に216ドルになっています。なぜですか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-09-08T15:47:32.000Z] Hello,
+
+Thank you for contacting us.
+
+Shipping to Canada is usually free.
+
+However, you have the option to select paid shipping upgrades at checkout.
+
+Did you select one of these options when placing your order?
+
+Please confirm.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+お問い合わせありがとうございます。
+カナダへの配送は通常無料です。
+ただし、チェックアウト時に有料の配送アップグレードを選択することも可能です。
+ご注文時にそのオプションを選択されましたか？
+ご確認ください。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-08T17:16:43.000Z] there are only two options. $216 &amp;amp; $230…..you can check it…….thanks</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 選択肢は216ドルと230ドルの2つだけです……ご確認ください……ありがとうございます。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-09-09T12:31:52.000Z] Hello,
+
+Thank you for checking.
+
+I have checked the details again, and there is no error in the listing information.
+
+The difference in the total amount is likely due to fluctuations in the exchange rate.
+
+Best regards,  
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+ご確認ありがとうございます。
+詳細を再度確認しましたが、出品情報に誤りはありませんでした。
+合計金額の差は為替レートの変動によるものと思われます。
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-09T13:08:41.000Z] 👍</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 👍</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-09-10T10:51:00.000Z] Hello,  
+Thank you for your purchase!
+The item will be shipped within 2-5 business days and you will receive a tracking number on ebay.  
+Your feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. 
+
+We will regularly send a coupon to followers.
+Please follow our shop!
+https://www.ebay.com/str/rioxrinaxshop
+
+If you are searching for any particular products, please don&#x27;t hesitate to reach out to us.
+We don&#x27;t mind if the item is already listed by other sellers on eBay. We have the ability to order anything.
+Rest assured, we will do our best to provide you with a better deal.
+
+Thank you once again for your purchase, and we wish you a delightful experience with your new item!
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+ご購入ありがとうございます！
+商品は2～5営業日以内に発送され、追跡番号はeBayでご確認いただけます。
+お客様のフィードバックは私たちにとって非常に重要です。商品を受け取りましたら、ぜひポジティブなフィードバックをお寄せいただけると幸いです。
+フォロワーの皆様には定期的にクーポンをお送りしています。
+ぜひ当店をフォローしてください！
+https://www.ebay.com/str/rioxrinaxshop
+特定の商品をお探しの場合は、お気軽にお問い合わせください。
+eBayの他の出品者が既に出品している商品でも構いません。私たちは何でも注文可能です。
+より良い条件でご提供できるよう最善を尽くしますのでご安心ください。
+改めましてご購入ありがとうございました。新しい商品で素敵な体験をお楽しみください！
+よろしくお願いいたします。
+Kei</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-10T10:52:03.000Z] 👍👌</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 👍👌</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2025-09-10T10:53:34.000Z] Just hoping it should be exactly the same as the one in your photo.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 写真とまったく同じであることを願っています。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2025-09-20T23:48:11.000Z] Hello,
+Did you like the shoes?
+Thank you once again for purchasing from us! 
+We have been selling shoes on eBay for five years. 
+Your positive feedback and comments are a daily motivation for us. 
+We would greatly appreciate it if you could leave us positive feedback! 
+We look forward to doing business with you again.
+
+How to leave feedback
+1. Go to &quot;Purchase history.&quot;
+2. Click the &quot;Leave Feedback&quot; button next to the item you would like to rate the service you received. 
+
+Best regards,
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは。
+靴は気に入っていただけましたか？
+改めましてご購入ありがとうございます！
+私たちはeBayで5年間靴を販売しています。
+お客様のポジティブなフィードバックやコメントは、私たちの毎日の励みです。
+ぜひポジティブなフィードバックをいただけると大変ありがたいです！
+またのご利用を心よりお待ちしております。
+フィードバックの残し方
+1. 「購入履歴」にアクセスします。
+2. 評価したい商品の横にある「フィードバックを残す」ボタンをクリックします。
+よろしくお願いいたします。
+RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2025-09-21T00:41:54.000Z] color is lighter unlike your photo is more dark brown. i even paid duty $27.50 to fedex</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 色が写真よりも明るく、写真はもっと濃い茶色です。FedExに27.50ドルの関税も支払いました。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>color is lighter unlike your photo is more dark brown. i even paid duty $27.50 to fedex</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>写真より色が薄く、もっと濃い茶色だと思っていました。FedExに27.50ドルの関税も支払いました。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    スコア <b>22</b>/25 ・ ⏱ 6.2秒 ・ 💴 ¥0.260
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello rolanbuen_0,
+
+I&#x27;m sorry the color looks lighter than in our photo and for the frustration with the FedEx duty charge of $27.50. Differences in lighting, camera settings, monitor displays, and small production color variations can cause the item to appear lighter than the listing images.
+
+Please tell us which resolution you prefer: a full refund, a partial refund, or a return/exchange. If you choose a return, we will proceed with accepting the return. Once you tell us which option you want, we will finalize the next steps and refund details.
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello rolanbuen_0,
+
+この度は商品がお手元に届き、写真と色味が異なっていたとのことでご不便をおかけし誠に申し訳ございません。ご指摘のとおり実物の色が写真よりも薄く見える場合、撮影環境（照明・カメラ設定）やモニターの表示差、個体ごとの色ブレが原因となることがございます。また、通関での配達手数料（今回のFedExの通関料$27.50）についてもご不満をお持ちのことと存じます。
+
+返品または返金をご希望される場合は、お手数ですがご希望の対応（全額返金・部分返金・返品交換のいずれか）をお知らせください。返品で進める場合は、返品を受け付ける旨をここで決定いたしますので、その旨をお伝えいただければ返品手続きを進めます。返送方法や返金額の詳細は返品を決定後に確定します。
+
+ご希望をお知らせください。
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 商品の色味が写真と異なる点と関税の負担に対し謝罪し、返金や返品などの解決策を提案している。対応は丁寧で的確だが、もう少し親しみやすい表現に改善できる。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>17</b>/25 ・ ⏱ 3.0秒 ・ 💴 ¥0.070
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>4</b>/5</span><span class="score-pill">トーン <b>4</b>/5</span><span class="score-pill">完全性 <b>3</b>/5</span><span class="score-pill">アクション <b>2</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello rolanbuen_0,
+
+Thank you for your feedback. We apologize for any dissatisfaction with the color of the product in the photos. Please note that actual colors may vary from the pictures. We appreciate your understanding.
+
+Regarding the customs duty paid, we acknowledge your situation. If you have any further questions, please feel free to ask.
+
+Best regards,
+商品</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは rolanbuen_0さん,
+
+ご指摘ありがとうございます。商品写真の色味についてご不満をおかけし申し訳ありません。実物の色は写真と異なる場合がございます。ご理解いただけますと幸いです。
+
+また、関税のご負担についても承知いたしました。何かご不明な点がございましたら、お気軽にお問い合わせください。
+
+よろしくお願いいたします。
+商品</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 商品の色が写真と異なる点と関税の支払いについての購入者の不満に対し、色の違いは写真と実物で生じることがあると説明し、関税については言及したが、具体的な対応策や次のステップの案内が不足している。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 3.6秒 ・ 💴 ¥0.040
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>5</b>/5</span><span class="score-pill">完全性 <b>4</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>5</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello rolanbuen_0,
+
+We’re sorry to hear the color appears lighter than in the photo and that you paid duties. We understand that can be frustrating. Please let us know if you’d like to proceed with a return or exchange due to the color discrepancy, and we’ll confirm the next steps. We’ll also take your feedback into account for future listings.
+
+Best regards,
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>ロランさんへ、
+
+この度は写真と実物の色味の違いでご不便をお掛けし、また関税をご負担いただいたことについて、深くお詫び申し上げます。現在の在庫写真と実際の色味が一致するよう、今後の商品撮影や表記の改善を検討します。もし色味の違いが大きく受け取りに影響する場合には、返品または交換のご案内をさせていただきますので、希望される対応をお知らせください。
+
+よろしくお願いいたします。
+</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 商品の色味が写真と異なる点と関税の支払いに対する不満に対し、返金や交換の選択肢を提案し丁寧に対応している。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="rolanbuen_0_6a5d661a"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="spv332_dd858207">
+        <div class="case-header">
+            <h3>📩 spv332_dd858207</h3>
+            <span class="category-pill">tracking</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> PUMA Women&#x27;s Speed ​​Cat Wedge 407878_01 Totally Taupe Chocolate</div>
+                    <div><b>SKU:</b> H01399-8.5-3</div>
+                    <div><b>Order ID:</b> 24-14039-13266</div>
+                    <div><b>Price:</b> 145.63 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-01-02T05:09:56.000Z] 商品が売れました！ PUMA Women&#x27;s Speed ​​Cat Wedge 407878_01 Totally</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-01-02T05:29:24.000Z] Won&#x27;t arrive on time</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">event: [2026-01-03T21:02:39.000Z] Cancel closed</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-02T06:09:18.000Z] Hello Edward Zee ,  
+Thank you for your purchase!
+The item will be shipped by Jan 9 (Japan time)  , and you will receive a tracking number on ebay.  
+
+Order details
+PUMA Women&#x27;s Speed ​​Cat Wedge 407878_01 Totally Taupe Chocolate US8.5/UK6/JP25 
+
+Your feedback is very important to us. If you could please take a moment and leave a positive feedback once you received your item, it would be much appreciated. 
+
+We will regularly send a coupon to followers.
+Please follow our shop!
+https://www.ebay.com/str/rioxrinaxshop
+
+If you are searching for any particular products, please don&#x27;t hesitate to reach out to us.
+We don&#x27;t mind if the item is already listed by other sellers on eBay. We have the ability to order anything.
+Rest assured, we will do our best to provide you with a better deal.
+
+Thank you once again for your purchase, and we wish you a delightful experience with your new item!
+
+Best Regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、Edward Zeeさん、ご購入ありがとうございます！商品は1月9日（日本時間）までに発送され、eBayで追跡番号をお知らせします。注文詳細PUMA レディース スピードキャット ウェッジ 407878_01 トータリータウプチョコレート US8.5/UK6/JP25お客様のフィードバックは非常に重要です。商品を受け取りましたら、ぜひポジティブなフィードバックをお願いいたします。フォロワーには定期的にクーポンを送っています。ぜひショップをフォローしてください！https://www.ebay.com/str/rioxrinaxshop特定の商品をお探しの場合はお気軽にお問い合わせください。他の出品者がすでに出品していても構いません。私たちは何でも注文可能です。より良い条件でご提供できるよう最善を尽くします。改めてご購入ありがとうございます。新しい商品で素敵な体験をお祈りしています！よろしくお願いいたします。ケイ</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-03T20:36:46.000Z] Hello,
+When would you like your item to arrive?
+Best regards,
+Kei</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、商品はいつ頃お届け希望ですか？よろしくお願いいたします。ケイ</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-03T20:37:21.000Z] Within 2 weeks?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 2週間以内ですか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-03T20:37:27.000Z] Hello spv332 ,
+Thank you for contacting us.
+We apologize for the inconvenience, but we are currently outside of business hours.
+If you have sent an inquiry or replied, we will respond on the next business day.
+We appreciate your understanding.
+This message has been sent automatically.
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、spv332さん、お問い合わせありがとうございます。ご不便をおかけして申し訳ありませんが、現在営業時間外です。お問い合わせや返信をいただいた場合は、翌営業日に対応いたします。ご理解のほどよろしくお願いいたします。このメッセージは自動送信されています。RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-03T20:38:02.000Z] is that possible?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> それは可能ですか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-03T20:40:05.000Z] Hello spv332,
+
+Thank you for your question. The item will be shipped within 5 business days, and it typically takes about a week to arrive. It is possible to receive it within 2 weeks, but please note that the exact delivery date depends on shipping conditions.
+
+rioxxrinaxjapan</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは spv332 さん、
+ご質問ありがとうございます。商品は5営業日以内に発送され、通常は約1週間で到着します。2週間以内に受け取ることは可能ですが、正確な配達日は配送状況によって異なりますのでご了承ください。
+rioxxrinaxjapan</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-03T20:43:17.000Z] Is there any way to get it shipped before 5 working days. 5 business days would make it this Thursday then?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 5営業日より前に発送してもらう方法はありますか？5営業日だと木曜日になりますか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-03T20:48:54.000Z] The shipping company starts operations on the 6th, so we can only ship on that day.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 配送会社は6日から営業を開始するため、その日にしか発送できません。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-03T20:57:53.000Z] Ok then i’ll keep the order and hope it goes out as soon as it can. Thank you very much.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> わかりました。それでは注文をそのままにして、できるだけ早く発送されることを願います。どうもありがとうございます。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-03T21:02:36.000Z] Thank you for your understanding.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ご理解いただきありがとうございます。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-06T00:49:04.000Z] Hello Edward Zee ,
+Your item has been shipped!
+
+Shipping Company SpeedPAK (FedEx/DHL).
+Tracking number EM1013082530001FE06010051G0N
+
+We hope you will like the product!
+This message has been sent automatically.
+If you have made a separate inquiry, We will respond to you in order.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは Edward Zee さん、
+あなたの注文商品は発送されました！
+配送会社 SpeedPAK (FedEx/DHL)
+追跡番号 EM1013082530001FE06010051G0N
+商品を気に入っていただけることを願っています！
+このメッセージは自動送信されています。
+別途お問い合わせをいただいている場合は、順次対応いたします。</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-01-06T01:14:37.000Z] Thank you</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ありがとうございます。</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-12T20:45:21.000Z] Hello,
+Did you like the shoes?
+Thank you once again for purchasing from us! 
+We have been selling shoes on eBay for five years. 
+Your positive feedback and comments are a daily motivation for us. 
+We would greatly appreciate it if you could leave us positive feedback! 
+We look forward to doing business with you again.
+
+How to leave feedback
+1. Go to &quot;Purchase history.&quot;
+2. Click the &quot;Leave Feedback&quot; button next to the item you would like to rate the service you received. 
+
+Best regards,
+RioxxRina Japan Sneakers</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、
+靴はいかがでしたか？
+改めてご購入いただきありがとうございます！
+私たちはeBayで5年間靴を販売しています。
+お客様のポジティブなフィードバックやコメントは、私たちの毎日の励みとなっています。
+ぜひポジティブなフィードバックをいただけると大変ありがたいです！
+またのご利用を心よりお待ちしております。
+フィードバックの残し方
+1. 「購入履歴」へアクセス
+2. 評価したい商品の横にある「フィードバックを残す」ボタンをクリックしてください。
+よろしくお願いいたします。
+RioxxRina Japan Sneakers</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-01-17T00:58:12.000Z] Hello Edward Zee ,
+Thank you so much for leaving positive feedback!
+We’re very happy to know that you liked our product.
+We truly look forward to doing business with you again!
+Best regards,
+Kei.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは Edward Zee さん、
+ポジティブなフィードバックをいただき誠にありがとうございます！
+商品を気に入っていただけてとても嬉しいです。
+またのご利用を心よりお待ちしております！
+よろしくお願いいたします。
+Kei.</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-01-17T01:00:38.000Z] You’re welcome and thank you for the great service!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> どういたしまして。素晴らしいサービスをありがとうございます！</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>You’re welcome and thank you for the great service!</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>どういたしまして。素晴らしいサービスをありがとうございます！</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    スコア <b>23</b>/25 ・ ⏱ 2.8秒 ・ 💴 ¥0.180
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>5</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>4</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello spv332,
+
+Thank you very much — we appreciate your kind message and are glad you’re happy with the service. If anything comes up, please feel free to contact us.
+
+Best regards,
+ seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>Hello spv332,
+
+ご丁寧にありがとうございます。こちらこそ良いお取り引きができて嬉しく思います。何かございましたらいつでもお気軽にご連絡ください。
+
+Best regards,
+ seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信は丁寧で感謝の気持ちを伝えており、顧客対応として適切ですが、購入者名の誤りや署名の不自然さがあり、より自然で個別対応感を出す改善が望まれます。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    スコア <b>25</b>/25 ・ ⏱ 1.7秒 ・ 💴 ¥0.070
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>5</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>5</b>/5</span><span class="score-pill">自然さ <b>5</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello spv332,
+
+Thank you very much for your kind words. I appreciate your message.
+If you need anything else, please feel free to contact me. Looking forward to doing business with you again.
+
+Best regards,
+Seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは spv332さん、
+
+こちらこそありがとうございます。ご丁寧にお言葉をいただき、とても嬉しいです。
+また何かございましたらお気軽にご連絡ください。今後ともどうぞよろしくお願いいたします。
+
+ベスト regards,
+セラー</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 返信は正確で丁寧なトーンで、購入者の感謝の言葉に適切に応答しています。次のアクションも明確に示されており、自然な文章です。
+            </div>
+        </div>
+        
+        <div class="reply-card">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Nano</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    スコア <b>24</b>/25 ・ ⏱ 2.8秒 ・ 💴 ¥0.040
+                </div>
+            </div>
+            <div class="score-detail"><span class="score-pill">正確性 <b>5</b>/5</span><span class="score-pill">トーン <b>5</b>/5</span><span class="score-pill">完全性 <b>5</b>/5</span><span class="score-pill">アクション <b>4</b>/5</span><span class="score-pill">自然さ <b>5</b>/5</span></div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre>Hello spv332,
+
+Thank you for your kind words and for choosing us. If there’s anything else you need, please let us know. Wishing you a great day!
+
+Best regards,
+seller</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre>こんにちは spv332、
+
+Thank you for your kind words and for choosing us. If there’s anything else you need, please let us know. Wishing you a great day!
+
+Best regards,
+seller</pre>
+                </div>
+            </div>
+            <div class="judge-summary">
+                🧑‍⚖️ AI審判コメント: 購入者の感謝の言葉に対して丁寧かつ適切に応答しており、全てのポイントに対応している。次のアクションもほぼ明確で自然な返信である。
+            </div>
+        </div>
+        </div>
+        
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="spv332_dd858207"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+
+    <footer>
+        BayChat AI Reply テストレポート / ソース: test_gpt5mini_gpt41nano_gpt5nano_v2.4_20260415_211256.xlsx<br>
+        フィードバックは localStorage（このブラウザ）に自動保存されます。
+    </footer>
+</div>
+
+<div class="floating-status" id="saveStatus">💾 変更なし</div>
+<button class="floating-download" onclick="downloadFeedback()">
+    📥 全フィードバックをJSONダウンロード
+</button>
+
+<script>
+// localStorage キー（このレポート固有）
+const STORAGE_KEY = 'baychat_feedback_20260415_2113';
+const statusEl = document.getElementById('saveStatus');
+
+// 初期化：保存済みフィードバックを復元
+function restoreFeedback() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.feedback-input').forEach(ta => {
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        });
+        const count = Object.keys(data).filter(k => data[k]).length;
+        statusEl.textContent = `💾 保存済み ${count}件`;
+    } catch (e) { console.error(e); }
+}
+
+// 自動保存
+function saveFeedback() {
+    const data = {};
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const count = Object.keys(data).length;
+    statusEl.textContent = `💾 保存 ${count}件 (${new Date().toLocaleTimeString('ja-JP')})`;
+}
+
+document.querySelectorAll('.feedback-input').forEach(ta => {
+    ta.addEventListener('input', saveFeedback);
+});
+
+// ダウンロード
+function downloadFeedback() {
+    const data = {
+        exported_at: new Date().toISOString(),
+        report_source: 'test_gpt5mini_gpt41nano_gpt5nano_v2.4_20260415_211256.xlsx',
+        feedback: {}
+    };
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data.feedback[cid] = ta.value;
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    a.download = `baychat_feedback_${ts}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+restoreFeedback();
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+[
+  {
+    "id": "synth_A1_cam_stock",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Vintage Cameras",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "First inquiry. Buyer asks if the item is still available and asks for more photos of the shutter condition.",
+    "buyer_ebay": "A1",
+    "buyer_message": "Hello, is this Leica M3 Double Stroke 1957 Rangefinder still available? Also, could you please provide additional photos showing the condition of the shutter? Thank you.",
+    "buyer_message_ja": "こんにちは、このLeica M3 ダブルストローク 1957年製レンジファインダーはまだありますか？また、シャッターの状態がわかる追加の写真をいただけますか？ありがとうございます。",
+    "history_ja": [
+      "こんにちは、このLeica M3 Double Stroke 1957レンジファインダーはまだ購入可能でしょうか？また、シャッターの状態がわかる追加の写真をいただけますか？よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"48293017564\", \"Title\": \"Leica M3 Double Stroke 1957 Rangefinder (Vintage Cameras)\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:Rangefinder\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3500.00\", \"CurrentPrice\": \"3500.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-15T09:12:00.000Z] Hello, is this Leica M3 Double Stroke 1957 Rangefinder still available? Also, could you please provide additional photos showing the condition of the shutter? Thank you."
+      }
+    ]
+  },
+  {
+    "id": "synth_A2_jacket_sizing",
+    "category": "general",
+    "stage": "S1",
+    "product_category": "Men's Clothing / Vintage",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "First inquiry. Buyer asks about exact chest and shoulder measurements since vintage sizes run different.",
+    "buyer_ebay": "A2",
+    "buyer_message": "Hi, could you please provide the exact chest and shoulder measurements of this vintage Levi's Type III Trucker Jacket? I know vintage sizing can vary quite a bit. Thanks.",
+    "buyer_message_ja": "こんにちは、このヴィンテージのLevi's Type III トラッカージャケットの正確な胸囲と肩幅のサイズを教えていただけますか？ヴィンテージのサイズはかなりばらつきがあることは承知しています。ありがとうございます。",
+    "history_ja": [
+      "こんにちは、このヴィンテージのリーバイス Type III トラッカージャケットの正確な胸囲と肩幅のサイズを教えていただけますか？ヴィンテージのサイズはかなりばらつきがあることは承知しています。よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"73829104562\", \"Title\": \"Vintage Levi's Type III Trucker Jacket (Size L)\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men's Clothing:Jackets\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"120.00\", \"CurrentPrice\": \"120.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T15:45:00.000Z] Hi, could you please provide the exact chest and shoulder measurements of this vintage Levi's Type III Trucker Jacket? I know vintage sizing can vary quite a bit. Thanks."
+      }
+    ]
+  },
+  {
+    "id": "synth_A3_guitar_ship_time",
+    "category": "general",
+    "stage": "S1",
+    "product_category": "Musical Instruments / Guitars",
+    "emotion": "mild_anxiety",
+    "language": "en",
+    "situation": "First inquiry. Buyer wants to know shipping time to the US West Coast and if the item is insured.",
+    "buyer_ebay": "A3",
+    "buyer_message": "Hi, I’m interested in the 1978 Fender Stratocaster Olympic White. Could you please let me know how long shipping to the US West Coast usually takes? Also, is the item insured during shipping? Thanks!",
+    "buyer_message_ja": "こんにちは、1978年製フェンダー ストラトキャスター オリンピックホワイトに興味があります。アメリカ西海岸への発送に通常どのくらい時間がかかるか教えていただけますか？また、発送時に保険はかけられていますか？ありがとうございます。",
+    "history_ja": [
+      "こんにちは、1978年製フェンダー・ストラトキャスター オリンピックホワイトに興味があります。アメリカ西海岸への発送には通常どのくらい時間がかかるか教えていただけますか？また、発送中に商品は保険に入っていますか？よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83746592017\", \"Title\": \"1978 Fender Stratocaster Olympic White (USA)\", \"PrimaryCategoryName\": \"Musical Instruments:Guitars:Electric Guitars\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3250.00\", \"CurrentPrice\": \"3250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T09:15:00.000Z] Hi, I’m interested in the 1978 Fender Stratocaster Olympic White. Could you please let me know how long shipping to the US West Coast usually takes? Also, is the item insured during shipping? Thanks!"
+      }
+    ]
+  },
+  {
+    "id": "synth_A4_pokemon_condition",
+    "category": "general",
+    "stage": "S2",
+    "product_category": "Collectible Card Games",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Buyer already asked one question about centering. Now asks for a scan of the back edges to confirm no whitening. This is pre-purchase negotiation, no purchase has been made yet.",
+    "buyer_ebay": "A4",
+    "buyer_message": "That’s great to hear, Emi. One last thing—could you confirm if the card’s corners show any minor wear or if they’re sharp as per PSA 9 standards?",
+    "buyer_message_ja": "それは良かったです、エミさん。最後にもう一つだけ、カードの角に多少の擦れなどはありますか？それともPSA 9の基準通りに角はシャープな状態でしょうか？",
+    "history_ja": [
+      "先ほどはセンタリングの詳細をご確認いただきありがとうございます。裏面の端の部分をアップでスキャンした画像をいただけますか？決定する前に、白化がないか確認したいです。",
+      "こんにちは、引き続きご関心をお寄せいただきありがとうございます。先ほど、裏面の端がはっきり見える高解像度のスキャン画像をアップロードしました。カードの端はきれいで白化は見られません。追加の角度や詳細が必要でしたらお知らせください。よろしくお願いします、ハルト",
+      "スキャン画像ありがとうございます、ハルト。画像で見る限り端は良さそうですね。カードは保護スリーブや特別なケースに入れて保管されていましたか？",
+      "再度こんにちは。はい、カードはグレーディング後、トップローダースリーブに入れた上で保護用バインダーに丁寧に保管しています。状態を保つために慎重に扱っています。何か他にご質問があればお手伝いします。よろしくお願いします、エミ",
+      "それは安心しました、エミ。最後にもう一点だけ確認させてください。カードの角に多少の擦れなどはありますか？それともPSA 9基準のようにシャープな状態でしょうか？"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"98765432109\", \"Title\": \"Pokemon Base Set Charizard 1st Edition PSA 9 (Collectible Card Games)\", \"PrimaryCategoryName\": \"Collectibles:Pokemon:TCG:Cards\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"15000.00\", \"CurrentPrice\": \"15000.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T10:15:00.000Z] Thanks for confirming the centering details earlier. Could you please provide a close-up scan of the back edges? I want to make sure there is no whitening before I decide."
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-10T15:20:00.000Z] Hello, thank you for your continued interest. I have just uploaded a high-resolution scan showing the back edges clearly. You can see the card’s edges are clean with no whitening visible. Please let me know if you need additional angles or details. Best regards, Haruto"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-11T08:05:00.000Z] Thanks for the scan, Haruto. The edges look good in the image. Could you also confirm if the card has been stored in a protective sleeve or any special casing?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-11T12:45:00.000Z] Hi again, yes, the card has been carefully stored in a top-loader sleeve inside a protective binder since grading. It has been handled with care to preserve its condition. If you have any further questions, I’m happy to assist. Regards, Emi"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-12T09:30:00.000Z] That’s great to hear, Emi. One last thing—could you confirm if the card’s corners show any minor wear or if they’re sharp as per PSA 9 standards?"
+      }
+    ]
+  },
+  {
+    "id": "synth_G4_cam_german",
+    "category": "discount",
+    "stage": "S2",
+    "product_category": "Vintage Cameras",
+    "emotion": "polite_but_pushing",
+    "language": "de",
+    "situation": "German-speaking buyer negotiating price - 2nd round of negotiation. Writes in German. Pre-purchase stage, has not bought yet.",
+    "buyer_ebay": "G4",
+    "buyer_message": "Vielen Dank, Markus. Das Angebot mit dem Reinigungspinsel klingt fair. Wären Sie bereit, den Preis auf 1425 USD zu senken, wenn ich sofort kaufe?",
+    "buyer_message_ja": "マルクスさん、ありがとうございます。クリーニングブラシ付きのオファーは妥当だと思います。もしすぐに購入するなら、価格を1425ドルに下げていただけますか？",
+    "history_ja": [
+      "こんにちは、ご返信ありがとうございます。価格は理解しましたが、もう少し譲っていただけませんか？1400ドルなら私にとってはもっと現実的です。",
+      "こんにちは、ご連絡とContax G2へのご関心ありがとうございます。残念ながら、現在の価格はすでに市場価値に非常に近いため、これ以上値下げはできません。ただし、このキットは非常に良い状態であることは保証します。よろしくお願いいたします、マルクス。",
+      "こんにちはマルクス、早速のご返信ありがとうございます。送料を安くすることは可能でしょうか？あるいは、小さなアクセサリーを同梱していただけますか？",
+      "こんにちは、ご希望は理解しました。残念ながらEMS国際便の送料は固定されており、値下げはできません。代わりに、レンズ用のクリーニングブラシを無料でお付けします。これでご納得いただければ幸いです。よろしくお願いいたします、マルクス。",
+      "ありがとうございます、マルクス。クリーニングブラシのお申し出は公平だと思います。もしすぐに購入するなら、価格を1425ドルに下げていただけますか？"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83749261503\", \"Title\": \"Contax G2 Body with 45mm Planar Lens Kit\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:Rangefinder\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1450.00\", \"CurrentPrice\": \"1450.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-01T09:15:00Z] Guten Tag, vielen Dank für Ihre Antwort. Ich verstehe den Preis, aber könnten Sie mir vielleicht noch etwas entgegenkommen? 1400 USD wäre für mich eher machbar."
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-01T12:30:00Z] Guten Tag, vielen Dank für Ihre Nachricht und Ihr Interesse an der Contax G2. Leider liegt der aktuelle Preis bereits sehr nah am Marktwert und ich kann den Preis nicht weiter senken. Ich kann aber versichern, dass das Kit in einem hervorragenden Zustand ist. Viele Grüße, Markus."
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-02T08:45:00Z] Hallo Markus, danke für die schnelle Antwort. Wäre es möglich, die Versandkosten zu reduzieren? Oder vielleicht ein kleines Zubehör mit ins Paket zu legen?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-02T11:00:00Z] Hallo, ich verstehe Ihren Wunsch. Leider sind die Versandkosten für EMS International fest und ich kann diese nicht reduzieren. Als kleines Entgegenkommen lege ich Ihnen gerne eine Reinigungspinsel für die Objektive kostenfrei bei. Ich hoffe, das ist für Sie akzeptabel. Beste Grüße, Markus."
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-03T07:20:00Z] Vielen Dank, Markus. Das Angebot mit dem Reinigungspinsel klingt fair. Wären Sie bereit, den Preis auf 1425 USD zu senken, wenn ich sofort kaufe?"
+      }
+    ]
+  },
+  {
+    "id": "synth_H1_bag_price_offer",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Luxury Bags / Chanel",
+    "emotion": "confident",
+    "language": "en",
+    "situation": "Listed at $7,500. Buyer offers $6,200 directly in a message (not through Best Offer feature). Pre-purchase.",
+    "buyer_ebay": "H1",
+    "buyer_message": "Hello, I’m interested in the Chanel Classic Flap Medium you have listed. Would you accept $6,200 for it? Thanks.",
+    "buyer_message_ja": "こんにちは、掲載されているシャネル クラシックフラップ ミディアムに興味があります。6200ドルでお譲りいただけますか？ありがとうございます。",
+    "history_ja": [
+      "こんにちは、掲載されているシャネル クラシック フラップ ミディアムに興味があります。6,200ドルでお譲りいただけますか？よろしくお願いします。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"98473620145\", \"Title\": \"Chanel Classic Flap Medium Caviar Leather Black GHW\", \"PrimaryCategoryName\": \"Luxury Bags:Designer Handbags:Chanel\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"7500\", \"CurrentPrice\": \"7500\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"75\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-10T09:15:00.000Z] Hello, I’m interested in the Chanel Classic Flap Medium you have listed. Would you accept $6,200 for it? Thanks."
+      }
+    ]
+  },
+  {
+    "id": "synth_H2_cards_bulk",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Collectible Card Games",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Buyer asks: 'If I buy 3 boxes, can you offer a discount?' Pre-purchase question about bulk discount.",
+    "buyer_ebay": "H2",
+    "buyer_message": "If I buy 3 boxes, can you offer a discount?",
+    "buyer_message_ja": "もし3箱購入したら割引はありますか？",
+    "history_ja": [
+      "もし3箱購入したら、割引してもらえますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927465102\", \"Title\": \"Magic: The Gathering Modern Horizons 3 Booster Box (Collectible Card Games)\", \"PrimaryCategoryName\": \"Toys & Hobbies:Collectible Card Games:Trading Card Game Booster Boxes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"130.00\", \"CurrentPrice\": \"130.00\", \"Quantity\": \"10\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"15.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-15T10:20:00.000Z] If I buy 3 boxes, can you offer a discount?"
+      }
+    ]
+  },
+  {
+    "id": "synth_H3_watch_re_nego",
+    "category": "discount",
+    "stage": "S2",
+    "product_category": "Wristwatches / Luxury",
+    "emotion": "persistent",
+    "language": "en",
+    "situation": "Seller declined first offer. Buyer counters with higher offer and pushes for a deal. Pre-purchase, still negotiating.",
+    "buyer_ebay": "H3",
+    "buyer_message": "I really want this watch and am willing to increase my offer to $51,500. I hope we can find a middle ground and close the deal today.",
+    "buyer_message_ja": "この時計が本当に欲しいので、オファーを51500ドルに上げます。お互いに妥協点を見つけて、今日中に取引を成立させたいです。",
+    "history_ja": [
+      "こんにちは、最初の48,000ドルのオファーをお断りされたのを拝見しました。もし早く取引を成立させられるなら、50,000ドルに上げることができます。ご検討いただけますか？",
+      "オファーとセイコー クレドール エイチIIへのご関心、ありがとうございます。50,000ドルは近いですが、この時計の希少性と状態を考慮し、現在は52,000ドルの提示価格で固く対応しています。その価格で進めたい場合はお知らせください。よろしくお願いいたします、ハルト",
+      "価値は理解していますが、現時点で出せるのは最大50,000ドルです。もし51,000ドルで折り合えれば、すぐに支払いをして購入を確定します。",
+      "迅速かつ真剣なご意向に感謝します。残念ながら、51,000ドルはこの特別な時計に対して受け入れられる金額にはまだ届きません。この時計は丁寧にメンテナンスされており、すべてのオリジナルの箱や書類も揃っています。ご理解いただければ幸いです。もしご意見が変わりましたら、どうぞお気軽にご連絡ください。よろしくお願いいたします、エミ",
+      "この時計が本当に欲しいので、オファーを51,500ドルに上げたいと思います。妥協点を見つけて、今日中に取引を成立させられればと思います。"
+    ],
+    "num_messages": 5,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"73849201567\", \"Title\": \"Seiko Credor Eichi II Porcelain Dial Platinum\", \"PrimaryCategoryName\": \"Wristwatches:Luxury\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"52000\", \"CurrentPrice\": \"52000\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"120\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-01T10:15:00.000Z] Hello, I noticed you declined my initial offer of $48,000. I can increase it to $50,000 if we can close the deal quickly. Would you consider that?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-01T15:30:00.000Z] Thank you for your offer and your interest in the Seiko Credor Eichi II. While $50,000 is closer, we are currently firm on the listed price of $52,000 due to the watch's rarity and condition. Please let me know if you would like to proceed at that price. Best regards, Haruto"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-02T09:45:00.000Z] I understand the value, but $50,000 is the maximum I can do right now. If you can meet me halfway at $51,000, I’m ready to pay immediately and finalize the purchase."
+      },
+      {
+        "role": "assistant",
+        "content": "[2024-06-02T13:20:00.000Z] I appreciate your promptness and serious intent. Unfortunately, $51,000 is still below what we can accept for this exceptional timepiece. The watch has been carefully maintained and includes all original packaging and papers. We hope you understand. Please feel free to contact me if you change your mind. Best regards, Emi"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-03T08:10:00.000Z] I really want this watch and am willing to increase my offer to $51,500. I hope we can find a middle ground and close the deal today."
+      }
+    ]
+  },
+  {
+    "id": "synth_H4_sneakers_reoffer",
+    "category": "discount",
+    "stage": "S1",
+    "product_category": "Sneakers / Limited Edition",
+    "emotion": "casual",
+    "language": "en",
+    "situation": "Seller's Best Offer auto-declined buyer's previous attempt. Buyer now sends a message outside Best Offer asking 'what's your best price?' Pre-purchase.",
+    "buyer_ebay": "H4",
+    "buyer_message": "Hey, what’s your best price on these sneakers?",
+    "buyer_message_ja": "こんにちは、このスニーカーの最安値はいくらですか？",
+    "history_ja": [
+      "ねえ、このスニーカーの最安値はいくらですか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"83927465102\", \"Title\": \"Nike Air Force 1 Off-White Virgil Abloh 'The Ten' Volt\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Shoes:Athletic Sneakers\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1250.00\", \"CurrentPrice\": \"1250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"25.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"whoPaysShipping\": \"Buyer\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2024-06-12T10:15:00.000Z] Hey, what’s your best price on these sneakers?"
+      }
+    ]
+  }
+]
