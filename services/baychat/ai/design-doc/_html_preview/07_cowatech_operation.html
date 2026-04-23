@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Cowatech運用ルール | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  📖 <a href="index.html">目次</a>
+  <a href="README.html">README</a>
+  <a href="00_overall_flow.html">全体フロー</a>
+  <a href="01_prompt_blocks_overview.html">ブロック俯瞰</a>
+  <a href="02_ui_injection_matrix.html">UI注入</a>
+  <a href="block_n4_admin_prompt.html">⭐admin_prompt</a>
+  <a href="04_conditional_logic.html">条件分岐</a>
+  <a href="09_open_questions.html">未解決論点</a>
+  <a href="06_glossary.html">用語集</a>
+</div>
+
+<h1 id="07-cowatech">07. Cowatech運用ルール</h1>
+<blockquote>
+<p>✅ <strong>v0.2 完成版</strong><br />
+このファイルの役割：<strong>設計図の管理・更新・レビューをCowatechと共同で回すための運用ルール</strong>を定義する。この設計図が「単発の文書」ではなく「継続する管理基盤」になるためのプロセス。</p>
+</blockquote>
+<hr />
+<h2 id="_1">🎯 運用の基本方針</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>方針</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>管理主体</strong></td>
+<td>Reffort（社長＋Claude）が主。Cowatechがレビュー</td>
+</tr>
+<tr>
+<td><strong>更新プロセス</strong></td>
+<td>段階導入：初期は直編集、軌道に乗ったらPR運用</td>
+</tr>
+<tr>
+<td><strong>既存CSVの扱い</strong></td>
+<td>段階的デモート（3か月移行→廃止判断）</td>
+</tr>
+<tr>
+<td><strong>マスター言語</strong></td>
+<td>日本語 + 技術用語は英日併記</td>
+</tr>
+<tr>
+<td><strong>保管場所</strong></td>
+<td><code>reffort-claude</code> GitHubリポジトリ（プライベート）</td>
+</tr>
+<tr>
+<td><strong>同期頻度</strong></td>
+<td>毎日深夜0時の自動バックアップ（既存運用に統合）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_2">👥 役割分担</h2>
+<h3 id="reffortclaude">Reffort側（社長＋Claude）</h3>
+<table>
+<thead>
+<tr>
+<th>役割</th>
+<th>担当者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>設計図の全体方針決定</strong></td>
+<td>社長</td>
+</tr>
+<tr>
+<td><strong>設計図の実作業（編集・更新）</strong></td>
+<td>Claude</td>
+</tr>
+<tr>
+<td><strong>変更提案のレビュー・承認</strong></td>
+<td>社長</td>
+</tr>
+<tr>
+<td><strong>Cowatech連絡</strong></td>
+<td>Claude（社長承認後）</td>
+</tr>
+<tr>
+<td><strong>変更履歴の記録</strong></td>
+<td>Claude</td>
+</tr>
+<tr>
+<td><strong>Cowatech回答の設計図への反映</strong></td>
+<td>Claude</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cowatech">Cowatech側</h3>
+<table>
+<thead>
+<tr>
+<th>役割</th>
+<th>担当者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>技術仕様の正確性レビュー</strong></td>
+<td>クエットさん</td>
+</tr>
+<tr>
+<td><strong>実装と仕様書の整合性チェック</strong></td>
+<td>クエットさん</td>
+</tr>
+<tr>
+<td><strong>新機能仕様書のレビュー</strong></td>
+<td>クエットさん</td>
+</tr>
+<tr>
+<td><strong>未解決論点への回答</strong></td>
+<td>クエットさん</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3">🔄 更新フローの3フェーズ</h2>
+<h3 id="11">フェーズ1：初期運用（〜1か月）</h3>
+<p><strong>スタイル</strong>：直編集<br />
+- Reffort側で直接設計図を編集<br />
+- Cowatechには「完成後」または「大きな変更時」にSlackで共有<br />
+- 軽微な修正（typo、表現改善）は共有不要</p>
+<p><strong>目的</strong>：設計図を早く成熟させる。形が固まるまでは高速に反復。</p>
+<h3 id="213">フェーズ2：安定運用（1〜3か月）</h3>
+<p><strong>スタイル</strong>：PR＆レビュー<br />
+- 変更は GitHub PR として提出<br />
+- Cowatechがレビュー<br />
+- 合意後にマージ<br />
+- PR説明文に「何を変えたか」「なぜ変えたか」「影響範囲」を記載</p>
+<p><strong>目的</strong>：変更の質と透明性を担保。</p>
+<h3 id="33">フェーズ3：成熟運用（3か月〜）</h3>
+<p><strong>スタイル</strong>：PR＆月次同期<br />
+- 通常の変更はPR＆レビュー<br />
+- 月1回、Slackで「設計図の定期レビューミーティング」を実施<br />
+- 既存論点の棚卸し・新規機能の方向性議論</p>
+<p><strong>目的</strong>：長期的な整合性を保つ。</p>
+<hr />
+<h2 id="_3">📝 変更時の必須記録項目</h2>
+<p>設計図を変更する際、必ず <code>05_changelog.md</code> に以下を記録：</p>
+<pre><code class="language-markdown">### [YYYY-MM-DD] 変更タイトル（短く）
+
+| 項目 | 内容 |
+|------|------|
+| 変更対象 | （どのファイル/ブロック） |
+| 変更者 | （社長 / Claude / Cowatech） |
+| 変更理由 | （なぜ変えたか） |
+| 変更内容 | （何を変えたか） |
+| 影響範囲 | （どこに波及するか） |
+| テスト | （どう検証したか） |
+| 関連ドキュメント | （リンク） |
+| ロールバック手順 | （戻し方） |
+
+**本文**：詳細・背景・議論の要旨
+</code></pre>
+<hr />
+<h2 id="_4">🗂️ ディレクトリ構造の運用ルール</h2>
+<h3 id="ok">🔴 編集OK</h3>
+<pre><code>design-doc/
+├── README.md
+├── 00_overall_flow.md
+├── 01_prompt_blocks_overview.md
+├── 02_ui_injection_matrix.md
+├── 03_block_cards/*.md
+├── 04_conditional_logic.md
+├── 05_changelog.md
+├── 06_glossary.md
+├── 07_cowatech_operation.md（このファイル）
+├── 08_migration_plan.md
+├── 09_open_questions.md
+├── 10_api_testing.md
+├── 11_model_selection.md
+├── 12_ebay_api_integration.md
+├── 13_baychat_api_spec.md
+├── 14_qa_testing.md
+└── 15_summary_mode.md
+</code></pre>
+<h3 id="_5">🟢 自動生成（編集不要）</h3>
+<pre><code>design-doc/_html_preview/*.html  ← Pythonスクリプトで生成
+design-doc/_render_html.py       ← レンダラー
+design-doc/03_block_cards/_TEMPLATE.md  ← テンプレート
+</code></pre>
+<hr />
+<h2 id="_6">📛 ファイル命名規則</h2>
+<h3 id="_7">既存ブロックカード</h3>
+<ul>
+<li><code>block_{順序}_{目的}.md</code></li>
+<li>例：<code>block_00_item_info.md</code>, <code>block_n4_admin_prompt.md</code></li>
+</ul>
+<h3 id="_8">新ブロック追加時</h3>
+<ul>
+<li>順序番号をつける（ルールと整合）</li>
+<li>新バージョン追加時は既存カードを上書き（バージョン履歴セクションに追記）</li>
+</ul>
+<h3 id="_9">番号付きファイル（設計図トップレベル）</h3>
+<ul>
+<li><code>{2桁番号}_{テーマ}.md</code></li>
+<li>新テーマ追加は次の番号を使用</li>
+<li>既存番号を入れ替えない（リンク破綻防止）</li>
+</ul>
+<hr />
+<h2 id="cowatech_1">🔀 新機能追加時の手順（Cowatech向け）</h2>
+<p>Cowatechが新機能を実装する前に、以下の順で進める：</p>
+<ol>
+<li><strong>Reffortが新機能の設計図ドラフトを作成</strong></li>
+<li>該当ブロックカード（新規 or 更新）</li>
+<li>条件分岐表（04）に新分岐を追記</li>
+<li>UI注入マトリクス（02）に新UI項目を追記</li>
+<li>
+<p>変更履歴（05）に記録</p>
+</li>
+<li>
+<p><strong>Cowatechにレビュー依頼</strong>（Slack #baychat-ai導入）</p>
+</li>
+<li>必要な情報はすべてGitHubに揃えた状態で依頼</li>
+<li>
+<p>技術的実現性・工数をフィードバック</p>
+</li>
+<li>
+<p><strong>Cowatechの意見を反映してドラフト確定</strong></p>
+</li>
+<li>
+<p>合意事項をブロックカードの「Cowatech合意事項」欄に記録</p>
+</li>
+<li>
+<p><strong>Cowatech実装開始</strong></p>
+</li>
+<li>
+<p><strong>実装完了後、本番同等テストで検証</strong></p>
+</li>
+<li><code>services/baychat/ai/testing/batch_test.py</code> で本番モードテスト</li>
+<li>
+<p>スコア劣化がないか確認</p>
+</li>
+<li>
+<p><strong>本番反映</strong></p>
+</li>
+<li>変更履歴に「本番反映日」を追記</li>
+</ol>
+<hr />
+<h2 id="cowatech_2">🚫 Cowatechがやらないこと</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>admin_prompt の内容変更</strong></td>
+<td>社長がadmin画面から直接編集する領域</td>
+</tr>
+<tr>
+<td><strong>設計図の方針決定</strong></td>
+<td>Reffort主管。Cowatechは技術レビュー担当</td>
+</tr>
+<tr>
+<td><strong>未解決論点の一方的な解決</strong></td>
+<td>必ず社長の判断を仰ぐ</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="slack">💬 Slack運用ルール</h2>
+<p><strong>チャンネル</strong>：<code>#baychat-ai導入</code>（C09KXK26J8G）</p>
+<h3 id="_10">議論の立て方</h3>
+<ol>
+<li>議題タイトルを太字でスレッド作成</li>
+<li>メンション付き本文を返信で追加</li>
+<li>設計図の該当ファイルリンクを必ず添付</li>
+</ol>
+<h3 id="_11">メンションルール</h3>
+<ul>
+<li>クエットさん：<code>&lt;@U04HGPBABQU&gt;</code></li>
+<li>社長：<code>&lt;@U048ZRU4KLG&gt;</code></li>
+<li><strong>必ず <code>&lt;@USER_ID&gt;</code> 形式</strong>（テキスト <code>@名前</code> はメンションにならない）</li>
+</ul>
+<h3 id="_12">言語</h3>
+<ul>
+<li>日本語のみ</li>
+<li>「ベトナム語でもOK」の類は言わない</li>
+</ul>
+<h3 id="_13">禁止</h3>
+<ul>
+<li>催促（1時間チェック運用で対応）</li>
+<li>ドキュメント添付なしの質問（Cowatechが見失う）</li>
+</ul>
+<p><strong>詳細</strong>：<code>services/baychat/ai/CLAUDE.md</code> の「Slackでの連絡ルール」参照</p>
+<hr />
+<h2 id="_14">📆 定期レビュー</h2>
+<h3 id="3_1">月次レビューミーティング（フェーズ3以降）</h3>
+<ul>
+<li>頻度：月1回（Slackで日程調整）</li>
+<li>参加者：社長・Claude・クエットさん</li>
+<li>アジェンダ：</li>
+<li>未解決論点の棚卸し（<code>09_open_questions.md</code>）</li>
+<li>新機能の方向性議論</li>
+<li>品質ベンチマークの推移</li>
+<li>モデル選定・コスト状況</li>
+</ul>
+<h3 id="_15">日次自動同期</h3>
+<ul>
+<li><code>reffort-claude</code> リポジトリへ毎日深夜0時に自動push</li>
+<li>Cowatechは閲覧権限を持つ（GitHubアクセス付与済みの場合）</li>
+</ul>
+<hr />
+<h2 id="_16">🛡️ バージョン管理</h2>
+<h3 id="_17">設計図全体のバージョン番号</h3>
+<ul>
+<li><code>v0.1</code> — 叩き台（2026-04-20）</li>
+<li><code>v0.2</code> — 実データ完全統合版（2026-04-20）</li>
+<li><code>v1.0</code> — Cowatechレビュー完了版（未定）</li>
+<li>以降、意味的変更ごとに minor up</li>
+</ul>
+<h3 id="_18">各ブロックカード・ファイルのバージョン</h3>
+<ul>
+<li>全体バージョンに連動</li>
+<li>個別のバージョン履歴は各ファイル内「バージョン履歴」セクションに記録</li>
+</ul>
+<hr />
+<h2 id="_19">⚠️ 運用上の注意点</h2>
+<h3 id="_20">やってはいけないこと</h3>
+<ul>
+<li><strong>CSVとの二重管理</strong>：必ず設計図をマスターにし、CSVは「参考資料」とする</li>
+<li><strong>未レビュー変更の本番反映</strong>：Cowatech実装前にReffort内で承認が必要</li>
+<li><strong>変更履歴を残さない修正</strong>：<code>05_changelog.md</code> への記録は必須</li>
+</ul>
+<h3 id="_21">気をつけること</h3>
+<ul>
+<li><strong>リンク破綻</strong>：ファイル名変更時は他ドキュメントからのリンクも修正</li>
+<li><strong>用語の揺らぎ</strong>：<code>06_glossary.md</code> を更新</li>
+<li><strong>重複記述</strong>：同じ情報が複数ファイルに散らばらないように、一次情報の場所を明確に</li>
+</ul>
+<hr />
+<h2 id="_22">📚 関連ドキュメント</h2>
+<table>
+<thead>
+<tr>
+<th>ドキュメント</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>05_changelog.md</code></td>
+<td>変更履歴</td>
+</tr>
+<tr>
+<td><code>08_migration_plan.md</code></td>
+<td>CSV→設計図の移行計画</td>
+</tr>
+<tr>
+<td><code>09_open_questions.md</code></td>
+<td>未解決論点集約</td>
+</tr>
+<tr>
+<td><code>services/baychat/ai/CLAUDE.md</code></td>
+<td>BayChat部門ルール（Slack運用等）</td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code>（reffort root）</td>
+<td>全社ルール</td>
+</tr>
+</tbody>
+</table>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>

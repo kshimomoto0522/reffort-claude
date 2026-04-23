@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>変更履歴 | BayChat AI Reply 設計図</title>
+
+<style>
+  body {
+    font-family: 'Yu Gothic UI', 'Segoe UI', -apple-system, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    line-height: 1.75;
+    color: #2d2d2d;
+    background: #fafafa;
+  }
+  h1 {
+    color: #5a189a;
+    border-bottom: 3px solid #9d4edd;
+    padding-bottom: 12px;
+    margin-top: 0;
+  }
+  h2 {
+    color: #5a189a;
+    border-left: 5px solid #9d4edd;
+    padding-left: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    color: #3c096c;
+    margin-top: 28px;
+  }
+  h4 {
+    color: #3c096c;
+    margin-top: 24px;
+  }
+  blockquote {
+    border-left: 4px solid #c77dff;
+    background: #f3e8ff;
+    margin: 16px 0;
+    padding: 12px 20px;
+    color: #3c096c;
+    border-radius: 4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: white;
+    font-size: 14px;
+  }
+  th {
+    background: #9d4edd;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #7b2cbf;
+  }
+  td {
+    padding: 10px 12px;
+    border: 1px solid #e0d5ef;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #faf5ff; }
+  code {
+    background: #f0e6fa;
+    color: #5a189a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92em;
+  }
+  pre {
+    background: #2d1a45;
+    color: #e0d5ef;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: none;
+    border-bottom: 1px dotted #9d4edd;
+  }
+  a:hover {
+    color: #5a189a;
+    border-bottom: 1px solid #5a189a;
+  }
+  hr {
+    border: none;
+    border-top: 2px dashed #c77dff;
+    margin: 32px 0;
+  }
+  ul, ol { padding-left: 28px; }
+  li { margin: 4px 0; }
+  .toc-card {
+    background: white;
+    border: 2px solid #c77dff;
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc-card h2 { margin-top: 0; border: none; padding-left: 0; }
+  .status-complete { color: #2d6a4f; font-weight: bold; }
+  .status-draft { color: #9a6700; font-weight: bold; }
+  .nav {
+    background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: -32px -40px 24px -40px;
+    font-size: 14px;
+  }
+  .nav a { color: white; margin-right: 16px; border-bottom: 1px dotted white; }
+  .nav a:hover { color: #f3e8ff; border-bottom: 1px solid #f3e8ff; }
+  mark { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="nav">
+  📖 <a href="index.html">目次</a>
+  <a href="README.html">README</a>
+  <a href="00_overall_flow.html">全体フロー</a>
+  <a href="01_prompt_blocks_overview.html">ブロック俯瞰</a>
+  <a href="02_ui_injection_matrix.html">UI注入</a>
+  <a href="block_n4_admin_prompt.html">⭐admin_prompt</a>
+  <a href="04_conditional_logic.html">条件分岐</a>
+  <a href="09_open_questions.html">未解決論点</a>
+  <a href="06_glossary.html">用語集</a>
+</div>
+
+<h1 id="05">05. 変更履歴</h1>
+<blockquote>
+<p>このファイルの役割：<strong>AI Replyに関わる全変更を時系列で記録する。</strong><br />
+「いつ・誰が・なぜ・何を変えた・どこに影響した」の5項目を必ずセットで残す。<br />
+これによって、将来「なぜこの仕様なのか」を過去に遡って確認できる。</p>
+</blockquote>
+<hr />
+<h2 id="_1">📝 記録フォーマット</h2>
+<p>変更を記録するときは、以下のテンプレートをコピーして先頭に追記する。新しい変更が上に来るようにする。</p>
+<pre><code class="language-markdown">---
+
+### [YYYY-MM-DD] 変更タイトル（短く）
+
+| 項目 | 内容 |
+|------|------|
+| 変更対象 | （どのファイル/ブロック/パラメータ） |
+| 変更者 | （社長 / Claude / Cowatech / 複数） |
+| 変更理由 | （なぜ変えたか） |
+| 変更内容 | （何を、どう変えたか） |
+| 影響範囲 | （どこに波及するか） |
+| テスト | （どう検証したか。未検証の場合はその旨） |
+| 関連ドキュメント | （関連するブロックカード・handoff等のリンク） |
+| ロールバック手順 | （問題があった時の戻し方） |
+
+**本文（詳細・背景・議論のメモ）:**
+詳細な説明や議論の背景、意思決定のプロセスをここに書く。後から読んでも判断理由が分かるように。
+</code></pre>
+<hr />
+<h2 id="v01-v02">🟢 記録例（v0.1 / v0.2サンプル）</h2>
+<p>以下は実際の変更記録。フォーマットの使用例としても活用。</p>
+<hr />
+<h3 id="2026-04-23-2217htmlreffort">[2026-04-23] 🎯 設計図シンプル化（22→17ファイル・HTMLプレビュー全削除・Reffort内部記録を分離）</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>変更対象</td>
+<td><code>design-doc/</code> フォルダ全体の構成</td>
+</tr>
+<tr>
+<td>変更者</td>
+<td>社長指示 + Claude実作業</td>
+</tr>
+<tr>
+<td>変更理由</td>
+<td>「情報量が多すぎてCowatech側もどこで何を見ればいいか把握するのに大変」という社長指摘。設計図を「実装仕様の単一参照源」として必要最低限に絞り、Reffort内部の記録は分離</td>
+</tr>
+<tr>
+<td>変更内容</td>
+<td><strong>削除（27ファイル）</strong>：<code>_html_preview/</code> 配下の全HTML 25ファイル + <code>_render_html.py</code> + <code>dashboard.html</code>（社長ダッシュボード）。GitHubはMarkdownを自動レンダリングするためHTML不要<br><strong>移動（5ファイル）</strong>：<code>services/baychat/ai/_reffort_internal/</code> を新設し、以下を移動 — <code>08_migration_plan.md</code>（CSV移行・目的達成済み）/ <code>10_api_testing.md</code>（Reffort内部テスト環境）/ <code>11_model_selection.md</code>（Reffort内部モデル選定経緯）/ <code>14_qa_testing.md</code>（Reffort内部QA記録）/ <code>15_summary_mode.md</code>（将来機能案）<br><strong>README.md 全面整理</strong>：216行→約120行。HTMLプレビュー記述・社長ダッシュボード記述・v0.2完成度表・社長向けセクションを削除。Cowatech視点での読み順に絞った</td>
+</tr>
+<tr>
+<td>影響範囲</td>
+<td>設計図ファイル数 22+HTML25+レンダラ2 = 49個 → <strong>17個</strong>。Cowatechが最初に開いた時の認知負荷を大幅削減</td>
+</tr>
+<tr>
+<td>テスト</td>
+<td>文書整合性のみ（Markdownリンク切れチェック）</td>
+</tr>
+<tr>
+<td>関連ドキュメント</td>
+<td>2026-04-23 Cowatech prd同期（本changelogの次エントリ）</td>
+</tr>
+<tr>
+<td>ロールバック手順</td>
+<td>git履歴から前版復元可能（削除ファイルも <code>git log</code> で復元可）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本文（詳細・背景・議論のメモ）:</strong></p>
+<p>社長から繰り返し「情報量が多い」「Cowatech側もどこで何を見ればいいか把握するのに大変」という指摘があった。v0.2で22ファイルに膨らんだ設計図は、Reffort内部の判断記録・テスト環境仕様・将来機能案なども含んでおり、Cowatechが実装で参照するには情報過多だった。</p>
+<p>社長の方針：</p>
+<blockquote>
+<p>「一旦シンプルに必要最低限のコード等管理している設計図にしてくれない？」<br />
+「社長ダッシュボードとかもいらない。」<br />
+「今はもっと追加で管理したいなど増やした方がいいです」</p>
+</blockquote>
+<p>= まずシンプルに、必要に応じて追加する、の方針。</p>
+<p>分離基準：<br />
+- <strong>設計図に残す</strong>：Cowatechが実装で参照する仕様・フロー・API・運用ルール<br />
+- <strong>_reffort_internal/ に移動</strong>：Reffort内部の記録（テスト環境仕様・モデル選定経緯・QA記録・将来機能案・CSV移行計画）<br />
+- <strong>削除</strong>：HTMLプレビュー（GitHubがMarkdownを自動レンダリングするため不要）</p>
+<p>第2段階（将来検討）：<br />
+- <code>00_overall_flow</code> + <code>01_prompt_blocks_overview</code> + <code>02_ui_injection_matrix</code> + <code>04_conditional_logic</code> を1ファイルに統合する案あり<br />
+- まず第1段階の効果を見てから判断</p>
+<hr />
+<h3 id="2026-04-23-cowatech-prdforced_template">[2026-04-23] 🆕 Cowatech prd実装に合わせた設計図同期（FORCED_TEMPLATE廃止＋プレースホルダ命名統一）</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>変更対象</td>
+<td><code>01_prompt_blocks_overview.md</code> / <code>03_block_cards/block_n4_admin_prompt.md</code> / <code>03_block_cards/block_n5_forced_template.md</code> / <code>04_conditional_logic.md</code> / <code>09_open_questions.md</code> / <code>prompt_admin_v2.6.md</code> / <code>_html_preview/</code> 全HTML</td>
+</tr>
+<tr>
+<td>変更者</td>
+<td>Claude（社長指示「設計図同期」に基づく）</td>
+</tr>
+<tr>
+<td>変更理由</td>
+<td>Cowatechが 2026-04-22 23:58 に stg+prd両環境で FORCED_TEMPLATE除去＋プレースホルダ注入対応を完了したため、設計図を実装と同期させる必要があった。社長指摘「Cowatech側がコード更新したから設計図も更新しないといけない」に対応</td>
+</tr>
+<tr>
+<td>変更内容</td>
+<td><strong>1. FORCED_TEMPLATE（[N+5]）を「廃止済み」ステータスに変更</strong> — block_n5_forced_template.md・01_prompt_blocks_overview.md・04_conditional_logic.md<br><strong>2. プレースホルダ命名を統一</strong> — <code>{buyer_name}</code> → <code>{buyerAccountEbay}</code> / <code>{seller_name}</code> → <code>{sellerAccountEbay}</code>（Cowatech実装の正式命名に揃える）<br><strong>3. admin_prompt v2.6 本文更新</strong> — GREETING &amp; SIGNATURE POLICY / INPUTS / FINAL CHECK 全箇所で命名統一<br><strong>4. Q1/Q3 を「解決済み」に移動</strong> — 09_open_questions.md<br><strong>5. admin_prompt が挨拶・署名制御の主担当</strong>に昇格 — block_n4_admin_prompt.md<br><strong>6. HTMLプレビュー全再生成</strong></td>
+</tr>
+<tr>
+<td>影響範囲</td>
+<td>設計図全体の用語・配置図・条件分岐が実装と一致。社長が admin画面に v2.6 をアップロードすれば即 FORCED_TEMPLATE除去＋新プレースホルダ運用が稼働する状態</td>
+</tr>
+<tr>
+<td>テスト</td>
+<td>設計図の文書整合性のみ。実装側のテストは Cowatech が stg+prd両環境で完了済み</td>
+</tr>
+<tr>
+<td>関連ドキュメント</td>
+<td><code>services/baychat/ai/handoff_20260423_cowatech_prd_sync.md</code><br><code>prompt_admin_v2.6.md</code>（命名統一済みの最新ドラフト）<br>Slack thread_ts <code>1776427836.602699</code>（クエットさん反映完了報告）</td>
+</tr>
+<tr>
+<td>ロールバック手順</td>
+<td>git履歴から前版（2026-04-22時点の設計図）に戻せる。ただしCowatech実装と不整合になるため非推奨</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本文（詳細・背景・議論のメモ）:</strong></p>
+<p>2026-04-23 朝、社長から以下の重要指摘があった：</p>
+<blockquote>
+<p>「Cowatech側がコードを更新したのであれば設計図も更新しないといけません。<br />
+まず設計図を完成させた上でお互いどうやって共有するのか、更新管理するのかを考えないといけません。」</p>
+</blockquote>
+<p>Cowatech（クエットさん）は2026-04-22 23:13に「ご認識通りです」（= <code>{sellerAccountEbay}</code> <code>{buyerAccountEbay}</code> の動的置換仕様の確認）、続いて23:58に「対応してstgとprdに反映済みです」と返信していた。つまり Reffort側の設計図は「まだFORCED_TEMPLATEが稼働している前提」のまま、Cowatech実装だけが先に新方式に移行した状態になっていた。</p>
+<p>社長の判断：<strong>進め方X</strong>（設計図を先行で最新化 → 共有方法議論 → Cowatech相談）を選択。</p>
+<p>本エントリは進め方Xのステップ1（設計図最新化）を完遂した記録。次はステップ2（Cowatech⇔Reffort間の共有・更新管理ルール策定）に進む。</p>
+<p><strong>重要な未着手事項</strong>：<br />
+- v2.6 の admin画面アップロード（社長タスク）<br />
+- クエットさんへのお礼返信（「対応ありがとうございます」）<br />
+- 設計図の Cowatech 共有方法決定（A/B/C/D 4案から社長判断）</p>
+<hr />
+<h3 id="2026-04-20-v02">[2026-04-20] 設計図 v0.2 実データ完全統合版完成</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>変更対象</td>
+<td><code>services/baychat/ai/design-doc/</code> 配下すべて（19ファイル規模）</td>
+</tr>
+<tr>
+<td>変更者</td>
+<td>社長 + Claude（5エージェント並列調査を活用）</td>
+</tr>
+<tr>
+<td>変更理由</td>
+<td>v0.1は「骨格のみ」で社長が目指す「すべてが分かる単一参照源」に達していなかった。CSV19枚・本番ペイロード・全プロンプトバージョン・testing環境・過去handoff情報をすべて統合する必要があった</td>
+</tr>
+<tr>
+<td>変更内容</td>
+<td><strong>1. 全ブロックカード6枚（block_00〜block_n5）を実データで完成版化</strong> — 本番ペイロード実例・CSV原文・event enum完全リスト・tone別3バリエーション完全原文・42項目eBay APIフィールドリストを転記<br><strong>2. 条件分岐表（04）を完全化</strong> — APIパラメータ全項目・動的プレースホルダ全一覧<br><strong>3. 用語集（06）を完全化</strong> — 日英対応100件・FAQ15問・略語集<br><strong>4. 新規ファイル7つ追加</strong><br>　- 07_cowatech_operation.md（運用ルール）<br>　- 08_migration_plan.md（CSV移行計画）<br>　- 09_open_questions.md（Q1-Q24集約）<br>　- 10_api_testing.md（testing環境完全仕様）<br>　- 11_model_selection.md（モデル選定）<br>　- 12_ebay_api_integration.md（eBay API 42項目）<br>　- 13_baychat_api_spec.md（BayChat→Cowatech I/F）<br>　- 14_qa_testing.md（QA観点・不具合履歴）<br>　- 15_summary_mode.md（要約モード仕様）</td>
+</tr>
+<tr>
+<td>影響範囲</td>
+<td>既存CSV19枚の全情報を設計図に統合済み。ClaudeがCowatechに仕様確認する必要性がほぼゼロに。次フェーズはCowatechレビュー待ち</td>
+</tr>
+<tr>
+<td>テスト</td>
+<td>叩き台のため未検証。Cowatechレビューで検証</td>
+</tr>
+<tr>
+<td>関連ドキュメント</td>
+<td><code>services/baychat/ai/handoff_20260420_design_doc_project.md</code><br><code>09_open_questions.md</code>（Q1-Q9 Cowatech確認事項）<br><code>08_migration_plan.md</code>（CSV移行スケジュール）</td>
+</tr>
+<tr>
+<td>ロールバック手順</td>
+<td>v0.1時点の簡素版に戻す場合、git履歴から復元可能（<code>reffort-claude</code>リポジトリ）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本文（詳細・背景・議論のメモ）:</strong></p>
+<p>v0.1完成後、社長から以下の重要な指摘があった：</p>
+<blockquote>
+<p>「スプレッドシートにバラバラにまとめているコード等の情報を設計図としてまとめて、わたし（あなた）とCowatechがしっかり情報共有する環境、Cowatechが情報更新する際にしっかり管理するための環境、あなたがAI Replyの仕様を確認するにはここを見ればすべてがわかるという状況と環境を作ることが目的です。」</p>
+</blockquote>
+<p>これを受けて、以下の方針転換を実施：<br />
+- ダッシュボード作成（社長向けサマリー）は補助的な位置づけに<br />
+- 設計図本体を「CSV19枚の全情報を統合した単一参照源」として完成させる<br />
+- 5エージェントを並列投入して一気に情報収集<br />
+- 新規ファイル7つで不足領域をカバー</p>
+<p>調査エージェント5本の成果：<br />
+1. CSV19枚完全棚卸し（約10,000文字の詳細報告）<br />
+2. 本番ペイロード完全解析（全パラメータ・全ブロック原文・レスポンス含む）<br />
+3. プロンプト全バージョン（v1.0〜v2.4）の差分と設計思想変遷<br />
+4. testing環境（payload_builder/batch_test/ai_judge/db_connect/extract_cases）完全ドキュメント<br />
+5. handoff・Slack草案から未解決論点・合意事項・テスト結果を集約</p>
+<p>v0.2完成時点での到達度：<br />
+- 「Claudeがここを見れば仕様確認できる」→ ほぼ達成<br />
+- 「Cowatechと3者で議論できる」→ レビュー待ち<br />
+- 「単一参照源」→ 技術的には達成。運用は次フェーズ</p>
+<p>次のマイルストーン：v1.0（Cowatechレビュー完了版）</p>
+<hr />
+<h3 id="2026-04-20-v01">[2026-04-20] 設計図 v0.1 初版作成</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>変更対象</td>
+<td><code>services/baychat/ai/design-doc/</code> フォルダ全体を新規作成</td>
+</tr>
+<tr>
+<td>変更者</td>
+<td>社長 + Claude</td>
+</tr>
+<tr>
+<td>変更理由</td>
+<td>プロンプト微修正ループでは上流の「設計図の質」問題を解決できないと判明。3者（社長・Claude・Cowatech）の共通言語基盤を作るため</td>
+</tr>
+<tr>
+<td>変更内容</td>
+<td>8ファイル構成で叩き台作成：README / 全体フロー / ブロック俯瞰 / UI注入マトリクス / ブロックカード6枚（admin_promptのみ完成版） / 条件分岐表 / 変更履歴 / 用語集</td>
+</tr>
+<tr>
+<td>影響範囲</td>
+<td>既存19CSVを「参考資料」にデモート。今後の仕様議論・変更提案はこの設計図ベースで行う</td>
+</tr>
+<tr>
+<td>テスト</td>
+<td>叩き台のため未検証。社長レビュー → 粒度OK → 他ブロックカード肉付け → v0.2</td>
+</tr>
+<tr>
+<td>関連ドキュメント</td>
+<td><code>services/baychat/ai/handoff_20260420_design_doc_project.md</code>（プロジェクト立ち上げ背景）</td>
+</tr>
+<tr>
+<td>ロールバック手順</td>
+<td><code>design-doc/</code> フォルダごと削除すれば元の状態に戻る（既存ファイルは一切変更していない）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本文（詳細・背景・議論のメモ）:</strong></p>
+<p>2026-04-14〜04-20の1週間、プロンプトv2.3→v2.4の微修正を続けたが、改善のたびに「そもそも本番構造がどうなっているか」「このブロックを変えると何が壊れるか」の確認に時間が溶ける状況が続いた。</p>
+<p>社長から「シェフ（AI）にマニュアル（プロンプト）を渡す前に、調味料や調理機器の設定が揃っていない状況」という問題意識が共有された。これを技術的に翻訳すると「設計図不足」であり、正しい見立てだった。</p>
+<p>v0.1の方針：<br />
+- フォーマット：A4ハイブリッド（全体図+俯瞰表+UI連動表+ブロックカード+条件分岐表+変更履歴+用語集）<br />
+- ツール：GitHub + Markdown（既存reffort-claude延長・スマホ連携済み）<br />
+- 管理：Reffort主 / Cowatechレビュー / 日本語マスター</p>
+<p>v0.1では叩き台として骨格を完成させ、ブロックカードは <code>block_n4_admin_prompt.md</code> のみ完成版として提示。社長が粒度・見やすさを判定してから、残り5ブロックを同じフォーマットで肉付けする。</p>
+<p>Cowatech連絡はv0.1完成・社長レビュー後。Q1〜Q5（未解決論点）をパッケージ化して送る予定。</p>
+<hr />
+<h2 id="_2">🚨 記録すべき変更の種類</h2>
+<p>以下が発生したら <strong>必ず</strong> ここに記録：</p>
+<ul>
+<li>[ ] admin_promptのバージョンアップ（v2.4 → v2.5等）</li>
+<li>[ ] BayChat側のブロック追加・削除・順序変更</li>
+<li>[ ] プレースホルダの追加・変更</li>
+<li>[ ] AIモデル・APIパラメータの変更</li>
+<li>[ ] UI項目の追加・変更</li>
+<li>[ ] 条件分岐ロジックの変更</li>
+<li>[ ] Cowatech合意事項の確定（ブロックカードの「Cowatech合意事項」欄への追記）</li>
+<li>[ ] 設計図（このdesign-doc/）自体の構造変更・フォーマット変更</li>
+<li>[ ] 新機能追加（要約モード等）</li>
+</ul>
+<hr />
+<h2 id="_3">📏 変更記録のルール</h2>
+<ol>
+<li><strong>必ず時系列で上に追加</strong>（新しい変更が先頭）</li>
+<li><strong>全項目を埋める</strong>（該当なしなら「該当なし」と明記）</li>
+<li><strong>ロールバック手順は具体的に</strong>（「元に戻せない」場合はその旨を明記）</li>
+<li><strong>関連ドキュメントはリンク化</strong>（将来遡れるように）</li>
+<li><strong>議論の背景は本文欄に残す</strong>（なぜこの決定に至ったか）</li>
+</ol>
+<hr />
+<p><em>このファイルは「設計図の履歴書」。ここを読めば、AI Replyがどう進化してきたかが分かる状態を維持する。</em></p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+  document.querySelectorAll('pre > code.language-mermaid').forEach((el, i) => {
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    el.parentElement.replaceWith(div);
+  });
+  mermaid.run();
+</script>
+<style>
+  .mermaid { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0d5ef; margin: 20px 0; text-align: center; }
+</style>
+
+</body>
+</html>
