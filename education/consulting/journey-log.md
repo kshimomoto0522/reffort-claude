@@ -1756,3 +1756,94 @@ v0.2 完成に社長と時間を使ったが、実は完成はスタート地点
 - 「当たり前の原則を忘れる罠」— 「コード変更→設計図更新」は自明だが忘れる
 
 *最終更新: 2026年4月23日 朝 — Cowatech prd反映発覚・設計図同期問題が顕在化・次セッションに持ち越し*
+
+---
+
+## 2026年4月23日〜24日（木〜金） ― Claude Code運用の根本リファクタ
+
+### やったこと
+✅ 社長から「最近Claude Codeが一度言ったことを守らない／嘘／遅い／トークン消費激しい／バカ過ぎる」と強い不満表明を受け、根本診断を実施
+✅ 3エージェント並列調査（Explore=設定監査 / general-purpose=ノイズ調査 / claude-code-guide=ベストプラクティス）で徹底ファクト収集
+✅ フォルダ再編成（2026-04-21）の影響を検証 → **ほぼゼロ**と判明（9割クリーン完遂）
+✅ 真因3本柱特定：
+  ① カスケードコンテキスト爆発（ルートCLAUDE.md 136行＋rules 6ファイル＋子CLAUDE.md最大488行＋settings.local.json 298行で5,000-8,000トークン/セッション）
+  ② effort_booster.py 過アグレッシブ（COMPLEX_KEYWORDSに「分析・検証・判断・バグ・エラー」等の日常語が含まれ社長の普通の発話でultrathink誤爆）
+  ③ ノイズ氾濫（commerce/ebay/tools/に77個の中間物・scrape_data.exe_extracted 190MB がgit追跡下）
+✅ 梅案（即効解毒）実施：effort_booster厳選・ノイズ191MB削除・.gitignore 11パターン追加・旧パス修正 → commit eef37ab
+✅ 竹案引き継ぎハンドオフmd作成：`.claude/handoff_20260423_claude_code_refactor.md`
+  - 冒頭に継続ルール25項目（feedback/user memory参照リスト）を明記
+  - タスク14個（CLAUDE.md圧縮・memory統合・archive/新設・biweekly-maintenance・index.md・/隔週メンテナンス・Campers素材化）
+  - 持続可能性4点セット設計
+✅ decisions_log.md・MEMORY.md・新規feedback memory（feedback_claude_code_persistent_maintenance.md）へ記録
+
+### 学び
+💡 **「直感ではなくファクトで特定する」**
+社長は直感で「再編成の影響」を疑ったが、3エージェント並列調査の結果「再編成前から蓄積してきた肥大化が臨界点を超えた」と判明。推測で動かず数字で結論する価値を改めて実感。
+
+💡 **Anthropic公式「CLAUDE.md 200行以下」は単なるTipではなく生命線**
+488行のCLAUDE.mdは推奨の2.4倍。これが「Claudeが一度言ったことを守らない／無視する」の直接原因。Boris Chernyの「コードと同じく定期的に剪定する」は運用の核。
+
+💡 **受動監視では Claude Code の進化に追随できない**
+Anthropicは急進化中（Skills・Effort・Hooks等）。単なる肥大化監視だけでは停滞 → 能動的に隔週で最新情報を取り込む仕組みが必要。
+
+💡 **社長の先回り提案力（再認識）**
+隔週メンテの「単なる超過報告」ではなく「最新情報取り込み＋改善提案＋実行」に進化させる発想、さらに「Campersコンテンツ化」まで自発提案。事業家視点の鋭さが発揮された場面。これ自体がコンテンツ素材。
+
+💡 **「退避ファイル増え続けて破綻しないか」は受講生全員の疑問になる**
+Progressive Disclosure ＋ archive/ ＋ 定期剪定 ＋ 探索はClaudeの負担 の4つをセットで説明すれば答えになる。
+
+### 失敗・迷い
+⚠️ `.gitignore` を Edit しようとして「File has not been read yet」エラー。Bash `cat` で読んでも Read ツールでの読み込みが必要。**Read→Edit の順序厳守**を再認識。
+
+⚠️ エージェント1が「commerce/ebay/tools/のノイズファイルは0バイト」と報告 → エージェント2で実測すると`big_chunk.txt` 71KB・`full_push.js` 80KB等の実サイズあり。**サブエージェント結果も鵜呑みにせずクロスチェック必須**。
+
+### 仕組み
+🔧 **effort_booster.py COMPLEX_KEYWORDS 厳選**
+旧: 20+語（分析・検証・判断・バグ・エラー・方針等の日常語含む）
+新: 16語（アーキテクチャ・リファクタリング・ボトルネック・トレードオフ等の専門語のみ）
+→ 社長明示オプトイン（しっかり・ちゃんと・ultrathink等）は残し、通常会話での誤爆ブーストを防止
+
+🔧 **.gitignore 強化（11パターン追加）**
+GAS中間物・tmpダンプ・backup/extractedパターンを追加。再発防止。
+
+🔧 **ハンドオフmd（`.claude/handoff_20260423_claude_code_refactor.md`）**
+新セッション起動プロンプト1行：`@.claude/handoff_20260423_claude_code_refactor.md を読んで、竹案を実行してください`
+
+🔧 **持続可能性4点セット**（新規memory `feedback_claude_code_persistent_maintenance.md`）
+① archive/ フォルダ（Claudeは読まない）
+② biweekly-claude-maintenance（第1・第3月曜10:00・5層調査＋松竹梅提案）
+③ 各部門 index.md（退避ファイル一覧）
+④ `/隔週メンテナンス` スラッシュコマンド（半自動フロー）
+
+### コンテンツ候補
+📦 **ケーススタディ記事『AI秘書が馬鹿になった日 〜 根本診断と復活の全記録』**
+ターゲット：Campers受講生＋eBay×AI関心層
+7章構成の骨子は竹案タスク14で `education/campers/content-projects/claude-code-maintenance-case-study/outline.md` に準備予定。**配信タイミング・チャネル・カレンダーは社長判断で別途**。
+
+📦 **Unit 1 補強：『CLAUDE.md肥大化の罠 — Anthropic公式が教えない現場の失敗と対処』**
+- 症状の自覚（社長本人の言葉＋受講生向けセルフチェック表）
+- 3エージェント並列診断のワークフロー（受講生がそのまま使える調査テンプレート）
+- ファクト数字（488行・298行・190MB・5,000-8,000トークン等）
+- 即効解毒5項目＋構造改善6項目＋持続可能性4点セット
+
+📦 **「退避ファイル増え続けて破綻しないか？」への答え回**
+Progressive Disclosure＋archive/＋定期剪定＋探索はClaudeの負担 の4つをセットで説明すれば疑問は解消。本棚モデルの比喩も使える（リビング/書斎/物置倉庫）。
+
+📦 **社長と Claude の対話そのものが素材**
+「GO」「追記してください」等の短い判断と、Claudeの徹底診断・松竹梅提案・先回り提案の応酬。AI秘書との共創プロセスのロールモデル。
+
+📦 **「先回り提案の具体例集」**
+- 社長「隔週メンテで現状報告したい」→ Claude「5層の最新情報調査＋松竹梅提案に進化させては？」
+- 社長「Campersコンテンツ化できるよね」→ Claude「7章構成の骨子案を先に提示、配信計画は社長判断と明言」
+これらは「言いなり禁止・先回り提案」feedback の実演素材。
+
+### 次セッションで最初にやること
+⏭ **新しいClaude Codeウィンドウを起動**（`/clear`ではなく完全新規起動推奨）
+⏭ **最初の1行**: `@.claude/handoff_20260423_claude_code_refactor.md を読んで、竹案を実行してください`
+⏭ 継続ルール25項目を確認した Claude が、タスク1（ルートCLAUDE.md圧縮136→80行）から順次実施
+⏭ 各タスク完了ごとにgit commit。社長がいつでも戻せる状態を維持
+⏭ 竹案完了後：biweekly-claude-maintenanceの初回実行タイミング（次の第1or第3月曜10:00）を確認
+
+---
+
+*最終更新: 2026年4月24日 — Claude Code運用根本リファクタ実施（梅案完了・commit eef37ab）・竹案引き継ぎ準備完了（handoff_20260423_claude_code_refactor.md）・持続可能性4点セット設計完了*

@@ -352,6 +352,45 @@ description: 隔週Claude Codeメンテナンスの半自動実行。Chatwork個
 **重要**: 実行過程の全記録は `education/campers/content-projects/claude-code-maintenance-case-study/session-logs/YYYY-MM-DD.md` にも保存する（Campersコンテンツ素材として蓄積）。
 ```
 
+### □ タスク15: `daily-github-backup` 拡張＋memory自動同期（管理方法統一の完成）
+**目的**: 2026-04-24 社長指示「管理方法は統一」を完遂。memoryフォルダのスナップショットを `.claude/memory_backup/` に毎日自動同期し、GitHub一元バックアップを確立する。
+**背景**: 2026-04-24時点で `.claude/memory_backup/` への初回コピー＋コミットは完了済み。ただし「自動同期」は未実装。手動同期が必要な状態を自動化する。
+
+#### 実施内容
+1. **`daily-github-backup` スクリプトを拡張**
+   - 現状対応範囲: reffortフォルダ全体（CLAUDE.md系中心）
+   - 拡張内容: スクリプト冒頭で以下を実行してから git add/commit/push
+     ```python
+     import shutil
+     from pathlib import Path
+     SRC = Path.home() / ".claude/projects/C--Users-KEISUKE-SHIMOMOTO-Desktop-reffort/memory"
+     DST = Path(__file__).parent.parent / ".claude/memory_backup"
+     DST.mkdir(parents=True, exist_ok=True)
+     # 削除対応のため DST を一旦クリアしてから同期
+     for f in DST.glob("*.md"):
+         f.unlink()
+     for f in SRC.glob("*.md"):
+         shutil.copy2(f, DST / f.name)
+     ```
+2. **scheduled-tasks MCP の `daily-github-backup` プロンプトも更新**
+   - 実行前の memory同期処理を明示
+   - feedback_scheduled_task_sync.md 準拠（スクリプト変更時はタスクプロンプトも必ず更新）
+3. **アクティベートテスト必須**（feedback_task_activation.md 準拠）
+   - 「今すぐ実行」で memory同期→git add→commit→push まで通ることを確認
+   - 差分が出た場合のみコミット（変更がない日はスキップ）
+4. **CLAUDE.md（ルート）の「自動タスク一覧」を更新**
+   - `daily-github-backup` の対象範囲を「reffortフォルダ＋memory同期」に書き換え
+
+#### 検証基準
+- memoryに新規ファイル追加→翌日深夜0時に自動で memory_backup に反映＆GitHub push
+- memoryファイル削除→翌日深夜0時に memory_backup からも削除反映＆push
+- スマホClaudeアプリから最新のmemory内容が参照できる
+
+#### 関連メモリ
+`memory/feedback_management_unification.md`（2026-04-24新規・3層管理原則）
+
+---
+
 ### □ タスク14: Campersコンテンツ素材の骨組み作成（配信スケジュールは対象外）
 **目的**: 「Claude Code失敗→診断→復活→永続メンテ」の記録を生徒向けコンテンツ素材として蓄積する骨組み作り。**社長判断により配信カレンダー・実行スケジュール・配信チャネル別タイミング等は本タスクの対象外（別途社長判断）。**
 
