@@ -1847,3 +1847,115 @@ Progressive Disclosure＋archive/＋定期剪定＋探索はClaudeの負担 の4
 ---
 
 *最終更新: 2026年4月24日 — Claude Code運用根本リファクタ実施（梅案完了・commit eef37ab）・竹案引き継ぎ準備完了（handoff_20260423_claude_code_refactor.md）・持続可能性4点セット設計完了*
+
+---
+
+## 2026-04-24（夜）：竹案 T1-T15 全実施完了
+
+### やったこと（タスクごとのコミット・20件）
+
+🟢 **T8 `8d3356e`** `commerce/direct-sales/data/backup_*` 95ファイルgit除外
+🟢 **T9 `9b5a893`** GAS中間物10ファイル＋`scheduled_tasks.lock`をgit除外＋.gitignore追記
+🟢 **T10 `461ffc8`** 全7部門に `archive/` 新設＋README配置＋「archive/は読まない」ルール
+🟢 **T2 `9e20494` + `c731ad1`** analytics/CLAUDE.md 488→168行（退避4ファイル＋archive＋index.md）＋**Chatwork APIトークン直書き是正**
+🟢 **T3 `7baba6d`** baychat/ai/CLAUDE.md 419→96行（退避5ファイル＋archive＋index.md）
+🟢 **T4 `a17db6a`** ebay/tools/CLAUDE.md 296→205行（退避2ファイル＋index.md・5行微超は運用知識の厳選結果）
+🟢 **T5 `734cef1`** monetization-portfolio/CLAUDE.md 249→129行（portfolio-analysis.md退避）
+🟢 **T1 `d35efb6` + `3e46d0b`** ルートCLAUDE.md 136→77行（目標80以下達成）
+🟢 **T6 `f51d91e`** settings.local.json 361→144行・allow 298→78件（ワイルドカード統合・deny/hooks維持）
+🟢 **T7 `e099015`** memory統合 46→34ファイル（archive/5移動・統合9→4・rules/移動1・**参照切れ0件**）
+🟢 **T11 `68c8e4a`** biweekly-claude-maintenance 新設（Python＋scheduled-tasks＋**社長Run nowアクティベート済**）
+🟢 **T13 `82e16d2`** /隔週メンテナンス スラッシュコマンド（5層調査→松竹梅→社長判断→実行→通知の半自動フロー）
+🟢 **T14 `63c5a65`** Campersコンテンツ素材骨組み（7章構成outline・session-logs 2本投入）
+🟢 **T15 `ea044c9`** daily-github-backup拡張（STEP 0 memory同期追加・初回同期で memory_backup 最新化）
+🟢 **最終 `9850eef` `3a990ed` `cea9077`** CLAUDE.md末尾更新＋allow重複3件削除（82→78）＋.bak_t6削除
+
+### 数値 Before / After
+
+| 指標 | Before | After | 削減率 |
+|------|-------:|------:|:-----:|
+| ルートCLAUDE.md | 136行 | **82行**（末尾案内で2行微超） | 40%減 |
+| 最大子CLAUDE.md | 488行 | **205行** | 58%減 |
+| CLAUDE.md 200行超 | 6/20 (30%) | **1/20 (5%)** | 83%減 |
+| settings.local.json | 361行 | **144行** | 60%減 |
+| settings allow件数 | 298件 | **78件** | 74%減 |
+| memory ファイル数 | 46 | **34** + archive/6 | 26%減 |
+| memory 合計行数 | 2,385 | **1,992** | 17%減 |
+| **情報資産変更（journey-log/decisions_log/user_*/weekly_history/webinar/design-doc/handoff）** | — | **0件** | 完全保護 |
+
+### 大きな判断ポイント
+
+**判断1: T2/T3/T4/T5 退避ファイル数をハンドオフ原案（2-3）から増加（4-5）**
+単一ファイル肥大化を避けるため細分化。社長のGOで各タスク都度確認。
+
+**判断2: T7 `feedback_baychat_ai_reply_stance.md` ハンドオフ指示の逆提案（A案維持）**
+ハンドオフは「decisions_log.md に吸収」だったが、データ確認で参照箇所8ファイル以上・役割独立と判明。社長「Aが本当にベストならGO」指示で Claude徹底確認 → A案確定。
+**学び**: ハンドオフでもデータで確認してから判断する重要性。
+
+**判断3: T11 Python単独 vs エージェント分担**
+スケジュールタスクからのPython単独では WebSearch/WebFetch・LLM提案生成は不可（エージェント能力必要）。
+**T11 Python = 定量計測のみ / T13 スラッシュコマンド = エージェント機能で5層調査＋松竹梅生成**に設計調整。
+
+### セキュリティ発見・是正（T2）
+
+`commerce/ebay/analytics/CLAUDE.md` L255 の Chatwork送信コード例に **APIトークン直書き** 発見。
+対処: `weekly-report-spec.md` 退避時に `os.environ.get('CW_TOKEN')` 参照へ書き換え＋実動作コード整合。
+**社長対応推奨**: git履歴に残存 → Chatworkで無効化→再発行→.envに新値保存。
+
+### 新機能：持続可能性4点セット稼働開始
+
+1. **archive/** — 全7部門・Claudeは読まない領域
+2. **biweekly-claude-maintenance** — 第1・第3月曜10時自動実行（初回実運用: 2026-05-04）
+3. **各部門 index.md** — 退避ファイル一覧の可視化
+4. **/隔週メンテナンス** スラッシュコマンド — 5層調査＋松竹梅＋社長判断＋実行＋結果再送信
+
+### memory 3層管理統一（T15）
+
+- ソース: `memory/`（$HOME配下）
+- バックアップ: `.claude/memory_backup/`（reffort配下・git管理）
+- スマホ参照: GitHub（kshimomoto0522/reffort-claude）
+- `daily-github-backup` STEP 0 で毎日0時にソース→backup 自動ミラー
+
+### Campersコンテンツ素材化（T14）
+
+`education/campers/content-projects/claude-code-maintenance-case-study/`:
+- README（配信は社長判断・勝手に公開しない明記）
+- outline.md（7章構成: 症状→診断→真因→即効解毒→構造改善→永続仕組み→受講生提言）
+- session-logs/: 2026-04-23（梅案）/ 2026-04-24（竹案）2本投入済み
+- assets/: 今後用
+
+### 学び
+
+💡 **「ハンドオフの指示でもファクト確認から逃げない」**（T7）— 指示をそのまま実行するのは思考放棄。経営パートナー像と矛盾。
+
+💡 **「Python単独で無理なものはエージェントで分担」**（T11/T13）— 実装制約を知って設計を調整する柔軟性。
+
+💡 **「Windowsでの絵文字print問題」** — CP932エンコーディングエラー。`sys.stdout.reconfigure(encoding='utf-8')` で解決。
+
+💡 **「自動タスクが未コミット変更を意図せずコミット」** — `7fd6bd2`で温存対象の `gas_shiire_tool.js` が自動commit/push。次回隔週メンテで扱い検討。
+
+### 失敗・迷い
+
+⚠️ **Edit 「File has been modified since read」エラー** — settings.local.json で発生。Read→Edit 直列化で回避。
+
+⚠️ **allow件数が社長 Run now で一時増加** — 3件自動追加（ワイルドカードで既にカバー済みの重複）。最終コミットで整理して78件に。
+
+### コンテンツ候補
+
+📦 **『Claude Code運用 2週間で88ファイル・6,000行を剪定した実録』** — 数字が強烈・Note/Campersメイン素材
+📦 **『ハンドオフ駆動開発 — AI秘書と複数セッションで大規模プロジェクトを回す』** — ワークフロー自体が記事価値
+📦 **『スラッシュコマンド設計パターン — Python定量＋LLM定性の分業』** — 受講生に刺さるパターン
+📦 **『情報資産を削除ではなく退避する思想』** — archive/パラダイムの発想転換提案
+📦 **『AI秘書の逆提案力』** — T7の「ハンドオフの指示でも確認して逆判断」は経営パートナー像の実演
+
+### 次セッションで最初にやること
+
+⏭ **T15 Run now アクティベート**: Claude Code UI → Scheduled → `daily-github-backup` → Run now
+⏭ **Chatwork個人DM(426170119) 確認**: 「📊 隔週Claude Codeメンテナンス｜2026-04-24」箱型カード表示確認
+⏭ **Chatwork APIトークン ローテーション**: 新発行→`.env`更新（社長手動）
+⏭ **`gas_shiire_tool.js` 扱い**: 自動バックアップでpush済。社長意図通りか検証
+⏭ **2026-05-04（第1月曜10:00）**: biweekly-claude-maintenance 初回実運用。通知・レポート到達を確認
+
+---
+
+*最終更新: 2026年4月24日 夜 — 竹案T1-T15 全完了（コミット20件・情報資産変更0件・持続可能性4点セット稼働・memory 3層管理統一・Campersコンテンツ素材化完成）*
