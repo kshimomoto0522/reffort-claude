@@ -1,94 +1,77 @@
 # 株式会社Reffort - Claude Code コアルール
 
-> このファイルはClaude Codeが毎セッション最優先で読むルールです。100行以下のコアのみ。
-> 会社概要・事業詳細・ロードマップ・プロジェクト構成等は `.claude/rules/` 配下に整理。
-> 各事業・各ユニットの詳細は各フォルダの `CLAUDE.md` と `index.md` を参照してください。
-> 社長プロフィール・思考パターンは memory（`user_profile.md` / `user_patterns.md`）に格納済み。
+> 毎セッション最優先・80行以下のコアのみ。詳細は `.claude/rules/` / 各フォルダ `index.md` / memory（`user_profile.md` `user_patterns.md` 等）参照。
 
 ---
 
-## 社長（ユーザー）について（要点）
+## 社長について（要点）
 
-- プログラミング経験なし・判断意思決定は速い・マーケに自信なし
-- 1年でAIを全事業に浸透させる。最終ビジョンは「AIを使いこなすセラー」としてのコンサル・スクール展開
-- 求めているのは「AIと共に経営する仕組み」・自分を一番理解している経営コンサルタント兼秘書
-- 詳細: `memory/user_profile.md` / `memory/user_patterns.md`
+プログラミング未経験・判断速い・マーケ自信なし。1年でAIを全事業浸透→コンサル・スクール展開。「AIと共に経営する仕組み」を求める。詳細 `memory/user_profile.md` / `memory/user_patterns.md`。
 
 ---
 
-## 重要ルール（必ず守ること）
+## 重要ルール
 
-- 本番の顧客データ・注文データを直接扱う処理は必ず社長に確認を取ること
-- eBay APIのレート制限に注意（過剰なAPIコールを避ける）
-- コードには必ず日本語コメントを入れる（Cowatechへの共有前提）
-- BayChat機能追加時はCowatech向けの日本語仕様書も一緒に作成する
-- 実装はCowatechに依頼する前提で、社長が判断・指示できる形でアウトプット
-- セッションが重くなったら自発的に「新セッションに引き継ぎますか？」と声をかける
-- settings.jsonのdeny設定にすべきと判断した場合は「deny設定にしますか？」と提案
-- 実装や作業の方向性に疑問・不確実性がある場合は勝手に進めず社長に確認（「たぶんこうだろう」で進めない）
-- APIトークン・認証情報は`.env`に保存しコード直書き禁止（`memory/feedback_security.md`準拠）
+- 本番の顧客/注文データ処理は必ず社長確認
+- eBay APIレート制限注意
+- コードに日本語コメント必須（Cowatech共有前提）
+- BayChat機能追加はCowatech向け日本語仕様書セット
+- 実装判断できない時は勝手に進めず確認
+- セッションが重くなったら「新セッションに引き継ぎますか？」
+- settings.json deny化推奨判断時は「deny設定にしますか？」と提案
+- APIトークンは `.env` 管理・コード直書き禁止（`memory/feedback_security.md`準拠）
 
 ---
 
 ## archive/ は読まない
 
-全フォルダの `archive/` 配下は、社長から明示的に指示されない限りClaudeは読み込まない。完了済みプロジェクト・古いバージョン・過去ログを削除せず保全するための退避先。
+全フォルダの `archive/` は社長明示指示がない限り読まない（完了済み・古いバージョン・過去ログの退避先）。
 
 ---
 
-## セッション終了時チェックリスト（必須）
+## セッション終了時チェックリスト
 
-「終了」「今日は終わり」「おつかれ」「また明日」「更新しておいて」「まとめておいて」等、セッション終了を示唆する発言があったら以下を実行：
+「終了」「おつかれ」「更新しておいて」等の終了示唆発言で即実行：
 
-1. **journey-log.md** — `education/consulting/journey-log.md` に今日やったこと全部門分を追記（最も漏れやすい・その場で書く）
-2. **各部門CLAUDE.md** — 作業した部門のCLAUDE.mdに変更点を反映
-3. **memory** — 新しい意思決定・フィードバック・プロジェクト進捗は memory に保存
-4. **decisions_log.md** — 経営判断があった場合は根拠とセットで記録
+1. `education/consulting/journey-log.md` に今日やったこと全部門分を追記（最も漏れやすい・その場で書く）
+2. 作業した部門の `CLAUDE.md` に変更点反映
+3. 新規意思決定・フィードバック・プロジェクト進捗は memory に保存
+4. 経営判断は `decisions_log.md` に根拠とセットで記録
 
 ---
 
 ## 回答スタイル
 
-- 専門用語は必ず簡単な説明を添える・日本語で素人にわかるように
-- 作業は小さなステップに分解・選択肢を出して社長判断に委ねる
-- 数字データが出たら「だから何をすべきか」まで踏み込んで提言
-- 社長の判断が最適でないと感じたときは理由を添えて軌道修正を提案
+- 専門用語は必ず簡単な説明を添える・日本語で素人向け
+- 選択肢提示→社長判断・数字は「だから何をすべきか」まで踏み込む
+- 社長の判断が最適でないと感じた時は理由添えて軌道修正提案
 
 ---
 
-## Effort Level（思考深度）運用
+## Effort Level
 
-デフォルト High（`.claude/settings.local.json`）。`.claude/hooks/effort_booster.py` が複雑タスクを自動判定して ultrathink を注入。オプトインワード（「しっかり」「ちゃんと」「じっくり」「徹底的」「ベストで」「!max」「ultrathink」等）で即ブースト。ログは `.claude/hooks/effort_booster.log`。モデル選択は社長判断（基本Opus・勝手に変更提案しない）。
+デフォルト High（`.claude/settings.local.json`）。`.claude/hooks/effort_booster.py` が複雑タスク自動判定→ultrathink注入。オプトイン語（「しっかり」「ちゃんと」「じっくり」「徹底的」「ベストで」「!max」「ultrathink」等）で即ブースト。モデル選択は社長判断（基本Opus）。
 
 ---
 
-## 自動タスク管理ルール
-
-新セッション開始時に「常に存在すべき自動タスク」を確認し、なければ社長に断りなく作成する。
+## 自動タスク一覧（不在なら作成）
 
 | タスクID | 内容 | スケジュール |
 |----------|------|------------|
-| `daily-github-backup` | reffortフォルダ＋memoryフォルダをGitHubにバックアップ | 毎日深夜0時 |
-| `monday-ebay-report-delivery` | eBay週次レポート自動配信 | 毎週月曜 10:00 |
+| `daily-github-backup` | reffort＋memoryフォルダをGitHubにバックアップ | 毎日深夜0時 |
+| `monday-ebay-report-delivery` | eBay週次レポート配信 | 毎週月曜 10:00 |
 | `daily-x-digest` | X情報ダイジェスト配信 | 毎日 9:40 |
-| `biweekly-claude-maintenance` | Claude Code運用の肥大化監視＋最新情報取り込み＋改善提案 | 第1・第3月曜 10:00 |
+| `biweekly-claude-maintenance` | Claude Code運用の肥大化監視＋最新情報取込＋改善提案 | 第1・第3月曜 10:00 |
 
-新しい自動タスクを追加する時: ①タスク作成 ②この一覧表に追記 ③GitHubへバックアップ。
-
----
-
-## 🚨 次セッション冒頭で必ず読むファイル（2026-04-24 時点）
-
-- **竹案リファクタ実施済み**（2026-04-24）：
-  1. 各部門の `index.md` を最初に読むことで退避ファイルの場所を把握
-  2. `.claude/rules/project-structure.md` で全体構造を把握
-  3. 詳細は必要時に退避ファイル（`ad-strategy.md` / `ai-reply-status.md` 等）をロード
-
-- **BayChat AI Reply 作業を始める場合**:
-  1. `services/baychat/ai/handoff_20260423_cowatech_prd_sync.md` を最初に読む
-  2. `memory/feedback_baychat_ai_reply_stance.md` を次に読む（進行時の5原則）
-  3. Cowatech stg+prd 反映完了済み・社長判断待ち：進め方X/Y/Z・共有方法A/B/C/D・お礼Slack返信
+新タスク追加時: ①作成 ②この表に追記 ③GitHubバックアップ。
 
 ---
 
-*最終更新: 2026年4月24日 — 竹案リファクタ（梅案+竹案T1-T5/T8-T10 完了・136→80行以下圧縮）*
+## 🚨 次セッション冒頭で必ず読むファイル（2026-04-24）
+
+- 竹案リファクタ完了。各部門 `index.md` → `.claude/rules/project-structure.md` の順で把握
+- **BayChat AI Reply作業時**: `services/baychat/ai/handoff_20260423_cowatech_prd_sync.md` + `memory/feedback_baychat_ai_reply_stance.md`（社長判断待ち：進め方・共有方法・お礼Slack返信）
+
+---
+
+*最終更新: 2026-04-24（竹案T1-T5/T8-T10完了）*
