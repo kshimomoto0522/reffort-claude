@@ -67,11 +67,16 @@
 
 ---
 
-## 🚨 次セッション冒頭で必ず読むファイル（2026-04-24）
+## 🚨 次セッション冒頭で必ず読むファイル（2026-04-24 竹案完了）
 
-- 竹案リファクタ完了。各部門 `index.md` → `.claude/rules/project-structure.md` の順で把握
+- **竹案リファクタ T1-T15 全完了**（梅案`eef37ab`→竹案 `ea044c9`）。各部門 `index.md` → `.claude/rules/project-structure.md` の順で把握
+- **新機能**:
+  - 隔週自動メンテ: `biweekly-claude-maintenance`（第1・第3月曜10時・肥大化監視＋Chatwork個人DM通知）
+  - 半自動改善: `/隔週メンテナンス` スラッシュコマンド（5層調査＋松竹梅＋社長判断→実行→結果再送信）
+  - memory3層統合: `memory/` → `.claude/memory_backup/` → GitHub（daily-github-backup 0:00自動同期・スマホアプリ参照可）
+  - 全作業蓄積: `education/campers/content-projects/claude-code-maintenance-case-study/session-logs/` にコンテンツ素材として蓄積（配信は社長判断）
 - **BayChat AI Reply作業時**: `services/baychat/ai/handoff_20260423_cowatech_prd_sync.md` + `memory/feedback_baychat_ai_reply_stance.md`（社長判断待ち：進め方・共有方法・お礼Slack返信）
 
 ---
 
-*最終更新: 2026-04-24（竹案T1-T5/T8-T10完了）*
+*最終更新: 2026-04-24（竹案T1-T15 全完了・Progressive Disclosure実装完成＋持続可能性4点セット完成）*
