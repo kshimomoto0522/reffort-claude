@@ -10,7 +10,7 @@
 | 項目 | 内容 |
 |------|------|
 | 送信アカウント | REFFORT AI（keishimomoto0522@gmail.com） |
-| APIトークン保存場所 | **`.env` 経由で環境変数 `CHATWORK_TOKEN` を参照（コード直書き厳禁・`feedback_security.md`準拠）** |
+| APIトークン保存場所 | **`.env` 経由で環境変数 `CW_TOKEN` を参照（コード直書き厳禁・`feedback_security.md`準拠）** |
 | 送信先ルーム | 【AI】eBay運営（room_id: **426169912**） |
 | 送信方法 | `curl` または Chatwork MCP経由 |
 | 設定日 | 2026年3月16日 |
@@ -20,7 +20,7 @@
 ```bash
 python -c "
 import os, urllib.request, urllib.parse
-token = os.environ.get('CHATWORK_TOKEN')  # .env から読み込み（コード直書き厳禁）
+token = os.environ.get('CW_TOKEN')  # .env から読み込み（コード直書き厳禁）
 room_id = '426169912'
 msg = '【メッセージ内容】'
 data = urllib.parse.urlencode({'body': msg}).encode()
