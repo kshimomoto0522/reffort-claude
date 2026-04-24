@@ -56,3 +56,6 @@ tmp-*.csv
 
 # PyInstaller等の展開物・解体物（再展開可能・リポジトリ不要）
 *_extracted/
+
+# Claude Code ランタイム（セッションごとに自動書き換わるロックファイル・git管理の意味なし）
+.claude/scheduled_tasks.lock
