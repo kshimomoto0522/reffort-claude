@@ -56,6 +56,7 @@ function onOpen() {
     .addSeparator()
     .addItem('🛡️ 重複安全チェック（本番反映前に推奨）', 'checkDuplicatesSafety')
     .addItem('🔍 特定オーダーのXMLを確認（デバッグ）', 'debugSingleOrder')
+    .addItem('📅 ShipByDate抽出テスト（直近オーダー）', 'debugShipByDateExtraction')
     .addItem('⏮️ 前回処理時刻をリセット', 'resetLastProcessedTime')
     .addToUi();
 }
@@ -404,13 +405,22 @@ function parseGetOrdersResponse_(xmlText) {
         }
       }
 
-      // 支払日時（ShipByDate計算のベース）
+      // 支払日時（フォールバック計算用のベース）
       var paidTimeStr = getChildText_(orderEl, 'PaidTime', ns);
       var createdTimeStr = getChildText_(orderEl, 'CreatedTime', ns);
       var baseTime = paidTimeStr ? new Date(paidTimeStr)
                    : (createdTimeStr ? new Date(createdTimeStr) : new Date());
       // 前回処理時刻フィルタ用のオーダー作成日時
       var orderCreatedTime = createdTimeStr ? new Date(createdTimeStr) : null;
+
+      // eBay APIが返す権威的なShipByDateを抽出（複数パスを試す）
+      // これが取得できればeBayの表示と常に一致するので、計算より優先する
+      var apiShipByDateStr = extractShipByDate_(orderEl, ns);
+      var apiShipByDate = apiShipByDateStr ? new Date(apiShipByDateStr) : null;
+      // 診断ログ（どのパスで取得できたかを可視化）
+      Logger.log('[ShipByDiag] Order ' + orderId
+        + ' | PaidTime=' + (paidTimeStr || '(none)')
+        + ' | API ShipByDate=' + (apiShipByDateStr || '(none)'));
 
       // --- 各トランザクション（商品）をループ ---
       var transArray = orderEl.getChild('TransactionArray', ns);
@@ -444,8 +454,12 @@ function parseGetOrdersResponse_(xmlText) {
         // ※ Z除去はしない（シートにはZ付きSKUをそのまま保持する運用）
         //   重複チェック時のみ normalizeSkuForCompare_ でZ除去正規化して比較する
 
-        // 発送期限を営業日で計算
-        var shipByDate = addBusinessDays_(baseTime, HANDLING_BUSINESS_DAYS);
+        // 発送期限：eBay API が ShipByDate を返していればそれを最優先で使う
+        // （タイムゾーン・カットオフ・祝日ルールすべてeBay側で計算済み）
+        // 返ってこない場合のみ、従来の営業日計算にフォールバックする
+        var shipByDate = apiShipByDate
+          ? apiShipByDate
+          : addBusinessDays_(baseTime, HANDLING_BUSINESS_DAYS);
 
         orders.push({
           orderNumber: orderId,
@@ -971,6 +985,32 @@ function getExistingOrderKeys_(sheet) {
 
 
 // ================================================================
+// eBay APIレスポンスから権威的なShipByDate（発送期限）を抽出
+// Trading APIのバージョンによって返却パスが異なる可能性があるため、
+// 想定パスを順番に試して最初に見つかったものを使う。
+// 返り値: ISO8601日時文字列 or 空文字（見つからなかった場合）
+// ================================================================
+function extractShipByDate_(orderEl, ns) {
+  // パス1: Order/ShippingDetails/ShipByDate（最も一般的）
+  var shippingDetails = orderEl.getChild('ShippingDetails', ns);
+  if (shippingDetails) {
+    var sbd1 = getChildText_(shippingDetails, 'ShipByDate', ns);
+    if (sbd1) return sbd1;
+  }
+  // パス2: Order/ShipByDate（Order直下）
+  var sbd2 = getChildText_(orderEl, 'ShipByDate', ns);
+  if (sbd2) return sbd2;
+  // パス3: Order/ShippingServiceSelected/ShipByDate
+  var sss = orderEl.getChild('ShippingServiceSelected', ns);
+  if (sss) {
+    var sbd3 = getChildText_(sss, 'ShipByDate', ns);
+    if (sbd3) return sbd3;
+  }
+  return '';
+}
+
+
+// ================================================================
 // 営業日を加算（土日を除く）
 // ================================================================
 function addBusinessDays_(startDate, businessDays) {
@@ -1126,6 +1166,99 @@ function removeDailyTrigger() {
       ScriptApp.deleteTrigger(triggers[i]);
     }
   }
+}
+
+
+// ================================================================
+// 【診断用】直近オーダー（過去2日）のShipByDateを抽出してログに出力
+// 目的: eBay APIがShipByDateフィールドを返すか、どのパスで返すか、
+//       どの値（5/1など）を返すかを実機で確認する。
+// 実行後、Apps Scriptエディタ→実行数→ログ で [ShipByDiag] 行を確認。
+// ================================================================
+function debugShipByDateExtraction() {
+  var ui = SpreadsheetApp.getUi();
+  var config = getEbayConfig_();
+  if (!config.userToken) {
+    ui.alert('⚠️ eBay APIが未設定です。');
+    return;
+  }
+
+  // 過去2日分を対象に取得（現状のFETCH_DAYS_BACKと同じ）
+  var toDate = new Date();
+  var fromDate = new Date(toDate.getTime() - FETCH_DAYS_BACK * 24 * 60 * 60 * 1000);
+
+  Logger.log('===== ShipByDate抽出テスト開始 =====');
+  Logger.log('取得範囲: ' + fromDate.toISOString() + ' 〜 ' + toDate.toISOString());
+
+  var xmlRequest = buildGetOrdersXml_(config.userToken, fromDate, toDate, 1);
+  var options = {
+    method: 'post',
+    contentType: 'text/xml',
+    headers: {
+      'X-EBAY-API-DEV-NAME': config.devId,
+      'X-EBAY-API-APP-NAME': config.appId,
+      'X-EBAY-API-CERT-NAME': config.certId,
+      'X-EBAY-API-CALL-NAME': 'GetOrders',
+      'X-EBAY-API-COMPATIBILITY-LEVEL': EBAY_COMPAT_LEVEL,
+      'X-EBAY-API-SITEID': EBAY_SITE_ID,
+    },
+    payload: xmlRequest,
+    muteHttpExceptions: true,
+  };
+
+  var apiResponse = UrlFetchApp.fetch(EBAY_API_URL, options);
+  var xmlText = apiResponse.getContentText();
+
+  // XMLを解析してShipByDateをオーダー毎に出力
+  var doc = XmlService.parse(xmlText);
+  var root = doc.getRootElement();
+  var ns = root.getNamespace();
+  var orderArray = root.getChild('OrderArray', ns);
+  if (!orderArray) {
+    Logger.log('OrderArrayが見つかりません。XML冒頭: ' + xmlText.substring(0, 500));
+    ui.alert('OrderArrayが見つかりません。ログをご確認ください。');
+    return;
+  }
+  var orderEls = orderArray.getChildren('Order', ns);
+  Logger.log('取得オーダー数: ' + orderEls.length);
+
+  var foundCount = 0;
+  for (var i = 0; i < orderEls.length; i++) {
+    var oe = orderEls[i];
+    var oid = getChildText_(oe, 'OrderID', ns);
+    var paid = getChildText_(oe, 'PaidTime', ns);
+    var created = getChildText_(oe, 'CreatedTime', ns);
+    var sbd = extractShipByDate_(oe, ns);
+
+    // どのパスで取得できたかを個別確認
+    var sdEl = oe.getChild('ShippingDetails', ns);
+    var sbdInShippingDetails = sdEl ? getChildText_(sdEl, 'ShipByDate', ns) : '';
+    var sbdDirect = getChildText_(oe, 'ShipByDate', ns);
+    var sssEl = oe.getChild('ShippingServiceSelected', ns);
+    var sbdInSss = sssEl ? getChildText_(sssEl, 'ShipByDate', ns) : '';
+
+    Logger.log('--- Order ' + (i + 1) + '/' + orderEls.length + ' ---');
+    Logger.log('  OrderID: ' + oid);
+    Logger.log('  CreatedTime: ' + created);
+    Logger.log('  PaidTime: ' + paid);
+    Logger.log('  ShipByDate (ShippingDetails直下): ' + (sbdInShippingDetails || '(なし)'));
+    Logger.log('  ShipByDate (Order直下): ' + (sbdDirect || '(なし)'));
+    Logger.log('  ShipByDate (ShippingServiceSelected): ' + (sbdInSss || '(なし)'));
+    Logger.log('  → extractShipByDate_結果: ' + (sbd || '(どのパスにも存在しない)'));
+    if (sbd) {
+      var d = new Date(sbd);
+      Logger.log('  → 変換後の日付: ' + (d.getMonth() + 1) + '/' + d.getDate());
+      foundCount++;
+    }
+  }
+
+  Logger.log('===== まとめ: ShipByDate取得成功 ' + foundCount + '/' + orderEls.length + ' 件 =====');
+  ui.alert('✅ ShipByDate抽出テスト完了。\n\n'
+    + '結果: ' + foundCount + '/' + orderEls.length + '件で取得成功\n\n'
+    + 'Apps Scriptエディタ → 「実行数」→ 最新の実行 → ログ\n'
+    + 'で詳細を確認してください。\n\n'
+    + '取得成功していれば、新規オーダー反映で正しい日付が入ります。\n'
+    + '0件だった場合は、互換性レベル(' + EBAY_COMPAT_LEVEL + ')を上げる必要があります。');
 }
 
 
