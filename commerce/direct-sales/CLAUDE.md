@@ -92,7 +92,7 @@ const MODEL_PRIORITY_LIST = [
 
 #### 8-1. コード変更のpush（app.js / index.html / style.css / CLAUDE.md）
 ```
-git subtree push --prefix=direct-sales render-ds master
+git subtree push --prefix=commerce/direct-sales render-ds master
 ```
 → Render自動デプロイ完了を確認（通常1-2分）
 

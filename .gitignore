@@ -32,3 +32,27 @@ yarn.lock
 .DS_Store
 Thumbs.db
 *.swp
+
+# GAS作業の中間生成物（再生成可能・コミット不要）
+_gas_b64*.txt
+gas_b64_temp.txt
+gas_shiire_b64*.txt
+gas_shiire_content.json
+big_chunk.txt
+b64_ch*.txt
+ch_[0-9][0-9].txt
+s_[0-9][0-9].txt
+_inject.js
+full_push.js
+part[0-9].js
+
+# direct-sales の一時ダンプ（再生成可能）
+tmp-*.html
+tmp-*.csv
+
+# データバックアップ（本番は永続ディスク側が正・ローカル管理不要）
+**/data/backup_*/
+**/data/backup_before_sync_*/
+
+# PyInstaller等の展開物・解体物（再展開可能・リポジトリ不要）
+*_extracted/
