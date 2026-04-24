@@ -1,14 +1,30 @@
 ---
-name: Claude Code運用の持続可能性ルール（4点セット＋隔週メンテ）
-description: Claude Codeの肥大化を防ぎ最新情報を取り込むための運用ルール。archive・biweekly-maintenance・index.md・/隔週メンテナンス＋Progressive Disclosure＋コンテンツ素材化
+name: Claude Code 運用ルール（CLAUDE.md構造＋持続可能性4点セット）
+description: Progressive Disclosure（200行以下・各フォルダindex.md）＋archive/・biweekly-maintenance・/隔週メンテナンス＋effort_booster厳選＋コンテンツ素材化
 type: feedback
-originSessionId: 895e94b1-5256-4fcc-b9c4-8dd3ada2f186
+originSessionId: bf4ef38c-6c1e-4833-837a-9742e689af01
 ---
-# Claude Code運用の持続可能性ルール
+# Claude Code 運用ルール
 
-2026-04-23〜24のリファクタで確立した、Claude Codeを永続的に最高パフォーマンスで動かすための運用ルール。
+2026-04-23〜24のリファクタで確立した、Claude Codeを永続的に最高パフォーマンスで動かすための統合運用ルール。
 
-## 持続可能性4点セット（全て揃って初めて機能する）
+---
+
+## ルール1: CLAUDE.md 構造最適化（Progressive Disclosure）
+
+CLAUDE.mdは毎セッション必読のコアルール（約100行以下）のみに絞る。参照情報は`.claude/rules/`に分離する。
+
+**Why:** CLAUDE.mdが長すぎるとClaudeが指示を読み飛ばすリスクが上がる。短いほど重要ルールの遵守率が高い。情報は捨てるのではなく「引き出しを分ける」。
+
+**How to apply:**
+- 新しい情報を追加するとき、CLAUDE.mdに直接書くのではなく、適切な.claude/rules/ファイルまたは部門CLAUDE.mdに配置する
+- CLAUDE.mdに残すのは：社長について、重要ルール、セッション終了チェックリスト、回答スタイル、自動タスク管理ルールのみ
+- 事業詳細は各部門CLAUDE.mdに、会社概要・用語集・ロードマップ等は.claude/rules/に
+- 各部門CLAUDE.mdも200行以下を厳守。超過したら即分割 or archive/ 移動
+
+---
+
+## ルール2: 持続可能性4点セット（全て揃って初めて機能する）
 
 ### ① archive/ フォルダで完了情報を退避
 - 全部門に `archive/` 配下を新設
@@ -38,15 +54,9 @@ originSessionId: 895e94b1-5256-4fcc-b9c4-8dd3ada2f186
 - Claude Code 1コマンドで改善サイクルが回る半自動フロー
 - 実行過程は全て `education/campers/content-projects/claude-code-maintenance-case-study/session-logs/YYYY-MM-DD.md` に蓄積
 
-## Progressive Disclosure 実装ルール（Anthropic公式・Boris Cherny準拠）
+---
 
-- **CLAUDE.md は各ファイル200行以下**（推奨60〜150行・HumanLayerは60行）
-- CLAUDE.mdに全部書かず「**どこに書いてあるか**」だけ書く
-- 詳細は退避先ファイル（ad-strategy.md・suppliers.md・features-spec.md等）で必要時ロード
-- `.claude/rules/` への外部化を徹底
-- 200行超過は即分割 or archive/ 移動
-
-## effort_booster.py チューニングルール
+## ルール3: effort_booster.py チューニング
 
 - `OPT_IN_KEYWORDS`（社長明示）: 「しっかり」「ちゃんと」「じっくり」「徹底的」「ベストで」「!max」「ultrathink」等 → 残す
 - `COMPLEX_KEYWORDS`（2個以上ヒットで自動ブースト）: **日常語NG・専門語OK**
@@ -54,14 +64,18 @@ originSessionId: 895e94b1-5256-4fcc-b9c4-8dd3ada2f186
   - ❌NG: 分析・検証・判断・バグ・エラー・方針・比較・改善・なぜ・原因（2026-04-23に削除済み）
 - 社長が本当に深思考を要する時は OPT_IN で明示することでカバー可能
 
-## 全作業のコンテンツ素材化
+---
+
+## ルール4: 全作業のコンテンツ素材化
 
 - 診断・改善・失敗・復活の全過程を `education/campers/content-projects/claude-code-maintenance-case-study/session-logs/YYYY-MM-DD.md` に蓄積
 - 7章構成の執筆骨子テンプレート（`outline.md`）を使用
 - 配信計画・記事公開・X投稿・動画制作等は**社長判断で別途実施**（勝手に公開しない）
 - `feedback_content_recording.md` の原則と整合
 
-## 肥大化の兆候（早期発見のチェックリスト）
+---
+
+## ルール5: 肥大化の兆候（早期発見のチェックリスト）
 
 以下が現れたら即メンテ:
 
@@ -74,9 +88,11 @@ originSessionId: 895e94b1-5256-4fcc-b9c4-8dd3ada2f186
 
 → これらが出たら **/隔週メンテナンス** を即実行、または 4点セットが欠けていないか確認
 
+---
+
 ## なぜこのルールが必要か
 
-**Why:** 2026-04-23、社長から「Claude Codeが遅く・浅く・嘘をつく」と強い不満表明。3エージェント並列診断で肥大化が真因と特定。「再編成前から蓄積された肥大化」が臨界点を超えていた。受動的な監視では Claude Code の進化に追随できない → 隔週で能動的に最新情報を取り込む仕組みが必要と判断。
+2026-04-23、社長から「Claude Codeが遅く・浅く・嘘をつく」と強い不満表明。3エージェント並列診断で肥大化が真因と特定。「再編成前から蓄積された肥大化」が臨界点を超えていた。受動的な監視では Claude Code の進化に追随できない → 隔週で能動的に最新情報を取り込む仕組みが必要と判断。
 
 **How to apply:**
 - 新規CLAUDE.md追加時は200行以下を厳守。超過したら即分割 or archive/

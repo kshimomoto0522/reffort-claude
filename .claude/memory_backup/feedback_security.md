@@ -1,9 +1,10 @@
 ---
-name: APIトークン・機密情報のセキュリティルール
-description: コード内にAPIキー・トークンを直書きしない。必ず.envファイルで管理する
+name: APIトークン・機密情報のセキュリティルール（統合版：トークン管理＋settings.json設定）
+description: コード直書き禁止・.env管理必須・.env中身の出力禁止＋deny設定判断基準・トークン管理・.envブロック
 type: feedback
 originSessionId: cad5d328-fbe2-462e-8502-6ca7c9ebaa09
 ---
+
 ## ルール：APIトークン・機密情報はコードに直書きしない
 
 すべてのAPIキー、トークン、パスワード等の機密情報は`.env`ファイルで管理し、コード内では`os.getenv()`で読み込む。
@@ -42,6 +43,7 @@ BayChat STG DB接続のデバッグ中、`.env` を `cat | grep` してパスワ
 - `printenv` / `env`（load後に実行するとexportされた値が出る）
 
 ### 正しい確認方法
+
 ```bash
 # 1. SET/UNSET のみ確認（値は絶対に表示しない）
 python -c "import os; from dotenv import load_dotenv; load_dotenv(); print('SET' if os.getenv('KEY_NAME') else 'UNSET')"
@@ -59,3 +61,31 @@ ls .env
 
 ### 適用範囲（徹底事項）
 BayChatだけでなく**全部門・全タスク**に適用する。eBay・Campers・BayPack・ダイレクト販売・ツール開発・どのプロジェクトでも例外なし。
+
+---
+
+## settings.local.json セキュリティ設定の判断基準（2026-03-26）
+
+### セキュリティは「やり直せるか？」で判断する
+
+- やり直せる操作（ファイル編集・検索・分析）→ Always allowでOK
+- やり直せない操作（git push --force、git reset --hard）→ deny設定で禁止
+- 外に出る操作（メッセージ送信・API呼び出し）→ 毎回確認
+
+### deny設定済み（2026-03-26・現行）
+- `git push --force` / `-f`（全パターン）
+- `git reset --hard`（全パターン）
+- `Read(**/.env)` / `Read(**/.env.*)`
+
+### トークン管理ルール
+- curlでAPIを直接叩く許可を出すと、settings.local.jsonにトークンが丸ごと記録される
+- MCP経由（mcp__chatwork__、mcp__slack__）ならトークンが見えないので安全
+- 今後APIを叩く必要がある場合は、curlではなくMCPまたはPythonスクリプト（.envから読む）経由で行う
+
+### .envブロックの理由（社長の洞察）
+- 社長自身が「読んで」と指示する分には問題ない
+- 問題は外部からの指示（プロンプトインジェクション）でClaudeが.envを読まされ、外部に送信させられるリスク
+- .envの直接読み取りをブロックすることで、仮に騙されても読めない状態にした
+
+**Why:** settings.local.jsonにAPIトークンが丸出しで記録されていた問題が発覚。.envに隠しても許可設定側に残る落とし穴
+**How to apply:** 新しいAPI連携を設定するときは必ずMCPまたは.env経由。curlで直接トークンを渡す許可は出さない

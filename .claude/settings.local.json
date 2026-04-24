@@ -80,7 +80,8 @@
       "Write(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\education\\\\campers\\\\removal-queue.json)",
       "Edit(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\education\\\\campers\\\\removal-queue.json)",
       "Bash(py \"C:/Users/KEISUKE SHIMOMOTO/Desktop/reffort/management/md-audit/biweekly_maintenance.py\")",
-      "mcp__mcp-registry__list_connectors"
+      "mcp__mcp-registry__list_connectors",
+      "Bash(python3 -c ' *)"
     ],
     "deny": [
       "Bash(git push --force:*)",
