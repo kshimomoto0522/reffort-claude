@@ -12,6 +12,7 @@
 - [経営パートナーとしての在り方](feedback_proactive_partner.md) — 言いなり禁止・指示の目的を理解し先回り提案
 - [常にベストから逆算する思考ルール](feedback_best_first_thinking.md) — ハードル/コストで切り捨てず松竹梅でベストを推奨
 - [宣言は必ず実装とセット](feedback_declaration_to_implementation.md) — 時間トリガー宣言→scheduled-task/hook/スクリプトに落とすまで完了しない
+- [API調査は根本を掘る](feedback_api_investigation_depth.md) — 自社他プロダクトで動いているならAPIに必ずある・安易な回避策前に根本調査
 - [BayChat AI Reply 進行時のスタンス](feedback_baychat_ai_reply_stance.md) — 設計図理解前提・Cowatech前に自力解決・5原則厳守
 
 ## フィードバック（コミュニケーション・報告）
@@ -56,6 +57,9 @@
 - `archive/project_shiire_gas_tool.md` — 仕入管理表GAS memory（gas-shiire-tool-spec.md で情報保全済み）
 - `archive/project_ebay_report.md` — 週次レポートv3 memory（weekly-report-spec.md＋本番稼働で完了）
 - `archive/feedback_remotion_video.md` — Remotion動画制作失敗教訓（過去参照用）
+
+## 参照（Reference）
+- [eBay API 2系統の使い分け](reference_ebay_api_dual.md) — Trading(Auth'n'Auth)とSell Fulfillment(OAuth2)の選定基準・認証・用途
 
 ## 外部ファイル（memoryから移動）
 - `.claude/rules/reference_nodejs_install.md` — Node.jsインストール手順（旧 memory/reference_nodejs_install.md を2026-04-24に移動）

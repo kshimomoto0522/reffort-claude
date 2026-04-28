@@ -188,6 +188,13 @@ function fetchAndPopulateOrdersBody_(ss, sheet) {
   // --- 5. 型番ルールを読み込み ---
   var modelRules = loadModelRules_(ss);
 
+  // --- 5.5. Sell Fulfillment API(REST) から Ship By Date を取得 ---
+  // Trading APIの GetOrders には ShipByDate が含まれないため、REST API で個別取得。
+  // Fulfillment API は eBay が計算済みの正確な期限（祝日・GW・セラー国カレンダー考慮）を返す。
+  // 取得結果は order.shipByDateRaw (ISO8601文字列) に格納し、buildRowData_ で日付整形に使う。
+  Logger.log('📅 Sell Fulfillment APIでShip By Dateを取得中...');
+  enrichOrdersWithShipByDateFromFulfillmentAPI_(newOrders);
+
   // --- 6. 各オーダーの行データを構築 ---
   var rowsData = newOrders.map(function(order) {
     return buildRowData_(order, history, modelRules);
@@ -413,14 +420,14 @@ function parseGetOrdersResponse_(xmlText) {
       // 前回処理時刻フィルタ用のオーダー作成日時
       var orderCreatedTime = createdTimeStr ? new Date(createdTimeStr) : null;
 
-      // eBay APIが返す権威的なShipByDateを抽出（複数パスを試す）
+      // eBay APIが返す権威的なShipByDateを抽出（Order直下の複数パスを試す）
       // これが取得できればeBayの表示と常に一致するので、計算より優先する
       var apiShipByDateStr = extractShipByDate_(orderEl, ns);
       var apiShipByDate = apiShipByDateStr ? new Date(apiShipByDateStr) : null;
       // 診断ログ（どのパスで取得できたかを可視化）
       Logger.log('[ShipByDiag] Order ' + orderId
         + ' | PaidTime=' + (paidTimeStr || '(none)')
-        + ' | API ShipByDate=' + (apiShipByDateStr || '(none)'));
+        + ' | API ShipByDate(order)=' + (apiShipByDateStr || '(none)'));
 
       // --- 各トランザクション（商品）をループ ---
       var transArray = orderEl.getChild('TransactionArray', ns);
@@ -454,11 +461,23 @@ function parseGetOrdersResponse_(xmlText) {
         // ※ Z除去はしない（シートにはZ付きSKUをそのまま保持する運用）
         //   重複チェック時のみ normalizeSkuForCompare_ でZ除去正規化して比較する
 
-        // 発送期限：eBay API が ShipByDate を返していればそれを最優先で使う
-        // （タイムゾーン・カットオフ・祝日ルールすべてeBay側で計算済み）
-        // 返ってこない場合のみ、従来の営業日計算にフォールバックする
-        var shipByDate = apiShipByDate
-          ? apiShipByDate
+        // Transaction直下にもShipByDateが返るケース（バリエーション商品等）に対応
+        // Order側にあればそれを優先、なければTransaction側を見る
+        var txShipByDateStr = '';
+        var txShippingDetails = trans.getChild('ShippingDetails', ns);
+        if (txShippingDetails) {
+          txShipByDateStr = getChildText_(txShippingDetails, 'ShipByDate', ns);
+        }
+        var effectiveShipByRaw = apiShipByDateStr || txShipByDateStr || '';
+        if (!apiShipByDateStr && txShipByDateStr) {
+          Logger.log('[ShipByDiag] Order ' + orderId + ' | API ShipByDate(transaction)=' + txShipByDateStr);
+        }
+
+        // 発送期限は後段で enrichOrdersWithDispatchTime_ がGetItem結果を使って再計算する。
+        // ここでは baseTime(支払・作成時刻) だけ保存しておき、暫定値として
+        // HANDLING_BUSINESS_DAYS による計算値を入れておく（API由来があればそれを最優先）
+        var shipByDate = effectiveShipByRaw
+          ? new Date(effectiveShipByRaw)
           : addBusinessDays_(baseTime, HANDLING_BUSINESS_DAYS);
 
         orders.push({
@@ -468,6 +487,8 @@ function parseGetOrdersResponse_(xmlText) {
           sku: sku,
           variationDetails: variationDetails,
           shipByDate: shipByDate,
+          shipByDateRaw: effectiveShipByRaw,   // API生ISO文字列（あれば・なければ空）
+          baseTime: baseTime,                  // GetItem後の再計算用（PaidTime等）
           isCancelRequested: isCancelRequested,
           hasStock: hasStock,
           createdTime: orderCreatedTime,   // 前回処理時刻との比較用
@@ -724,10 +745,23 @@ function extractModelFromTitle_(title, rules) {
   }
 
   // --- ミズノ ---
+  // 型番ルール: 英字1 + 数字1 + 英字2 + 数字6（カラーコード込み10桁。例: J1GC267101）
+  // タイトル表記の揺れに対応:
+  //   "P1GC253009"（連続10桁）
+  //   "P1GC2530 09"（スペース区切り）← eBay公式表記に多い
+  //   "P1GC2530-09"（ハイフン区切り）
+  // いずれも結合して10桁にして返す
+  // 10桁で取れない場合のみ、カラーコード無しの8桁にフォールバック
   if (upperTitle.indexOf('MIZUNO') >= 0) {
-    var matchMizuno = title.match(/\b([A-Za-z]\d[A-Za-z]{2}\d{4})\b/);
-    if (matchMizuno) {
-      return matchMizuno[1].toUpperCase();
+    // 8桁本体 + 任意区切り(空白/ハイフン/無し) + 2桁カラーコード
+    var matchMizuno10 = title.match(/\b([A-Za-z]\d[A-Za-z]{2}\d{4})[\s\-]?(\d{2})\b/);
+    if (matchMizuno10) {
+      return (matchMizuno10[1] + matchMizuno10[2]).toUpperCase();
+    }
+    // 8桁単独（カラーコード無しの商品のみ該当）
+    var matchMizuno8 = title.match(/\b([A-Za-z]\d[A-Za-z]{2}\d{4})\b/);
+    if (matchMizuno8) {
+      return matchMizuno8[1].toUpperCase();
     }
   }
 
@@ -765,12 +799,21 @@ function buildRowData_(order, history, modelRules) {
   var parentSku = extractParentSKU_(order.sku);
   var hist = findBestHistory_(history, parentSku);
 
-  // 型番の決定: 履歴 > タイトルから抽出
-  var model = '';
-  if (hist && hist.model) {
-    model = hist.model;
+  // 型番の決定:
+  //   通常は「履歴 > タイトル抽出」の優先だが、履歴データに過去バグ由来の
+  //   短縮型番（例: ミズノの旧8桁 J1GC2671）が残っていると新しい10桁コード
+  //   (J1GC267101) が上書きできない。
+  //   そこで「タイトル抽出結果が履歴値を前方一致で含み、かつより長い」場合は
+  //   タイトル抽出側を優先採用する（履歴の不完全情報を上書き修正できる）
+  var histModel = (hist && hist.model) ? String(hist.model).trim() : '';
+  var titleModel = extractModelFromTitle_(order.title, modelRules);
+  var model;
+  if (histModel && titleModel
+      && titleModel.indexOf(histModel) === 0
+      && titleModel.length > histModel.length) {
+    model = titleModel;   // タイトルの方が情報量多い → 上書き修正
   } else {
-    model = extractModelFromTitle_(order.title, modelRules);
+    model = histModel || titleModel;   // 履歴優先・無ければタイトル
   }
 
   // New Balance等のWidth情報をサイズ末尾に付加
@@ -781,8 +824,18 @@ function buildRowData_(order, history, modelRules) {
     size = size ? (size + '　' + width) : width;
   }
 
+  // 発送期限の表示文字列を決定:
+  // 優先1) Sell Fulfillment API が返した ISO文字列(order.shipByDateRaw)があればそれを使う
+  //       → eBayがセラー国祝日・GW・週末を全て考慮して算出した正確な期限
+  //       → 日付部分を直接取り出すことでタイムゾーン変換ズレを完全回避
+  // 優先2) API不達時のみ、parseGetOrdersResponse_ が HANDLING_BUSINESS_DAYS +
+  //       JP祝日テーブルで計算した暫定 shipByDate を使う（ベストエフォート）
+  var shipByStr = order.shipByDateRaw
+    ? formatDateMDFromISO_(order.shipByDateRaw)
+    : formatDateMD_(order.shipByDate);
+
   return {
-    shipBy: formatDateMD_(order.shipByDate),              // B: 発送期限（例: "4/16"）
+    shipBy: shipByStr,                                     // B: 発送期限（例: "4/16"）
     sku: order.sku,                                        // C: SKU
     model: model,                                          // F: 型番
     supplier: (hist && hist.supplier) || '',                // G: 仕入先
@@ -985,6 +1038,164 @@ function getExistingOrderKeys_(sheet) {
 
 
 // ================================================================
+// Sell Fulfillment API (REST) で各オーダーの Ship By Date を取得し、
+// orders[].shipByDateRaw に ISO8601 文字列として格納する。
+//
+// Trading API の GetOrders には ShipByDate が返らないため、このAPI経由が必須。
+// Fulfillment API は eBay が「セラー国の祝日・週末・ハンドリング設定」を
+// 全て考慮して計算した正確な期限を返す（手動で祝日テーブルを持つ必要なし）。
+//
+// 認証: OAuth2 User Access Token（Script Properties の EBAY_OAUTH_REFRESH_TOKEN
+//       から refresh_token flow で自動取得・キャッシュ）
+// エンドポイント: GET /sell/fulfillment/v1/order/{orderId}
+// レスポンス該当フィールド: lineItems[].lineItemFulfillmentInstructions.shipByDate
+// ================================================================
+function enrichOrdersWithShipByDateFromFulfillmentAPI_(orders) {
+  if (!orders || orders.length === 0) return;
+
+  // 同一オーダー番号でdedup（オーダー内の複数商品は1回のAPI呼び出しで取れる）
+  var uniqueOrderNumbers = {};
+  for (var i = 0; i < orders.length; i++) {
+    if (orders[i].orderNumber) uniqueOrderNumbers[orders[i].orderNumber] = true;
+  }
+  var orderNumbers = Object.keys(uniqueOrderNumbers);
+
+  Logger.log('  Fulfillment API 対象: ' + orderNumbers.length + '件（オーダー番号）');
+
+  var accessToken;
+  try {
+    accessToken = getOAuth2AccessToken_();
+  } catch (e) {
+    Logger.log('[Fulfillment ERROR] OAuth2トークン取得失敗: ' + e.message);
+    Logger.log('  → 発送期限は HANDLING_BUSINESS_DAYS(' + HANDLING_BUSINESS_DAYS + ')による暫定計算にフォールバック');
+    return;
+  }
+
+  // orderNumber -> { sku -> shipByDate ISO文字列 }
+  var shipByMap = {};
+  var okCount = 0, ngCount = 0;
+
+  for (var j = 0; j < orderNumbers.length; j++) {
+    var orderNumber = orderNumbers[j];
+    var url = 'https://api.ebay.com/sell/fulfillment/v1/order/'
+            + encodeURIComponent(orderNumber);
+    var options = {
+      method: 'get',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Accept': 'application/json',
+      },
+      muteHttpExceptions: true,
+    };
+    try {
+      var response = UrlFetchApp.fetch(url, options);
+      var code = response.getResponseCode();
+      if (code !== 200) {
+        ngCount++;
+        Logger.log('[Fulfillment WARN] ' + orderNumber + ' HTTP ' + code
+          + ' body=' + response.getContentText().substring(0, 200));
+        continue;
+      }
+      var data = JSON.parse(response.getContentText());
+      var lineItems = data.lineItems || [];
+      shipByMap[orderNumber] = {};
+      for (var k = 0; k < lineItems.length; k++) {
+        var li = lineItems[k];
+        var sku = li.sku || '';
+        var instr = li.lineItemFulfillmentInstructions || {};
+        if (instr.shipByDate) {
+          shipByMap[orderNumber][sku] = instr.shipByDate;
+        }
+      }
+      okCount++;
+    } catch (e) {
+      ngCount++;
+      Logger.log('[Fulfillment EXCEPTION] ' + orderNumber + ': ' + e.message);
+    }
+    // レート配慮: 10件以上は100ms間隔
+    if (j >= 10 && j < orderNumbers.length - 1) Utilities.sleep(100);
+  }
+
+  Logger.log('  Fulfillment API結果: 成功=' + okCount + ' 失敗=' + ngCount);
+
+  // 各注文に shipByDateRaw を付与（SKU一致を優先、なければ同一オーダーの最初の値）
+  var mergedCount = 0;
+  for (var m = 0; m < orders.length; m++) {
+    var order = orders[m];
+    var perOrder = shipByMap[order.orderNumber];
+    if (!perOrder) continue;
+    var matched = perOrder[order.sku];
+    if (!matched) {
+      // SKU一致なし → 同一オーダー内の他商品から拾う（通常は同じ期限）
+      var keys = Object.keys(perOrder);
+      if (keys.length > 0) matched = perOrder[keys[0]];
+    }
+    if (matched) {
+      order.shipByDateRaw = matched;
+      mergedCount++;
+    }
+  }
+  Logger.log('  発送期限マージ済み: ' + mergedCount + '/' + orders.length + '件');
+}
+
+
+// ================================================================
+// OAuth2 User Access Token 取得（キャッシュ付き）
+// 初回または期限切れの場合は Script Properties の EBAY_OAUTH_REFRESH_TOKEN から
+// refresh_token grant で新規発行し、Script Properties にキャッシュする。
+// access_token は 2時間(7200秒) 有効、refresh_token は 約18ヶ月 有効。
+// ================================================================
+function getOAuth2AccessToken_() {
+  var props = PropertiesService.getScriptProperties();
+  var cached = props.getProperty('EBAY_OAUTH_ACCESS_TOKEN');
+  var expiresAtStr = props.getProperty('EBAY_OAUTH_ACCESS_TOKEN_EXPIRES_AT') || '0';
+  var expiresAt = parseInt(expiresAtStr, 10);
+  var now = Date.now();
+  // 5分の余裕を持って有効なものは再利用
+  if (cached && expiresAt > now + 5 * 60 * 1000) {
+    return cached;
+  }
+
+  var appId = props.getProperty('APP_ID') || props.getProperty('EBAY_APP_ID');
+  var certId = props.getProperty('CERT_ID') || props.getProperty('EBAY_CERT_ID');
+  var refreshToken = props.getProperty('EBAY_OAUTH_REFRESH_TOKEN');
+  if (!appId || !certId) {
+    throw new Error('Script Properties: APP_ID / CERT_ID が未設定');
+  }
+  if (!refreshToken) {
+    throw new Error('Script Properties: EBAY_OAUTH_REFRESH_TOKEN が未設定（'
+      + 'analytics/.env から値をコピーして追加してください）');
+  }
+
+  var basic = Utilities.base64Encode(appId + ':' + certId);
+  var payload = {
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+    scope: 'https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly',
+  };
+  var response = UrlFetchApp.fetch('https://api.ebay.com/identity/v1/oauth2/token', {
+    method: 'post',
+    contentType: 'application/x-www-form-urlencoded',
+    headers: { 'Authorization': 'Basic ' + basic },
+    payload: payload,
+    muteHttpExceptions: true,
+  });
+  if (response.getResponseCode() !== 200) {
+    throw new Error('OAuth2 refresh failed: HTTP ' + response.getResponseCode()
+      + ' body=' + response.getContentText().substring(0, 300));
+  }
+  var data = JSON.parse(response.getContentText());
+  var newAccessToken = data.access_token;
+  var expiresIn = data.expires_in || 7200;
+  var newExpiresAt = now + (expiresIn - 60) * 1000;  // 1分の安全マージン
+  props.setProperty('EBAY_OAUTH_ACCESS_TOKEN', newAccessToken);
+  props.setProperty('EBAY_OAUTH_ACCESS_TOKEN_EXPIRES_AT', newExpiresAt.toString());
+  Logger.log('  OAuth2 access_token 更新 (expires_in=' + expiresIn + 's)');
+  return newAccessToken;
+}
+
+
+// ================================================================
 // eBay APIレスポンスから権威的なShipByDate（発送期限）を抽出
 // Trading APIのバージョンによって返却パスが異なる可能性があるため、
 // 想定パスを順番に試して最初に見つかったものを使う。
@@ -1011,7 +1222,49 @@ function extractShipByDate_(orderEl, ns) {
 
 
 // ================================================================
-// 営業日を加算（土日を除く）
+// 日本の祝日テーブル（2026-2027年・毎年1月に更新要）
+// eBayは日本のセラーに対してはJP祝日も営業日計算から除外するため、
+// 発送期限（Ship by）が eBay 表示と一致するように同じルールで計算する。
+// GW や年末年始など連休が含まれると最大7-10日ずれるため必須。
+// ※ 来年以降は https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html 等で確認して追記
+// ================================================================
+var JP_HOLIDAYS = {
+  // 2026年
+  '2026-01-01': '元日',        '2026-01-12': '成人の日',
+  '2026-02-11': '建国記念の日', '2026-02-23': '天皇誕生日',
+  '2026-03-20': '春分の日',    '2026-04-29': '昭和の日',
+  '2026-05-03': '憲法記念日',  '2026-05-04': 'みどりの日',
+  '2026-05-05': 'こどもの日',  '2026-05-06': '振替休日',
+  '2026-07-20': '海の日',      '2026-08-11': '山の日',
+  '2026-09-21': '敬老の日',    '2026-09-22': '国民の休日',
+  '2026-09-23': '秋分の日',    '2026-10-12': 'スポーツの日',
+  '2026-11-03': '文化の日',    '2026-11-23': '勤労感謝の日',
+  // 2027年
+  '2027-01-01': '元日',        '2027-01-11': '成人の日',
+  '2027-02-11': '建国記念の日', '2027-02-23': '天皇誕生日',
+  '2027-03-21': '春分の日',    '2027-03-22': '振替休日',
+  '2027-04-29': '昭和の日',    '2027-05-03': '憲法記念日',
+  '2027-05-04': 'みどりの日',  '2027-05-05': 'こどもの日',
+  '2027-07-19': '海の日',      '2027-08-11': '山の日',
+  '2027-09-20': '敬老の日',    '2027-09-23': '秋分の日',
+  '2027-10-11': 'スポーツの日',
+  '2027-11-03': '文化の日',    '2027-11-23': '勤労感謝の日',
+};
+
+
+// ================================================================
+// 指定日が日本の祝日か判定（JST基準）
+// ================================================================
+function isJapaneseHoliday_(date) {
+  var key = Utilities.formatDate(date, 'Asia/Tokyo', 'yyyy-MM-dd');
+  return !!JP_HOLIDAYS[key];
+}
+
+
+// ================================================================
+// 営業日を加算（土日＋日本祝日を除く）
+// eBayの発送期限（Ship by）はセラーの所在国の祝日も考慮されるため、
+// 日本セラーの場合はGW・年末年始などの連休もスキップ対象となる。
 // ================================================================
 function addBusinessDays_(startDate, businessDays) {
   var date = new Date(startDate.getTime());
@@ -1020,10 +1273,9 @@ function addBusinessDays_(startDate, businessDays) {
   while (added < businessDays) {
     date.setDate(date.getDate() + 1);
     var dayOfWeek = date.getDay();
-    // 0=日曜, 6=土曜 はスキップ
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      added++;
-    }
+    if (dayOfWeek === 0 || dayOfWeek === 6) continue;  // 土日
+    if (isJapaneseHoliday_(date)) continue;            // 日本祝日
+    added++;
   }
 
   return date;
@@ -1032,9 +1284,27 @@ function addBusinessDays_(startDate, businessDays) {
 
 // ================================================================
 // 日付を M/D 形式にフォーマット（例: "4/16"）
+// ※ 注意: date.getMonth()/getDate() は Apps Script の既定タイムゾーンで解釈される。
+//   eBay API の ShipByDate は ISO8601(UTC) で返るため、そのまま new Date → getDate
+//   すると JST 変換で日付がズレる可能性がある。API 由来の値は formatDateMDFromISO_
+//   を使い、文字列の日付部分を直接整形すること。
 // ================================================================
 function formatDateMD_(date) {
   return (date.getMonth() + 1) + '/' + date.getDate();
+}
+
+
+// ================================================================
+// ISO8601 日付文字列から M/D 形式を抽出（タイムゾーン変換しない）
+// 例: "2026-05-07T06:59:59.000Z" → "5/7"
+// eBay API の ShipByDate は既にセラータイムゾーンで解釈された日付を
+// ISO表現で返すため、日付部分をそのまま取り出すのが最も安全。
+// ================================================================
+function formatDateMDFromISO_(isoStr) {
+  if (!isoStr) return '';
+  var m = String(isoStr).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return '';
+  return parseInt(m[2], 10) + '/' + parseInt(m[3], 10);
 }
 
 
@@ -1237,6 +1507,21 @@ function debugShipByDateExtraction() {
     var sssEl = oe.getChild('ShippingServiceSelected', ns);
     var sbdInSss = sssEl ? getChildText_(sssEl, 'ShipByDate', ns) : '';
 
+    // Transaction(商品)階層にもShipByDateが返るケースを調査
+    var txSbdFound = '';
+    var txChildTagNames = [];
+    var transArrayEl = oe.getChild('TransactionArray', ns);
+    if (transArrayEl) {
+      var txEls = transArrayEl.getChildren('Transaction', ns);
+      for (var ti = 0; ti < txEls.length; ti++) {
+        var txSdEl = txEls[ti].getChild('ShippingDetails', ns);
+        if (txSdEl) {
+          var txSbd = getChildText_(txSdEl, 'ShipByDate', ns);
+          if (txSbd) { txSbdFound = txSbd; break; }
+        }
+      }
+    }
+
     Logger.log('--- Order ' + (i + 1) + '/' + orderEls.length + ' ---');
     Logger.log('  OrderID: ' + oid);
     Logger.log('  CreatedTime: ' + created);
@@ -1244,9 +1529,40 @@ function debugShipByDateExtraction() {
     Logger.log('  ShipByDate (ShippingDetails直下): ' + (sbdInShippingDetails || '(なし)'));
     Logger.log('  ShipByDate (Order直下): ' + (sbdDirect || '(なし)'));
     Logger.log('  ShipByDate (ShippingServiceSelected): ' + (sbdInSss || '(なし)'));
-    Logger.log('  → extractShipByDate_結果: ' + (sbd || '(どのパスにも存在しない)'));
-    if (sbd) {
-      var d = new Date(sbd);
+    Logger.log('  ShipByDate (Transaction/ShippingDetails): ' + (txSbdFound || '(なし)'));
+    Logger.log('  → extractShipByDate_結果: ' + (sbd || txSbdFound || '(どのパスにも存在しない)'));
+    // 最初のオーダーのみ、Order直下とShippingDetails直下の全子タグ名をダンプ
+    // eBay APIが実際にどのタグで発送期限を返しているかを特定するため
+    if (i === 0) {
+      var orderChildNames = oe.getChildren().map(function(c){ return c.getName(); }).join(', ');
+      Logger.log('  [DUMP] Order直下の全子タグ: ' + orderChildNames);
+      if (sdEl) {
+        var sdChildNames = sdEl.getChildren().map(function(c){ return c.getName(); }).join(', ');
+        Logger.log('  [DUMP] Order/ShippingDetails子タグ: ' + sdChildNames);
+      }
+      if (transArrayEl) {
+        var firstTx = transArrayEl.getChild('Transaction', ns);
+        if (firstTx) {
+          var txChildNames = firstTx.getChildren().map(function(c){ return c.getName(); }).join(', ');
+          Logger.log('  [DUMP] Transaction直下の全子タグ: ' + txChildNames);
+          var firstTxSd = firstTx.getChild('ShippingDetails', ns);
+          if (firstTxSd) {
+            var firstTxSdChildNames = firstTxSd.getChildren().map(function(c){ return c.getName(); }).join(', ');
+            Logger.log('  [DUMP] Transaction/ShippingDetails子タグ: ' + firstTxSdChildNames);
+          }
+          // Transaction/Item 直下も確認（DispatchTimeMax 等の場所）
+          var firstTxItem = firstTx.getChild('Item', ns);
+          if (firstTxItem) {
+            var itChildNames = firstTxItem.getChildren().map(function(c){ return c.getName(); }).join(', ');
+            Logger.log('  [DUMP] Transaction/Item子タグ: ' + itChildNames);
+            var dtmVal = getChildText_(firstTxItem, 'DispatchTimeMax', ns);
+            Logger.log('  [DUMP] Transaction/Item/DispatchTimeMax: ' + (dtmVal || '(なし)'));
+          }
+        }
+      }
+    }
+    if (sbd || txSbdFound) {
+      var d = new Date(sbd || txSbdFound);
       Logger.log('  → 変換後の日付: ' + (d.getMonth() + 1) + '/' + d.getDate());
       foundCount++;
     }

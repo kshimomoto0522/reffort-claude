@@ -20,6 +20,7 @@
 - セッションが重くなったら「新セッションに引き継ぎますか？」
 - settings.json deny化推奨判断時は「deny設定にしますか？」と提案
 - APIトークンは `.env` 管理・コード直書き禁止（`memory/feedback_security.md`準拠）
+- **.env作業時3原則**：①会話文脈から対象.envを自動特定（曖昧でないのに社長に聞くのは違反・真に不明な時のみ確認）②Write/Edit直後にhookが自動オープン（`.claude/hooks/env_auto_open.py`）③「開きました」を必ず先に宣言してから次の作業へ
 
 ---
 

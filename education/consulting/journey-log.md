@@ -1959,3 +1959,86 @@ Progressive Disclosure＋archive/＋定期剪定＋探索はClaudeの負担 の4
 ---
 
 *最終更新: 2026年4月24日 夜 — 竹案T1-T15 全完了（コミット20件・情報資産変更0件・持続可能性4点セット稼働・memory 3層管理統一・Campersコンテンツ素材化完成）*
+
+---
+
+## 2026年4月24日（金）深夜 ― 仕入管理表GAS: 発送期限バグ根本対応＋Fulfillment API移行
+
+### 発端
+社長がオーダー`16-14538-80834`の発送期限が `5/1` と表示されることに気づく。eBay上では `Ship by May 7`。
+GW祝日を挟むから5/7になるはずなのに、ツールが5営業日を単純計算で反映していた。1営業日設定の商品もあるので単純計算では根本対応にならない。
+
+### やったこと
+
+✅ Trading API `GetOrders` のタグダンプ実測で48/48件すべて `ShipByDate` 未返却を確認
+  - Order直下24タグ中になし / ShippingDetails内4タグにもなし / Transaction/Item 5タグにもなし
+  - Transaction/Item/DispatchTimeMax も返らないことを確認 → GetItem別呼び出し必要
+
+✅ **Sell Fulfillment API (REST)** に `lineItems[].lineItemFulfillmentInstructions.shipByDate` が直接あることを公式ドキュメントで確認
+  - eBay側で「セラー国祝日・GW・週末・商品毎ハンドリング」すべて計算済み
+  - BayChatもこれを使っていると推定（社長の「日本時間基準にするか議論した」発言から）
+
+✅ OAuth2 Refresh Token 取得フロー自作
+  - Step1: `_oauth_step1_open_consent.py` で同意URLを開く
+  - Step2: `_oauth_step2_exchange.py` でリダイレクトURL→refresh_token自動取得＋.env保存
+  - 検証: `_oauth_verify.py` でトークン交換疎通確認（access_token 2372文字・2h TTL）
+
+✅ Apps Script 移行実装
+  - `getOAuth2AccessToken_()`: refresh_token→access_tokenキャッシュ管理
+  - `enrichOrdersWithShipByDateFromFulfillmentAPI_()`: オーダー番号毎にREST呼び出し・SKU一致でマージ
+  - `buildRowData_`: API取得ISO文字列から日付部直接切出（TZ変換しない）
+  - JP祝日テーブルは「API不達時の最終フォールバック」として残置
+
+✅ ミズノ型番抽出ロジック強化
+  - 過去バグ由来の8桁データが履歴に残っていて上書き不可の問題を特定
+  - `buildRowData_` を「タイトル抽出値が履歴値の前方一致で長い場合はタイトル側を採用」に変更
+  - 正規表現もスペース/ハイフン区切り対応（"P1GC2530 09" → `P1GC253009`）
+
+✅ テスト環境→本番への手動デプロイ完了
+
+### 学び
+
+💡 **「調査が甘い」の指摘が正しかった**
+社長に「BayChatで反映できているのだからAPIで取れないわけがない」と指摘されるまで、Trading APIに固執してJP祝日テーブル＋GetItem方式という回避策を提案していた。**根本API（REST Fulfillment）を1回調べれば済む話**を、既存実装を活かすバイアスで遠回りした。
+次回以降: 「他の自社プロダクトでできているなら必ず方法がある」の視点を先に持つ。
+
+💡 **Claude in Chrome の自動ペーストは信頼できない**
+Chrome側のクリップボード保護強化で、Ctrl+V 自動化が10回以上試して成功1回レベル。Base64チャンク分割でsetValueする回避策も実装したがエラー。最終的に「クリップボード準備→社長手動ペースト」が最速ルートと確定。次回以降はこれを標準フローにする。
+
+💡 **eBay API 2系統の住み分け**
+- Trading API (XML/Auth'n'Auth): オーダー取得・キャンセル検知の基本情報
+- Sell Fulfillment API (REST/OAuth2): 正確な発送期限・フルフィルメント関連の新情報
+両方を組み合わせるのが現状のベストプラクティス。
+
+💡 **履歴優先ロジックのトレードオフ**
+「過去の手動入力データを尊重する」優先順位は通常良いが、過去バグ由来の不完全データが残っていると新しい正しい抽出結果が反映されない。
+解決: 「タイトル抽出値が履歴値を前方一致で含み、かつ長い」場合のみタイトル側を優先。他ブランドには副作用なし。
+
+⚠️ **祝日テーブル追加は恥ずかしい失敗**
+JP祝日ハードコードテーブル（2026-2027年分・毎年メンテ要）を実装した時点で「以前のツールはそんなアナログなことしていない」と社長指摘。テーブルは最終フォールバックとしてコードに残したが、実質使われない。
+根本対応が取れる可能性を最初に潰してしまった。
+
+### 🔧 仕組み
+
+- **マスターファイル**: [commerce/ebay/tools/gas_shiire_tool.js](commerce/ebay/tools/gas_shiire_tool.js)（1765行・約60KB）
+- **Script Properties 追加**: `EBAY_OAUTH_REFRESH_TOKEN`（18ヶ月有効・手動設定）
+- **自動キャッシュ**: `EBAY_OAUTH_ACCESS_TOKEN` / `EBAY_OAUTH_ACCESS_TOKEN_EXPIRES_AT`（2時間TTL）
+- **追加認証**: .env に `EBAY_OAUTH_REFRESH_TOKEN=...` バックアップ
+
+### 📦 コンテンツ候補
+
+- 「eBay API 2系統の使い分け (Trading vs Sell Fulfillment)」— 現役セラーが知っておくべき技術的背景
+- 「なぜ古いAPIに固執すると遠回りするか」— 私の失敗談込みで、調査初動の判断力について
+- 「OAuth2 認証をApps Scriptで扱う」— refresh_token 管理・自動更新・Script Properties活用の実例
+- 「型番抽出の履歴 vs タイトル抽出 優先順位ロジック」— データ品質改善の継続的改善事例
+- 「BayChatの設計思想を自社ツールに活かす」— 自社プロダクトを観察することで他ツール改善のヒントを得る
+
+### ⚠️ 次セッション冒頭で確認
+
+- 本番Apps Scriptの `EBAY_OAUTH_REFRESH_TOKEN` 設定が正しく保存されているか
+- 本番で翌朝9:45の自動実行ログで「📅 Sell Fulfillment APIでShip By Dateを取得中...」行が出ているか
+- 他のオーダー数件をeBay表示と照合してShip by一致確認
+
+---
+
+*最終更新: 2026年4月24日 深夜 — 仕入管理表GAS Fulfillment API移行完了（発送期限正確化＋ミズノ型番10桁化＋OAuth2運用開始）*

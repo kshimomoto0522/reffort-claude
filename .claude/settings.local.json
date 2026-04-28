@@ -78,7 +78,9 @@
       "Write(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\commerce\\\\ebay\\\\analytics\\\\report_requests.json)",
       "Edit(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\commerce\\\\ebay\\\\analytics\\\\report_requests.json)",
       "Write(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\education\\\\campers\\\\removal-queue.json)",
-      "Edit(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\education\\\\campers\\\\removal-queue.json)"
+      "Edit(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\education\\\\campers\\\\removal-queue.json)",
+      "Bash(python3)",
+      "Bash(py \"C:/Users/KEISUKE SHIMOMOTO/Desktop/reffort/management/md-audit/biweekly_maintenance.py\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
@@ -135,6 +137,17 @@
           {
             "type": "command",
             "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/slack_preflight_check.py\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/env_auto_open.py\""
           }
         ]
       }
