@@ -4,10 +4,21 @@
 *.env
 *.env.*
 
+# Playwrightセッション情報（ログインcookie等の機密）
+.chatwork_auth.json
+.gas_auth.json
+*_auth_state.json
+
 # Google API認証ファイル
 credentials*.json
 *-service-account*.json
 reffort-sheets-*.json
+
+# eBay/各種APIのOAuthトークン・キャッシュ（2026-04-29 追加・過去commit混入を発見）
+**/ebay_oauth_tokens.json
+**/ebay_seller_cache.json
+**/oauth_tokens*.json
+**/*_oauth_state.json
 
 # バックアップファイル（ローカル作業用・GitHub不要）
 *.bak
