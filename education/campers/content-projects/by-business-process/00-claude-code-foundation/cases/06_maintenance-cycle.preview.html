@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>06_maintenance-cycle.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="_1">運用維持の隔週メンテ・肥大化対策</h1>
+<blockquote>
+<p>対象: Campersメンバー（Claude Code 運用が3ヶ月以上経過した人）
+所要時間: 隔週30分〜1時間</p>
+</blockquote>
+<hr />
+<h2 id="_2">なぜ「メンテ」が必要か</h2>
+<p>Claude Code は使うほどファイル・設定・記録が溜まっていきます。</p>
+<p>放置していると：
+- CLAUDE.md が500行を超えて肥大化
+- memory が50個超えて Claude が把握できない
+- settings.local.json の権限が古い・危険なまま
+- archive すべき完了情報が現役フォルダに混在
+- 結果：<strong>Claude が「バカ」になる</strong>（社長体験：2026-04-23）</p>
+<p>逆に<strong>隔週で点検する習慣</strong>を持てば：
+- 常にClaudeが鋭い回答を返す
+- セキュリティが古いまま放置されない
+- 業務AI化のスピードが落ちない</p>
+<hr />
+<h2 id="_3">肥大化のサイン（こんな症状が出たら点検時）</h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>何が起きているか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同じ指示を3回以上やり直している</td>
+<td>コンテキスト混乱・指示が伝わりきっていない</td>
+</tr>
+<tr>
+<td>Claude の回答が遅い</td>
+<td>コンテキストが膨らみすぎ</td>
+</tr>
+<tr>
+<td>Claude が「確認しました」と嘘をつく</td>
+<td>注意力低下・コンテキスト圧迫</td>
+</tr>
+<tr>
+<td>トークン消費が跳ね上がる</td>
+<td>不要ファイルを読み込みすぎ</td>
+</tr>
+<tr>
+<td>「あれ、前にも同じ間違いした」</td>
+<td>学習が記録されていない</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="301">隔週メンテのチェック項目（30分〜1時間）</h2>
+<h3 id="1claudemd">チェック1：CLAUDE.md の行数</h3>
+<pre><code class="language-bash">wc -l CLAUDE.md
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>結果</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>〜80行</td>
+<td>◎ 理想</td>
+</tr>
+<tr>
+<td>81〜150行</td>
+<td>○ OK</td>
+</tr>
+<tr>
+<td>151〜200行</td>
+<td>△ 整理推奨</td>
+</tr>
+<tr>
+<td>201行〜</td>
+<td>✕ 即整理（ファイル分割）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>整理方法</strong>: 詳細を別ファイル（<code>memory/</code> や <code>.claude/rules/</code>）に分けて、CLAUDE.md は要点のみに絞る。</p>
+<h3 id="2memory">チェック2：memory ファイル数</h3>
+<pre><code class="language-bash">ls memory/ | wc -l
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>結果</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>〜30個</td>
+<td>◎</td>
+</tr>
+<tr>
+<td>31〜50個</td>
+<td>○</td>
+</tr>
+<tr>
+<td>51個〜</td>
+<td>△ 統合推奨</td>
+</tr>
+</tbody>
+</table>
+<p><strong>統合方法</strong>: 似た内容のファイルを1つにまとめる、古い情報は archive に退避。</p>
+<h3 id="3settingslocaljson">チェック3：settings.local.json の権限見直し</h3>
+<p><code>.claude/settings.local.json</code> を開いて allow/deny リストを確認：
+- 使っていないコマンドは削除
+- ワイルドカード（<code>Bash(*)</code> 等）は危険なので個別化
+- 怪しいコマンドが残っていないか</p>
+<h3 id="4archive">チェック4：archive フォルダの活用</h3>
+<p>完了したプロジェクト・古いツールは <code>archive/</code> 配下に移動：
+- 削除ではなく退避（情報資産は保全）
+- Claude は archive/ を読まないので軽量化される</p>
+<h3 id="5journey-logmd">チェック5：journey-log.md の追記漏れ</h3>
+<p>直近2週間で書いていない日があれば、今からでも追記：
+- 「何かやったはず」を絞り出してメモ
+- 後でコンテンツ素材になる</p>
+<hr />
+<h2 id="_4">社長の隔週メンテ運用（参考）</h2>
+<p>社長は隔週メンテを完全自動化しています：</p>
+<h3 id="131000">自動チェック（毎月第1・第3月曜10:00）</h3>
+<ul>
+<li>計測スクリプトが定量チェック</li>
+<li>Chatwork個人DMに結果通知</li>
+<li>「CLAUDE.md 200行超えています」「memory 50個超えています」等の警告</li>
+</ul>
+<h3 id="_5">半自動改善（社長判断）</h3>
+<ul>
+<li><code>/隔週メンテナンス</code> スラッシュコマンドで以下を一気に：</li>
+<li>Chatwork DM 読み込み</li>
+<li>5層調査（CLAUDE.md／memory／settings／hook／archive）</li>
+<li>松竹梅の改善提案</li>
+<li>社長判断 → 実行 → 結果再送信</li>
+</ul>
+<h3 id="_6">結果蓄積</h3>
+<ul>
+<li>各メンテサイクルの過程を <code>archived-by-theme/claude-code-maintenance-case-study/session-logs/</code> に保存</li>
+<li>コンテンツ素材としても活用</li>
+</ul>
+<hr />
+<h2 id="_7">メンバー向けの簡易メンテ手順（最初はこれから）</h2>
+<h3 id="1">ステップ1：ターミナルで以下を実行</h3>
+<pre><code class="language-bash">wc -l CLAUDE.md
+ls memory/ | wc -l
+git status
+</code></pre>
+<h3 id="2claude">ステップ2：Claude に投げる</h3>
+<pre><code>隔週メンテをお願いします。
+- CLAUDE.md の肥大化チェック
+- memory の整理候補
+- 不要ファイルの archive 移動候補
+を教えてください。
+</code></pre>
+<h3 id="31">ステップ3：提案された改善を1つずつ実施</h3>
+<ul>
+<li>全部一気にやろうとしない</li>
+<li>1つ実施・動作確認・次へ</li>
+</ul>
+<h3 id="4journey-logmd">ステップ4：journey-log.md に追記</h3>
+<pre><code>2026-XX-XX 隔週メンテ実施
+- CLAUDE.md: XXX行 → XXX行
+- memory: XX個 → XX個
+- 改善: &lt;具体的に&gt;
+</code></pre>
+<hr />
+<h2 id="_8">やってはいけないメンテ作業</h2>
+<h3 id="ng1">NG1：いきなり大量削除</h3>
+<ul>
+<li>必ずバックアップ（git commit）してから</li>
+<li>削除より archive 退避を優先</li>
+</ul>
+<h3 id="ng2">NG2：「とりあえず全部新しくする」</h3>
+<ul>
+<li>過去の記録は財産</li>
+<li>整理 ≠ リセット</li>
+</ul>
+<h3 id="ng3">NG3：メンテを後回しにする</h3>
+<ul>
+<li>「忙しいから来週」が3ヶ月続く</li>
+<li>隔週で自動アラート（カレンダー登録 or scheduled task）</li>
+</ul>
+<hr />
+<h2 id="_9">社長が肥大化を放置した結果（実例）</h2>
+<p>2026-04-23、社長から：</p>
+<blockquote>
+<p>「最近あきらかにClaude codeが一度言った通りにやらない、嘘をつく、言い訳をする、遅い、トークン消費が激しい、回答がバカ過ぎます」</p>
+</blockquote>
+<p>調査の結果：
+- ルートCLAUDE.md 136行
+- 最大子CLAUDE.md 488行（推奨200行の2.4倍）
+- memory 47ファイル・2,385行
+- settings.local.json 298行
+- 不要ファイル 77個・190MB</p>
+<p>→ 大改修（梅案＋竹案）を実施し、すべて軽量化・回答品質が劇的回復。</p>
+<p><strong>詳細記録</strong>: <code>archived-by-theme/claude-code-maintenance-case-study/</code></p>
+<hr />
+<h2 id="_10">次のステップ</h2>
+<p>→ <code>07_complete-setup-checklist.md</code> で 導入完了チェックリスト</p>
+<hr />
+<p><em>社長の隔週メンテ運用（2026-04-24以降稼働中）から要点整理</em></p></body></html>

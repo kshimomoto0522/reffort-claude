@@ -138,6 +138,9 @@ def _substitute_admin_prompt(admin_prompt_text, tone, description,
     v2.5 追加対応:
     - {buyer_name} / {seller_name} を UI選択値で置換（FORCED_TEMPLATE除去に伴うadmin_prompt側での制御）
     - Cowatech実装側のプレースホルダ名（{sellerAccountEbay}/{buyerAccountEbay}）とも互換置換
+
+    v2.3_baseline 追加対応 (2026-04-29):
+    - v2.5 と同等にプレースホルダ置換 + FORCED_TEMPLATE 除去（Cowatech prd 反映済み構成と一致）
     """
     # toneSetting は必ず置換（本番もそう）
     result = admin_prompt_text.replace("{toneSetting}", tone)
@@ -147,11 +150,11 @@ def _substitute_admin_prompt(admin_prompt_text, tone, description,
         result = result.replace("{sellerSetting}", description)
     # descriptionが空の場合は {sellerSetting} をそのまま残す（本番の実挙動に合わせる）
 
-    # v2.5: buyer_name / seller_name のプレースホルダ置換
-    if prompt_version == "2.5":
+    # FORCED_TEMPLATE 除去後のadmin_prompt内プレースホルダ置換が必要なバージョン
+    if prompt_version in ("2.5", "2.3_baseline"):
         result = result.replace("{buyer_name}", buyer_name or "")
         result = result.replace("{seller_name}", seller_name or "")
-        # Cowatech実装側の命名にも対応（将来の切り替え用）
+        # Cowatech実装側の命名にも対応
         result = result.replace("{buyerAccountEbay}", buyer_name or "")
         result = result.replace("{sellerAccountEbay}", seller_name or "")
 
@@ -224,8 +227,8 @@ def build_production_payload(
     if tone not in ("polite", "friendly", "apologetic"):
         raise ValueError(f"tone は polite/friendly/apologetic のいずれか: {tone}")
 
-    # v2.5 では FORCED_TEMPLATE を強制的に除去
-    if prompt_version == "2.5":
+    # FORCED_TEMPLATE 除去構成（Cowatech prd 2026-04-22 反映と一致）
+    if prompt_version in ("2.5", "2.3_baseline"):
         include_forced_template = False
 
     original = test_case.get("input") or test_case.get("messages") or []

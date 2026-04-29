@@ -1,0 +1,39 @@
+[
+  {
+    "name": "井上慶成",
+    "account_id": 1842232,
+    "rooms": [
+      {
+        "room_id": "178951974",
+        "label": "Campers 質問・共有チャット",
+        "in_room_before": true,
+        "off_result": {
+          "ok": true,
+          "before": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "after": {
+            "チャットの参加者一覧を表示する": false,
+            "メッセージ送信を許可する": false
+          },
+          "details": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          }
+        },
+        "delete": {
+          "status": "dry_run"
+        },
+        "status": "abort_on_failed",
+        "on_error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"room-header_room-settings-button\\\"]\")\n    - locator resolved to <button type=\"button\" aria-label=\"チャットの設定\" data-tooltip=\"チャットの設定\" class=\"sc-dLKNRh aHNsR _showDescription\" data-testid=\"room-header_room-settings-button\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div data-testid=\"backdrop\" class=\"sc-dPZUQH hhHrTH\"></div> from <div id=\"RootModalsEntryPoint\">…</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div data-testid=\"backdrop\" class=\"sc-dPZUQH hhHrTH\"></div> from <div id=\"RootModalsEntryPoint\">…</div> subtree intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    57 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div data-testid=\"backdrop\" class=\"sc-dPZUQH hhHrTH\"></div> from <div id=\"RootModalsEntryPoint\">…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n"
+      }
+    ],
+    "status": "aborted_after_delete",
+    "pre_membership": {
+      "178951974": true,
+      "213457923": true,
+      "167902309": true
+    }
+  }
+]

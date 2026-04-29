@@ -85,3 +85,43 @@ ts・カーソル・cursor_token等で「前回の続き」から処理する定
 - 1件の処理失敗で他の処理を巻き込まないよう、メッセージごとにtry/except的に扱う
 - 異常終了時も必ず社長個人DM（room_id: 426170119）に箱型カードで失敗報告する（沈黙停止を防ぐ）
 - 適用範囲：Slackの slack_last_checked.txt 型タスク、メール監視、API polling、RSSフィード監視など、すべての「前回から今回までの差分」を扱うタスク
+
+---
+
+## ルール5: API/Bash/Python完結タスクは Windows タスクスケジューラ直接起動を原則とする（2026-04-29 確立）
+
+ルール3.5 の「常に許可」UI欠落＋per-task承認キャッシュ減衰の組み合わせにより、API完結タスクであっても Claude scheduled-task 経由は**ある日突然サイレント停止**する。`daily-x-digest` が4/25〜4/29の5日間連続で配信途絶した実害発生（lastRunAt は更新されていたが Chatwork DM への送信もエラー報告も来ない状態）。
+
+**Why:**
+- 旧 memory `feedback_chrome_mcp_unattended.md` は「Chrome操作はWindows、API完結はClaude scheduled-task」というルーティングを定義していたが、後者の信頼性が崩れた
+- 真の分岐軸は「Chrome操作の有無」ではなく「Claudeセッション固有のMCP（chatwork/slack 等）が必須か」
+- pure Python/Bash で完結するタスク（urllib + tweepy + anthropic SDK 等で外部API直接叩き）は Claude セッションを介在させる必然性がない
+- Claude を介在させると承認キャッシュ・UI制約・セッションlock の3点で詰まる
+
+**How to apply:**
+- 新規タスク設計時の二択（**2026-04-29 さらに見直し**）：
+  - **Claudeセッション固有のMCP（chatwork/slack/Claude判断）が必須 → Claude scheduled-task**（biweekly-claude-maintenance / 週1の monday-* 系）
+  - **APIで完結（Claudeへの判断は anthropic SDK 経由でPythonから直接呼ぶ）→ Windows タスクスケジューラ直接起動**
+- 4/29時点でWindows化済み: DailyXDigest / CampersMemberRemoval / **ChatworkAIReply（新）** / **BayChatSlackCheck（新・SLACK_BOT_TOKEN待ち）**
+- スクリプト側に必ず try/except + Chatwork失敗DM を仕込む（サイレント停止を python 層で防ぐ）
+- bat ラッパーは `logs/<task>_<timestamp>.log` 形式で全出力を保存
+- 残候補（Windows化検討）: `daily-github-backup`, `monday-ebay-report-delivery`（週1なので延命中）
+- Windows タスク登録方法：
+  - 単一発火/日次の Daily Trigger は `Register-ScheduledTask -Trigger (New-ScheduledTaskTrigger -Daily -At ...)` でOK
+  - **30分間隔等の繰り返しは PowerShell の RepetitionDuration バグを避けるため CIM で直接Repetitionプロパティを上書きする**：
+    ```powershell
+    $trigger = New-ScheduledTaskTrigger -Once -At <初回時刻>
+    $trigger.Repetition = New-CimInstance -ClientOnly -Namespace 'Root/Microsoft/Windows/TaskScheduler' -ClassName 'MSFT_TaskRepetitionPattern' -Property @{ Interval = 'PT30M' }
+    ```
+- 共通設定：`StartWhenAvailable=True / DontStopIfGoingOnBatteries=True / MultipleInstances=IgnoreNew / AllowStartIfOnBatteries=True`（CampersMemberRemoval / DailyXDigest / ChatworkAIReply / BayChatSlackCheck 共通）
+- Slack を直接 API 叩く場合は MCP の OAuth トークンは取れないため、**Slack App を別途作成してBot Token (xoxb-...)を発行**する必要あり（社長作業・10分・SLACK_BOT_SETUP.md にガイド完備）
+
+---
+
+## ルール6: 高頻度タスクほど Claude scheduled-task で詰まりやすい（2026-04-29 観測）
+
+`chatwork-ai-reply`（10分ごと・平日10〜20時）と `baychat-slack-hourly-check`（毎時05分）は4/28夜にサイレント停止していた一方、週1の `monday-*` 系や `biweekly-claude-maintenance` は生存。**起動回数が多いほど承認キャッシュ消耗→詰まる**規則性を確認。
+
+**How to apply:**
+- 新規タスクで頻度が「1日1回より多い」場合は最初から Windows タスクスケジューラを選ぶ
+- 既存タスクで頻度が高いものを延命させる必要があれば、Run nowで承認焼き直しを月1回以上ルーティン化（ただしUIに「常に許可」が出ないので根本解決にならない）

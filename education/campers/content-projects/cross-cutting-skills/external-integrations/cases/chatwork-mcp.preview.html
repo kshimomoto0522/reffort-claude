@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>chatwork-mcp.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="chatwork-mcp">Chatwork MCP 連携（自動配信・通知）</h1>
+<blockquote>
+<p>業務段階横断
+状況: 社長運用継続中（複数タスクで毎日配信）</p>
+</blockquote>
+<hr />
+<h2 id="_1">何をやったか（目的・背景）</h2>
+<p>Claude Code から Chatwork に<strong>自動でメッセージ送信・取得</strong>する仕組み。</p>
+<p>社長は社内連絡を Chatwork に集約しているため、Claude Code が実行した結果を Chatwork に自動配信できれば<strong>情報が一元化</strong>される。</p>
+<hr />
+<h2 id="_2">できること</h2>
+<ul>
+<li>週次レポートの自動配信（毎週月曜10:00）</li>
+<li>X情報ダイジェストの自動配信（毎日9:40）</li>
+<li>隔週メンテ結果の通知（第1・第3月曜10:00）</li>
+<li>Campersメンバー削除完了通知</li>
+<li>スケジュールタスクの実行結果通知</li>
+<li>社長個人DM・社内グループ・Campers部屋への投稿</li>
+<li>DM内容の自動取得・要約</li>
+</ul>
+<hr />
+<h2 id="_3">取り組みのプロセス</h2>
+<ol>
+<li>Chatwork API トークン取得</li>
+<li>.env に保存（<code>CHATWORK_API_TOKEN=xxx</code>）</li>
+<li>MCP サーバー設定（<code>mcp__chatwork__*</code> ツール群）</li>
+<li>投稿先 room_id を確認</li>
+<li>メッセージ整形ルール確立（[info][title]形式・箱型カード）</li>
+</ol>
+<hr />
+<h2 id="_4">つまづいたこと</h2>
+<h3 id="1">失敗1：誤ルームへの誤送信</h3>
+<ul>
+<li>room_id をハードコードしていて切り替え時にミス</li>
+<li>対策：room_id 一覧を memory で管理</li>
+</ul>
+<h3 id="2to">失敗2：「To」漏れで通知されない</h3>
+<ul>
+<li>グループルームでメンションなしだと相手に通知が飛ばない</li>
+<li>対策：重要メッセージは必ず <code>[To:user_id]</code> を付ける</li>
+</ul>
+<h3 id="3">失敗3：箱型カードフォーマット未統一</h3>
+<ul>
+<li>個人DM 426170119（社長個人）には [info][title] 形式の箱型カード必須</li>
+<li>対策：memory <code>feedback_chatwork.md</code> でルール固定</li>
+</ul>
+<hr />
+<h2 id="_5">メンバーへの含意（応用ポイント） ★</h2>
+<h3 id="_6">あなたが使っているチャットツールでも同じことができる</h3>
+<ul>
+<li>Chatwork（社長の社内）</li>
+<li>Slack（社長の Cowatech連絡用）</li>
+<li>LINE Notify（簡易通知に便利）</li>
+<li>Discord（コミュニティ運営なら）</li>
+</ul>
+<h3 id="_7">必要な前提</h3>
+<ul>
+<li>該当チャットツールの API トークン取得</li>
+<li>.env での認証情報管理</li>
+<li>MCP サーバーの設定</li>
+</ul>
+<h3 id="1_1">最初の1個を作る手順</h3>
+<ol>
+<li>Chatwork API トークン発行（Chatwork 設定 &gt; API）</li>
+<li>.env に保存</li>
+<li>Claude Code の MCP 設定に Chatwork を追加</li>
+<li>テスト：「Chatworkにテストメッセージ送って」と依頼</li>
+<li>自動配信したい業務（週次レポート等）に組み込み</li>
+</ol>
+<h3 id="_8">やってはいけないこと</h3>
+<ul>
+<li>❌ APIトークンをコード直書き</li>
+<li>❌ 確認なしで重要メッセージ送信（送信前にGO確認）</li>
+<li>❌ 全ルームへの誤送信（room_id を必ず確認）</li>
+</ul>
+<hr />
+<h2 id="_9">関連</h2>
+<ul>
+<li>関連 memory: <code>feedback_chatwork.md</code>（社長個人DM 箱型カードルール）</li>
+<li>業務での活用例: <code>09-analytics/cases/weekly-report.md</code> / <code>08-accounting/cases/monthly-invoice.md</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em></p></body></html>

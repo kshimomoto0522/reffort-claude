@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>spreadsheet-automation.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="3">スプレッドシート自動化3型ルーティング</h1>
+<blockquote>
+<p>業務段階横断（全業務でスプレッドシートを使う前提）
+状況: 社長運用継続中（3型すべて稼働中）
+元素材: 旧 spreadsheet-automation-case-study（archived-by-theme/ に保存）</p>
+</blockquote>
+<hr />
+<h2 id="_1">何をやったか（目的・背景）</h2>
+<p>eBay運営に限らず、<strong>ほぼ全ての中小事業者は業務をスプレッドシートに集約</strong>している。</p>
+<p>しかし「AIにスプレッドシートを任せる」のやり方は1つではない。<strong>3つの型</strong>があり、用途で使い分けが必要。社長は3型すべてを実践し、それぞれの落とし穴を体験した。</p>
+<hr />
+<h2 id="3_1">3型ルーティング（最重要）</h2>
+<h3 id="aapps-script-clasp">型A：シート上で動くロジック（Apps Script + clasp）</h3>
+<p><strong>いつ使う</strong>:
+- シートを開いた瞬間メニュー表示
+- 行追加トリガー
+- 時間トリガーで API叩いて自動入力</p>
+<p><strong>適例</strong>:
+- 仕入管理表（毎朝 eBay APIから新規オーダーを取得→反映）</p>
+<p><strong>ツール</strong>:
+- Google Apps Script（GAS）
+- clasp（Google公式 CLI・ローカル開発・自動デプロイ）</p>
+<p><strong>社長の運用例</strong>:
+- <code>commerce/ebay/tools/gas/shiire/</code>（仕入管理表）</p>
+<hr />
+<h3 id="bsheets-api-service-account">型B：外部からシートを読み書き（Sheets API + Service Account）</h3>
+<p><strong>いつ使う</strong>:
+- Pythonの朝バッチで集計→シートに書込
+- 在庫管理ツールがシート更新
+- 外部システムとの連携</p>
+<p><strong>適例</strong>:
+- 週次レポート（Pythonで Excel生成＋Sheets書込→ Chatworkに配信）</p>
+<p><strong>ツール</strong>:
+- Google Sheets API
+- Service Account（人間アカウントとは別の機械アカウント）
+- gspread / google-api-python-client（Pythonライブラリ）</p>
+<p><strong>社長の運用例</strong>:
+- 週次レポートv3 の GSheets書込</p>
+<hr />
+<h3 id="cuiplaywright-cookie">型C：シートのUI操作（Playwright + cookieセッション・最終手段）</h3>
+<p><strong>いつ使う</strong>:
+- 管理画面でしか操作不可のUI設定
+- GASエディタ自体を触る
+- API公開がない権限管理</p>
+<p><strong>適例</strong>:
+- Campersグループの権限OFF/ON操作</p>
+<p><strong>ツール</strong>:
+- Playwright（ブラウザ自動操作）
+- storage_state（cookie保存・継続セッション）
+- Windowsタスクスケジューラ（Claude scheduled-task ではなく直接起動）</p>
+<p><strong>社長の運用例</strong>:
+- Campersメンバー削除（権限OFF→API削除→ON×2部屋＋全体連絡API削除）</p>
+<hr />
+<h2 id="3_2">3型の判定フローチャート（記事化時に図示）</h2>
+<pre><code>やりたいこと
+  ↓
+シート内のロジックを動かしたい？
+  ├─ Yes → 型A（GAS + clasp）
+  └─ No
+       ↓
+       外部からシートを読書きしたい？
+        ├─ Yes → 型B（Sheets API + Service Account）
+        └─ No
+            ↓
+            APIで操作できないUI操作が必要？
+             ├─ Yes → 型C（Playwright + cookie）
+             └─ No → そもそもスプレッドシート不要
+</code></pre>
+<hr />
+<h2 id="_2">つまづいたこと（失敗・遠回り）</h2>
+<h3 id="1">失敗1：型を間違える</h3>
+<ul>
+<li>型Aで済むのに Playwright で Monaco editor を操作 → bot検知・遠回り</li>
+<li>型Bで済むのに GAS を新規作成 → GAS制約（実行時間6分・同時実行制限）に詰まる</li>
+<li>型Cが必要なのに API で無理やり片付けようとする → 仕様外で動かない</li>
+<li>教訓：<strong>最初に型判定を正しくする</strong></li>
+</ul>
+<h3 id="2anthropic-issuechrome-mcp">失敗2：Anthropic Issue（Chrome MCP）</h3>
+<ul>
+<li>Claude in Chrome MCP を無人実行で使うと per-origin permission 問題で停止</li>
+<li>Anthropic Issue <a href="https://github.com/anthropics/claude-code/issues/30356">#30356</a> / <a href="https://github.com/anthropics/claude-code/issues/47180">#47180</a></li>
+<li>対策：<strong>Playwright + Windowsタスクスケジューラ直接起動</strong>に切り替え</li>
+</ul>
+<h3 id="3monaco-editor-ctrlv">失敗3：Monaco editor 手動 Ctrl+V 運用の限界</h3>
+<ul>
+<li>GAS のエディタに手動でコードをペーストする運用</li>
+<li>ペースト漏れ・古いコード残存・差分管理不可</li>
+<li>対策：<strong>clasp 必須</strong></li>
+</ul>
+<h3 id="4claude-scheduled-task-per-task">失敗4：Claude scheduled-task の per-task 承認キャッシュ不安定性</h3>
+<ul>
+<li>「Run now の常に許可」が UI に出ない現象（2026-04-24社長観測）</li>
+<li>無人タスクで毎回承認待ちになるリスク</li>
+<li>対策：<strong>Chrome 操作が必要なタスクは Windowsタスクスケジューラ直接起動</strong></li>
+</ul>
+<hr />
+<h2 id="_3">学んだこと（教訓）</h2>
+<ul>
+<li><strong>3型を見極めることが最重要</strong>：間違えると遠回り</li>
+<li><strong>GAS は clasp で管理</strong>：Monaco editor 手動運用は破綻</li>
+<li><strong>Service Account は機械アカウント</strong>：人間ログイン切れの心配なし</li>
+<li><strong>Playwright は cookie session で安定</strong>：毎回ログインさせない</li>
+<li><strong>Chrome 操作の無人タスクは Claude 経由を捨てる</strong>：Windowsタスクスケジューラ直接</li>
+</ul>
+<hr />
+<h2 id="_4">メンバーへの含意（応用ポイント） ★</h2>
+<h3 id="3_3">あなたの業務でもこの3型は使う</h3>
+<ul>
+<li>在庫管理表（型A or 型B）</li>
+<li>仕入管理表（型A）</li>
+<li>売上ダッシュボード（型B）</li>
+<li>顧客リスト（型A or 型B）</li>
+<li>経費集計表（型B）</li>
+</ul>
+<h3 id="_5">必要な前提</h3>
+<ul>
+<li>Google アカウント（個人 or 業務用）</li>
+<li>Python or Node.js の最低限の理解</li>
+<li>Claude Code が動く環境（00-claude-code-foundation/ 整備済み）</li>
+</ul>
+<h3 id="1_1">最初の1個を作る手順</h3>
+<ol>
+<li>自分の業務スプレッドシートを1つ選ぶ</li>
+<li>やりたいことを言語化（「毎朝 ○○ を自動更新したい」等）</li>
+<li>上記の型判定フローチャートで A/B/C を判定</li>
+<li>Claude Code に「型○で実装して」と依頼</li>
+<li>テスト → 1週間運用 → 改善</li>
+</ol>
+<h3 id="_6">やってはいけないこと</h3>
+<ul>
+<li>❌ 型を間違える（最重要）</li>
+<li>❌ Monaco editor 手動運用（型A の場合は clasp 導入）</li>
+<li>❌ Chrome MCP の無人実行（型C は Playwright + Windowsタスク直接）</li>
+<li>❌ Service Account の JSON キーを GitHub にプッシュ</li>
+</ul>
+<hr />
+<h2 id="_7">配信先別の使い分け</h2>
+<table>
+<thead>
+<tr>
+<th>配信先</th>
+<th>適合度</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campers ◎</td>
+<td>◎</td>
+<td>全員がスプレッドシートを使うため最も刺さる</td>
+</tr>
+<tr>
+<td>匿名X</td>
+<td>◎</td>
+<td>「3型ルーティング」は普遍的価値・独立した記事化可能</td>
+</tr>
+<tr>
+<td>Note有料</td>
+<td>◎</td>
+<td>有料記事3本構成（型A実装／型B実装／型C実装）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_8">関連</h2>
+<ul>
+<li>既存の旧 case-study（保存）: <code>archived-by-theme/spreadsheet-automation-case-study/</code></li>
+<li>関連 memory: <code>feedback_spreadsheet_automation_patterns.md</code> / <code>feedback_chrome_mcp_unattended.md</code></li>
+<li>関連 spec: <code>commerce/ebay/tools/gas-shiire-tool-spec.md</code></li>
+<li>関連 Claude Code 基盤: <code>by-business-process/00-claude-code-foundation/</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em>
+<em>社長運用継続中（3型すべて稼働中）</em></p></body></html>

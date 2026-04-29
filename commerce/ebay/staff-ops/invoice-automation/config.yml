@@ -1,0 +1,76 @@
+# 月次請求書 半自動化 設定ファイル
+# 2027年度に新ファイルへ切替時はここのIDだけ差し替え
+
+spreadsheets:
+  # 収支表（KeiS）2026 — 本間/清水/佐々木請求書 ＋ 収支表YYYYMM
+  keishi: '1t_GHxn2PQY2F78Xgx9B0o602Wl0CeJSeBlA1Wo1ngME'
+  # 仕入管理表（清水単価の取得元）
+  shiire: '1B1kFIiu8M5Pw8U8YuERK8ApKUa4S--GfIzBkW53kY3g'
+  # 【佐々木さん】実績管理表
+  sasaki: '1cKiRQIUHb2LM0p8yrxkQ4voorEkjGgprf4ox8WOrrKY'
+
+# 請求書シート名（年度ごとに変わる）
+invoice_sheets:
+  honma:    '本間請求書（2026）'
+  shimizu:  '清水請求書（2026）'
+  sasaki:   '佐々木請求書（2026）'
+
+# 請求書ブロックレイアウト（3名共通）
+invoice_layout:
+  block_width: 14            # 1ヶ月分のブロック幅（列数）
+  rows:
+    date:    5               # 日付行（ブロック+13列）
+    subject: 8               # 件名行（ブロック+1列）
+    item:    15              # 単価開始行（ブロック+8列=単価, +11列=備考）
+    incentive: 17            # 佐々木リサーチインセンティブ行
+  offsets:
+    subject_col:  1          # 件名 = ブロック開始+1列
+    date_col:     13         # 日付 = ブロック開始+13列
+    unit_col:     8          # 単価 = ブロック開始+8列
+    remarks_col:  11         # 備考 = ブロック開始+11列
+  copy_rows: 32              # ブロックコピーする行範囲
+
+# 本間
+honma:
+  unit_price: 10000
+  subject_template: '出品商品メンテナンス作業（{month}月）'
+
+# 清水
+shimizu:
+  subject_template: '発送作業（{month}月）'
+  shiire_sheet: '報酬管理'
+  shiire_amount_col: 'AH'    # AH列が月計（=SUM(C:AG)）
+  shiire_month_col: 'B'      # B列に月名「X月」、上方向に「小計（円）」
+
+# 佐々木
+sasaki:
+  subject_template: '出品・リサーチ業務（{month}月）'
+  incentive_rate: 0.19       # 19%
+  floor_unit: 50000          # 5万円切捨
+  jisseki_ratio: 0.95        # U列=S列の95%
+  remarks_template: '実績{target_man}万円 × 19%（累計{acc_man}万円）'
+  jisseki_sheet: '実績'
+  jisseki_cols:
+    month_label: 'B'         # 集計行のB列＝月名（例：'2026年3月'）
+    sku:        'F'          # 明細F列＝SKU、Sで始まるものを対象
+    count_label: 'F'         # 集計行F列='販売数'
+    count:      'G'          # 集計行G列=COUNTA
+    label_jisseki: 'J'       # 集計行J列='実績 '
+    revenue:    'R'          # 集計行R列=SUM(R*:R*)
+    profit:     'S'          # 集計行S列=SUM(S*:S*)
+    profit_rate: 'T'         # 集計行T列=S/R
+    profit_95:  'U'          # 集計行U列=S*0.95
+  jisseki_top_acc_cells:
+    revenue_acc: 'G3'        # G3=各月R列の合計（売上累計）
+    profit_acc:  'I3'        # I3=各月U列の合計（粗利累計）
+  monthly_balance_sheet_pattern: '収支表{yyyymm}'
+  monthly_balance_data_start_row: 17  # 収支表の明細データはR17以降
+  monthly_balance_cols:
+    sku_col_index: 4         # B17から取った時、F列=index 4（B=0,C=1,D=2,E=3,F=4）
+    end_col: 'T'             # B:T の19列を取得して貼付（U列の還付金は不要）
+    paste_end_col_index: 18  # 0-indexed: T=18
+
+# その他
+defaults:
+  default_target_month: 'previous'  # 引数省略時は前月
+  log_dir: 'logs'                   # ドライラン/書込ログ

@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>monthly-invoice.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="3">月次請求書スキル（外注3名・本間／清水／佐々木）</h1>
+<blockquote>
+<p>業務段階: 08-経理・外注報酬
+状況: 社長運用継続中（slash command スキル化済み）</p>
+</blockquote>
+<hr />
+<h2 id="_1">何をやったか（目的・背景）</h2>
+<p>eBay外注スタッフ3名（本間・清水・佐々木）の月次請求書を半自動作成するスキル。</p>
+<p>引数 YYYYMM 省略時は前月を自動判定。Claude Codeのslash command風に呼び出せばいつでも実行可能。</p>
+<hr />
+<h2 id="_2">取り組みのプロセス（時系列要点）</h2>
+<ul>
+<li>各スタッフの勤怠データから時間集計</li>
+<li>請求書テンプレート（Word/PDF）に自動転記</li>
+<li>メンバーごとの単価設定を管理</li>
+<li>スキル化（slash command）で運用定着</li>
+</ul>
+<hr />
+<h2 id="_3">つまづいたこと（失敗・遠回り）</h2>
+<ul>
+<li>スタッフごとの単価・支払条件のバラツキを管理する仕組みが必要</li>
+<li>月末締めのタイミング調整</li>
+<li>請求書フォーマットの個別対応</li>
+</ul>
+<hr />
+<h2 id="_4">学んだこと（教訓）</h2>
+<ul>
+<li><strong>定型作業は最初に自動化すべき</strong>：毎月同じ作業 = 自動化の宝庫</li>
+<li><strong>スキル化（slash command）で運用が定着</strong>：忘れない・属人化しない</li>
+<li><strong>個別差異は設定ファイルで管理</strong>：単価・締め日を JSON / YAML で</li>
+</ul>
+<hr />
+<h2 id="_5">メンバーへの含意（応用ポイント） ★</h2>
+<h3 id="_6">あなたもスタッフがいるなら必ず効く</h3>
+<ul>
+<li>月末の請求書作成は典型的な「毎月同じ作業」</li>
+<li>スタッフが増えるほど効果倍増</li>
+<li>自分の確定申告用集計とも統合可能</li>
+</ul>
+<h3 id="_7">必要な前提</h3>
+<ul>
+<li>スタッフの勤怠データがどこかにある（スプレッドシート等）</li>
+<li>請求書テンプレートがある（Word / PDF / Excel）</li>
+<li>単価・支払条件が決まっている</li>
+</ul>
+<h3 id="1">最初の1個を作る手順</h3>
+<ol>
+<li>既存の請求書フォーマットを Claude に読ませる</li>
+<li>勤怠データの形式を伝える</li>
+<li>「このフォーマットで請求書PDFを生成するスクリプト書いて」と依頼</li>
+<li>1名分でテスト</li>
+<li>全員分に拡張</li>
+<li>slash command（スキル）化していつでも実行可能に</li>
+</ol>
+<h3 id="_8">やってはいけないこと</h3>
+<ul>
+<li>❌ 単価・支払条件をコード内に直書き（変更時に詰む）</li>
+<li>❌ 個別フォーマットの違いを無理に1テンプレに統合</li>
+<li>❌ 月末まで放置して月初にまとめてやる（毎月コツコツ）</li>
+</ul>
+<hr />
+<h2 id="beforeafter">数値 Before/After</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>Before（手動）</th>
+<th>After（自動化）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1名分の請求書作成</td>
+<td>30〜60分</td>
+<td>数秒</td>
+</tr>
+<tr>
+<td>月3名分</td>
+<td>90〜180分</td>
+<td>ほぼゼロ</td>
+</tr>
+<tr>
+<td>計算ミス・転記ミス</td>
+<td>月1〜2件</td>
+<td>ゼロ</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_9">今後の拡張候補</h2>
+<ul>
+<li><strong>領収書管理連携</strong>：レシート画像 → OCR → 経費分類 → 月次集計</li>
+<li><strong>会計ソフト連携</strong>：freee / 弥生 / マネフォとのAPI連携</li>
+<li><strong>確定申告補助</strong>：年間収支まとめ・控除計算</li>
+</ul>
+<hr />
+<h2 id="_10">配信先別の使い分け</h2>
+<table>
+<thead>
+<tr>
+<th>配信先</th>
+<th>適合度</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campers ◎</td>
+<td>◎</td>
+<td>スタッフがいる人に確実に効く</td>
+</tr>
+<tr>
+<td>匿名X</td>
+<td>○</td>
+<td>経理AI化の入門事例として</td>
+</tr>
+<tr>
+<td>Note有料</td>
+<td>○</td>
+<td>領収書管理・会計連携と合わせて1本に</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_11">関連</h2>
+<ul>
+<li>スキル本体: <code>.claude/skills/月次請求書/</code>（社長運用中）</li>
+<li>関連 memory: <code>feedback_spreadsheet_automation_patterns.md</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em>
+<em>社長運用継続中</em></p></body></html>

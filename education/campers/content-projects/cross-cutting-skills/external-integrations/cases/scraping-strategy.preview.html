@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>scraping-strategy.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="botplaywrightstealth">スクレイピング戦略（Bot検出回避・Playwright・stealth）</h1>
+<blockquote>
+<p>業務段階横断（リサーチ・無在庫管理・競合調査で必須）
+状況: 社長運用継続中</p>
+</blockquote>
+<hr />
+<h2 id="_1">何をやったか（目的・背景）</h2>
+<p>公式APIが公開されていないサイトから情報を取得するための<strong>スクレイピング技術と戦略</strong>。</p>
+<p>ASICS無在庫管理ツールでの Akamai Bot 検出格闘の経験から得られた知見を、メンバーが他サイト（メルカリ・ラクマ・各種公式EC）にも応用できる形で整理。</p>
+<hr />
+<h2 id="_2">スクレイピングが必要な場面</h2>
+<ul>
+<li>メルカリ・ラクマで「ウォッチ商品の売り切れ検知」</li>
+<li>公式EC（NIKE / adidas / Uniqlo 等）の在庫・価格追跡</li>
+<li>海外サイト（並行輸入元）の情報取得</li>
+<li>競合セラーの出品リスト追跡</li>
+</ul>
+<hr />
+<h2 id="_3">基本方針（最重要）</h2>
+<h3 id="1-api">1. 公式APIがあるなら必ずそちらを使う</h3>
+<ul>
+<li>スクレイピングは最終手段</li>
+<li>公式API（無料 or 有料）があるなら利用規約に従って使う</li>
+<li>スクレイピングは技術的に可能でも<strong>規約違反のリスク</strong>がある</li>
+</ul>
+<h3 id="2">2. 規約を読んでから実行</h3>
+<ul>
+<li>robots.txt（クローラー向けルール）</li>
+<li>利用規約のスクレイピング禁止条項</li>
+<li>違反すると法的リスク（警告 → 訴訟事例あり）</li>
+</ul>
+<h3 id="3">3. レート制限を守る</h3>
+<ul>
+<li>1秒1リクエスト以下が無難</li>
+<li>連続アクセスはBot検出を加速</li>
+</ul>
+<hr />
+<h2 id="_4">技術スタック（社長運用）</h2>
+<h3 id="playwright-stealth">Playwright + stealth設定</h3>
+<ul>
+<li>Selenium より検出されにくい</li>
+<li><code>playwright-stealth</code>（Python）で指紋偽装</li>
+<li>ヘッドレス（GUIなし）回避（一部サイトはヘッドレスを検出）</li>
+</ul>
+<h3 id="firefox-session">Firefox session継続</h3>
+<ul>
+<li>ログイン状態を維持</li>
+<li>storage_state で cookie 保存</li>
+<li>セッション切れ時のみ手動ログイン</li>
+</ul>
+<h3 id="windows">Windows タスクスケジューラ直接起動</h3>
+<ul>
+<li>Claude scheduled-task では Chrome 操作で詰まる（Anthropic Issue #30356/#47180）</li>
+<li>Windowsタスクスケジューラに <code>.bat</code> スクリプトを直接登録</li>
+<li>セッションログイン状態を維持できる</li>
+</ul>
+<hr />
+<h2 id="_5">つまづいたこと（社長の体験）</h2>
+<h3 id="1bot-ip">失敗1：Bot検出 = IPブロックと誤認</h3>
+<ul>
+<li>IPアドレスが原因と思い込む</li>
+<li>実態は「フィンガープリント検出」（ブラウザ指紋）</li>
+<li>教訓：<strong>検出メカニズムを正しく理解</strong></li>
+</ul>
+<h3 id="2-bot">失敗2：並列化で Bot検出加速</h3>
+<ul>
+<li>速度を上げようと並列処理</li>
+<li>同一IPからの並列アクセス → 即検出</li>
+<li>教訓：<strong>直列で安定確保が先</strong></li>
+</ul>
+<h3 id="3_1">失敗3：監視するほど止められるパラドックス</h3>
+<ul>
+<li>自動監視の頻度を上げる → Bot検出加速</li>
+<li>教訓：<strong>適切な間隔（1時間以上）・User-Agent ランダム化</strong></li>
+</ul>
+<h3 id="4">失敗4：「動いているはず」報告</h3>
+<ul>
+<li>exe 起動だけ確認して稼働中と報告</li>
+<li>内部はエラー連発</li>
+<li>教訓：<strong>実装＝作成＋テスト実行＋結果確認＋問題修正</strong></li>
+</ul>
+<hr />
+<h2 id="_6">学んだこと（教訓）</h2>
+<ul>
+<li><strong>公式APIが優先</strong>：スクレイピングは最終手段</li>
+<li><strong>規約・robots.txt 確認必須</strong>：法的リスク回避</li>
+<li><strong>stealth設定は最初に</strong>：後付けは難しい</li>
+<li><strong>直列で安定確保</strong>：並列化は最後の手段</li>
+<li><strong>エラーハンドリング・通知必須</strong>：失敗を検知できないと壊れていても気付かない</li>
+<li><strong>完璧を目指さない</strong>：80%取れれば十分</li>
+</ul>
+<hr />
+<h2 id="_7">メンバーへの含意（応用ポイント） ★</h2>
+<h3 id="_8">あなたの仕入元・競合追跡でも同じ手法が使える</h3>
+<ul>
+<li>メルカリ・ラクマの「ウォッチ商品売り切れ検知」</li>
+<li>公式EC の在庫・価格追跡</li>
+<li>海外サイトの並行輸入</li>
+</ul>
+<h3 id="_9">必要な前提</h3>
+<ul>
+<li>Python or Node.js で Playwright を動かせる</li>
+<li>.env で認証情報管理</li>
+<li>規約を読んで判断できる</li>
+</ul>
+<h3 id="1">最初の1個を作る手順</h3>
+<ol>
+<li><strong>対象サイトの規約を読む</strong>：スクレイピング禁止か確認</li>
+<li><strong>公式APIの有無を確認</strong>：あればそちらを優先</li>
+<li><strong>小さく始める</strong>：10商品程度で動作確認</li>
+<li><strong>stealth設定を最初から</strong>：後付けは大変</li>
+<li><strong>エラー通知を仕込む</strong>：Chatwork等に失敗時通知</li>
+<li><strong>1日運用 → 1週間運用 → 商品数拡大</strong></li>
+</ol>
+<h3 id="_10">やってはいけないこと</h3>
+<ul>
+<li>❌ 規約を読まずに開始</li>
+<li>❌ いきなり1000商品の自動巡回</li>
+<li>❌ 1分間隔の監視（過剰アクセス）</li>
+<li>❌ stealth設定なしの Selenium</li>
+<li>❌ エラー通知なしの放置運用</li>
+</ul>
+<hr />
+<h2 id="_11">配信先別の使い分け</h2>
+<table>
+<thead>
+<tr>
+<th>配信先</th>
+<th>適合度</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campers ◯</td>
+<td>◯</td>
+<td>規約・法的リスクの注意喚起必須</td>
+</tr>
+<tr>
+<td>匿名X</td>
+<td>◎</td>
+<td>「Bot検出との戦い」は読み物として人気</td>
+</tr>
+<tr>
+<td>Note有料</td>
+<td>◎</td>
+<td>「スクレイピング実装ガイド」として価値高</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_12">関連</h2>
+<ul>
+<li>業務での活用例: <code>by-business-process/03-mukozai-stock-management/cases/stock-management-tool.md</code></li>
+<li>関連 memory: <code>feedback_asics_block.md</code> / <code>feedback_chrome_mcp_unattended.md</code> / <code>archive/project_asics_tool.md</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em></p></body></html>

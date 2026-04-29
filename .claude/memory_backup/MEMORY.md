@@ -26,6 +26,8 @@
 - [.envファイルの作成・入力方法](feedback_env_file_handling.md) — Claudeがファイル作成→社長が直接入力（チャット入力禁止）
 - [スケジュールタスク運用ルール（統合）](feedback_scheduled_tasks.md) — 実行厳守・プロンプト同期・Run now承認焼き込み・チェックポイント先行更新
 - [スケジュールタスク アクティベート必須](feedback_task_activation.md) — 新規タスク必ずアクティベートテスト→承認→本番プロンプト更新
+- [Chrome操作の無人タスクはClaude経由を捨てる](feedback_chrome_mcp_unattended.md) — Chrome必須はPlaywright+Windowsタスクスケジューラ直接起動・Claude中継禁止
+- [スプレッドシート自動化3型](feedback_spreadsheet_automation_patterns.md) — GASロジック=clasp / 外部読書=Sheets API / UI操作=Playwright の即判定ルール
 - [Claude Code 運用ルール（統合）](feedback_claude_code_operation.md) — Progressive Disclosure＋4点セット（archive・biweekly-maintenance・index.md・/隔週メンテナンス）＋effort_booster厳選
 - [管理方法統一](feedback_management_unification.md) — 3層管理原則（ソース/バックアップ/スマホ参照）
 
@@ -34,6 +36,7 @@
 - [ファイル作成後は即座に開く](feedback_file_delivery.md) — startコマンドで開くかエクスプローラーで見える状態にする
 - [モデル判断は社長・Effortは自動調整](feedback_model_effort_policy.md) — モデル切替は提案しない・Opus基本
 - [事業実践のコンテンツ記録ルール](feedback_content_recording.md) — AI運用の発見・テスト・結果をSNS/Note/コンサル向け記録
+- [コンテンツ素材の対象者・2軸フレーミング](feedback_content_audience_framing.md) — Campers実名向け/匿名X→Note向けの切り分け・**BayChat は Campers 参考例のみ・匿名X/Note 一切禁止**（2026-04-29明確化）
 - [商品言及時は必ずSKU付き](feedback_sku_required.md) — 必ず【SKU】タイトル形式
 - [本番HP変更は必ずOK確認後に公開](feedback_hp_publish_rule.md) — プレビュー→社長OK→公開
 - [BayChat UI設計原則](feedback_baychat_ui_design.md) — 紫ベース配色・信号機色禁止・英日併記・シンプルイズザベスト
@@ -43,12 +46,14 @@
 - [ダイレクト販売テスト・デプロイ運用](feedback_local_test_workflow.md) — ローカルテスト→社長OK→本番push・営業時間中push禁止
 
 ## プロジェクト
-- [コンサル事業ビジョン](project_consulting.md) — 将来のコンサルコミュニティ事業の方針・記録場所
+- [コンサル事業ビジョン](project_consulting.md) — 2軸戦略（Campers実名/匿名X→Note）・コンテンツ蓄積基盤（content-projects/業務縦軸12段階）2026-04-29 構造刷新
 - [eBay広告最適化プロジェクト](project_ad_optimization.md) — PLG/PLP/Offsite最適化・Marketing API活用・コンテンツ化
 - [高橋Claude Code導入](project_takahashi_claude.md) — 高橋さんへのClaude Code環境共有・段階的AI活用計画
 - [ダイレクト販売ツール](project_direct_sales.md) — Render公開済・技術構成・課題
-- [Campersウェビナー4/26](project_campers_webinar.md) — eBay×AI運営ウェビナー・AIコース案内・草案作成済み
+- [Campersウェビナー4/26＋5/31](project_campers_webinar.md) — eBay×AI運営ウェビナー・AIコース案内・草案作成済み・5/31骨子v0.1完成
 - [X情報ダイジェスト](project_x_digest.md) — X投稿自動収集→Claude要約→Chatwork個人DM配信（毎日9:40）
+- [スプレッドシート操作はAIコース必須テーマ](project_spreadsheet_automation_content.md) — Campers/コンサル教材の必須コンテンツ・記録蓄積先・扱い方針
+- [月次請求書 半自動化ツール](project_invoice_automation.md) — eBay外注3名の請求書自動作成（/月次請求書 YYYYMM）・3シート跨ぎ・列ごと型変換
 
 ## 参照なし（archive/・通常ロードしない）
 - `archive/README.md` — archive/ 配下のルール
@@ -63,3 +68,4 @@
 
 ## 外部ファイル（memoryから移動）
 - `.claude/rules/reference_nodejs_install.md` — Node.jsインストール手順（旧 memory/reference_nodejs_install.md を2026-04-24に移動）
+- `.claude/rules/honesty_and_self_completion.md` — 誠実性最優先・自己完結原則・社長依頼OK白リスト（2026-04-25新設・hook実装と同時）

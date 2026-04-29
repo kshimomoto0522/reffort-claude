@@ -1,0 +1,161 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>05_dos-and-donts.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="_1">やっておくべきこと／やってはいけないこと</h1>
+<blockquote>
+<p>対象: Campersメンバー
+性質: 社長が約7週間試行錯誤して得た<strong>全体共通ルール</strong></p>
+</blockquote>
+<hr />
+<h2 id="do">やっておくべきこと（DO）</h2>
+<h3 id="do1-claudemd">DO1：最初に CLAUDE.md を整える</h3>
+<ul>
+<li>自分の事業・取扱商材・スキル・目標を明確に書く</li>
+<li>80行以下に保つ</li>
+<li>詳細は <code>03_claude-md-template.md</code> を参照</li>
+</ul>
+<h3 id="do2api-env">DO2：APIトークンは即 .env 管理</h3>
+<ul>
+<li>1個でもキーを発行したら即 .env に入れる</li>
+<li><code>.env</code> は <code>.gitignore</code> で除外</li>
+<li>詳細は <code>02_security-rules.md</code> を参照</li>
+</ul>
+<h3 id="do3journey-logmd">DO3：journey-log.md を毎セッション書く</h3>
+<ul>
+<li>1日の終わり / セッション終了時に必ず追記</li>
+<li>「やったこと・学び・失敗・コンテンツ候補」の4項目で構造化</li>
+<li>後から見返せる時系列の財産になる</li>
+</ul>
+<h3 id="do4">DO4：本番データを触る前に必ず確認</h3>
+<ul>
+<li>「これは本番DBに書き込みますか？」と Claude に聞き返させる</li>
+<li>不可逆な操作（削除・上書き・送信）は二重確認</li>
+</ul>
+<h3 id="do5">DO5：失敗・遠回りも正直に記録</h3>
+<ul>
+<li>完璧な記録より生の記録</li>
+<li>後でコンテンツ素材になる</li>
+<li>同じ失敗を繰り返さないチェックポイントになる</li>
+</ul>
+<h3 id="do6">DO6：隔週でメンテする</h3>
+<ul>
+<li>CLAUDE.md の行数チェック</li>
+<li>memory ファイル数の棚卸し</li>
+<li>settings の権限見直し</li>
+<li>詳細は <code>06_maintenance-cycle.md</code> を参照</li>
+</ul>
+<h3 id="do7-claude">DO7：分からないことは Claude に聞き返す</h3>
+<ul>
+<li>「このコードは何をしてる？」</li>
+<li>「今のコマンドの意味は？」</li>
+<li>「これを実行するとどうなる？」</li>
+<li>質問は無料・知らないままが一番危険</li>
+</ul>
+<h3 id="do8claude">DO8：Claude が「分からない」「やれない」と言ったら信じる</h3>
+<ul>
+<li>嘘の完了報告より100倍マシ</li>
+<li>代替案を一緒に考える</li>
+</ul>
+<hr />
+<h2 id="dont">やってはいけないこと（DON'T）</h2>
+<h3 id="dont1api">DON'T1：APIトークンをコードに直接書く</h3>
+<pre><code class="language-python">api_key = &quot;sk-abc123...&quot;   # ← 絶対NG
+</code></pre>
+<ul>
+<li>→ 必ず .env 管理</li>
+<li>一度GitHubに上がったら世界中のbotに発見される</li>
+<li>パブリック化していなくても危険</li>
+</ul>
+<h3 id="dont2claude-env">DON'T2：Claude に .env の中身を読ませる／表示させる</h3>
+<ul>
+<li>セッションログにトークンが残る</li>
+<li>スクショ共有で漏れる</li>
+<li>値が必要な時は自分でファイルに書く</li>
+</ul>
+<h3 id="dont3">DON'T3：「全部削除して」「全件処理して」を確認なしで実行</h3>
+<ul>
+<li>不可逆な操作は1回で取り返しがつかない</li>
+<li>バックアップを取ってから・1件テストしてから・本番は最後</li>
+</ul>
+<h3 id="dont4claudemd">DON'T4：CLAUDE.md を肥大化させる</h3>
+<ul>
+<li>200行を超えたら肥大化警報</li>
+<li>500行になったら<strong>Claude のレスポンスが目に見えて悪化</strong>する</li>
+<li>詳細は <code>06_maintenance-cycle.md</code></li>
+</ul>
+<h3 id="dont5memory">DON'T5：memory に何でも書く</h3>
+<ul>
+<li>50ファイル超えると Claude が把握しきれない</li>
+<li>重要なルール・継続的に必要な情報だけに絞る</li>
+<li>一時的な作業内容は journey-log.md へ</li>
+</ul>
+<h3 id="dont6">DON'T6：「とりあえずできる方法」で進める</h3>
+<ul>
+<li>セキュリティを後回しにすると後で取り返しがつかない</li>
+<li>設計をサボると同じ問題を3回目で必ず踏む</li>
+<li>最初に正しい型を作って、そこから運用</li>
+</ul>
+<h3 id="dont7claude">DON'T7：Claude を疑わずに鵜呑みにする</h3>
+<ul>
+<li>AIは間違える（古い情報・誤った推論・確信を持って嘘）</li>
+<li>重要な判断は必ず一次情報（公式ドキュメント・実機テスト）で確認</li>
+<li>「Claude がこう言った」を最終根拠にしない</li>
+</ul>
+<h3 id="dont8-claude">DON'T8：自分で出来ることを Claude に丸投げする</h3>
+<ul>
+<li>「キーをください」（→ あなた自身が発行する）</li>
+<li>「ファイルを開いて教えて」（→ あなた自身が読める）</li>
+<li>AIに頼る部分と、自分でやる部分を分ける</li>
+</ul>
+<h3 id="dont9">DON'T9：質問する前に何も試していない</h3>
+<ul>
+<li>まず本資料（<code>00-claude-code-foundation/</code>）を全部読む</li>
+<li>それでも分からなければ Claude に質問</li>
+<li>それでも詰まれば社長／Campers Chatworkで相談</li>
+</ul>
+<h3 id="dont101">DON'T10：1人で抱え込む</h3>
+<ul>
+<li>Campers にはメンバーがいる</li>
+<li>同じ業務AI化に挑戦している人と情報交換する</li>
+<li>失敗談こそ最も価値がある（皆が学べる）</li>
+</ul>
+<hr />
+<h2 id="_2">社長が実際にやらかして学んだこと</h2>
+<h3 id="1">失敗1：「動いているはず」と確認せず報告</h3>
+<ul>
+<li>→ タスクが実は動いていなかった</li>
+<li>→ 5日間気づかず重要なメッセージに気付かなかった</li>
+<li>→ 教訓：実装＝作成＋テスト実行＋結果確認＋問題修正</li>
+</ul>
+<h3 id="2slack">失敗2：本番Slackに意図せず送信</h3>
+<ul>
+<li>→ Claudeに「このメッセージ送信して」と言って即送信された</li>
+<li>→ 教訓：送信前に「内容を表示して、GOで送信」のステップを必ず入れる</li>
+</ul>
+<h3 id="3claudemd-500">失敗3：CLAUDE.md が500行近くまで肥大化</h3>
+<ul>
+<li>→ Claudeが「バカ」になった（同じ指示を何度もやり直し・回答が浅い・嘘をつく）</li>
+<li>→ 教訓：定期的な棚卸し（隔週メンテ）が必要</li>
+</ul>
+<h3 id="41">失敗4：1人ずつ手動でメンバー削除する仕組みを提案</h3>
+<ul>
+<li>→ 社長の本来の目的「自動化」を見失っていた</li>
+<li>→ 教訓：作業の目的を理解する・先回りで提案</li>
+</ul>
+<p>これらは Reffort で実際に起きたことです。同じ失敗を踏まないでください。</p>
+<hr />
+<h2 id="_3">困ったときの判断フロー</h2>
+<pre><code>何か困った
+  ↓
+本資料（00-claude-code-foundation/）を読み返した？
+  ↓ Yes
+業務段階別フォルダ（01〜11）の該当事例を読んだ？
+  ↓ Yes
+Claude に質問した？
+  ↓ Yes
+それでも詰まる
+  ↓
+Campers Chatwork で相談（失敗談はオープンに）
+</code></pre>
+<hr />
+<h2 id="_4">次のステップ</h2>
+<p>→ <code>06_maintenance-cycle.md</code> で 運用維持の隔週メンテ・肥大化対策</p>
+<hr />
+<p><em>社長の体験談（journey-log.md 全般）から要点整理</em></p></body></html>

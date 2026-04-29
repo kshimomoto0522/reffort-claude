@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>07_complete-setup-checklist.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="_1">導入完了チェックリスト</h1>
+<blockquote>
+<p>対象: Claude Code 導入を完了したCampersメンバー
+使い方: 各項目に「☐→☑」をつけながら進める</p>
+</blockquote>
+<hr />
+<h2 id="_2">環境構築（基礎）</h2>
+<ul>
+<li>☐ Node.js LTS版がインストール済み</li>
+<li>☐ Claude Code がインストール済み（<code>claude --version</code> で確認）</li>
+<li>☐ Claude Max プランに加入済み</li>
+<li>☐ ターミナルから <code>claude</code> コマンドで起動できる</li>
+<li>☐ ブラウザ認証が完了している</li>
+<li>☐ Git がインストール済み</li>
+<li>☐ GitHubアカウント を持っている（Privateリポジトリ作成可能）</li>
+</ul>
+<p>参照: <code>01_setup-installation.md</code></p>
+<hr />
+<h2 id="_3">セキュリティ初期設定</h2>
+<ul>
+<li>☐ プロジェクトフォルダのトップに <code>.env</code> を作成済み</li>
+<li>☐ <code>.gitignore</code> に <code>.env</code> が含まれている</li>
+<li>☐ APIトークンは全て <code>.env</code> に格納（コードに直書きゼロ）</li>
+<li>☐ 過去にコードに書いたAPIトークンがあれば再発行済み</li>
+<li>☐ GitHub のリポジトリは Private 設定</li>
+<li>☐ 自動バックアップ運用を決めた（毎日 / 週次 / 都度）</li>
+<li>☐ Claude Code に <code>.env</code> の中身を表示させない運用ルールを理解</li>
+</ul>
+<p>参照: <code>02_security-rules.md</code></p>
+<hr />
+<h2 id="claudemd">CLAUDE.md 整備</h2>
+<ul>
+<li>☐ プロジェクトフォルダのトップに <code>CLAUDE.md</code> を作成済み</li>
+<li>☐ 「私について」を埋めた（事業・商材・経験・目標）</li>
+<li>☐ 「業務プロセス」の優先度を埋めた</li>
+<li>☐ 「回答スタイル」を自分のレベルに合わせて記入</li>
+<li>☐ 80行以下に収まっている</li>
+<li>☐ 重要ルール・セッション終了チェックリストを記入</li>
+</ul>
+<p>参照: <code>03_claude-md-template.md</code></p>
+<hr />
+<h2 id="_4">メモリ・記録</h2>
+<ul>
+<li>☐ memory/ フォルダを作成済み</li>
+<li>☐ <code>memory/user_profile.md</code> で自己プロフィールを書いた</li>
+<li>☐ <code>journey-log.md</code> を作成済み</li>
+<li>☐ 初回セッション後に journey-log を1エントリ書いた</li>
+<li>☐ 次セッションで journey-log が引き継がれることを確認</li>
+</ul>
+<p>参照: <code>04_session-and-memory.md</code></p>
+<hr />
+<h2 id="dodont">DO・DON'T の理解</h2>
+<ul>
+<li>☐ APIトークンを直書きしてはいけない理由を説明できる</li>
+<li>☐ 本番データを触る前に必ず確認する習慣がある</li>
+<li>☐ Claude が「分からない」と言ったら信じる</li>
+<li>☐ 失敗を隠さず journey-log に記録する習慣がある</li>
+<li>☐ 同じ指示を3回やり直したら設計が間違っていると気付ける</li>
+</ul>
+<p>参照: <code>05_dos-and-donts.md</code></p>
+<hr />
+<h2 id="_5">運用維持</h2>
+<ul>
+<li>☐ 隔週メンテのスケジュールを決めた（カレンダー登録 or リマインダー）</li>
+<li>☐ CLAUDE.md の行数チェック方法を理解</li>
+<li>☐ memory ファイル数の上限（50個）を意識している</li>
+<li>☐ archive 退避の考え方を理解</li>
+<li>☐ 肥大化のサイン5項目を覚えている</li>
+</ul>
+<p>参照: <code>06_maintenance-cycle.md</code></p>
+<hr />
+<h2 id="ai">業務AI化の準備</h2>
+<ul>
+<li>☐ 自分の業務プロセスを11段階のどこに当てはめるか整理した</li>
+<li>☐ AI化優先度の高い業務段階トップ3を決めた</li>
+<li>☐ 該当する業務段階フォルダ（01〜11）の README を読んだ</li>
+<li>☐ 該当ケース事例を読んで具体イメージを掴んだ</li>
+</ul>
+<p>参照: <code>by-business-process/01-research/</code> 〜 <code>11-direct-sales/</code></p>
+<hr />
+<h2 id="_6">完了判定</h2>
+<p>上記の全てに ☑ がついたら、Claude Code 基盤の導入は<strong>完了</strong>です。</p>
+<p>ここから業務AI化の本番に進みます：</p>
+<ol>
+<li><strong>業務プロセスの優先度トップ1</strong>を決める</li>
+<li>該当する業務段階フォルダの事例を読む</li>
+<li><strong>最初の1個を作って動かす</strong></li>
+<li>journey-log に記録</li>
+<li>次の業務段階へ</li>
+</ol>
+<hr />
+<h2 id="_7">詰まったら</h2>
+<ul>
+<li>各 case ファイルを読み返す</li>
+<li>Claude に聞く（「この導入チェックリストで詰まっているのは……」）</li>
+<li>Campers Chatwork で相談（同じ詰まりを経験したメンバーが居る可能性大）</li>
+</ul>
+<hr />
+<h2 id="_8">関連ファイル</h2>
+<ul>
+<li>業務段階別ガイド: <code>by-business-process/01-research/</code> 〜 <code>11-direct-sales/</code></li>
+<li>横断スキル: <code>cross-cutting-skills/external-integrations/</code></li>
+<li>メンバー向けQ&amp;A: （Campers Chatwork内）</li>
+<li>ウェビナー素材: <code>webinar-materials/20260531-draft.md</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em></p></body></html>

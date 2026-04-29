@@ -80,7 +80,9 @@
       "Write(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\education\\\\campers\\\\removal-queue.json)",
       "Edit(C:\\\\Users\\\\KEISUKE SHIMOMOTO\\\\Desktop\\\\reffort\\\\education\\\\campers\\\\removal-queue.json)",
       "Bash(python3)",
-      "Bash(py \"C:/Users/KEISUKE SHIMOMOTO/Desktop/reffort/management/md-audit/biweekly_maintenance.py\")"
+      "Bash(py \"C:/Users/KEISUKE SHIMOMOTO/Desktop/reffort/management/md-audit/biweekly_maintenance.py\")",
+      "Bash(python \"C:/Users/KEISUKE SHIMOMOTO/Desktop/reffort/education/campers/scripts/campers_member_removal.py\")",
+      "Bash(python campers_member_removal.py)"
     ],
     "deny": [
       "Bash(git push --force:*)",
@@ -147,7 +149,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/env_auto_open.py\""
+            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/file_auto_open.py\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/action_guard_stop.py\""
           }
         ]
       }

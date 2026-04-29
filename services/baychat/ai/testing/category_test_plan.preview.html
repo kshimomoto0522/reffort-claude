@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>category_test_plan.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="ai-reply">AI Reply カテゴリ別反復テスト計画</h1>
+<blockquote>
+<p>作成日: 2026-04-29
+起点プロンプト: <code>prompt_admin_v2.3_baseline.md</code>（v2.3 + Cowatech プレースホルダ最小反映のみ）
+目的: 対応カテゴリを基本→複雑の順に絞り、1 カテゴリ 10 ケース → 社長フィードバック → 必要なら +5 → 次カテゴリ、というループで段階的に改修する。</p>
+</blockquote>
+<hr />
+<h2 id="1">反復ループの 1 サイクル</h2>
+<pre><code>[A] 1 カテゴリ × 10 ケース合成（同カテゴリ内で偏り出ないように）
+       ↓
+[B] AI Reply 生成（payload_builder で本番再現・admin_prompt は最新ベースライン）
+       ↓
+[C] 社長レビュー HTML（カテゴリ単位）→ ケースごとにフィードバック
+       ↓
+[D] 社長判断
+     ├─ 同カテゴリ +5 ケースで再テスト  → [B] に戻る
+     └─ 次カテゴリへ進む  → [A] に戻る
+       ↓
+[E] フィードバックを踏まえてプロンプト派生版を作成
+     例: prompt_admin_v2.3_baseline_c1.md（カテゴリ 1 反映後）
+</code></pre>
+<p>派生版は <strong>そのカテゴリで合意した最小修正のみ</strong> を加える。複数カテゴリの修正を一度に混ぜない（v2.4-v2.6 で繰り返した複雑化を防ぐため）。</p>
+<hr />
+<h2 id="claude">カテゴリ分類案（Claude 提案・社長判断待ち）</h2>
+<p>eBay CS の実務カテゴリを「シンプル → 複雑」「平和 → トラブル」順で並べた <strong>10 カテゴリ案</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>カテゴリ</th>
+<th>バイヤー側のメッセージ例</th>
+<th>想定 STAGE / TYPE</th>
+<th>期待される対応の難易度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>購入直後の挨拶・感謝・closing 系</strong></td>
+<td>"Thanks!" / "Just bought, looking forward" / "Have a great day"</td>
+<td>STAGE 1 or 2 / 短文 closing 系</td>
+<td>低（短く温かく返すだけ）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>商品の事前質問（在庫・サイズ・素材・状態）</strong></td>
+<td>"Do you have size 9?" / "Is this real leather?" / "Is this brand new?"</td>
+<td>STAGE 1 中心・プリパーチェス</td>
+<td>低〜中</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>配送関連（送料・配送日数・配送可否）</strong></td>
+<td>"Do you ship to Italy?" / "How many days does shipping take?"</td>
+<td>STAGE 1 中心・プリパーチェス</td>
+<td>中</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>ベストオファー・価格交渉</strong></td>
+<td>"Would you accept $80?" / "Any chance for a discount?"</td>
+<td>STAGE 1 or 2</td>
+<td>中（「補足なし」のとき判断が分かれる）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>注文後の確認・変更・キャンセル依頼</strong></td>
+<td>"Can you ship to a different address?" / "I want to cancel"</td>
+<td>STAGE 1 or 2 / 出荷前</td>
+<td>中</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>配送中の追跡・遅延問い合わせ</strong></td>
+<td>"Where is my order?" / "Tracking shows nothing"</td>
+<td>STAGE 1 or 2 / in-transit</td>
+<td>中</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>関税・税金・到着後の通常質問</strong></td>
+<td>"Customs charged me" / "Is this the right size?"</td>
+<td>STAGE 1 or 2 / post-arrival</td>
+<td>中</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>返品リクエスト（理由：サイズ違い・気に入らない等）</strong></td>
+<td>"It doesn't fit, can I return?" / "Wrong size sent?"</td>
+<td>STAGE 1 or 2 / post-arrival</td>
+<td>中〜高（補足の有無で対応が変わる）</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>不良品・破損・誤発送対応</strong></td>
+<td>"Arrived damaged" / "Wrong item received" / "Defect found"</td>
+<td>STAGE 1 or 2 / 謝罪トーン要</td>
+<td>高（謝罪 + 解決提示）</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>ディスピュート・激怒・偽物クレーム等の重対応</strong></td>
+<td>"Opening dispute" / "This is fake!" / "You're a scammer"</td>
+<td>STAGE 2 or 3 / 重圧</td>
+<td>最高</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_1">カテゴリ順序の根拠</h3>
+<ul>
+<li><strong>1 → 3</strong> は「平和な問い合わせ・短文返信」が中心で、プロンプトの基本動作を確認する初期段階に最適</li>
+<li><strong>4 → 7</strong> は「判断が要るが基本トーンは保てる」中間層</li>
+<li><strong>8 → 10</strong> は「謝罪／重大対応／センシティブ」で、プロンプトの限界が出やすい層</li>
+</ul>
+<p>カテゴリ番号は基本→複雑の <strong>テスト順序</strong> とイコール。</p>
+<hr />
+<h2 id="_2">社長明日朝の判断ポイント（最小限）</h2>
+<ol>
+<li><strong>カテゴリ分類は上の 10 案で良いか？</strong>（粒度・順番・取捨）</li>
+<li><strong>ケースは合成 / DB 抽出 のどちらで進めるか？</strong></li>
+<li>合成 ＝ Claude がパターン多様性を担保しやすい・短時間で 10 ケース揃う</li>
+<li>DB 抽出 ＝ 実会話そのまま・代表性は高いがカテゴリ判定とノイズ除去が必要</li>
+<li><strong>推奨：合成スタート（カテゴリ 1）／後でズレを感じたら DB 抽出に切替</strong></li>
+<li><strong>テスト時のモデルは GPT-5-Nano 1 本で良いか？</strong>（admin 切替予定モデル・コスト最小・速度十分）</li>
+<li>必要なら後で GPT-4.1-Mini と並走可能</li>
+</ol>
+<hr />
+<h2 id="1-claude">カテゴリ 1 で確認したい点（Claude 仮置き）</h2>
+<p>カテゴリ 1（購入直後の挨拶・感謝・closing 系）でプロンプトが出すべき挙動：</p>
+<ul>
+<li>STAGE 1 の「Just bought, thank you!」 → 短く・温かく・「Thank you for your message」または「Thank you for your inquiry」始まり</li>
+<li>STAGE 2 の「Thanks again!」 → 「Thank you for your message」を <strong>使わない</strong> ／ 短い acknowledgement</li>
+<li>過剰なフォーマル化（"Best regards, [seller_name]" のフル装備）にしない</li>
+<li>既出情報を再説明しない</li>
+<li>署名は <code>{sellerAccountEbay}</code> が空なら省略・あれば 1 行</li>
+</ul>
+<p>ここでプロンプトが過剰な定型句を出してくるなら、カテゴリ 1 反映版で「短文 closing 時の振る舞い」を最小限追記する。</p>
+<hr />
+<h2 id="_3">ファイル命名規約</h2>
+<table>
+<thead>
+<tr>
+<th>フェーズ</th>
+<th>プロンプトファイル名</th>
+<th>テストケースファイル名</th>
+<th>結果 HTML 名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>起点</td>
+<td><code>prompt_admin_v2.3_baseline.md</code></td>
+<td><code>test_cases/category_01_post_purchase_thanks.json</code></td>
+<td><code>results/category_01_baseline_YYYYMMDD_HHMMSS.html</code></td>
+</tr>
+<tr>
+<td>カテゴリ 1 反映後</td>
+<td><code>prompt_admin_v2.3_baseline_c1.md</code></td>
+<td><code>test_cases/category_02_pre_purchase_qa.json</code></td>
+<td><code>results/category_02_after_c1_YYYYMMDD_HHMMSS.html</code></td>
+</tr>
+<tr>
+<td>カテゴリ 2 反映後</td>
+<td><code>prompt_admin_v2.3_baseline_c1c2.md</code></td>
+<td><code>test_cases/category_03_shipping.json</code></td>
+<td><code>results/category_03_after_c1c2_YYYYMMDD_HHMMSS.html</code></td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+</tbody>
+</table>
+<p>派生版の差分は <strong>追記行数 5-15 行以内</strong> を上限の目安に。それを超える要望が出たら、社長と「カテゴリ分け自体を見直すべきか」を再協議する。</p></body></html>

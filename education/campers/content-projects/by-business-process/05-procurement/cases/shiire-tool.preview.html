@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>shiire-tool.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="gastradingfulfillment-apiclasp">仕入管理表GAS（Trading→Fulfillment API移行・clasp化）</h1>
+<blockquote>
+<p>業務段階: 05-仕入管理
+状況: 社長運用継続中（2026-04-24 Fulfillment API移行・clasp化完了）
+元素材: journey-log.md L1040-1075 / L1519-1584 / L1965-2044</p>
+</blockquote>
+<hr />
+<h2 id="_1">何をやったか（目的・背景）</h2>
+<p>eBay受注情報から自動で仕入指示を生成し、スタッフに「何を・いつまでに・どこから仕入れるか」を伝える Google スプレッドシート + GAS（Google Apps Script）の仕組み。</p>
+<p>社長の運用では、外注スタッフ3名（本間・清水・佐々木）が毎日この表を見て仕入を実行する。</p>
+<hr />
+<h2 id="_2">取り組みのプロセス（時系列要点）</h2>
+<h3 id="v1-trading-api2026-04">v1 Trading API実装（〜2026-04）</h3>
+<ul>
+<li>古い SOAP API（Trading API）で実装</li>
+<li>制限が多く動作不安定</li>
+<li>認証は Auth'n'Auth トークン</li>
+</ul>
+<h3 id="32026-04-13">機能追加3件（2026-04-13）</h3>
+<ul>
+<li>有在庫判定（自社在庫があるか）</li>
+<li>E列結合（複数情報を1セルに統合）</li>
+<li>赤文字化（要確認案件のハイライト）</li>
+<li>Z除去による重複反映バグ発覚</li>
+</ul>
+<h3 id="42026-04-21">スタッフ指摘4点修正（2026-04-21）</h3>
+<ul>
+<li>多言語サイズ表記対応（US/UK/EU）</li>
+<li>Width 機能追加</li>
+<li>キャンセル検知</li>
+<li>Refunded 蘇生（返金された注文を仕入リストから削除）</li>
+<li>重複3層防御導入（同SKU・同日付・同BuyerID）</li>
+</ul>
+<h3 id="fulfillment-api2026-04-24">Fulfillment API移行（2026-04-24）</h3>
+<ul>
+<li>Trading API → Fulfillment API（REST API）</li>
+<li>OAuth2 認証導入</li>
+<li>Ship by Date を正確化（祝日テーブル不要・APIから取得）</li>
+<li>ミズノ型番10桁化対応</li>
+<li>clasp 導入（ローカルエディタで開発・自動デプロイ）</li>
+</ul>
+<hr />
+<h2 id="_3">つまづいたこと（失敗・遠回り）</h2>
+<h3 id="1zsku">失敗1：Z除去（マイナーSKU処理）の副作用</h3>
+<ul>
+<li>Z付きSKUを除去するロジックを入れたら、本来別商品扱いの「型番A-Z」と「型番A」が同一視された</li>
+<li>重複反映バグ発生</li>
+<li>教訓：<strong>正規化は副作用を全パターン考える</strong></li>
+</ul>
+<h3 id="2monaco-editor-ctrlv">失敗2：Monaco editor 手動 Ctrl+V 運用の限界</h3>
+<ul>
+<li>Apps Script のエディタ（Monaco）に手動でコードをペーストする運用は崩壊した</li>
+<li>ペースト漏れ・古いコード残存・差分管理不可</li>
+<li>教訓：<strong>clasp 導入が正解</strong>（Google公式CLI・ローカル開発・自動デプロイ）</li>
+</ul>
+<h3 id="3">失敗3：複数ファイル構成の複雑化</h3>
+<ul>
+<li>機能追加のたびにファイル分割</li>
+<li>5ファイル以上になると依存関係が見えなくなる</li>
+<li>教訓：<strong>設計を最初にしっかり</strong>・後付けは2ファイルまで</li>
+</ul>
+<h3 id="4">失敗4：スタッフ運用フィードバックを後から拾う</h3>
+<ul>
+<li>機能追加時にスタッフに事前確認しなかった</li>
+<li>結果4点もの修正リクエストが運用後に来た</li>
+<li>教訓：<strong>スタッフ運用フィードバックは仕様策定の初日に取る</strong></li>
+</ul>
+<hr />
+<h2 id="_4">学んだこと（教訓）</h2>
+<ul>
+<li><strong>Fulfillment API のほうが Trading API より安定</strong>：OAuth2 は最初の壁だが越える価値あり</li>
+<li><strong>重複チェックは3層必要</strong>：単一キーでは不十分</li>
+<li><strong>clasp 必須</strong>：Monaco editor 手動運用は破綻する</li>
+<li><strong>スタッフフィードバックが最も価値ある改善源</strong>：運用してみて初めて分かる</li>
+<li><strong>Ship by Date は eBay公式 API から取得</strong>：祝日テーブル等の自前実装は不要</li>
+</ul>
+<hr />
+<h2 id="_5">メンバーへの含意（応用ポイント） ★</h2>
+<h3 id="_6">あなたの仕入フローでも同じ仕組みは作れる</h3>
+<ul>
+<li>商材問わず「受注 → 仕入指示 → 仕入完了 → 発送」のフローは共通</li>
+<li>スタッフがいる人ほど効果大（指示伝達のミス・遅延が消える）</li>
+</ul>
+<h3 id="_7">必要な前提</h3>
+<ul>
+<li>Google アカウント（スプレッドシート）</li>
+<li>Apps Script の基礎知識（Claude Code が書いてくれるが、概念は理解必須）</li>
+<li>eBay Developer プログラム登録（OAuth2 用）</li>
+<li>スタッフがスプレッドシートを毎日見る運用</li>
+</ul>
+<h3 id="1">最初の1個を作る手順</h3>
+<ol>
+<li>既存の仕入管理表（または新規作成）にどんな項目が必要か洗い出し</li>
+<li>eBay受注情報のうち何を反映するか決める（最低限：注文日・SKU・サイズ・送料・Ship by Date）</li>
+<li>Claude Code に「eBay Fulfillment API から受注を取得して、このシート構造で行追加するGAS書いて」と依頼</li>
+<li>テスト用シートで動作確認</li>
+<li>スタッフに使ってもらってフィードバック → 改善</li>
+<li>本番運用</li>
+</ol>
+<h3 id="_8">やってはいけないこと</h3>
+<ul>
+<li>❌ Trading API（古い）でゼロから実装（時代遅れ・OAuth2 を学んで Fulfillment API へ）</li>
+<li>❌ Monaco editor で手動 Ctrl+V 運用（clasp 導入が正解）</li>
+<li>❌ スタッフ運用前にゼロベースで仕様策定（フィードバック必須）</li>
+<li>❌ 重複チェック1層のみ（最低3層）</li>
+</ul>
+<hr />
+<h2 id="beforeafter">数値 Before/After</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>Before（手動）</th>
+<th>After（自動化）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1注文あたり手作業時間</td>
+<td>2〜3分</td>
+<td>0秒</td>
+</tr>
+<tr>
+<td>月間100注文の処理時間</td>
+<td>200〜300分</td>
+<td>完全自動</td>
+</tr>
+<tr>
+<td>スタッフの仕入忘れ</td>
+<td>月数件</td>
+<td>ゼロ</td>
+</tr>
+<tr>
+<td>Ship by Date計算ミス</td>
+<td>月1〜2件</td>
+<td>ゼロ</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_9">配信先別の使い分け</h2>
+<table>
+<thead>
+<tr>
+<th>配信先</th>
+<th>適合度</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campers ◎</td>
+<td>◎</td>
+<td>スタッフ運用している人に特に響く</td>
+</tr>
+<tr>
+<td>匿名X</td>
+<td>○</td>
+<td>「ある公式 API」として匿名化可能</td>
+</tr>
+<tr>
+<td>Note有料</td>
+<td>◎</td>
+<td>OAuth2 / GAS / clasp の実装ガイドとして3本構成可能</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="journey-logmd">元素材（journey-log.md 該当行・関連ファイル）</h2>
+<ul>
+<li>journey-log.md L1040-1075（2026-04-13 機能追加3件）</li>
+<li>journey-log.md L1519-1584（2026-04-21 スタッフ指摘4点修正）</li>
+<li>journey-log.md L1965-2044（2026-04-24 Fulfillment API移行）</li>
+<li>関連 spec: <code>commerce/ebay/tools/gas-shiire-tool-spec.md</code></li>
+<li>関連 memory: <code>feedback_spreadsheet_automation_patterns.md</code> / <code>archive/project_shiire_gas_tool.md</code></li>
+<li>関連コード: <code>commerce/ebay/tools/gas/shiire/</code>（clasp管理）</li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em></p></body></html>

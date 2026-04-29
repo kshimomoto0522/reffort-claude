@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>direct-sales.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="renderny">ダイレクト販売Render本番デプロイ（NY顧客向け）</h1>
+<blockquote>
+<p>業務段階: 11-ダイレクト販売
+状況: 社長運用中（NY在住の常連顧客向け本番稼働）
+元素材: journey-log.md L951-1007 / L1010-1037</p>
+</blockquote>
+<hr />
+<h2 id="_1">何をやったか（目的・背景）</h2>
+<p>eBayの常連顧客（NY在住）向けに、eBayを介さない直販サイトを構築した事例。</p>
+<p>eBay手数料（10〜15%）を顧客側に還元できるため、リピート顧客との関係強化と利益率改善を同時に実現。</p>
+<hr />
+<h2 id="_2">取り組みのプロセス（時系列要点）</h2>
+<h3 id="2026-04-10">初期構築（〜2026-04-10）</h3>
+<ul>
+<li>ローカル開発（React/Next.js）</li>
+<li>Render（PaaS）に本番デプロイ</li>
+<li>顧客ログイン・注文管理・発送管理を一元化</li>
+</ul>
+<h3 id="2026-04-10_1">本番安定化（2026-04-10）</h3>
+<ul>
+<li>Render ディスク追加でデータ永続化</li>
+<li>直後にデータ消失 → seed方式で復元</li>
+<li>発送管理・オーダー管理 7項目修正</li>
+</ul>
+<h3 id="2026-04-13">バグ修正（2026-04-13）</h3>
+<ul>
+<li>5件のバグ修正</li>
+<li>アーキテクチャ修正（max方式 → add方式）</li>
+<li>ログイン関数未定義バグ修正</li>
+<li>3回の本番デプロイ</li>
+</ul>
+<hr />
+<h2 id="_3">つまづいたこと（失敗・遠回り）</h2>
+<h3 id="1">失敗1：データ構造理解不足で初期設計ミス</h3>
+<ul>
+<li>顧客・注文・在庫の関係を最初に明確に設計しなかった</li>
+<li>max方式（最大値で管理）で実装したが add方式（積み上げ）が正しかった</li>
+<li>設計ミスを後で大幅修正</li>
+<li>教訓：<strong>データ構造は最初に紙で描く</strong></li>
+</ul>
+<h3 id="2render">失敗2：Render ディスク追加直後にデータ消失</h3>
+<ul>
+<li>永続化のためディスク追加 → 既存データが消えた</li>
+<li>seed方式（初期データを再投入する仕組み）で復元</li>
+<li>教訓：<strong>永続化は最初に設計</strong>・後から追加すると詰む</li>
+</ul>
+<h3 id="3">失敗3：ログイン関数未定義バグで本番停止</h3>
+<ul>
+<li>フロントエンドで使っている関数がバックエンドに存在しなかった</li>
+<li>本番デプロイ後に発覚</li>
+<li>教訓：<strong>ローカルテスト → 社長OK → 本番push の順序を厳守</strong></li>
+</ul>
+<h3 id="4">失敗4：営業時間中の本番デプロイで混乱</h3>
+<ul>
+<li>顧客がアクセス中に本番反映 → エラー画面</li>
+<li>教訓：<strong>営業時間中の本番デプロイ禁止</strong></li>
+</ul>
+<hr />
+<h2 id="_4">学んだこと（教訓）</h2>
+<ul>
+<li><strong>永続化は最初に設計すべき</strong>：後から追加すると詰む</li>
+<li><strong>ローカルテスト → 社長OK → 本番push の順序を厳守</strong></li>
+<li><strong>営業時間中の本番デプロイは禁止</strong></li>
+<li><strong>修正は本番データで即検証</strong>：テスト環境ローカルで十分</li>
+<li><strong>PaaS（Render等）は意外と簡単</strong>：プログラミング未経験でもデプロイ可能</li>
+</ul>
+<hr />
+<h2 id="_5">メンバーへの含意（応用ポイント） ★</h2>
+<h3 id="_6">あなたにも直取需要があるかもしれない</h3>
+<ul>
+<li>eBayで購入してくれた顧客から「直接買いたい」打診はないか？</li>
+<li>知人・SNS経由で直取注文を受けていないか？</li>
+<li>取りこぼしている可能性のあるリピート顧客はいないか？</li>
+</ul>
+<h3 id="_7">必要な前提</h3>
+<ul>
+<li>直取できる商材・在庫がある</li>
+<li>顧客との信頼関係（決済リスク管理）</li>
+<li>発送・梱包の対応リソース</li>
+</ul>
+<h3 id="1_1">最初の1個を作る手順</h3>
+<ol>
+<li><strong>小さく始める</strong>：Google Form + スプレッドシートで注文受付</li>
+<li><strong>手動で運用</strong>：月10件以上になったらシステム化検討</li>
+<li><strong>PaaS で簡易Webアプリ</strong>：Claude Code + Render で React/Next.js アプリ作成</li>
+<li><strong>顧客ログイン・注文管理・発送管理を一元化</strong></li>
+<li><strong>eBayと独立した顧客 DB 管理</strong>：CRM的な使い方も可能</li>
+</ol>
+<h3 id="_8">やってはいけないこと</h3>
+<ul>
+<li>❌ 永続化を後回し（データ消失のリスク）</li>
+<li>❌ ローカルテスト未実施で本番デプロイ</li>
+<li>❌ 営業時間中の本番デプロイ</li>
+<li>❌ いきなり大規模システム（Google Form + Sheets で十分始められる）</li>
+<li>❌ eBay規約違反（eBay経由で接触した顧客への直取勧誘は規約違反の可能性）</li>
+</ul>
+<hr />
+<h2 id="beforeafter">数値 Before/After</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>Before（Excel手動）</th>
+<th>After（Webアプリ）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>注文1件あたり管理時間</td>
+<td>5〜10分</td>
+<td>30秒（顧客が自分で入力）</td>
+</tr>
+<tr>
+<td>顧客側の手間</td>
+<td>メール往復</td>
+<td>サイト上で完結</td>
+</tr>
+<tr>
+<td>利益率</td>
+<td>eBay手数料分</td>
+<td>10〜15%改善</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_9">配信先別の使い分け</h2>
+<table>
+<thead>
+<tr>
+<th>配信先</th>
+<th>適合度</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campers ◯</td>
+<td>◯</td>
+<td>「直取需要を見逃していないか」のフックに</td>
+</tr>
+<tr>
+<td>匿名X</td>
+<td>△</td>
+<td>規模感が大きく見えて参考になりにくい可能性</td>
+</tr>
+<tr>
+<td>Note有料</td>
+<td>◯</td>
+<td>「PaaS で副業ECサイト構築」として技術記事化可能</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ebay">eBay規約への注意</h2>
+<p>eBay は <strong>eBay経由で接触した顧客への直取勧誘を禁止</strong>しています（規約違反）。
+直取に切り替えるには：
+- 既に eBay外で関係性を持っていた顧客
+- SNS等で別途繋がった顧客
+- 顧客側から積極的に提案してきたケース</p>
+<p>社長の事例は「NY在住の長年の常連で、eBay外でも関係性があった」前提です。
+メンバーが実践する際は eBay規約をしっかり確認してください。</p>
+<hr />
+<h2 id="journey-logmd">元素材（journey-log.md 該当行・関連ファイル）</h2>
+<ul>
+<li>journey-log.md L951-1007（2026-04-10 本番安定化）</li>
+<li>journey-log.md L1010-1037（2026-04-13 バグ修正5件）</li>
+<li>関連 memory: <code>project_direct_sales.md</code> / <code>feedback_server_deploy.md</code> / <code>feedback_local_test_workflow.md</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em>
+<em>社長運用継続中（NY顧客向け）</em></p></body></html>

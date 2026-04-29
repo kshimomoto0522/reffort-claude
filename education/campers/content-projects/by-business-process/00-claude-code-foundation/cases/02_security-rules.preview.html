@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>02_security-rules.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="api">セキュリティルール — APIトークン管理・社長が試行錯誤して確立した運用</h1>
+<blockquote>
+<p>対象: Campersメンバー
+所要時間: 20〜30分の理解＋随時</p>
+</blockquote>
+<hr />
+<h2 id="_1">このファイルでわかること</h2>
+<ul>
+<li>APIトークンの正しい管理方法（.envファイル）</li>
+<li>やってはいけない危険な行為</li>
+<li>社長が実際にやらかして学んだ教訓</li>
+</ul>
+<hr />
+<h2 id="_2">なぜセキュリティが最初に来るか</h2>
+<p>Claude Codeは強力です。eBay APIキー、Chatwork APIキー、各種サービスのトークン … これらが揃って初めて業務AI化ができます。</p>
+<p>しかし<strong>そのトークンが漏れたら</strong>：
+- eBayアカウントが乗っ取られる
+- 顧客データが盗まれる
+- スタッフ宛Chatworkで偽メッセージが送られる
+- 不正課金される</p>
+<p>「便利さ」と「危険さ」は表裏一体。最初に<strong>正しい管理方法</strong>を身につけてから業務AI化に進みます。</p>
+<hr />
+<h2 id="1api-env">ルール1：APIトークンは必ず .env で管理する</h2>
+<h3 id="_3">やってはいけないこと</h3>
+<p>❌ <strong>コード内に直接書く</strong>:</p>
+<pre><code class="language-python">EBAY_API_KEY = &quot;abc123xyz789...&quot;   # ← 絶対NG
+</code></pre>
+<p>❌ <strong>CLAUDE.md などのMarkdownに書く</strong>:</p>
+<pre><code class="language-markdown">私のAPIキーは abc123xyz789 です  ← ← 絶対NG
+</code></pre>
+<p>❌ <strong>GitHubに直接プッシュする</strong>:
+- パブリックリポジトリは即座に世界中のbotに発見される
+- プライベートでも、運営側からアクセス可能</p>
+<h3 id="env">正しい方法：.envファイル</h3>
+<p>プロジェクトフォルダのトップに <code>.env</code> という名前のファイルを作って、そこにトークンを書きます：</p>
+<pre><code>EBAY_APP_ID=your_app_id_here
+EBAY_CERT_ID=your_cert_id_here
+CHATWORK_API_TOKEN=your_token_here
+</code></pre>
+<p>そして <code>.gitignore</code> に <code>.env</code> を必ず追加（GitHubに上がらないようにする）：</p>
+<pre><code>.env
+.env.*
+</code></pre>
+<p>コードからは環境変数として読み込みます：</p>
+<pre><code class="language-python">import os
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.getenv(&quot;EBAY_APP_ID&quot;)
+</code></pre>
+<hr />
+<h2 id="2claude-code-env">ルール2：Claude Code には .env の中身を見せない</h2>
+<p>Claude Code は便利ですが、<strong>.envファイルの中身をチャットに出力させてはいけません</strong>。</p>
+<h3 id="_4">何が問題か</h3>
+<ul>
+<li>チャットログがAnthropic側に送信される（学習に使われない契約だが、ログには残る）</li>
+<li>スクリーンショットを誰かに送ったときに漏れる</li>
+<li>セッション履歴を共有したときに漏れる</li>
+</ul>
+<h3 id="claude">社長と Claude のルール</h3>
+<ul>
+<li>Claude が <code>.env</code> ファイルの<strong>中身を表示する行為は禁止</strong></li>
+<li>値が必要な時は、<strong>社長が直接ファイルに書き込む</strong>（Claudeはテンプレを作るだけ）</li>
+<li>Claudeは「.envを開きました」「項目を追加しました」と宣言するが、<strong>値は見ない／見せない</strong></li>
+</ul>
+<p>これは社長が実際に体験して、Claude Codeの設定（settings.local.json の deny ルール）に焼き込んでいます。</p>
+<hr />
+<h2 id="3">ルール3：本番の顧客データ・注文データは扱う前に必ず確認</h2>
+<p>eBayの本番注文データやBayChatの本番DBを扱う作業は、<strong>社長が明示的に許可してから</strong>着手します。</p>
+<p>ヒヤリハットの例：
+- テスト用と思って本番DBに書き込み → データ消失
+- 「全件削除して」と指示 → 本当に全件消えた
+- 「このメッセージを送って」 → スタッフ全員に意図しないSlack送信</p>
+<p><strong>Claude Code は強力すぎる</strong>ため、確認なしで動くと不可逆な事故が起きます。</p>
+<hr />
+<h2 id="4settingslocaljson">ルール4：settings.local.json の権限管理</h2>
+<p>Claude Code はコマンド実行権限を <code>settings.local.json</code> で管理します。
+このファイルに「ALLOW」されているコマンドはユーザー確認なしで実行されます。</p>
+<h3 id="_5">ベストプラクティス</h3>
+<ul>
+<li>ワイルドカード（<code>Bash(*)</code>等）は使わない</li>
+<li>個別コマンドを必要に応じて追加</li>
+<li>怪しいコマンドはallowリストから削除（特に rm, sudo, curl等の外部送信）</li>
+<li>定期的に棚卸しする（社長は隔週メンテで実施）</li>
+</ul>
+<hr />
+<h2 id="5github-private">ルール5：GitHubバックアップは Private リポジトリで</h2>
+<p>社長の事業フォルダは GitHub に毎日深夜0時に自動バックアップされています。</p>
+<ul>
+<li>リポジトリは<strong>必ずPrivate</strong>（Publicにすると世界中に公開）</li>
+<li>バックアップ先：<a href="https://github.com/kshimomoto0522/reffort-claude">https://github.com/kshimomoto0522/reffort-claude</a>（社長の例）</li>
+<li>メンバーも自分のGitHubアカウントで Private リポジトリを作成すべし</li>
+</ul>
+<hr />
+<h2 id="_6">社長が試行錯誤して学んだこと</h2>
+<h3 id="1api">失敗1：APIトークンを設定ファイルに直書き</h3>
+<ul>
+<li>→ 早期に発見できたので被害ゼロ</li>
+<li>→ 即座に .env 管理へ移行</li>
+<li>→ settings.local.json から該当行を削除</li>
+</ul>
+<h3 id="2claude-code-env_1">失敗2：Claude Code に .env の中身を読ませた</h3>
+<ul>
+<li>→ セッションログにトークンが残る可能性に気付いた</li>
+<li>→ settings.local.json で .env の Read を deny に設定</li>
+</ul>
+<h3 id="3slack">失敗3：本番Slackに意図せず送信</h3>
+<ul>
+<li>→ 「このメッセージ送信して」を Claude が即実行</li>
+<li>→ 以降「送信前に必ずGOを確認する」ルールを徹底</li>
+</ul>
+<p>これらは Reffort で実際に起きた事例で、それぞれ運用ルール化されました。</p>
+<hr />
+<h2 id="_7">次のステップ</h2>
+<p>→ <code>03_claude-md-template.md</code> で、自分用のCLAUDE.mdを作る</p>
+<hr />
+<p><em>社長の体験談（journey-log.md L452-491 ほか）から要点整理</em>
+<em>関連 memory: feedback_security.md / feedback_env_file_handling.md</em></p></body></html>

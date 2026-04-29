@@ -1,0 +1,133 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>03_claude-md-template.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="claudemd">CLAUDE.md テンプレート — メンバーがコピペして使える初期設定</h1>
+<blockquote>
+<p>対象: Campersメンバー
+使い方: 以下の枠内をコピーして自分のプロジェクトフォルダのトップに <code>CLAUDE.md</code> という名前で保存。空欄を埋める。</p>
+</blockquote>
+<hr />
+<h2 id="claudemd_1">CLAUDE.md とは</h2>
+<p>Claude Code はプロジェクトフォルダにある <code>CLAUDE.md</code> を<strong>毎セッション最初に必ず読み込みます</strong>。
+ここに書いた内容が「あなたのClaudeの基本方針」になります。</p>
+<p>社長が試行錯誤の末に確立した構造をテンプレート化しました。</p>
+<hr />
+<h2 id="_1">テンプレート（コピペ用）</h2>
+<p>以下を <code>CLAUDE.md</code> にコピーして、<code>【】</code>内を自分の事業情報で埋めてください。</p>
+<pre><code class="language-markdown"># 【あなたの事業名】 — Claude Code コアルール
+
+&gt; 毎セッション最優先・本ファイルは80行以下に保つ（肥大化防止）
+
+---
+
+## 私について（要点）
+
+- 名前: 【あなたの名前】
+- 事業: 【eBay輸出 / メルカリ / その他フリマ等】
+- 取扱商材: 【スニーカー / アパレル / 雑貨 / 他】
+- プログラミング経験: 【未経験 / 初心者 / 中級】
+- 業務スタッフ: 【外注○名 / 自分のみ】
+- 月間売上規模: 【記入任意】
+- 1年の目標: 【例：AI化で業務時間半減・売上維持／関税対応で利益率回復／等】
+
+---
+
+## 重要ルール
+
+- APIトークンは必ず `.env` 管理（コードに直書き禁止）
+- 本番の顧客／注文データを操作する作業は必ず私（オーナー）の確認を得る
+- 同じ指示を3回以上やり直していたら設計が間違っている合図
+- セッションが重くなったら新セッションへの引継ぎを提案
+- 出来ない事は素直に「出来ない」と言う（嘘をついて完了報告しない）
+- 開ける／確認できる／実行できる事は私に依頼せず Claude が自分でやる
+
+---
+
+## 私の業務プロセス（AI化したい順に並べる）
+
+優先度を1〜5で記入：
+
+| 業務 | AI化優先度 | メモ |
+|---|---|---|
+| リサーチ | 【】 | 【現状の手間・課題】 |
+| 出品 | 【】 | 【】 |
+| 在庫管理 | 【】 | 【】 |
+| 仕入管理 | 【】 | 【】 |
+| メッセージ対応 | 【】 | 【】 |
+| 発送 | 【】 | 【】 |
+| 経理・確定申告 | 【】 | 【】 |
+| 分析・KPI | 【】 | 【】 |
+| 広告 | 【】 | 【】 |
+
+---
+
+## 回答スタイル
+
+- 専門用語は必ず簡単な説明を添える・素人向けに
+- 選択肢提示→私が判断
+- 数字は「だから何をすべきか」まで踏み込む
+- 私の判断が最適でないと感じた時は理由添えて軌道修正提案
+
+---
+
+## セッション終了時のチェックリスト
+
+「終了」「おつかれ」等の終了示唆発言で実行：
+
+1. 今日やったことを `journey-log.md` に追記
+2. 重要な意思決定は memory に保存
+3. 設定変更があれば本ファイルに反映
+
+---
+
+## 参照
+
+- セキュリティ詳細: `00-claude-code-foundation/cases/02_security-rules.md`
+- やってはいけないこと一覧: `00-claude-code-foundation/cases/05_dos-and-donts.md`
+- 隔週メンテ手順: `00-claude-code-foundation/cases/06_maintenance-cycle.md`
+
+---
+
+*作成: 【YYYY-MM-DD】（自分の Claude Code 導入日）*
+*更新: 業務AI化の進捗に応じて随時*
+</code></pre>
+<hr />
+<h2 id="_2">カスタマイズのポイント</h2>
+<h3 id="1">1. 「私について（要点）」は具体的に</h3>
+<ul>
+<li>Claude は毎回これを読むので、毎回同じ説明をしなくて済む</li>
+<li>「未経験」と書けば自動で平易な日本語で答えてくれる</li>
+<li>取扱商材を書けば、関連する話題で先回り提案してくれる</li>
+</ul>
+<h3 id="2">2. 「業務プロセスの優先度」を埋める</h3>
+<ul>
+<li>自分の業務でどこから着手すべきかが明確になる</li>
+<li>優先度5（即必要）から順にAI化していくロードマップになる</li>
+<li>これが空欄だと「何から始めるか」が曖昧で時間を浪費する</li>
+</ul>
+<h3 id="3">3. 「回答スタイル」は妥協しない</h3>
+<ul>
+<li>メンバー本人がプログラミング未経験なら「素人向け」を絶対書く</li>
+<li>これがないとClaudeは技術用語連発で説明する</li>
+</ul>
+<h3 id="4-80">4. 80行以下を維持する</h3>
+<ul>
+<li>社長が試行錯誤して確立したルール</li>
+<li>これを超えると「肥大化」が始まり、Claude のレスポンスが悪化する</li>
+<li>詳細は <code>06_maintenance-cycle.md</code> を参照</li>
+</ul>
+<hr />
+<h2 id="claudemd_2">応用：部門別 CLAUDE.md</h2>
+<p>複数の業務がある場合は、フォルダごとに CLAUDE.md を置けます：</p>
+<pre><code>my-ebay-business/
+  CLAUDE.md                    ← トップ：基本方針
+  research/
+    CLAUDE.md                  ← リサーチ業務専用
+  shipping/
+    CLAUDE.md                  ← 発送業務専用
+</code></pre>
+<p>Claude Code は<strong>作業中のフォルダから親方向にCLAUDE.mdを遡って読み込みます</strong>。
+research/ で作業すると、<code>my-ebay-business/CLAUDE.md</code> + <code>research/CLAUDE.md</code> の両方が自動ロードされます。</p>
+<p>これは応用なので、最初はトップに1つだけ置いて運用してください。</p>
+<hr />
+<h2 id="_3">次のステップ</h2>
+<p>→ <code>04_session-and-memory.md</code> で セッション・メモリの仕組みを理解</p>
+<hr />
+<p><em>社長の運用例: ルートCLAUDE.md（<code>/CLAUDE.md</code>）が参考実例</em></p></body></html>

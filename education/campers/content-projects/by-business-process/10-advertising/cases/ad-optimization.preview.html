@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>ad-optimization.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="ebayplgplpoffsite103">eBay広告最適化（PLG/PLP/Offsite・帰属103%発見・「広告税」エピソード）</h1>
+<blockquote>
+<p>業務段階: 10-広告最適化
+状況: 社長運用継続中（2026-03-26 開始・最適化進行中）
+元素材: journey-log.md L633-700</p>
+</blockquote>
+<hr />
+<h2 id="_1">何をやったか（目的・背景）</h2>
+<p>eBayの3種類の広告（PLG/PLP/Offsite）の実態を完全可視化し、「一律設定」から「階層型最適化」へ移行するプロジェクト。</p>
+<p>社長は数年間「PLG一律5%」のまま放置していた。ある日、改めて広告費の総額と帰属売上を可視化したところ、<strong>衝撃の事実が次々と発覚</strong>：</p>
+<ul>
+<li>PLG一律5%が実質「広告税」状態（売れ筋にも死蔵品にも同じ料率）</li>
+<li>帰属売上 $68,963 / 総売上 $66,724 = <strong>帰属率103%</strong>（明らかに重複計上）</li>
+<li>Offsite広告 2,878商品中、<strong>売却58商品のみ</strong>（成果率2%）</li>
+</ul>
+<p>このプロジェクトは社長の「数年来の思考停止」を打ち破った象徴的な事例。</p>
+<hr />
+<h2 id="_2">取り組みのプロセス（時系列要点）</h2>
+<h3 id="2026-03-26">可視化フェーズ（2026-03-26）</h3>
+<ul>
+<li>PLG / PLP / Offsite を別々に集計</li>
+<li>商品単位の広告費 vs 売上をマッピング</li>
+<li>「広告税」状態（一律料率の弊害）を発見</li>
+<li>帰属率103%の異常を発見</li>
+</ul>
+<h3 id="_3">分析フェーズ</h3>
+<ul>
+<li>2026年1月の帰属ルール変更を見落としていたことが発覚</li>
+<li>重複計上が3ヶ月続いていた</li>
+<li>Offsite広告の効果が極端に低いことを定量化</li>
+</ul>
+<h3 id="_4">最適化フェーズ（進行中）</h3>
+<ul>
+<li>階層型 PLG 設計：</li>
+<li>売れ筋（過去30日売上あり）：2%（最低料率）</li>
+<li>育成商品（インプ高だが売上低）：5〜8%</li>
+<li>死蔵品（インプ低・売上ゼロ）：0% または取り下げ</li>
+<li>Marketing API での自動管理を検討中</li>
+</ul>
+<hr />
+<h2 id="_5">つまづいたこと（失敗・遠回り）</h2>
+<h3 id="1">失敗1：「広告費は仕方ないコスト」と思考停止</h3>
+<ul>
+<li>数年間 PLG 5% を疑わず放置</li>
+<li>売れ筋にも死蔵品にも同じ料率</li>
+<li>教訓：<strong>「常識」を疑う・定期的に実態を可視化</strong></li>
+</ul>
+<h3 id="23">失敗2：帰属ルール変更を3ヶ月見落とし</h3>
+<ul>
+<li>2026年1月のeBay仕様変更通知を見ていなかった</li>
+<li>帰属売上が103%（重複計上）の状態を3ヶ月放置</li>
+<li>教訓：<strong>eBay公式アナウンスは月次でチェック</strong></li>
+</ul>
+<h3 id="3transaction-report">失敗3：Transaction Report だけで判断</h3>
+<ul>
+<li>PLP/Offsite は別途取得が必要</li>
+<li>Transaction Report のみだと「利益が多く見える」状態</li>
+<li>教訓：<strong>広告は3系統別々に集計</strong></li>
+</ul>
+<h3 id="4offsite">失敗4：Offsite広告を盲信</h3>
+<ul>
+<li>2,878商品が Offsite対象になっていた</li>
+<li>実は売却したのは58商品のみ（成果率2%）</li>
+<li>教訓：<strong>「広告掛けっぱなし」は危険・定期見直し必須</strong></li>
+</ul>
+<hr />
+<h2 id="_6">学んだこと（教訓）</h2>
+<ul>
+<li><strong>PLG階層型（売れ筋2%・育成5%）が推奨設定</strong></li>
+<li><strong>API による完全自動管理が可能</strong>（Marketing API）</li>
+<li><strong>帰属率103%は誰にでも起きる</strong>：重複計上の検知が必須</li>
+<li><strong>「広告税」発想からの脱却</strong>が利益率回復の鍵</li>
+<li><strong>Offsite は厳選</strong>：闇雲に対象を広げない</li>
+</ul>
+<hr />
+<h2 id="_7">メンバーへの含意（応用ポイント） ★</h2>
+<h3 id="_8">あなたも同じ状態かもしれない</h3>
+<ul>
+<li>PLG一律5%のまま放置していませんか？</li>
+<li>Offsite広告を「とりあえず全商品オン」にしていませんか？</li>
+<li>帰属率を一度でも計算したことがありますか？</li>
+</ul>
+<h3 id="_9">必要な前提</h3>
+<ul>
+<li>eBay Seller Hub にアクセス可能</li>
+<li>過去3ヶ月の Transaction Report と Advertising Sales Report を持っている</li>
+<li>Excel / Sheets で集計できる（Claude Code が手伝う）</li>
+</ul>
+<h3 id="1_1">最初の1個を作る手順</h3>
+<ol>
+<li>Transaction Report と Advertising Sales Report をダウンロード</li>
+<li>Claude に「商品単位で広告費と売上を集計して、広告費率の高い商品TOP20を出して」と依頼</li>
+<li>「広告費率 &gt; 10% の商品」「Impressionゼロの商品」を可視化</li>
+<li>階層型料率の設計（売れ筋・育成・死蔵）</li>
+<li>Seller Hub 上で手動変更（最初は10〜20商品で試す）</li>
+<li>1ヶ月後に効果検証</li>
+<li>効果が確認できたら Marketing API での自動化検討</li>
+</ol>
+<h3 id="_10">やってはいけないこと</h3>
+<ul>
+<li>❌ PLG一律5%のまま放置</li>
+<li>❌ Offsite を「全オン」のまま</li>
+<li>❌ 帰属ルール変更を見逃す（年1〜2回ある）</li>
+<li>❌ Transaction Report だけで広告効果を判断</li>
+<li>❌ いきなり全商品の料率変更（最初は10〜20商品で）</li>
+</ul>
+<hr />
+<h2 id="_11">数値で見えた事実（社長運用例）</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>数値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>総収入</td>
+<td>$64,600</td>
+<td>—</td>
+</tr>
+<tr>
+<td>広告費合計</td>
+<td>$6,336</td>
+<td>広告費率約9.8%</td>
+</tr>
+<tr>
+<td>PLG（成果報酬）一律料率</td>
+<td>5%</td>
+<td>売れ筋にも死蔵品にも同じ</td>
+</tr>
+<tr>
+<td>帰属売上 / 総売上</td>
+<td>103%</td>
+<td>重複計上の証拠</td>
+</tr>
+<tr>
+<td>Offsite対象商品</td>
+<td>2,878件</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Offsite売却商品</td>
+<td>58件</td>
+<td>成果率2%</td>
+</tr>
+</tbody>
+</table>
+<p>→ 階層型に移行できれば<strong>数千ドル/月の利益改善見込み</strong></p>
+<hr />
+<h2 id="_12">配信先別の使い分け</h2>
+<table>
+<thead>
+<tr>
+<th>配信先</th>
+<th>適合度</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campers ◎</td>
+<td>◎</td>
+<td>「皆さんの広告設定どうなっていますか？」で最も刺さる</td>
+</tr>
+<tr>
+<td>匿名X</td>
+<td>○</td>
+<td>「数年放置していた広告税」エピソードは普遍的価値</td>
+</tr>
+<tr>
+<td>Note有料</td>
+<td>◎</td>
+<td>「広告最適化の実装ガイド」3本構成可能</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_13">ストーリー化候補（コンテンツ素材）</h2>
+<p>タイトル案：
+- 「数年放置していた『広告税』に気付いた話」
+- 「eBay広告で月数千ドル捨てていた事例」
+- 「帰属率103%の異常を発見してから何が変わったか」
+- 「PLG一律5%は思考停止の象徴」</p>
+<hr />
+<h2 id="journey-logmd">元素材（journey-log.md 該当行・関連ファイル）</h2>
+<ul>
+<li>journey-log.md L633-700（2026-03-26 広告最適化プロジェクト開始）</li>
+<li>関連 memory: <code>project_ad_optimization.md</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（コンテンツ蓄積基盤整備セッション）</em>
+<em>更新: Marketing API 自動化完了時</em></p></body></html>

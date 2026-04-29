@@ -11,7 +11,9 @@
 
 ## コード本体
 
-- `gas_shiire_tool.js` ... 仕入管理表GASツール（本番Apps Scriptと同期するマスター）
+- `gas/shiire/コード.js` ... 仕入管理表GASツール（本番Apps Scriptと同期するマスター・clasp管理）
+- `gas/shiire/.clasp.json` ... clasp設定（本番GAS scriptId紐付け）
+- `gas/shiire/appsscript.json` ... GASマニフェスト
 - その他Pythonツール類（ASICS・adidas等は別フォルダ）
 
 ## 参照なし（archive/）

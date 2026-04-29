@@ -22,9 +22,14 @@ originSessionId: cad5d328-fbe2-462e-8502-6ca7c9ebaa09
 
 ### ✅ 正しい流れ（例外なし）
 1. Write / Edit でファイル作成
-2. **同じターン内で** `start "" "絶対パス"` を実行して開く
+2. **同じターン内で** `start "" "絶対パス"` を実行して開く（`.claude/hooks/file_auto_open.py` が自動補助）
 3. ユーザーには「開きました。要点は〜」と**開いたことを先に宣言**してから説明に入る
 4. どんなに小さい変更でも、社長が見る可能性があるファイルは全て開く
+
+### 🔧 機械化バックアップ（2026-04-25）
+- `.claude/hooks/file_auto_open.py`（PostToolUse / `Write|Edit`）：`.env*` `.md` `.html` `.txt` `.csv` `.xlsx` `.pptx` `.pdf` を自動オープン。`.md` は HTML プレビュー化して開く。除外：`.claude/` `archive/` `memory/` 配下、`CLAUDE.md` `index.md` `README.md` 等
+- `.claude/hooks/action_guard_stop.py`（Stop / 警告のみ）：応答中の NG フレーズ（「ダブルクリック」「開いて確認してください」「探してください」等）を検出して警告
+- 詳細：`.claude/rules/honesty_and_self_completion.md`（誠実性 > 自己完結 > 言葉遣い の優先順位）
 
 **適用範囲**: 全部門・全タスク。.md / .py / .json / .xlsx / .pptx / .pdf / .html / .txt 等ファイル種別を問わない。
 

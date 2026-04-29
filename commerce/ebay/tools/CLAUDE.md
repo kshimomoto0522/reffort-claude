@@ -178,12 +178,13 @@ rows = ws.get_all_values()
 
 ---
 
-## 仕入管理表 GASツール（gas_shiire_tool.js）— 要点のみ
+## 仕入管理表 GASツール（`gas/shiire/コード.js`）— 要点のみ
 
 - **概要**: eBay Trading API（GetOrders）で新規オーダーを自動取得→仕入管理表に反映するGAS
 - **トリガー**: 毎朝9:45頃・本番設定済み
 - **APIキー**: Script Properties に保存（コード直書き禁止）
-- **状態**: 2026-04-22 大改修後・本番反映完了
+- **状態**: 2026-04-28 clasp移行完了（旧Monaco貼付け運用は廃止）
+- **コード更新**: `cd gas/shiire/ && clasp push`（Chrome/Monaco不要）
 - **詳細仕様・本番/テスト環境ID・3層重複防御・コード更新手順**: `gas-shiire-tool-spec.md` 参照
 
 ---

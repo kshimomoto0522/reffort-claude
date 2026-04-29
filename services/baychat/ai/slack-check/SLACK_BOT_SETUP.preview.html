@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>SLACK_BOT_SETUP.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="slack-bot">Slack Bot セットアップ手順（社長作業）</h1>
+<p>baychat-slack-check スクリプトを動かすには Slack Bot Token (<code>xoxb-...</code>) が必要です。
+Anthropic 経由のSlack MCPはOAuthでトークンが取れないため、別途 Slack App を作成して Bot を発行します。</p>
+<p>所要時間：約10分</p>
+<hr />
+<h2 id="step-1-slack-app">STEP 1: Slack App を作成</h2>
+<ol>
+<li>https://api.slack.com/apps にアクセス</li>
+<li>「Create New App」→「From scratch」を選択</li>
+<li>App Name: <code>Reffort BayChat Bot</code>（なんでもOK）</li>
+<li>Workspace: Reffort のワークスペースを選択</li>
+<li>「Create App」</li>
+</ol>
+<h2 id="step-2-bot-token-scopes">STEP 2: Bot Token Scopes を設定</h2>
+<ol>
+<li>左メニュー「OAuth &amp; Permissions」を開く</li>
+<li>下にスクロールして「Scopes」→「Bot Token Scopes」へ</li>
+<li>「Add an OAuth Scope」で以下7個を<strong>全部</strong>追加：</li>
+<li><code>channels:history</code> — チャンネルメッセージ取得</li>
+<li><code>channels:read</code> — チャンネル情報取得</li>
+<li><code>chat:write</code> — メッセージ投稿</li>
+<li><code>users:read</code> — ユーザー情報取得</li>
+<li><code>groups:history</code> — プライベートチャンネル対応</li>
+<li><code>groups:read</code> — プライベートチャンネル情報</li>
+<li><code>chat:write.public</code> — Bot未参加でも投稿可（任意）</li>
+</ol>
+<h2 id="step-3-workspace">STEP 3: Workspace にインストール</h2>
+<ol>
+<li>「OAuth &amp; Permissions」ページ上部の「Install to <Workspace>」をクリック</li>
+<li>権限確認画面で「許可」をクリック</li>
+<li>上に表示される「Bot User OAuth Token」（<code>xoxb-...</code> で始まる）をコピー</li>
+</ol>
+<h2 id="step-4-env">STEP 4: トークンを .env に貼り付け</h2>
+<p>ファイル：<code>C:/Users/KEISUKE SHIMOMOTO/Desktop/reffort/services/baychat/ai/slack-check/.env</code></p>
+<pre><code>SLACK_BOT_TOKEN=xoxb-（ここにペースト）
+</code></pre>
+<h2 id="step-5-bot">STEP 5: Bot をチャンネルに招待</h2>
+<p>Slackで <code>#baychat-ai導入</code> チャンネルを開き、メッセージ欄に：</p>
+<pre><code>/invite @Reffort BayChat Bot
+</code></pre>
+<p>入力して送信。Botが入室したら準備完了。</p>
+<h2 id="step-6">STEP 6: 動作確認</h2>
+<p>社長は何もしなくてOK。Claudeに「Slack Botセットアップ完了しました」と一言送れば、Claudeが下記を順に実行します：
+1. DRY_RUN モードでテスト実行
+2. 結果を社長に確認
+3. DRY_RUN=false に切替えて本番化
+4. Windows Task Scheduler 起動</p>
+<hr />
+<h2 id="_1">注意事項</h2>
+<ul>
+<li><code>xoxb-...</code> トークンは絶対に他者と共有しない（漏洩したら STEP 1 で revoke→再発行）</li>
+<li>App は今後 Reffort 専用の他用途にも使い回せる（例：今後別チャンネル監視を追加する等）</li>
+<li>スコープ追加時は再インストール（STEP 3）が必要</li>
+</ul></body></html>

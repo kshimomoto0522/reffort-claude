@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>04_session-and-memory.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="_1">セッション管理・メモリ仕組み</h1>
+<blockquote>
+<p>対象: Campersメンバー
+所要時間: 15〜20分の理解＋実践</p>
+</blockquote>
+<hr />
+<h2 id="_2">このファイルでわかること</h2>
+<ul>
+<li>Claude Code の「セッション」とは何か</li>
+<li>「メモリ」がどう動くか</li>
+<li>セッションが重くなったときの対処法</li>
+<li>過去の会話を引き継ぐ方法</li>
+</ul>
+<hr />
+<h2 id="_3">セッションとは</h2>
+<p>Claude Code を起動して、終了するまでの一連の会話 = 1セッション です。</p>
+<pre><code class="language-bash">claude       # ← セッション開始
+&gt; ...        # ← 会話・作業
+&gt; /exit      # ← セッション終了
+</code></pre>
+<ul>
+<li>1セッション中の会話は連続している（前の発言を覚えている）</li>
+<li>セッションを終了すると、その会話は記録には残るが「現在の文脈」からは消える</li>
+<li>次のセッションは「白紙」から始まる</li>
+</ul>
+<p>ただし<strong>メモリ機能</strong>を使えば、セッションをまたいで覚えてくれます。</p>
+<hr />
+<h2 id="_4">メモリ仕組み</h2>
+<p>Claude Code には3種類の「記憶」があります：</p>
+<h3 id="1-claudemd">1. CLAUDE.md（毎セッション読み込まれる）</h3>
+<p>プロジェクトフォルダのCLAUDE.mdは<strong>毎セッション最初に必ず読まれます</strong>。
+ここに書いた内容 = Claudeの基本方針。</p>
+<h3 id="2-memory">2. memory/フォルダ（明示的に保存・参照する記憶）</h3>
+<p>過去の決定・フィードバック・重要な情報を保存しておく場所。
+Claudeが必要に応じて読み込んで判断材料にします。</p>
+<p>社長の例：
+- <code>memory/user_profile.md</code> — 社長のプロフィール（毎回読む）
+- <code>memory/feedback_security.md</code> — セキュリティルール
+- <code>memory/project_consulting.md</code> — コンサル事業の方針</p>
+<h3 id="3-journey-logmd">3. journey-log.md（時系列の業務記録）</h3>
+<p>日々の作業・学び・失敗を時系列で蓄積するファイル。
+コンテンツ素材としても、過去の参照記録としても価値が高い。</p>
+<hr />
+<h2 id="_5">セッションが重くなったときの対処法</h2>
+<p>長時間作業していると、Claudeのレスポンスが遅く・回答が浅くなります。
+これは <strong>コンテキスト（会話履歴）が膨らみすぎた</strong> 状態。</p>
+<h3 id="1">対処1：新セッションを開始</h3>
+<pre><code class="language-bash">/exit              # 一度終了
+claude             # 再起動
+</code></pre>
+<p>重要な情報はCLAUDE.mdとmemory/に保存されているので、引き継ぎはほぼ自動。</p>
+<h3 id="2">対処2：明示的にメモリを保存</h3>
+<p>セッション終了前に：</p>
+<pre><code>今日の重要な学びをmemoryに保存して
+今日やったことをjourney-log.mdに追記して
+</code></pre>
+<h3 id="3claudemd">対処3：CLAUDE.mdの肥大化を点検</h3>
+<p>セッションが頻繁に重くなるなら、CLAUDE.mdが200行を超えている可能性。
+詳細は <code>06_maintenance-cycle.md</code> を参照。</p>
+<hr />
+<h2 id="_6">過去の会話を引き継ぐ方法</h2>
+<h3 id="1_1">パターン1：自然な引継ぎ（メモリ使用）</h3>
+<ol>
+<li>重要な決定をしたら「memory に保存して」と頼む</li>
+<li>次セッションでClaude が自動で読み込んで認識</li>
+</ol>
+<h3 id="2handoff">パターン2：明示的な引継ぎ（handoff 文書）</h3>
+<p>大きなプロジェクトの途中で session を切るときは、引継ぎドキュメントを作る：</p>
+<pre><code>このプロジェクトの引継ぎ文書を `.claude/handoff_&lt;日付&gt;_&lt;テーマ&gt;.md` に作って。
+次セッションで `@&lt;その文書&gt; を読んで進めて` と言えば再開できる形で。
+</code></pre>
+<h3 id="3journey-logmd">パターン3：journey-log.md 経由</h3>
+<p>セッション終了時に必ず journey-log に追記。
+次セッションで「journey-log を見て今日何やる？」と聞けば、Claudeが過去を踏まえて提案。</p>
+<hr />
+<h2 id="_7">メモリの種類（社長運用に倣う）</h2>
+<p>memory/ 配下に保存するときは、種類を意識すると後で取り出しやすい：</p>
+<table>
+<thead>
+<tr>
+<th>種類</th>
+<th>内容</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user</td>
+<td>あなた自身のプロフィール・スキル</td>
+<td><code>user_profile.md</code></td>
+</tr>
+<tr>
+<td>feedback</td>
+<td>Claude への指示・修正方針</td>
+<td><code>feedback_communication.md</code></td>
+</tr>
+<tr>
+<td>project</td>
+<td>進行中のプロジェクト情報</td>
+<td><code>project_ad_optimization.md</code></td>
+</tr>
+<tr>
+<td>reference</td>
+<td>外部リソースへの参照</td>
+<td><code>reference_ebay_api.md</code></td>
+</tr>
+</tbody>
+</table>
+<p>社長は約30〜40個のmemoryファイルで運用しています（多すぎると逆効果）。</p>
+<hr />
+<h2 id="_8">やってはいけないこと</h2>
+<h3 id="ng1">NG1：メモリに何でも書きすぎる</h3>
+<ul>
+<li>50ファイル超えると Claude が把握しきれない</li>
+<li>重要なものだけ・1ファイル100行以下で運用</li>
+</ul>
+<h3 id="ng2claudemd">NG2：CLAUDE.md にメモリの内容を全部書く</h3>
+<ul>
+<li>CLAUDE.mdは200行以下に保つ</li>
+<li>詳細はmemory/に分割</li>
+</ul>
+<h3 id="ng3journey-log">NG3：journey-log を整形しすぎて書かなくなる</h3>
+<ul>
+<li>完璧な書式より「とにかく書く」</li>
+<li>後からClaudeに整形させればOK</li>
+</ul>
+<hr />
+<h2 id="_9">次のステップ</h2>
+<p>→ <code>05_dos-and-donts.md</code> で やってはいけないこと一覧</p>
+<hr />
+<p><em>社長の運用ルール（CLAUDE.md / memory運用）から要点整理</em></p></body></html>

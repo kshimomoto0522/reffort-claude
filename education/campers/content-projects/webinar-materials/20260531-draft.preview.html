@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>20260531-draft.md</title><style>body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}table{border-collapse:collapse;margin:12px 0;}th,td{border:1px solid #cbd5e1;padding:6px 12px;}th{background:#f1f5f9;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}pre code{background:transparent;padding:0;}blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}a{color:#2563eb;}</style></head><body><h1 id="531-campersv01">5/31 Campersウェビナー骨子（v0.1 枠組み）</h1>
+<blockquote>
+<p><strong>日時</strong>: 2026年5月31日（日）
+<strong>対象</strong>: Campersメンバー（約40名・eBayセラー・非エンジニア）
+<strong>テーマ</strong>: eBay × AI運営 — あなたの業務もあなた自身でAI化できる
+<strong>話者</strong>: 下元 敬介（株式会社Reffort 代表）</p>
+<p>⚠️ <strong>本ファイルは枠組みドラフト</strong>。4/26版（<code>education/consulting/webinar-draft-20260426.md</code>）をベースに、コンテンツ蓄積基盤整備（2026-04-29）の方針を反映した v0.1。実際のスクリプト肉付け・スライド作成は社長との対話で進める。</p>
+</blockquote>
+<hr />
+<h2 id="_1">核心メッセージ（再掲）</h2>
+<p><strong>「あなたもプログラミング未経験でも、Claude Code で自分の業務をAI化できる。私が体験した変化を、あなたの商材・あなたの業務で実現するロードマップを示す」</strong></p>
+<p>社長の事例（在庫管理ツール／週次レポート／広告最適化／仕入管理 等）は<strong>「テンプレ」ではなく「方法論を例示する素材」</strong>として配置する。</p>
+<hr />
+<h2 id="90">全体構成（約90分想定）</h2>
+<table>
+<thead>
+<tr>
+<th>パート</th>
+<th>内容</th>
+<th>時間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>共感パート — メンバーのリアルを言葉にする</td>
+<td>5分</td>
+</tr>
+<tr>
+<td>2</td>
+<td>変化のストーリー — 私（社長）が体験した3ヶ月</td>
+<td>15分</td>
+</tr>
+<tr>
+<td>3</td>
+<td>方法論 — eBay運営11業務段階の AI化マトリクス</td>
+<td>25分</td>
+</tr>
+<tr>
+<td>4</td>
+<td>第一歩 — あなたの最初の1個を選ぶフレームワーク</td>
+<td>15分</td>
+</tr>
+<tr>
+<td>5</td>
+<td>「Claude Code はeBay以外でも」— 自社サービスの参考例</td>
+<td>10分</td>
+</tr>
+<tr>
+<td>6</td>
+<td>AIコース月額の案内 — 伴走の提案</td>
+<td>10分</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Q&amp;A</td>
+<td>自由</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="15">パート1：共感パート（5分）</h2>
+<h3 id="_2">狙い</h3>
+<p>メンバーの今のリアルを言葉にして、共感のフックを作る。「自分のことを言われている」と感じてもらう。</p>
+<h3 id="_3">トピック</h3>
+<ul>
+<li>トランプ関税の影響でeBayが厳しい</li>
+<li>Campers も70名→40名に減少している事実</li>
+<li>売上ダメージ・新しい打ち手が見つからない・時間が足りない</li>
+<li>「同じやり方を続けているだけでは生き残れない」</li>
+</ul>
+<h3 id="_4">使う素材</h3>
+<ul>
+<li>4/26版 webinar-draft-20260426.md パート1 を流用・更新</li>
+</ul>
+<h3 id="_5">注意</h3>
+<ul>
+<li>「皆さんも同じ状況ですよね？」と巻き込む</li>
+<li>自分の数字（売上 $60,000 等）公開可否は社長判断</li>
+</ul>
+<hr />
+<h2 id="215">パート2：変化のストーリー（15分）</h2>
+<h3 id="_6">狙い</h3>
+<p>社長自身が「プログラミング未経験」から「Claude Code で人生変わった」までの<strong>数字＋エピソード</strong>で、変化の現実性を示す。</p>
+<h3 id="_7">トピック</h3>
+<ul>
+<li>2026年3月11日にClaude Code導入</li>
+<li>1ヶ月半でeBay運営のやり方が根本から変わった</li>
+<li>業務効率化を超えた変化（経営パートナーAIを持つ感覚）</li>
+<li>数字での裏付け：時間短縮・コスト削減・利益率改善</li>
+</ul>
+<h3 id="_8">使う素材（業務縦軸から抽出）</h3>
+<ul>
+<li><strong>00-claude-code-foundation/</strong>：Claude Code を入れて何が変わったか</li>
+<li><strong>09-analytics/cases/weekly-report.md</strong>：週次レポート手動3〜4時間 → 完全自動の Before/After</li>
+<li><strong>05-procurement/cases/shiire-tool.md</strong>：仕入忘れ月数件 → ゼロ</li>
+<li><strong>10-advertising/cases/ad-optimization.md</strong>：「広告税」発見・帰属率103%</li>
+</ul>
+<h3 id="_9">注意</h3>
+<ul>
+<li>数字公開範囲は社長判断</li>
+<li>「私だからできた」ではなく「方法論があれば誰でもできる」と伝える</li>
+</ul>
+<hr />
+<h2 id="3-ebay11-ai25">パート3：方法論 — eBay運営11業務段階の AI化マトリクス（25分・最重要）</h2>
+<h3 id="_10">狙い</h3>
+<p><strong>「あなたの業務もAI化できる」を体系的に示す</strong>。商材バラバラのメンバー全員が「自分の業務に当てはめられる」状態を作る。</p>
+<h3 id="_11">構成</h3>
+<ol>
+<li>eBay運営の業務プロセス全体図を提示（10業務段階＋Claude Code基盤）</li>
+<li>各業務段階で「AIで何ができるか」を概要紹介</li>
+<li>自分（社長）の事例は「業務プロセスのこの段階で、私はこうした」と位置づけて紹介</li>
+</ol>
+<h3 id="11">11業務段階の紹介順（推奨）</h3>
+<ol>
+<li><strong>00-claude-code-foundation</strong>（土台）→ メンバー向け導入の入口</li>
+<li><strong>09-analytics</strong>（数字を見るインパクト・92.7%売上ゼロの衝撃）</li>
+<li><strong>10-advertising</strong>（広告税エピソード）</li>
+<li><strong>05-procurement</strong>（仕入管理AI化の代表例）</li>
+<li><strong>03-mukozai-stock-management</strong>（リサーチ・スクレイピング系）</li>
+<li><strong>04-uzaiko-stock-management</strong>（有在庫の人向け）</li>
+<li><strong>08-accounting</strong>（スタッフがいる人向け）</li>
+<li><strong>01-research / 02-listing</strong>（5/31までに事例作成・予告）</li>
+<li><strong>07-shipping / 11-direct-sales</strong>（簡潔に）</li>
+<li><strong>06-trouble-handling</strong>（参考までに）</li>
+</ol>
+<h3 id="_12">使う素材</h3>
+<ul>
+<li>各業務段階の README.md</li>
+<li>各業務段階の cases/*.md</li>
+<li>INDEX.md の業務縦軸ビュー</li>
+</ul>
+<h3 id="_13">注意</h3>
+<ul>
+<li>1業務段階あたり2〜3分で簡潔に</li>
+<li>詳細は AIコースで深掘りすると伝える</li>
+</ul>
+<hr />
+<h2 id="4-115">パート4：第一歩 — あなたの最初の1個を選ぶフレームワーク（15分）</h2>
+<h3 id="_14">狙い</h3>
+<p>メンバーが<strong>自分の業務に重ねて「最初に何をAI化するか」を決められる</strong>状態にする。</p>
+<h3 id="_15">フレームワーク</h3>
+<ol>
+<li><strong>業務棚卸し</strong>：自分の1日／1週間の業務を11業務段階に当てはめる</li>
+<li><strong>ボトルネック特定</strong>：どこが最も時間取られているか</li>
+<li><strong>AI化優先度を1〜5で記入</strong>：CLAUDE.mdテンプレ（03_claude-md-template.md）参照</li>
+<li><strong>最初の1個を選ぶ基準</strong>：</li>
+<li>毎日／毎週やっている定型作業</li>
+<li>数値で効果が測れるもの</li>
+<li>失敗してもダメージが小さいもの</li>
+</ol>
+<h3 id="_16">使う素材</h3>
+<ul>
+<li><strong>00-claude-code-foundation/cases/03_claude-md-template.md</strong> の業務プロセス優先度表</li>
+<li><strong>00-claude-code-foundation/cases/07_complete-setup-checklist.md</strong></li>
+</ul>
+<h3 id="_17">配布素材（候補）</h3>
+<ul>
+<li>業務棚卸しワークシート（PDF）</li>
+<li>11業務段階の早見表</li>
+</ul>
+<hr />
+<h2 id="5claude-code-ebay10">パート5：Claude Code はeBay以外でも（10分）</h2>
+<h3 id="_18">狙い</h3>
+<p>「Claude Code を使いこなせばeBayだけでなく、他事業にも・新規事業にも応用できる」を示す。</p>
+<h3 id="_19">トピック</h3>
+<ul>
+<li>自社サービス（BayChat）でも Claude Code を活用していること</li>
+<li>AI Reply のプロンプト改善サイクル</li>
+<li>外注先（Cowatech）への発注書も Claude が支援</li>
+<li>ダイレクト販売サイトの構築も可能</li>
+</ul>
+<h3 id="_20">使う素材</h3>
+<ul>
+<li><strong>applications-beyond-ebay/cases/baychat-ai-reply.md</strong>（参考例として）</li>
+<li><strong>11-direct-sales/cases/direct-sales.md</strong>（直取応用）</li>
+</ul>
+<h3 id="_21">重要な注意</h3>
+<ul>
+<li>BayChat の話は <strong>Campers向け参考例のみ</strong>（匿名X／Note には出さない）</li>
+<li>「皆さんが新規事業を考えるときも応用できる」というメッセージ</li>
+</ul>
+<hr />
+<h2 id="6ai10">パート6：AIコース月額の案内（10分）</h2>
+<h3 id="_22">狙い</h3>
+<p><strong>単発講座で終わらせず、メンバーが自分の業務をAI化するまで伴走する月額コース</strong>を案内する。</p>
+<h3 id="_23">提案するコース内容（社長確認待ち）</h3>
+<ul>
+<li>月額追加（Campers月会費に上乗せ・金額は社長判断）</li>
+<li>月次の課題・Q&amp;A・個別相談・ツール開発サポート</li>
+<li>ロードマップ：業務棚卸し → ボトルネック特定 → 最初の1個 → スプレッドシート活用 → API連携 → 自動化 → 自分専用ツール</li>
+<li>詳細は <code>ai-course-curriculum/curriculum-draft.md</code> 参照</li>
+</ul>
+<h3 id="_24">注意</h3>
+<ul>
+<li>「金を巻き取る」感を出さない</li>
+<li>「メンバーに新たな収入源を作る・スキルアップ・脱退抑止」が動機</li>
+<li>「金を払ってでも学びたい」と感じてもらえる中身が前提</li>
+</ul>
+<hr />
+<h2 id="7qa">パート7：Q&amp;A</h2>
+<h3 id="_25">想定される質問</h3>
+<ul>
+<li>「私の取扱商材でも本当にできるのか？」→ 商材問わず業務プロセスは共通</li>
+<li>「プログラミング未経験で大丈夫か？」→ 社長自身が未経験から始めた</li>
+<li>「コストはどれくらいかかるのか？」→ Claude Maxプラン＋APIで月数万円程度</li>
+<li>「最初の1個に何を選ぶべきか？」→ 業務棚卸し → ボトルネック特定で決まる</li>
+<li>「失敗が怖い」→ 小さく始める・失敗込みで学ぶ</li>
+</ul>
+<hr />
+<h2 id="_26">当日の演出（社長判断）</h2>
+<ul>
+<li>ライブデモする？ or 録画動画？</li>
+<li>スライド形式 or ホワイトボード形式？</li>
+<li>配布資料は事前？当日？</li>
+<li>録画して後日配信OK？</li>
+<li>AIコース申込みフォームは事前準備？</li>
+</ul>
+<hr />
+<h2 id="531">5/31までの準備タスク</h2>
+<h3 id="_27">必須</h3>
+<ul>
+<li>[ ] 01-research / 02-listing の事例作成（社長指示）</li>
+<li>[ ] 03-mukozai-stock-management にフリマ関連事例追加</li>
+<li>[ ] AIコースの料金・開始時期決定（社長判断）</li>
+<li>[ ] パート1〜7の本文スクリプト作成（社長との対話で進める）</li>
+<li>[ ] スライド作成（PowerPoint or Keynote）</li>
+<li>[ ] 配布資料作成（業務棚卸しワークシート）</li>
+</ul>
+<h3 id="_28">余裕があれば</h3>
+<ul>
+<li>[ ] 申込みフォーム準備</li>
+<li>[ ] 録画環境準備</li>
+<li>[ ] リハーサル</li>
+</ul>
+<hr />
+<h2 id="_29">関連</h2>
+<ul>
+<li>4/26版草案: <code>education/consulting/webinar-draft-20260426.md</code></li>
+<li>AIコースカリキュラム: <code>ai-course-curriculum/curriculum-draft.md</code></li>
+<li>INDEX（取り出し窓口）: <code>INDEX.md</code></li>
+<li>関連 memory: <code>project_campers_webinar.md</code></li>
+</ul>
+<hr />
+<p><em>作成: 2026-04-29（v0.1 枠組み）</em>
+<em>更新: スクリプト肉付け・社長判断反映時</em></p></body></html>

@@ -1,0 +1,105 @@
+[
+  {
+    "name": "井上慶成",
+    "account_id": 1842232,
+    "rooms": [
+      {
+        "room_id": "178951974",
+        "label": "Campers 質問・共有チャット",
+        "in_room_before": true,
+        "off_result": {
+          "ok": true,
+          "before": {
+            "チャットの参加者一覧を表示する": false,
+            "メッセージ送信を許可する": false
+          },
+          "after": {
+            "チャットの参加者一覧を表示する": false,
+            "メッセージ送信を許可する": false
+          },
+          "details": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "verified": true
+        },
+        "delete": {
+          "status": "dry_run"
+        },
+        "on_result": {
+          "ok": true,
+          "before": {
+            "チャットの参加者一覧を表示する": false,
+            "メッセージ送信を許可する": false
+          },
+          "after": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "details": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "verified": true
+        },
+        "status": "ok"
+      },
+      {
+        "room_id": "213457923",
+        "label": "Campers ツール質問チャット",
+        "in_room_before": true,
+        "off_result": {
+          "ok": true,
+          "before": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "after": {
+            "チャットの参加者一覧を表示する": false,
+            "メッセージ送信を許可する": false
+          },
+          "details": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "verified": true
+        },
+        "delete": {
+          "status": "dry_run"
+        },
+        "on_result": {
+          "ok": true,
+          "before": {
+            "チャットの参加者一覧を表示する": false,
+            "メッセージ送信を許可する": false
+          },
+          "after": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "details": {
+            "チャットの参加者一覧を表示する": true,
+            "メッセージ送信を許可する": true
+          },
+          "verified": true
+        },
+        "status": "ok"
+      },
+      {
+        "room_id": "167902309",
+        "label": "Campers【全体連絡チャット】",
+        "in_room_before": true,
+        "delete": {
+          "status": "dry_run"
+        },
+        "status": "ok"
+      }
+    ],
+    "status": "completed",
+    "pre_membership": {
+      "178951974": true,
+      "213457923": true,
+      "167902309": true
+    }
+  }
+]

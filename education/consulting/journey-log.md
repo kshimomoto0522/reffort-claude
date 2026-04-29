@@ -2042,3 +2042,294 @@ JP祝日ハードコードテーブル（2026-2027年分・毎年メンテ要）
 ---
 
 *最終更新: 2026年4月24日 深夜 — 仕入管理表GAS Fulfillment API移行完了（発送期限正確化＋ミズノ型番10桁化＋OAuth2運用開始）*
+
+---
+
+## 2026-04-28（火）— Chrome MCP既知バグ顕在化＋Playwright/Windowsタスク／clasp 三本立て移行
+
+### 🎯 今日の最大トピック
+
+「Chromeを介して何かを操作する自動化」が**Anthropic 側の既知バグ**で連続失敗していた。設計レベルで Claude Code を中継させない構造に書き換え、複数の運用課題を同時解決した1日。
+
+### 📌 主要な3つの出来事
+
+**1. Chatwork APIトークン同期不整合の発覚と修正**
+- 社長が新トークン発行＆.env 更新したつもりが、`commerce/ebay/analytics/.env`（CW_TOKEN）にしか反映されておらず、`management/x-digest/.env` と `~/.claude.json` MCP設定2箇所は古い無効トークンのまま
+- 3箇所を新トークンに揃え、Chatwork API `/me` で疎通確認
+- 副次成果：eBay週次レポート4/27月曜分が未配信だったため遅延配信で復旧（Excel新規生成・GSheets 12シート更新・備考102件引継）
+
+**2. Campersメンバー削除タスク：Anthropic既知バグ顕在化 → Playwright + Windowsタスク移行**
+- 4/25削除予定の井上慶成さんが3部屋全てに在籍したまま（自動タスクが連日 permission_required で失敗）
+- 既知バグ調査：[Issue #30356](https://github.com/anthropics/claude-code/issues/30356) / [#47180](https://github.com/anthropics/claude-code/issues/47180) — Chrome MCP の per-origin permission問題＋Claude scheduled-task の per-task承認キャッシュ問題
+- **Reffort側で直せないのでアーキテクチャ変更で回避**
+  - Playwright + cookie永続化で Chrome MCP を完全置き換え
+  - 起動経路を Windowsタスクスケジューラから直接 → Claude Code を中継させない
+- 井上慶成さん削除を本番実行で完走（68→67・72→71・68→67、権限OFF→ON verified=True）
+- Windowsタスク `CampersMemberRemoval`（毎朝5:00・バッテリー対応）登録、旧 `CampersChromeRestart` 削除
+- 即時起動テスト exit_code=0 / DM配信 / ログ生成 すべて確認
+
+**3. 仕入管理表のコード更新自動化（clasp 導入）**
+- 社長から「Chromeを開いて編集する系の問題は解決したか」と確認 → 仕入管理表GAS更新の Monaco貼付け運用が依然手作業 と判明
+- 調査で `clasp`（Google公式 Apps Script CLI v3.3.0）が**既に npm install -g 済み・未活用**と判明
+- `clasp login` → `clasp clone` で本番GAS（1EGuRaF...）を `commerce/ebay/tools/gas/shiire/` に展開
+- 既存ローカルマスター（76KB・1331行）と本番が**完全一致**確認（LF正規化後 identical）
+- `clasp push` 動作テスト「Script is already up to date」OK
+- 旧Monaco貼付け補助ファイル6個（gas_shiire_tool.js / gas_copy.html / gas_shiire_b64.txt / gas_shiire_content.json / serve_gas.py / update_gas_copy.py・合計約210KB）を削除
+
+### 🧠 確立した設計原則：スプレッドシート自動化3型ルーティング
+
+memory `feedback_spreadsheet_automation_patterns.md` に保存：
+
+| 型 | 適用 | ツール |
+|---|---|---|
+| A. GAS内ロジック | シートを開いた瞬間メニュー・行追加トリガー・GAS自身がAPI叩く | **clasp** + Apps Script |
+| B. 外部読み書き | Pythonバッチでデータ集計→シート書込 | **Sheets API + Service Account** |
+| C. UI操作 | 管理画面でしか操作できないUI | **Playwright + cookie** |
+
+### 📊 数値Before/After
+
+| 項目 | Before | After |
+|------|--------|-------|
+| 仕入管理表コード更新 所要時間 | 数分（PowerShell→Chrome→Monaco→手動Ctrl+V→8秒wait→Ctrl+S） | 数秒（`clasp push`一発） |
+| Chrome操作系タスクの起動経路中継数 | 5層（scheduled-task → Claude session → Bash → MCP → Chrome拡張） | 2層（Windowsタスク → python） |
+| Chatwork APIトークン参照箇所のズレ | 3箇所中2箇所が古いまま | 3箇所全て同期 |
+| Campers削除タスクの既知バグ依存 | あり（Anthropic修正待ち） | なし（Playwright自前） |
+| obsoleteファイル | 6個（210KB） | 0個（削除済） |
+
+### 🚫 廃止した運用
+
+- Claude in Chrome MCP 経由のChrome navigate（無人実行向け）
+- Monaco editorへの手動Ctrl+V運用
+- gas_copy.html（ブラウザでクリップボード経由でコピー用HTML）
+- gas_shiire_b64.txt / gas_shiire_content.json（base64中継）
+- serve_gas.py（gas_copy.htmlのローカルサーバー）
+- update_gas_copy.py（マスター→gas_copy.html変換）
+
+### 🆕 新設運用
+
+- Windowsタスク `CampersMemberRemoval`（毎朝5:00・bat→python直接）
+- `commerce/ebay/tools/gas/shiire/` clasp プロジェクト構造
+- スプレッドシート自動化3型ルーティング（memory）
+- ケーススタディ `education/campers/content-projects/spreadsheet-automation-case-study/`
+
+### 💡 学び
+
+1. **「ツール側の既知バグ」を最初に疑う癖**：Reffortのコードに問題があるとは限らない。Anthropic Issue検索は重要なデバッグ手段。
+2. **公式CLIがある領域は迷わずそれを使う**：Apps Script なら clasp、Drive なら Drive API。手作業ブラウザ操作は負け筋。
+3. **自動化の中継数は最小化**：5層中継より2層直接の方が壊れにくく原因切り分けも速い。
+4. **認証は1回・サイト全体が原則**：clasp login 1回で全GAS、service account 1個で全シート、Playwright cookie 1個で1サイト全体。
+
+### 📦 コンテンツ候補（社長判断で配信タイミング決定）
+
+- 「AIにスプレッドシートを編集させる3つの方法」— 中小事業者向け実例
+- 「Anthropic Chrome MCP の無人実行バグ：実戦回避策」— 技術的希少価値高
+- 「Apps Script の Monaco editor 手動Ctrl+V運用が破綻した話」— 失敗譚
+- 「clasp で Apps Script を Git管理する」— 実装記事
+- 「Windowsタスクスケジューラを最後の砦にする設計」— アーキテクチャ哲学
+
+### ⏭️ 次セッション冒頭で確認
+
+1. 4/30 朝5:00 の Kento さん削除（Windowsタスク `CampersMemberRemoval` の本番運用初検証）
+2. 仕入管理表 9:45 自動実行で異常なし確認
+3. 他GASプロジェクトを clasp化する候補があるか棚卸し（社長判断）
+4. Anthropic Issue #30356/#47180 の修正ステータスを定期チェック
+
+### 🔗 関連ファイル / 直リンク
+
+- ケーススタディ: [education/campers/content-projects/spreadsheet-automation-case-study/](education/campers/content-projects/spreadsheet-automation-case-study/)
+- 仕入管理表: [commerce/ebay/tools/gas/shiire/コード.js](commerce/ebay/tools/gas/shiire/コード.js)
+- 仕入管理表 spec: [commerce/ebay/tools/gas-shiire-tool-spec.md](commerce/ebay/tools/gas-shiire-tool-spec.md)
+- Campers削除スクリプト: [education/campers/scripts/campers_member_removal.py](education/campers/scripts/campers_member_removal.py)
+- 3型ルーティング memory: `feedback_spreadsheet_automation_patterns.md`
+- Chrome無人タスク方針 memory: `feedback_chrome_mcp_unattended.md`
+
+---
+
+## 2026年4月28日（火）夜 ― 月次請求書 半自動化ツール完成
+
+### 🎯 課題
+
+eBay外注3名（本間・清水・佐々木）の毎月の請求書作成が、複数スプレッドシートを跨ぐ手作業で1時間以上かかっていた：
+- 「収支表（KeiS）2026」に請求書ブロックを月毎に14列ずつ右に追加
+- 清水分は「仕入管理表」の月次小計値を反映
+- 佐々木分は「【佐々木さん】実績管理表」に当月収支表からSKU=Sオーダーを抽出貼付・累計式更新・5万円切捨×19%でインセンティブ計算・備考生成
+- 印刷・PDF化・送付は社長手作業（変えない）
+
+### ✅ やったこと
+
+1. **3シート構造を全部Sheets API調査**（読み取り専用・3回イテレーション）
+   - 請求書ブロックの列オフセット法則：件名=+1列・日付=+13列・単価=+8列・備考=+11列（3名共通）
+   - 佐々木実績管理表のG3/I3累計式・前月集計行のSUM範囲・予備空白1行ルールを解明
+2. **本体ツール実装**：`commerce/ebay/staff-ops/invoice-automation/`
+   - `config.yml`（シートID・閾値・テンプレ）・`inv_common.py`（認証・列計算・ブロックコピー・列幅コピー・書式コピー）
+   - `inv_honma.py` / `inv_shimizu.py` / `inv_sasaki.py`（最複雑：累計検出・SKU抽出・型変換・5万切捨×19%）
+   - `run.py`（CLI・ドライラン→社長OK→`--apply`の2段階）
+3. **スラッシュコマンド** `.claude/commands/月次請求書.md` 作成 → Claude Codeが自動認識・「/」入力で予測候補表示
+4. **2026年3月分を実行**（130件のSKU=S抽出・インセンティブ¥152,000自動算出）
+5. **3度のフィードバック修正**：
+   - 1回目：清水ロジックで「月名行から下方向に小計」と逆向きにしていた→修正
+   - 2回目：列幅・書式（緑背景・罫線）がコピーされない→`updateDimensionProperties`と`PASTE_FORMAT`を追加
+   - 3回目：列ごとの値型が異なる（USD列=文字列・JPY列=数値・%列=数値）→`_transform_cell()`で列単位に型変換
+
+### 💡 学び
+
+1. **Sheets APIの`copyPaste`は値・数式・書式・結合はコピーするが、列幅と「source側で列ごとに違う値型」は別扱い**：
+   - 列幅は`updateDimensionProperties`で別途
+   - 値型は受信側がローカル運用に合わせて変換（USD「$159.00」は文字列・JPY「¥30,845」は数値+書式）
+   - これは手動コピペの「値貼付」と完全に同じ挙動を再現する作業
+2. **手作業の運用は意外と「1セルごとに型が違う」**：機械化前に正解データの型を内部値で確認しておかないとSUMが効かない罠にハマる
+3. **ドライラン・apply 2段階フロー**は社長確認の場としても、推定値と実値の差分検証としても効く（推定インセンティブ・実I3新値で2円差→丸め誤差として許容）
+4. **gspread 6.x の構造**：`ss.client.session`（旧`ss.client.http_client.session`は無効）・`ws.update(range_name=...,values=...)`がkw推奨
+5. **社長の「これでこのタスクを終了します」発言**：1タスクの完了示唆であってセッション終了ではない場合あり。チェックリストは実行する
+
+### 🔧 仕組み
+
+- `/月次請求書 YYYYMM` で起動（省略時は前月）
+- ドライラン：書込予定セル・推定インセンティブ・累計値を画面表示
+- 社長OK後 `--apply` で書込：実績管理表→I3新値再取得→請求書計算→請求書書込の3フェーズ
+- `logs/YYYYMM_apply_*.json` に書込内容記録（ロールバック判断用）
+- 2027年度切替時：`config.yml` のシートID・シート名（"〜（2026）"→"〜（2027）"）差し替えのみ
+
+### 📦 コンテンツ候補（社長判断で配信タイミング決定）
+
+- **「事業者の月次請求書を半自動化する設計」** — 複数シート跨ぎ・累計計算・型混在の実戦例
+- **「Sheets API copyPasteの落とし穴：列幅と値型は別物」** — 技術的希少価値（手動コピペとAPIコピーの動作差を1日で踏み抜いた失敗譚）
+- **「ドライラン→社長OK→applyフロー」** — 業務AI自動化の堅牢な型としての設計パターン
+
+### ⏭️ 次セッション冒頭で確認
+
+1. 5/01以降の4月分実行：`/月次請求書 202604` でドライラン → 推定値が妥当か
+2. 月次請求書ツールに想定外の追加要望が出ていないか（出品数・リサーチ数の自動化要望など）
+3. 仕入管理表GAS（4/24完成）の月跨ぎ動作（4/30〜5/01）
+4. Campers削除タスクの本番運用初検証（4/30 5:00）
+
+### 🔗 関連ファイル / 直リンク
+
+- ツール本体: [commerce/ebay/staff-ops/invoice-automation/](commerce/ebay/staff-ops/invoice-automation/)
+- スラッシュコマンド: [.claude/commands/月次請求書.md](.claude/commands/月次請求書.md)
+- 実行ログ: `commerce/ebay/staff-ops/invoice-automation/logs/`
+
+---
+
+*最終更新: 2026年4月28日夜 — 月次請求書 半自動化ツール完成（3名分・スラッシュコマンド対応・3度修正反映済み）*
+
+---
+
+## 2026年4月29日 ― コンテンツ蓄積基盤整備（業務縦軸構造への根本刷新）
+
+### やったこと
+
+✅ **content-projects/ を業務プロセス縦軸（00〜11の12段階）構造に根本刷新**
+- 前セッション提案の「テーマ別ケーススタディ7本」案は社長指摘で却下
+- 社長指摘により「業務プロセス縦軸 × Claude Code活用例」マトリクス構造に再設計
+- 旧 INDEX.md 破棄・既存2本（claude-code-maintenance / spreadsheet-automation）を archived-by-theme/ に退避
+
+✅ **業務段階12フォルダ新設**：
+- 00-claude-code-foundation（メンバー向け導入ガイド・最優先・7ファイル整備）
+- 01-research / 02-listing（5/31向けに事例作成予定）
+- 03-mukozai-stock-management（旧「在庫管理」を改名）
+- 04-uzaiko-stock-management（新設・有在庫管理）
+- 05-procurement / 06-trouble-handling（要検討）/ 07-shipping
+- 08-accounting / 09-analytics / 10-advertising / 11-direct-sales
+
+✅ **削除した段階**：旧05-customer-service（BayChat統一でClaude Code推奨不可）、旧11-tariff-response（ChatGPTでも代替可・Claude Code優位なし）
+
+✅ **横断スキル整備**：cross-cutting-skills/external-integrations/（スプレッドシート3型・Chatwork MCP・スクレイピング戦略）
+
+✅ **applications-beyond-ebay/ 新設**：BayChat AI Reply は「Campers向け参考例専用・匿名X/Note 一切不可」と明記
+
+✅ **メンバー向け導入ガイド7ファイル整備**（00-claude-code-foundation/cases/）：
+- 01_setup-installation / 02_security-rules / 03_claude-md-template
+- 04_session-and-memory / 05_dos-and-donts / 06_maintenance-cycle / 07_complete-setup-checklist
+
+✅ **主要事例6本を要点整理**（journey-log.md 引用ではなく再構成）：
+- 03 在庫管理ツール / 05 仕入管理表GAS / 08 月次請求書スキル
+- 09 週次レポート / 10 広告最適化 / 11 ダイレクト販売
+- 全ファイルに「メンバーへの含意（応用ポイント）」セクション必須化（社長事例を「テンプレ」ではなく「方法論の例示」として機能させる核心）
+
+✅ **INDEX.md を配信ダッシュボードとして再設計**：
+- 業務縦軸ビュー（完成度・3軸適合度の表）
+- 配信フォーマット別ビュー（5/31ウェビナー候補・X単発候補・Note記事候補）
+- 「やっておくべき／やってはいけない」横断ビューへの導線
+
+✅ **5/31 Campersウェビナー骨子 v0.1 完成**：webinar-materials/20260531-draft.md
+- 核心メッセージ「あなたもプログラミング未経験でも、Claude Code で自分の業務をAI化できる」
+- 全7パート構成（共感→変化のストーリー→方法論→第一歩→eBay以外→AIコース案内→Q&A）
+
+✅ **AIコース月額カリキュラム v0.1 完成**：ai-course-curriculum/curriculum-draft.md
+- 全6単元構成（Unit 1〜6）
+- 業務棚卸し → ボトルネック特定 → 最初の1個 → スプレッドシート → API連携 → 自動化 → 自分専用ツール のロードマップ
+
+✅ **memory修正**：
+- feedback_content_audience_framing.md：BayChat の Note/X 言及「触れても匿名化」→「**完全禁止**」に修正
+- project_consulting.md：記録場所セクションを業務縦軸構造に更新
+- project_campers_webinar.md：5/31骨子完成を反映
+- MEMORY.md：3項目更新
+
+### 学び
+
+💡 **「テーマ別棚卸し」と「業務縦軸ビュー」は別物**
+- 過去のテーマ別整理だけでは「メンバーが自分の業務に当てはめる」窓口にならない
+- 業務プロセス縦軸でフォルダ振り分けすることで、メンバーが自分の業務段階を見つけて該当事例を即取り出せる
+
+💡 **「事例＝テンプレ」ではなく「事例＝方法論の例示」**
+- メンバーの商材バラバラ問題への答え
+- 「メンバーへの含意（応用ポイント）」セクション必須化で対応
+- 社長の事例（ASICS / 仕入管理 / 週次レポート 等）を真似するのではなく、自分の業務に応用するための素材として配置
+
+💡 **BayChat の Note/X 完全禁止**
+- 匿名でも「あるSaaSプロダクト」と書いた瞬間 Reffort と特定される
+- 社長個人を伏せる Axis 2 の方針と矛盾する
+- → applications-beyond-ebay/ に Campers向け参考例専用として保管
+
+💡 **「メンバー向け導入ガイド」を最優先で整備**
+- 社長指示「このmdを読み込ませればわたしが試行錯誤してルール化したことなどをやってくれる」
+- メンバーが自分のClaude Codeに食わせる用のテンプレート＋運用ガイド
+- 5/31ウェビナー前に完成させる必要がある（→ 完成）
+
+### ⚠️ 失敗・遠回り
+
+⚠️ **「タグ付けで十分」という浅い提案 → 社長指摘でフォルダ振り分け＋内容整理に修正**
+- 当初「journey-log.md にタグ付けする」提案 → 社長から「付箋を貼るより本棚に振り分けて整理しろ」
+- 修正：業務縦軸フォルダに振り分け＋journey-log を要点整理して再構成
+
+⚠️ **「テーマ別ケーススタディ9本」案 → 社長指摘で業務縦軸12段階に修正**
+- 過去テーマをそのまま並べただけの棚卸しになっていた
+- 社長指摘：「メンバーの商材バラバラなのに ASICS等を中心に据えても直接参考にならない」
+- 修正：業務プロセス縦軸でメンバーが自分の業務に重ねられる構造に
+
+⚠️ **2軸戦略の理解誤り**
+- 当初「Axis 1とAxis 2で素材を分ける」と読んでいた
+- 正：「素材は共通・社長個人を特定する情報のみ抜く」
+- BayChat は社長個人と紐づくため Note/X 完全禁止が正解
+
+⚠️ **「Campersとは何か」の本質理解が浅かった**
+- 社長から根本的な指摘：「メンバーの商材バラバラ・関税で売上減・新しい打ち手見つからない」状態への対応がコンテンツの核心
+- 「AI化の方法論を伝える＋メンバーが自分で実践できるまで伴走する」が社長が真に売りたいもの
+- AIコース月額の設計はその伴走の枠組み
+
+### 📦 コンテンツ候補（社長判断で配信タイミング決定）
+
+- **「『テーマ別棚卸し』ではなく『業務縦軸ビュー』が必要だった話」** — コンテンツ蓄積基盤の設計失敗→改善のメタな学び
+- **「事例はテンプレではなく方法論の例示」** — Campersメンバーの商材バラバラ問題への答え
+- **「業務プロセス12段階×Claude Code活用例」マトリクス** — 構造化フレームワーク自体がコンテンツになる
+
+### ⏭️ 次セッション冒頭で確認
+
+1. **01-research / 02-listing 事例作成**（社長が5/31向けに作るとコミット済み）
+2. **03-mukozai-stock-management にフリマ関連事例追加**（社長が5/31向けに準備予定）
+3. **AIコース月額の料金・開始時期決定**（社長判断）
+4. **5/31ウェビナースクリプトの肉付け**（webinar-materials/20260531-draft.md を社長と対話で詰める）
+5. **メンバーアクセス用サイトの方針決定**（Notion／Note マガジン／reffort.co.jp サブドメイン／専用Web）
+
+### 🔗 関連ファイル / 直リンク
+
+- 配信ダッシュボード: [education/campers/content-projects/INDEX.md](education/campers/content-projects/INDEX.md)
+- 業務縦軸: [education/campers/content-projects/by-business-process/](education/campers/content-projects/by-business-process/)
+- 5/31ウェビナー骨子: [education/campers/content-projects/webinar-materials/20260531-draft.md](education/campers/content-projects/webinar-materials/20260531-draft.md)
+- AIコースカリキュラム: [education/campers/content-projects/ai-course-curriculum/curriculum-draft.md](education/campers/content-projects/ai-course-curriculum/curriculum-draft.md)
+- 旧構造退避先: [education/campers/content-projects/archived-by-theme/](education/campers/content-projects/archived-by-theme/)
+
+---
+
+*最終更新: 2026年4月29日 — コンテンツ蓄積基盤を業務縦軸構造（00〜11の12段階＋横断スキル＋展示棚＋ウェビナー素材＋AIコース）に根本刷新*

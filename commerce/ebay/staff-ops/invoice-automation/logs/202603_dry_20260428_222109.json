@@ -1,0 +1,83 @@
+{
+  "year": 2026,
+  "month": 3,
+  "mode": "DRY-RUN（ドライラン）",
+  "targets": [
+    "honma",
+    "shimizu",
+    "sasaki"
+  ],
+  "plans": {
+    "honma": {
+      "staff": "本間",
+      "sheet": "本間請求書（2026）",
+      "src_block": "O:AB",
+      "dst_block": "AC:AP",
+      "src_col": 15,
+      "dst_col": 29,
+      "cells": {
+        "AD8": "出品商品メンテナンス作業（3月）",
+        "AP5": "2026/3/31",
+        "AK15": 10000
+      },
+      "needed_col_count": 42,
+      "_detail_count": null
+    },
+    "shimizu": {
+      "staff": "清水",
+      "sheet": "清水請求書（2026）",
+      "src_block": "O:AB",
+      "dst_block": "AC:AP",
+      "src_col": 15,
+      "dst_col": 29,
+      "shiire_subtotal_cell": "AH19",
+      "shiire_debug": {
+        "month_label_row": 21,
+        "subtotal_row": 19
+      },
+      "unit_price": 37200,
+      "cells": {
+        "AD8": "発送作業（3月）",
+        "AP5": "2026/3/31",
+        "AK15": 37200
+      },
+      "needed_col_count": 42,
+      "_detail_count": null
+    },
+    "sasaki": {
+      "staff": "佐々木",
+      "sheet": "佐々木請求書（2026）",
+      "src_block": "O:AB",
+      "dst_block": "AC:AP",
+      "src_col": 15,
+      "dst_col": 29,
+      "needed_col_count": 42,
+      "jisseki_sheet": "実績",
+      "monthly_balance_sheet": "収支表202603",
+      "prev_summary_row": 8373,
+      "prev_detail_start": 8374,
+      "prev_spare_row": 8529,
+      "new_summary_row": 8530,
+      "detail_start_row": 8531,
+      "detail_end_row": 8660,
+      "spare_blank_row": 8661,
+      "detail_count": 130,
+      "g3_old": "=R7+R21+R47+R94+R187+R265+R387+R546+R739+R999+R1252+R1504+R1841+R2176+R2460+R2807+R3214+R3530+R3864+R4170+R4498+R4847+R5192+R5517+R5762+R6004+R6228+R6437+R6678+R6842+R7018+R7185+R7384+R7577+R7751+R7916+R8112+G8242+R8373",
+      "i3_old": "=S7+S21+S47+S94+S187+S265+S387+S546+S739+S999+S1252+S1504+S1841+S2176+S2460+S2807+S3214+S3530+S3864+S4170+S4498+S4847+S5192+S5517+S5762+S6004+S6228+S6437+S6678+S6842+S7018+S7185+S7384+S7577+U7751+U7916+U8112+U8242+U8373",
+      "g3_new_tail": "+R8530",
+      "i3_new_tail": "+U8530",
+      "occupied_rows": [],
+      "prev_acc_u": 36559479.45000001,
+      "monthly_s_sum": 848698.34343141,
+      "estimated_monthly_u": 806263.4262598394,
+      "estimated_acc": 37365742.87625985,
+      "prev_floor": 36550000,
+      "estimated_floor": 37350000,
+      "estimated_target": 800000,
+      "estimated_incentive": 152000,
+      "estimated_remarks": "実績80万円 × 19%（累計3,735万円）",
+      "_detail_count": 130
+    }
+  },
+  "results": {}
+}

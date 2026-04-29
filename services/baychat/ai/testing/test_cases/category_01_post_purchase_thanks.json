@@ -1,0 +1,387 @@
+[
+  {
+    "id": "cat01_01_stage1_thanks_short",
+    "category": "post_purchase_thanks",
+    "stage": "S1",
+    "product_category": "Sneakers",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer just completed purchase and sent a short thank-you as the very first message of the thread.",
+    "buyer_ebay": "B01",
+    "buyer_message": "Just placed the order, thank you!",
+    "buyer_message_ja": "注文しました、ありがとうございます！",
+    "history_ja": [
+      "注文しました、ありがとうございます！"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"355315032752\", \"Title\": \"Onitsuka Tiger MEXICO 66 1183C102 751 YELLOW BLACK\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"150.00\", \"CurrentPrice\": \"150.00\", \"Quantity\": \"395\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"30.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-25T09:14:23.000Z] purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-25T09:18:02.000Z] Just placed the order, thank you!"
+      }
+    ]
+  },
+  {
+    "id": "cat01_02_stage1_excited_first_pair",
+    "category": "post_purchase_thanks",
+    "stage": "S1",
+    "product_category": "Sneakers",
+    "emotion": "excited",
+    "language": "en",
+    "situation": "Stage 1. Buyer says it's their first pair and is excited about the purchase.",
+    "buyer_ebay": "B02",
+    "buyer_message": "Hi! I just bought my first pair of these. Super excited — can't wait to receive them!",
+    "buyer_message_ja": "こんにちは！この靴を初めて買いました。とても楽しみで、届くのが待ちきれません！",
+    "history_ja": [
+      "こんにちは！この靴を初めて買いました。とても楽しみで、届くのが待ちきれません！"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"364892017543\", \"Title\": \"New Balance 990v6 Made in USA M990GL6 Grey\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"229.00\", \"CurrentPrice\": \"229.00\", \"Quantity\": \"42\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"30.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-26T14:02:11.000Z] purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-26T14:05:48.000Z] Hi! I just bought my first pair of these. Super excited — can't wait to receive them!"
+      }
+    ]
+  },
+  {
+    "id": "cat01_03_stage1_looking_forward",
+    "category": "post_purchase_thanks",
+    "stage": "S1",
+    "product_category": "Vintage Cameras",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer expresses they are looking forward to the item arriving. Polite, mid-length.",
+    "buyer_ebay": "B03",
+    "buyer_message": "Hello, just placed my order. Looking forward to receiving it. Thanks!",
+    "buyer_message_ja": "こんにちは、注文しました。届くのを楽しみにしています。ありがとうございます！",
+    "history_ja": [
+      "こんにちは、注文しました。届くのを楽しみにしています。ありがとうございます！"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"285731029814\", \"Title\": \"Olympus OM-1 35mm Film SLR Camera Body Vintage 1973\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:35mm Cameras\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"320.00\", \"CurrentPrice\": \"320.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-27T18:30:15.000Z] purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-27T18:34:02.000Z] Hello, just placed my order. Looking forward to receiving it. Thanks!"
+      }
+    ]
+  },
+  {
+    "id": "cat01_04_stage2_thanks_for_tracking",
+    "category": "post_purchase_thanks",
+    "stage": "S2",
+    "product_category": "Sneakers",
+    "emotion": "positive",
+    "language": "en",
+    "situation": "Stage 2. Seller already sent a shipping confirmation with tracking, and the buyer is thanking them for the fast handling.",
+    "buyer_ebay": "B04",
+    "buyer_message": "Got the tracking info, thanks for the fast shipping!",
+    "buyer_message_ja": "追跡情報を受け取りました。早いご対応ありがとうございます！",
+    "history_ja": [
+      "ご購入ありがとうございます。追跡番号は EJ123456789JP です。日本郵便にて発送済みです。よろしくお願いいたします。",
+      "追跡情報を受け取りました。早いご対応ありがとうございます！"
+    ],
+    "num_messages": 2,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"376102845739\", \"Title\": \"Asics Gel-Lyte III OG 1201A763 White Black US 9\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"135.00\", \"CurrentPrice\": \"135.00\", \"Quantity\": \"18\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"30.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-22T08:05:00.000Z] purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-22T09:30:18.000Z] Hello, thank you for your purchase! Your order has been shipped. Tracking number: EJ123456789JP (Japan Post). Estimated delivery is around May 2-5. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-22T22:14:08.000Z] Got the tracking info, thanks for the fast shipping!"
+      }
+    ]
+  },
+  {
+    "id": "cat01_05_stage2_arrived_looks_great",
+    "category": "post_purchase_thanks",
+    "stage": "S2",
+    "product_category": "Sneakers",
+    "emotion": "positive",
+    "language": "en",
+    "situation": "Stage 2. The item has arrived and the buyer is sharing their happy first impression.",
+    "buyer_ebay": "B05",
+    "buyer_message": "Just got my order in! They look amazing, thank you so much.",
+    "buyer_message_ja": "注文が届きました！とても素敵です、本当にありがとうございました。",
+    "history_ja": [
+      "ご購入ありがとうございます。発送が完了しました。追跡番号は EE987654321JP です。",
+      "注文が届きました！とても素敵です、本当にありがとうございました。"
+    ],
+    "num_messages": 2,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"305971283047\", \"Title\": \"Nike SB Dunk Low Travis Scott CT5053-001 US 10\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1450.00\", \"CurrentPrice\": \"1450.00\", \"Quantity\": \"3\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-19T11:20:00.000Z] purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-19T13:08:42.000Z] Thank you for your purchase! The item has been shipped. Tracking number: EE987654321JP. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-26T19:45:11.000Z] Just got my order in! They look amazing, thank you so much."
+      }
+    ]
+  },
+  {
+    "id": "cat01_06_stage2_will_leave_feedback",
+    "category": "post_purchase_thanks",
+    "stage": "S2",
+    "product_category": "Watches",
+    "emotion": "positive",
+    "language": "en",
+    "situation": "Stage 2. Buyer is wrapping up the conversation and saying they will leave positive feedback.",
+    "buyer_ebay": "B06",
+    "buyer_message": "Thanks again for the great service. I'll be leaving you positive feedback shortly!",
+    "buyer_message_ja": "素晴らしいご対応、改めてありがとうございました。後ほどポジティブな評価を残しますね！",
+    "history_ja": [
+      "ご購入ありがとうございます。発送が完了しました。追跡番号は EJ555666777JP です。",
+      "受け取りました！状態も良く、迅速な発送に感謝します。",
+      "ご購入と温かいメッセージをありがとうございます。これからもよろしくお願いいたします。",
+      "素晴らしいご対応、改めてありがとうございました。後ほどポジティブな評価を残しますね！"
+    ],
+    "num_messages": 4,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"394812075639\", \"Title\": \"Casio G-Shock GMW-B5000D-1JF Full Metal Silver\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Wristwatches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"550.00\", \"CurrentPrice\": \"550.00\", \"Quantity\": \"6\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"40.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-15T05:11:00.000Z] purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-15T07:42:18.000Z] Thank you for your purchase. The item has been shipped. Tracking number: EJ555666777JP (Japan Post). Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-23T16:18:55.000Z] Got it! Condition looks great, and shipping was super quick. Appreciate it!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-23T22:01:39.000Z] Thank you for your purchase and your kind message. We hope to serve you again. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-24T03:09:52.000Z] Thanks again for the great service. I'll be leaving you positive feedback shortly!"
+      }
+    ]
+  },
+  {
+    "id": "cat01_07_stage2_short_cheers",
+    "category": "post_purchase_thanks",
+    "stage": "S2",
+    "product_category": "Sneakers",
+    "emotion": "casual",
+    "language": "en",
+    "situation": "Stage 2. The seller already sent a fairly long reply, and the buyer is closing the thread with a single casual word.",
+    "buyer_ebay": "B07",
+    "buyer_message": "Cheers!",
+    "buyer_message_ja": "サンキュー！",
+    "history_ja": [
+      "ご購入ありがとうございます。発送が完了しました。追跡番号は LX123987654JP です。日本からの発送ですので、現地まで通常 7〜10 日ほどかかります。何かご不明な点があればお知らせください。",
+      "ありがとうございます、了解しました。",
+      "こちらこそありがとうございます。商品が無事に届きますように。",
+      "サンキュー！"
+    ],
+    "num_messages": 4,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"275829314776\", \"Title\": \"Adidas Samba OG B75806 Cloud White Core Black US 9.5\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"110.00\", \"CurrentPrice\": \"110.00\", \"Quantity\": \"24\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"30.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-20T13:48:00.000Z] purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-20T15:16:24.000Z] Thank you for your purchase! The item has been shipped. Tracking number: LX123987654JP (Japan Post). It usually takes 7-10 days from Japan to your destination. Please let us know if you have any questions. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-20T23:52:11.000Z] Thanks, got it."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-21T01:03:05.000Z] Thank you. We hope your item arrives safely. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-21T03:18:46.000Z] Cheers!"
+      }
+    ]
+  },
+  {
+    "id": "cat01_08_stage2_non_native_short_thanks",
+    "category": "post_purchase_thanks",
+    "stage": "S2",
+    "product_category": "Trading Cards",
+    "emotion": "positive",
+    "language": "en",
+    "situation": "Stage 2. Non-native English speaker buyer (Italian) sends a short, slightly broken English thank-you after the item arrived.",
+    "buyer_ebay": "B08",
+    "buyer_message": "Thank you very much. The item is perfect!",
+    "buyer_message_ja": "本当にありがとうございました。商品は完璧です！",
+    "history_ja": [
+      "ご購入ありがとうございます。本日発送いたしました。追跡番号は EJ222333444JP です。",
+      "本当にありがとうございました。商品は完璧です！"
+    ],
+    "num_messages": 2,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"166038472913\", \"Title\": \"Pokemon TCG Charizard Holo Base Set 4/102 PSA 8\", \"PrimaryCategoryName\": \"Toys & Hobbies:Collectible Card Games:Pokémon TCG\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"890.00\", \"CurrentPrice\": \"890.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-12T07:45:00.000Z] purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-12T09:18:33.000Z] Thank you for your purchase. The item was shipped today. Tracking number: EJ222333444JP. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-22T20:34:09.000Z] Thank you very much. The item is perfect!"
+      }
+    ]
+  },
+  {
+    "id": "cat01_09_stage2_warm_us_buyer",
+    "category": "post_purchase_thanks",
+    "stage": "S2",
+    "product_category": "Sneakers",
+    "emotion": "warm",
+    "language": "en",
+    "situation": "Stage 2. Friendly American buyer wrapping up the transaction with a warm casual closing.",
+    "buyer_ebay": "B09",
+    "buyer_message": "Awesome, you've been great! Thanks for the smooth transaction.",
+    "buyer_message_ja": "最高です、本当に助かりました！スムーズなお取引、ありがとうございました。",
+    "history_ja": [
+      "ご購入ありがとうございます。発送完了しました。追跡番号は LX667788991JP です。",
+      "ありがとう、追跡見ました！",
+      "メッセージありがとうございます。無事に届きますように。",
+      "最高です、本当に助かりました！スムーズなお取引、ありがとうございました。"
+    ],
+    "num_messages": 4,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"175918264033\", \"Title\": \"New Balance 1906R M1906RA Silver Metallic Sea Salt US 10.5\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"195.00\", \"CurrentPrice\": \"195.00\", \"Quantity\": \"11\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"30.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-21T16:02:00.000Z] purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-21T17:38:14.000Z] Thank you for your purchase! The item has been shipped. Tracking number: LX667788991JP. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-22T01:25:30.000Z] Thanks, got the tracking!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-22T03:11:48.000Z] Thank you for confirming. We hope your item arrives safely. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-28T22:50:07.000Z] Awesome, you've been great! Thanks for the smooth transaction."
+      }
+    ]
+  },
+  {
+    "id": "cat01_10_stage2_have_a_great_day",
+    "category": "post_purchase_thanks",
+    "stage": "S2",
+    "product_category": "Action Figures",
+    "emotion": "warm",
+    "language": "en",
+    "situation": "Stage 2. The conversation is finished and the buyer signs off with a friendly farewell.",
+    "buyer_ebay": "B10",
+    "buyer_message": "Thanks for everything, have a wonderful day!",
+    "buyer_message_ja": "本当にありがとうございました。素敵な一日をお過ごしください！",
+    "history_ja": [
+      "ご購入ありがとうございます。本日発送しました。追跡番号は EJ888999000JP です。",
+      "受け取りました、状態も完璧です。",
+      "メッセージありがとうございます。これからもよろしくお願いいたします。",
+      "本当にありがとうございました。素敵な一日をお過ごしください！"
+    ],
+    "num_messages": 4,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"196028471552\", \"Title\": \"Bandai S.H. Figuarts Goku Super Saiyan Action Figure\", \"PrimaryCategoryName\": \"Toys & Hobbies:Action Figures:Anime & Manga\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"95.00\", \"CurrentPrice\": \"95.00\", \"Quantity\": \"5\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"35.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "system",
+        "content": "event: [2026-04-13T10:22:00.000Z] purchase_completed"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-13T11:48:51.000Z] Thank you for your purchase. The item was shipped today. Tracking number: EJ888999000JP. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-22T18:55:14.000Z] Got it, condition is perfect!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-22T22:30:05.000Z] Thank you for your message. We hope to serve you again. Best regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-23T04:09:48.000Z] Thanks for everything, have a wonderful day!"
+      }
+    ]
+  }
+]

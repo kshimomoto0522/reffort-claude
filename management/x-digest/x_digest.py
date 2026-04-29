@@ -5,6 +5,7 @@ X（Twitter）情報収集・要約 → Chatwork自動報告スクリプト
 
 import os
 import sys
+import traceback
 import tweepy
 import anthropic
 import urllib.request
@@ -183,20 +184,66 @@ def send_to_chatwork(message_body):
         print(f"✅ Chatwork送信完了 message_id: {result.get('message_id')}")
 
 
+def send_failure_notice(step: str, err: BaseException) -> None:
+    """失敗時に社長個人DMへ通知する（サイレント停止防止）。
+
+    Why: 旧実装は例外発生時にスクリプトが落ちるだけで、Chatwork通知も飛ばず、
+         4/25〜4/29の5日連続サイレント停止の直接原因となった。
+    """
+    try:
+        if not CW_TOKEN:
+            return
+        # 社長個人DM（room_id 426170119）に固定送信。CW_ROOM_ID（=本番送信先）と分離する判断もありうるが
+        # 失敗通知も同じDMで届く運用で社長がすぐ気づける構成になっているため踏襲。
+        target_room_id = os.getenv("CHATWORK_FAILURE_ROOM_ID", CW_ROOM_ID) or "426170119"
+        jst = timezone(timedelta(hours=9))
+        now = datetime.now(jst).strftime("%Y-%m-%d %H:%M")
+        err_class = type(err).__name__
+        err_msg = str(err)[:600]
+        body = (
+            f"[info][title]⚠️ X情報ダイジェスト 失敗通知｜{now}[/title]"
+            f"■ 失敗ステップ: {step}\n"
+            f"■ 例外: {err_class}\n"
+            f"■ 内容: {err_msg}\n"
+            f"■ 起動経路: Windowsタスクスケジューラ\n"
+            f"対応: 社長確認をお願いします（クレジット枯渇/トークン期限切れ/ネットワーク等）。[/info]"
+        )
+        data = urllib.parse.urlencode({"body": body}).encode()
+        req = urllib.request.Request(
+            f"https://api.chatwork.com/v2/rooms/{target_room_id}/messages",
+            data=data,
+            method="POST",
+        )
+        req.add_header("X-ChatWorkToken", CW_TOKEN)
+        urllib.request.urlopen(req, timeout=15).read()
+    except Exception:
+        # 失敗通知の失敗はログのみで握り潰す（プロセスは exit 1 で抜ける）
+        traceback.print_exc()
+
+
 def main():
     print("=== X情報ダイジェスト 開始 ===")
 
-    print("📥 Xから投稿を取得中...")
-    tweets = fetch_home_timeline()
-    print(f"  → {len(tweets)}件取得")
+    step = "init"
+    try:
+        step = "fetch_home_timeline"
+        print("📥 Xから投稿を取得中...")
+        tweets = fetch_home_timeline()
+        print(f"  → {len(tweets)}件取得")
 
-    print("🤖 Claudeで要約中...")
-    summary = summarize_with_claude(tweets)
+        step = "summarize_with_claude"
+        print("🤖 Claudeで要約中...")
+        summary = summarize_with_claude(tweets)
 
-    print("📨 Chatworkに送信中...")
-    send_to_chatwork(summary)
+        step = "send_to_chatwork"
+        print("📨 Chatworkに送信中...")
+        send_to_chatwork(summary)
 
-    print("=== 完了 ===")
+        print("=== 完了 ===")
+    except BaseException as e:
+        traceback.print_exc()
+        send_failure_notice(step, e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

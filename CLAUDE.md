@@ -20,7 +20,9 @@
 - セッションが重くなったら「新セッションに引き継ぎますか？」
 - settings.json deny化推奨判断時は「deny設定にしますか？」と提案
 - APIトークンは `.env` 管理・コード直書き禁止（`memory/feedback_security.md`準拠）
-- **.env作業時3原則**：①会話文脈から対象.envを自動特定（曖昧でないのに社長に聞くのは違反・真に不明な時のみ確認）②Write/Edit直後にhookが自動オープン（`.claude/hooks/env_auto_open.py`）③「開きました」を必ず先に宣言してから次の作業へ
+- **.env作業時3原則**：①会話文脈から対象.envを自動特定（曖昧でないのに社長に聞くのは違反・真に不明な時のみ確認）②Write/Edit直後にhookが自動オープン（`.claude/hooks/file_auto_open.py`）③「開きました」を必ず先に宣言してから次の作業へ
+- **誠実性最優先**：実行不可能な事を偽装しない/無理にやらない/嘘の完了報告をしない。優先度＝誠実性 > 自己完結 > 言葉遣い（詳細 `.claude/rules/honesty_and_self_completion.md`）
+- **自己完結原則**：Claudeが出来る事（開く/探す/確認/実行/読む）を社長に依頼するのは禁止。NGフレーズ「ダブルクリックして」「探してください」「開いて確認」「パスは〇〇です」等。例外白リスト（認証/物理/事業判断/.env値入力等）は同上ファイル参照
 
 ---
 
@@ -57,27 +59,37 @@
 
 ## 自動タスク一覧（不在なら作成）
 
-| タスクID | 内容 | スケジュール |
-|----------|------|------------|
-| `daily-github-backup` | reffort＋memoryフォルダをGitHubにバックアップ | 毎日深夜0時 |
-| `monday-ebay-report-delivery` | eBay週次レポート配信 | 毎週月曜 10:00 |
-| `daily-x-digest` | X情報ダイジェスト配信 | 毎日 9:40 |
-| `biweekly-claude-maintenance` | Claude Code運用の肥大化監視＋最新情報取込＋改善提案 | 第1・第3月曜 10:00 |
+| タスクID | 内容 | スケジュール | 起動経路 |
+|----------|------|------------|---------|
+| `daily-github-backup` | reffort＋memoryフォルダをGitHubにバックアップ | 毎日深夜0時 | Claude scheduled-task |
+| `monday-ebay-report-delivery` | eBay週次レポート配信 | 毎週月曜 10:00 | Claude scheduled-task |
+| `biweekly-claude-maintenance` | Claude Code運用の肥大化監視＋最新情報取込＋改善提案 | 第1・第3月曜 10:00 | Claude scheduled-task |
+| `monday-report-requests-review` | 先週のレポート改善要望を社長DMへ報告 | 毎週月曜 9:50 | Claude scheduled-task |
+| `monday-ebay-report-delivery` | eBay週次レポート自動配信 | 毎週月曜 10:00 | Claude scheduled-task |
+| `CampersMemberRemoval` | Campersメンバー削除（Playwright版） | 毎日 5:00 | **Windowsタスクスケジューラ直接** |
+| `DailyXDigest` | X情報ダイジェスト配信（旧 `daily-x-digest`） | 毎日 9:40 | **Windowsタスクスケジューラ直接** |
+| `ChatworkAIReply` | 【AI】eBay運営Gメンション自動応答（旧 `chatwork-ai-reply`・頻度10分→1日に変更） | 毎日 10:00 | **Windowsタスクスケジューラ直接** |
+| `BayChatSlackCheck` ⏸ | BayChat Slack監視（旧 `baychat-slack-hourly-check`・頻度1時間→30分に変更） | 30分ごと | **Windowsタスクスケジューラ直接**（SLACK_BOT_TOKEN設定後に有効化） |
 
-新タスク追加時: ①作成 ②この表に追記 ③GitHubバックアップ。
+新タスク追加時: ①作成 ②この表に追記 ③GitHubバックアップ。**API/Bash/Pythonだけで完結する無人タスクは原則 Windowsタスクスケジューラ直接起動**（Claude scheduled-task の承認キャッシュ減衰によるサイレント停止問題回避・2026-04-29 daily-x-digest で実害確認）。MCP（chatwork/slack 等）が必須のタスクのみ Claude scheduled-task に残す。
 
 ---
 
-## 🚨 次セッション冒頭で必ず読むファイル（2026-04-24 竹案完了）
+## 🚨 次セッション冒頭で必ず読むファイル（2026-04-29更新）
 
+- **🔥 最優先：コンテンツ蓄積基盤整備 完了引継ぎ**: `.claude/handoff_20260429_content_infrastructure_complete.md`（業務縦軸構造に根本刷新完了・5/31ウェビナー骨子v0.1＋AIコースカリキュラムv0.1完成・残タスクは社長コミット4点＋判断待ち5点）
+- **配信ダッシュボード**: `education/campers/content-projects/INDEX.md`（全体の取り出し窓口・最初に開く）
+- **2軸戦略コンテンツ前提**: `memory/project_consulting.md` + `memory/feedback_content_audience_framing.md`（**BayChat は Campers のみ・Note/X 完全禁止**）
+- **直近イベント**: 2026-05-31（日）Campersウェビナー（`memory/project_campers_webinar.md`）
 - **竹案リファクタ T1-T15 全完了**（梅案`eef37ab`→竹案 `ea044c9`）。各部門 `index.md` → `.claude/rules/project-structure.md` の順で把握
-- **新機能**:
+- **新機能（4/24以降稼働中）**:
   - 隔週自動メンテ: `biweekly-claude-maintenance`（第1・第3月曜10時・肥大化監視＋Chatwork個人DM通知）
-  - 半自動改善: `/隔週メンテナンス` スラッシュコマンド（5層調査＋松竹梅＋社長判断→実行→結果再送信）
-  - memory3層統合: `memory/` → `.claude/memory_backup/` → GitHub（daily-github-backup 0:00自動同期・スマホアプリ参照可）
-  - 全作業蓄積: `education/campers/content-projects/claude-code-maintenance-case-study/session-logs/` にコンテンツ素材として蓄積（配信は社長判断）
-- **BayChat AI Reply作業時**: `services/baychat/ai/handoff_20260423_cowatech_prd_sync.md` + `memory/feedback_baychat_ai_reply_stance.md`（社長判断待ち：進め方・共有方法・お礼Slack返信）
+  - 半自動改善: `/隔週メンテナンス` スラッシュコマンド
+  - memory3層統合: `memory/` → `.claude/memory_backup/` → GitHub（daily-github-backup 0:00自動同期）
+  - Campers削除: Windowsタスク `CampersMemberRemoval`（Playwright版・毎日5:00・Chrome MCP不要）
+  - 仕入管理表GAS: `commerce/ebay/tools/gas/shiire/` clasp管理（Monaco貼付け廃止）
+- **BayChat AI Reply作業時**: `services/baychat/ai/handoff_20260423_cowatech_prd_sync.md` + `memory/feedback_baychat_ai_reply_stance.md`
 
 ---
 
-*最終更新: 2026-04-24（竹案T1-T15 全完了・Progressive Disclosure実装完成＋持続可能性4点セット完成）*
+*最終更新: 2026-04-29（コンテンツ蓄積基盤を業務縦軸12段階構造に根本刷新・content-projects/ 完成・5/31ウェビナー骨子＋AIコースカリキュラム枠組み完成）*
