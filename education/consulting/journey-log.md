@@ -2428,3 +2428,97 @@ eBay外注3名（本間・清水・佐々木）の毎月の請求書作成が、
 ---
 
 *最終更新: 2026年5月1日 — BayChat AI Reply cat02 完成・GPT-5-Mini本番除外決定・iter1〜8自走改善で 100%クリーン達成*
+
+---
+
+## 2026年4月29日（水）〜5月1日（金）― スケジュールタスクWindows化＋セキュリティインシデント対応
+
+### 背景・きっかけ
+社長から「スケジュールタスクが実行時間に毎回承認を求められる問題を解決してください。何度も話したのに改善されない。Xダイジェストは問題なく動いていたが今は機能していない」との強い指摘。
+
+### やったこと
+
+**[Phase 1] サイレント停止の発覚**
+✅ Xダイジェスト lastRunAt は更新されていたがChatworkに4/25〜4/29の5日間配信ゼロ
+✅ Slack/Chatwork関連タスクも調査 → chatwork-ai-reply（4/28 19:55停止）・baychat-slack-hourly-check（4/28 23:06停止）を発見
+✅ 規則性確認：「**高頻度タスクほどClaude scheduled-task で詰まる**」（10分・1時間・毎日のものが軒並み停止／週1低頻度は生存）
+
+**[Phase 2] 構造的解決：4タスクをWindows Task Scheduler に全面移管**
+✅ DailyXDigest（毎日9:40）— x_digest.py に try/except + 失敗DM 追加・bat改修・Windowsタスク登録
+✅ ChatworkAIReply（毎日10:00、頻度10分→1日に変更）— chatwork_ai_reply.py 新規実装（メンション抽出・Claude判断・改善要望蓄積）
+✅ BayChatSlackCheck（30分ごと、頻度1時間→30分に変更）— baychat_slack_check.py 新規実装（チェックポイント先行更新・3区分判定）
+✅ DailyGithubBackup（毎日0:05）— github_backup.py 新規実装（memory同期+機密検出+commit+push+失敗DM）
+✅ Slackトークン取得：新規App作成不要・既存App `A0AM9GJKEM8` から Bot Token 取り出し成功（同じU0AM647TMNH Botで運用継続）
+✅ X API 402 Payment Required の解決：社長クレカ更新で復旧
+
+**[Phase 3] 重大セキュリティインシデント発覚＆対応**
+⚠️ DailyGithubBackup の機密検出ロジックが `commerce/ebay/analytics/ebay_oauth_tokens.json` と `ebay_seller_cache.json` を検出
+⚠️ git log で確認 → **2026-04-23 の初回大規模push（commit 6761123）から GitHub Private repo に流出していた**
+✅ 応急処置：.gitignore追加（`**/oauth*` `**/*tokens*.json` 等）+ git rm --cached + commit 21bd3bd push
+✅ 5/1朝 cache/ebay_app_token.json も検出（リサーチツール経由・別セッション作成）→ .gitignore強化＋検出ロジック改善（拡張子フィルタで.py/.md誤検出回避）
+
+**[Phase 4] rotate判断と3層防衛完成**
+💡 攻撃成立条件分析：refresh_token単体では access_token 取得不可（Client ID + Client Secret も必要・両方とも .env で守られていた）
+✅ 社長判断「rotate不要」を採用（実害発生条件が成立しない）
+✅ PreToolUse hook `sensitive_file_guard.py` 新規追加（ファイル作成時に機密パターン警告＋推奨gitignoreパターン提示）
+✅ 3層防衛完成：① PreToolUse hook（作成時警告）② github_backup.py（push直前ブロック）③ .gitignore（包括パターン）
+
+### 💡 学び
+
+💡 **「lastRunAt 更新 ≠ 成功」**：Claude scheduled-task は実行開始時刻を記録するだけで、承認待ちで止まっていてもlastRunAtは更新される。**Chatwork/Slackの実配信跡を見ないと真の生死は判定できない**
+
+💡 **Anthropic UI の承認キャッシュ問題は構造的**：「常に許可」ボタンが出ない／キャッシュ消耗で詰まる／高頻度ほど消耗が激しい。memory ルール3.5で既知だったが、対処は「.envワイルドカード事前登録」では不十分で、最終的にWindows化が唯一の構造的解決
+
+💡 **「.env管理＝安全」は思い込み**：4/23流出した `ebay_oauth_tokens.json` は OAuth で動的生成されるキャッシュで、.env と別形式。.env系のみ gitignore で守られていてノーマーク。「機密＝.env」という枠組み自体が OAuth 系の動的トークンに対応できていなかった
+
+💡 **3点セット原則**：OAuth攻撃成立には refresh_token + Client ID + Client Secret の3点必要。1点流出しても残り2点が守られていれば実害なし。だがその前提が崩れた瞬間にrotate必須＝**前提条件の維持こそが本質**
+
+💡 **3層防衛の設計思想**：1層目（PreToolUse hook・作成時警告）→ 2層目（github_backup.py・push前ブロック）→ 3層目（.gitignore・そもそも上がらない）。各層が独立して効くので1つ破れても他で止まる
+
+💡 **「MCP必須=Claude / API完結=Windows」のルーティング原則確立**：旧memoryは「Chrome操作だけWindows化」だったが、API完結タスクでも実害発生（Xダイジェスト5日停止）。判断軸を「MCP必須か」に変更してmemory更新
+
+### ⚠️ 失敗・迷い
+
+⚠️ 4/23の初回push時にoauth_tokens.json流出を見落としていた（その時点で.gitignore のパターンが.env系のみだった）
+⚠️ rotate するか否かで揺れた（私が「念には念を」で必須っぽく説明・社長が論理的に「3点セット必要なら不要では？」と修正）
+⚠️ 5/1朝のエラーで「保留タスクと同じ件か？」と社長を混乱させた（誤検出と本物の機密が混在していた）
+
+### ⚠️ 過去の改善トラッキング更新
+- 2026-04-29 「rotate必須っぽく説明」 → 社長が「3点セットなら不要では？」と修正 → ✅ 論理的判断を尊重
+- 2026-04-29 「.env中身露出禁止」ルール（既存）が、OAuth 動的キャッシュ漏れには対応できていなかった → ✅ .gitignore 包括パターンと PreToolUse hook で補強
+
+### 📦 コンテンツ候補
+
+📦 **「Claude Code 高頻度スケジュールタスクの罠」** — 承認キャッシュ消耗・lastRunAt の罠・サイレント停止の見抜き方（実害5日間の事例）
+📦 **「Windowsタスクスケジューラ × Python の鉄板パターン」** — bat ラッパー＋ログ＋失敗DM の3点セット構成・Register-ScheduledTask の RepetitionDuration バグ回避
+📦 **「.env を守るだけでは足りない：OAuth動的トークン漏洩の実例」** — gitignore 包括パターン・3層防衛・拡張子フィルタによる誤検出抑制
+📦 **「セキュリティ判断の3点セット原則」** — refresh_token単体流出の影響分析・rotate コスト/ベネフィット・前提条件で守る設計
+📦 **「Pythonから Slack / Chatwork API を直接叩く」** — MCP に依存しない自律タスクの設計（slack_sdk不要・urllib のみで動く）
+📦 **「機密検出ロジックは最後の防衛線」** — コード/ドキュメント拡張子の誤検出回避・gitignore済みは黙る・push 直前ブロック
+
+### 🔢 数値記録
+- 移管タスク数：4本（X digest / Chatwork AI Reply / BayChat Slack Check / GitHub Backup）
+- 新規Pythonスクリプト：4ファイル（合計約1,000行）
+- 新規Windowsタスク登録：4本
+- Claude scheduled-task 無効化：4本
+- セキュリティ追加施策：3層防衛＋hook 1本＋.gitignoreパターン7行
+- 漏洩トークン rotate：取り下げ（3点セット成立せず）
+- 全体所要時間：約8時間（社長対話含む）
+
+### 🔧 仕組み
+
+🔧 **`.claude/hooks/sensitive_file_guard.py`** — PreToolUse hook で機密ファイル名を作成時に警告＋推奨gitignoreパターン提示。.gitignore済みは黙る・コード/ドキュメント拡張子は誤検出しない
+🔧 **`management/github-backup/github_backup.py`** — memory同期+機密検出+commit+push+失敗DM の統合バックアップスクリプト
+🔧 **`commerce/ebay/staff-ops/chatwork-ai-reply/chatwork_ai_reply.py`** — Chatworkメンションを Claude SDK 直叩きで判断・改善要望をjsonへ蓄積
+🔧 **`services/baychat/ai/slack-check/baychat_slack_check.py`** — Slack履歴をWeb API直叩きで取得・3区分判定（auto_reply/president_check/ignore）
+
+### 📌 次セッション申し送り
+1. **5/2朝の自動実行確認**：DailyGithubBackup 0:05 / DailyXDigest 9:40 / ChatworkAIReply 10:00 / BayChatSlackCheck 10:00→以後30分ごと、すべて成功するか lastRunTime と Chatwork配信跡で確認
+2. **保留タスクなし**（rotate も git履歴削除も取り下げ済み）
+3. **次の機密ファイル候補が出たら**：PreToolUse hook が警告 → 内容確認 → 機密ならgitignore先行更新 → コード/ドキュメントなら拡張子で自動除外される
+4. **新規スケジュールタスク作成時**：「MCP必須か？」を最初に判断 → 必須でなければWindows化（memory feedback_scheduled_tasks.md ルール5・6参照）
+5. ガイドファイル `commerce/ebay/analytics/EBAY_TOKEN_ROTATE_GUIDE.md` は保険として保持（前提条件が崩れた時に使う）
+
+---
+
+*最終更新: 2026年5月1日（金）— スケジュールタスク全面Windows化・セキュリティ3層防衛完成・社長判断でrotate取り下げ*

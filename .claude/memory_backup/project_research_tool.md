@@ -16,17 +16,21 @@ originSessionId: fc475ca5-22e9-41d7-b335-3542505be00e
 - 黒字 3 件・赤字 2 件
 - TOP: DH0957-001 Nike Dunk Low Crazy Black Multi → eBay $177 / 楽天 ¥5,918 → **純利益 $86.69 (¥13,849) / マージン 49%**
 
-## 主要ファイル
+## 主要ファイル（Ver.1.5）
 
-- `orchestrator.py` — メインエントリ
+- `orchestrator.py` — メインエントリ・ゲート・5 サイト並列・市場概要+evidence 統合
 - `ebay_app_token.py` — Browse API 用 Application Token（client_credentials）
-- `ebay_browse.py` — Browse API クライアント
-- `rakuten_search.py` — 楽天市場 検索結果スクレイパー（HTML `__INITIAL_STATE__` 抽出）
-- `yahoo_shopping.py` — Yahoo!ショッピング 検索結果スクレイパー（HTML `__NEXT_DATA__` 抽出）
-- `matcher.py` — 型番抽出 + ブランド検出 + 検索キーワード生成 + 一致スコア
-- `pricing.py` — FVF + 送料 + 関税 + 為替 + 国内コスト全部入りの利益計算
-- `fx.py` — USD/JPY 自動取得（Frankfurter / open.er-api.com）
-- `report.py` — HTML レポート生成
+- `ebay_browse.py` — Browse API クライアント + `market_overview` 集計関数
+- `evidence.py` — 売れる根拠スコア（7 シグナル合成 0-100・watch なしでも按分動作）
+- `rakuten_search.py` — 楽天（new_only 対応・中古マーカー除外）
+- `yahoo_shopping.py` — Yahoo!ショッピング（new_only 対応）
+- `amazon_search.py` — **NEW** Amazon.co.jp（curl_cffi + chrome131 TLS 偽装）
+- `yahoo_furima.py` — **NEW** Yahoo!フリマ（内部 JSON API）
+- `surugaya_search.py` — **NEW** 駿河屋（コレクター系・トレカ・ゲーム・フィギュア）
+- `matcher.py` — 型番抽出（Onitsuka・Tamiya 改善）+ ブランド + キーワード生成
+- `pricing.py` — FVF + 送料 + 関税 + 為替 + 国内コスト
+- `fx.py` — USD/JPY 自動取得
+- `report.py` — HTML レポート（evidence セクション付き）
 
 ## 2026 年版で重要な前提（リサーチツールに反映済み）
 

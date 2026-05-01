@@ -229,6 +229,38 @@ originSessionId: 35eb4679-f28f-4d72-9a30-510e015273e2
 - **前決定との関係**: 2026-04-22 に「次期モデル GPT-5-Nano 仮決定」していたが、Nano vs Mini ではなく **Mini級** を中心にテストした結果、Mini級の中で 4.1 と 4o を本番候補と判断
 - **影響**: 今後の cat03〜 テストは 4.1-Mini と 4o-Mini のみで実施。これにより 3モデル順次→2モデル化で速度改善も見込める
 
+### 2026-05-01 スケジュールタスク運用：高頻度タスクは Windows Task Scheduler 直起動を原則化
+- **決定**: Claude scheduled-task は「週1より多い頻度」「MCP必須でない」タスクから順次撤退。新規タスクは原則 Windows 直起動
+- **対象**: 4本を移管完了（DailyXDigest / ChatworkAIReply / BayChatSlackCheck / DailyGithubBackup）。残るClaude側は週1低頻度3本（monday-ebay-report-delivery / monday-report-requests-review / biweekly-claude-maintenance）
+- **根拠**:
+  - 4/28夜〜4/29朝にかけて高頻度タスク4本（chatwork-ai-reply・baychat-slack-hourly-check・daily-x-digest・daily-github-backup）が承認キャッシュ消耗で軒並みサイレント停止
+  - lastRunAtは更新されるが実配信ゼロ（Xダイジェスト 4/25〜4/29 の5日間配信途絶＝実害確認）
+  - 旧memory `feedback_chrome_mcp_unattended.md` の「Chrome操作だけWindows化、API完結はClaude」ルーティングが破綻
+  - 真の判断軸は「Chrome操作の有無」ではなく「Claudeセッション固有のMCPが必須か」
+- **構造的優位性**:
+  - Windows直起動は承認プロンプト無し → サイレント停止リスクゼロ
+  - bat ラッパー＋Pythonの try/except で失敗DM自動送信
+  - 既存 CampersMemberRemoval（Playwright版・毎日5:00）が同方式で安定稼働中（実証済み）
+- **副次効果**: Xダイジェスト復活＋Slack/Chatwork 自律応答の頻度社長判断（10分→1日／1時間→30分）反映可能になった
+- **影響**: 残りの Claude scheduled-task で同問題が再発したら即Windows化。新規タスクは「MCP必須か？」で経路判定
+
+### 2026-05-01 セキュリティ：eBay OAuth refresh_token rotate を取り下げ（3点セット成立せず）
+- **決定**: GitHub Private repo に4/23から流出していた `ebay_oauth_tokens.json` の refresh_token rotate を実施しない
+- **代わりに**: 「3つの前提条件を維持」する設計に転換し、PreToolUse hook 追加で .gitignore 漏れを未然防止
+- **根拠**:
+  - eBay OAuth 攻撃成立条件は「refresh_token + Client ID(EBAY_APP_ID) + Client Secret(EBAY_CERT_ID)」の3点セット
+  - 流出したのは1点（refresh_token）のみ。残り2点は `.env` で守られていて GitHub には流出していない
+  - つまり**攻撃者は refresh_token 単体では access_token を取得できない＝実害発生条件が成立しない**
+  - rotate コスト10〜15分 vs 実利低 → 社長判断で取り下げ（git filter-repo / BFG での履歴削除も同論理で取り下げ）
+- **前提条件3つ（崩れたら即rotate必須）**:
+  1. `.env` が GitHub に流出しない（`.gitignore` の `.env` 系除外を維持）
+  2. `.env` が他経路（メール・チャット・PCマルウェア）で流出しない
+  3. 機密混入の検知体制が動いている（`github_backup.py` の検出＋PreToolUse hook の警告）
+- **追加施策**:
+  - `.claude/hooks/sensitive_file_guard.py` 新規（Write/Edit時にファイル名で機密パターン検知＋推奨gitignoreパターン提示・拡張子フィルタで誤検出抑制）
+  - 3層防衛完成：①PreToolUse hook（作成時警告）②`github_backup.py`（push直前ブロック）③`.gitignore`の包括パターン（`**/cache/*token*.json` 等）
+- **保険**: ガイドファイル `commerce/ebay/analytics/EBAY_TOKEN_ROTATE_GUIDE.md` は削除せず保持。前提条件が崩れた瞬間に即rotate実行できる状態を維持
+
 ### 2026-05-01 BayChat AI Reply：admin_prompt v2.3_baseline_natural3 を cat02 確定版とする
 - **決定**: cat02（購入前Q&A）のテストを v2.3_baseline_natural3（iter 8）で完了。社長OK判定
 - **試行錯誤**: iter 1〜8 で漸進改善（73% → 100%クリーン）
@@ -241,6 +273,7 @@ originSessionId: 35eb4679-f28f-4d72-9a30-510e015273e2
 ## 更新ログ
 | 日付 | 内容 |
 |------|------|
+| 2026-05-01 | スケジュールタスク全面Windows化（4本移管・実害5日間Xダイジェスト停止が直接の引き金）／eBay OAuth rotate取り下げ（3点セット成立せず・3層防衛で代替）／PreToolUse hook追加 |
 | 2026-05-01 | BayChat AI Reply：cat02 完成（natural3 / iter8）・GPT-5-Mini 本番除外決定・SpeedPAK業者対応辞書を将来課題化 |
 | 2026-04-24 | **Claude Code運用の根本リファクタ実施**（梅案即効解毒＋竹案ハンドオフ作成）。肥大化診断・4点セット設計・隔週メンテサイクル導入・Campers素材化 |
 | 2026-04-21 深夜 | **フォルダ構成を3事業階層に大規模リファクタ**（commerce/services/education/management）。失敗ゼロで完遂 |

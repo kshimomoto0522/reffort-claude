@@ -78,7 +78,7 @@
 ## 🚨 次セッション冒頭で必ず読むファイル（2026-05-01更新）
 
 - **🔥 BayChat AI Reply cat02 完成・cat03 引継ぎ**: `services/baychat/ai/handoff_20260501_evening_cat02_complete.md`（iter1〜8自走改善で品質100%クリーン・GPT-5-Mini本番除外決定・補足情報UI/再生成APIサーバー実装済・cat03で APOLOGY トーン込みテスト着手予定）
-- **🔥 eBay リサーチツール Ver.1 完成（5/31ウェビナーデモ用）**: `commerce/ebay/tools/research/handoff_20260430_morning.md`（一晩構築・最大マージン49% / 黒字3件・楽天/Yahoo APIキー登録 + Marketplace Insights API申請が社長判断待ち）
+- **🔥 eBay リサーチツール Ver.1.5 完成（社長厳指摘で全面刷新）**: `commerce/ebay/tools/research/handoff_20260501_v15.md`（Ver.1の中古混入・スニーカー偏重・赤字混入・売れる根拠ゼロを是正・5サイト並列+12カテゴリ+evidence score 7シグナル+赤字除外ゲート・社長判断待ちAPI 3件）
 - **🔥 コンテンツ基盤整備 完了引継ぎ**: `.claude/handoff_20260429_content_infrastructure_complete.md`（業務縦軸構造に根本刷新完了・5/31ウェビナー骨子v0.1＋AIコースカリキュラムv0.1完成・残タスクは社長コミット4点＋判断待ち5点）
 - **配信ダッシュボード**: `education/campers/content-projects/INDEX.md`（全体の取り出し窓口・最初に開く）
 - **2軸戦略コンテンツ前提**: `memory/project_consulting.md` + `memory/feedback_content_audience_framing.md`（**BayChat は Campers のみ・Note/X 完全禁止**）

@@ -141,6 +141,15 @@
             "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/slack_preflight_check.py\""
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/sensitive_file_guard.py\""
+          }
+        ]
       }
     ],
     "PostToolUse": [

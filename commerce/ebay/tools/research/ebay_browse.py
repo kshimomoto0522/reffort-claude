@@ -141,6 +141,105 @@ def search_us_marketplace(
     return res.get('itemSummaries', []) or []
 
 
+def market_overview(
+    keyword: str,
+    *,
+    min_price: Optional[float] = None,
+    max_price: Optional[float] = None,
+    sample_size: int = 100,
+) -> dict:
+    """
+    キーワードの「米国マーケット全体」のスナップショットを返す。
+    Browse API 1 リクエスト（最大 200 件）で「競合の厚み・価格分布・ユニークセラー数」を計算。
+
+    返り値: {
+      'total_listed': int,        # eBay 全体の出品総数（推定）
+      'sampled': int,             # 取得サンプル数
+      'unique_sellers': int,      # 出品セラーのユニーク数
+      'jp_seller_count': int,     # 日本セラー数
+      'us_seller_count': int,     # 米国セラー数
+      'price_min_usd': float,
+      'price_median_usd': float,
+      'price_max_usd': float,
+      'price_p25_usd': float,
+      'price_p75_usd': float,
+      'top_sellers': [(username, count), ...],   # 出品多い順 上位 5 名
+    }
+    """
+    filters = ['conditionIds:{1000|1500}', 'buyingOptions:{FIXED_PRICE}']
+    if min_price is not None or max_price is not None:
+        lo = '' if min_price is None else f'{min_price:.0f}'
+        hi = '' if max_price is None else f'{max_price:.0f}'
+        filters.append(f'price:[{lo}..{hi}]')
+        filters.append('priceCurrency:USD')
+
+    client = EbayBrowse()
+    res = client.search(q=keyword, filters=filters, limit=min(sample_size, 200))
+    items = res.get('itemSummaries', []) or []
+    total_listed = int(res.get('total', 0) or 0)
+
+    if not items:
+        return {
+            'total_listed': total_listed,
+            'sampled': 0,
+            'unique_sellers': 0,
+            'jp_seller_count': 0,
+            'us_seller_count': 0,
+            'price_min_usd': 0.0,
+            'price_median_usd': 0.0,
+            'price_max_usd': 0.0,
+            'price_p25_usd': 0.0,
+            'price_p75_usd': 0.0,
+            'top_sellers': [],
+        }
+
+    prices = []
+    seller_counts: dict[str, int] = {}
+    jp_count = 0
+    us_count = 0
+    for it in items:
+        price = (it.get('price') or {}).get('value')
+        try:
+            price_f = float(price) if price else 0.0
+        except (TypeError, ValueError):
+            price_f = 0.0
+        if price_f > 0:
+            prices.append(price_f)
+        seller = (it.get('seller') or {}).get('username') or ''
+        if seller:
+            seller_counts[seller] = seller_counts.get(seller, 0) + 1
+        country = (it.get('itemLocation') or {}).get('country') or ''
+        if country == 'JP':
+            jp_count += 1
+        elif country == 'US':
+            us_count += 1
+
+    prices.sort()
+    n = len(prices)
+
+    def percentile(p: float) -> float:
+        if not prices:
+            return 0.0
+        idx = max(0, min(n - 1, int(p * (n - 1))))
+        return prices[idx]
+
+    top_sellers = sorted(seller_counts.items(), key=lambda kv: -kv[1])[:5]
+
+    return {
+        'total_listed': total_listed,
+        'sampled': n,
+        'unique_sellers': len(seller_counts),
+        'jp_seller_count': jp_count,
+        'us_seller_count': us_count,
+        'price_min_usd': prices[0] if prices else 0.0,
+        'price_median_usd': percentile(0.5),
+        'price_max_usd': prices[-1] if prices else 0.0,
+        'price_p25_usd': percentile(0.25),
+        'price_p75_usd': percentile(0.75),
+        'top_sellers': top_sellers,
+    }
+
+
 if __name__ == '__main__':
     # 動作確認
     print('▼ Nike Dunk Low（米国マーケット）検索')

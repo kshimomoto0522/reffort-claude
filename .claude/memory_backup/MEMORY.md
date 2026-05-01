@@ -18,6 +18,7 @@
 - [BayChat AI Reply 進行時のスタンス](feedback_baychat_ai_reply_stance.md) — 設計図理解前提・Cowatech前に自力解決・5原則厳守
 - [BayChat AI Reply 英文自然さは Claude 主体で担保](feedback_baychat_natural_english.md) — 社長の英語チェックに頼らない・反映前に自主チェックリスト・違和感候補は先に列挙
 - [BayChat AI Reply 80点原則と4大ルール](feedback_baychat_ai_80point_principle.md) — 補足情報なし80点目標・事実根拠厳格化（セラー本人視点）・追加作業禁止・誤ポリシー禁止・トーン不変
+- [リサーチツール品質要件](feedback_research_quality.md) — 新品/中古整合・カテゴリ全網羅・赤字除外・仕入先4サイト+・売れる根拠スコア必須（5原則・2026-05-01指摘）
 
 ## フィードバック（コミュニケーション・報告）
 - [コミュニケーション・運用スタイル](feedback_communication.md) — Chatwork確認運用・報告先の好み・作業可視性
@@ -26,11 +27,11 @@
 - [読めない時は諦めず読む手段を探す](feedback_fetch_fallback.md) — WebFetchで取れなくてもChromeツールで読む
 
 ## フィードバック（運用・セキュリティ）
-- [セキュリティルール（統合）](feedback_security.md) — APIトークン.env管理・.env出力禁止・settings.json deny判断基準・トークン管理
+- [セキュリティルール（統合）](feedback_security.md) — APIトークン.env管理・.env出力禁止・settings.json deny判断基準・**2026-05-01 重大インシデント発覚＆rotate不要判断（3点セット原則）／PreToolUse hook追加（sensitive_file_guard.py）／3層防衛完成**
 - [.envファイルの作成・入力方法](feedback_env_file_handling.md) — Claudeがファイル作成→社長が直接入力（チャット入力禁止）
-- [スケジュールタスク運用ルール（統合）](feedback_scheduled_tasks.md) — 実行厳守・プロンプト同期・Run now承認焼き込み・チェックポイント先行更新
+- [スケジュールタスク運用ルール（統合）](feedback_scheduled_tasks.md) — 実行厳守・プロンプト同期・承認キャッシュ／**2026-05-01 ルール5・6追加：高頻度タスクはWindows直起動を原則化（API完結タスクも対象に）**
 - [スケジュールタスク アクティベート必須](feedback_task_activation.md) — 新規タスク必ずアクティベートテスト→承認→本番プロンプト更新
-- [Chrome操作の無人タスクはClaude経由を捨てる](feedback_chrome_mcp_unattended.md) — Chrome必須はPlaywright+Windowsタスクスケジューラ直接起動・Claude中継禁止
+- [Chrome操作の無人タスクはClaude経由を捨てる](feedback_chrome_mcp_unattended.md) — Chrome必須はPlaywright+Windowsタスクスケジューラ直接起動・**2026-04-29 派生指針改訂：API完結タスクもWindows優先（feedback_scheduled_tasks.md ルール5を参照）**
 - [スプレッドシート自動化3型](feedback_spreadsheet_automation_patterns.md) — GASロジック=clasp / 外部読書=Sheets API / UI操作=Playwright の即判定ルール
 - [Claude Code 運用ルール（統合）](feedback_claude_code_operation.md) — Progressive Disclosure＋4点セット（archive・biweekly-maintenance・index.md・/隔週メンテナンス）＋effort_booster厳選
 - [管理方法統一](feedback_management_unification.md) — 3層管理原則（ソース/バックアップ/スマホ参照）

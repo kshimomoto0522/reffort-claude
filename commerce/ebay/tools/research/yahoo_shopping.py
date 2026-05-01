@@ -125,6 +125,31 @@ def _parse_data_beacon(beacon: str) -> dict:
     return out
 
 
+USED_MARKERS = [
+    '【中古】', '[中古]', '(中古)', '中古品', '中古美品',
+    'USED', 'used', 'Used',
+    'ジャンク', '訳あり', '訳アリ',
+    '展示品', '展示処分', 'B級品',
+]
+
+NEW_MARKERS = [
+    '【新品】', '[新品]', '(新品)', '新品未開封', '新品未使用',
+    '正規品', '日本正規品', '国内正規品', '国内正規',
+]
+
+
+def _infer_condition(text: str) -> str:
+    if not text:
+        return 'unknown'
+    for m in USED_MARKERS:
+        if m in text:
+            return 'used'
+    for m in NEW_MARKERS:
+        if m in text:
+            return 'new'
+    return 'unknown'
+
+
 def _normalize_item(raw: dict) -> dict:
     name = raw.get('name', '') or ''
     actual_price = raw.get('actualPrice') or raw.get('price') or 0
@@ -133,6 +158,7 @@ def _normalize_item(raw: dict) -> dict:
     point = raw.get('point') or 0
     item_url = raw.get('url') or ''
     is_ship = bool(raw.get('isShip'))
+    condition = _infer_condition(name)
 
     beacon = _parse_data_beacon(raw.get('dataBeacon') or '')
     store_id = beacon.get('cid') or ''
@@ -163,6 +189,7 @@ def _normalize_item(raw: dict) -> dict:
         'store_rate': store_rate,
         'store_review_count': store_review_count,
         'jan': jan,
+        'condition': condition,
         'category_ids': raw.get('categoryIds') or [],
         'brand': (raw.get('brand') or {}).get('name') if isinstance(raw.get('brand'), dict) else (raw.get('brand') or ''),
     }
@@ -179,7 +206,7 @@ def search_by_keyword(
 ) -> list[dict]:
     """
     キーワード検索結果を返す。
-    new_only=True で新品のみフィルタ（used=2）。
+    new_only=True で新品のみフィルタ（Yahoo は used=2・タイトル「中古」も二重除外）。
     """
     base = 'https://shopping.yahoo.co.jp/search'
     params = {'p': keyword}
@@ -192,7 +219,10 @@ def search_by_keyword(
     if not state:
         return []
     raw_items = _find_search_items(state)
-    return [_normalize_item(it) for it in raw_items[:max_items]]
+    items = [_normalize_item(it) for it in raw_items[:max_items]]
+    if new_only:
+        items = [it for it in items if it.get('condition') != 'used']
+    return items
 
 
 def search_by_jan(jan: str, max_items: int = 10) -> list[dict]:

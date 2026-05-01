@@ -157,6 +157,10 @@ def _normalize_item(raw: dict) -> dict:
         elif isinstance(first, str):
             image_url = first
 
+    # 新品/中古ステータス推定（タイトルベース・楽天は明示フィールドなし）
+    full_text = f'{name} {raw.get("subtitle") or ""}'
+    condition = _infer_condition(full_text)
+
     return {
         'source': 'rakuten',
         'name': name,
@@ -167,6 +171,7 @@ def _normalize_item(raw: dict) -> dict:
         'item_code': raw.get('code') or '',
         'is_free_shipping': is_free_shipping,
         'is_sold_out': is_sold_out,
+        'condition': condition,  # 'new' / 'used' / 'unknown'
         'review_count': review_count,
         'review_average': review_average,
         'image_url': image_url,
@@ -175,6 +180,36 @@ def _normalize_item(raw: dict) -> dict:
         'subtitle': raw.get('subtitle') or '',
         'has_price_range': bool(raw.get('hasPriceRange')),
     }
+
+
+# 中古を示す日本語マーカー（タイトル先頭/中身どちらでも反応）
+USED_MARKERS = [
+    '【中古】', '[中古]', '(中古)', '中古品', '中古美品',
+    'USED', 'used', 'Used',
+    'ジャンク', '訳あり', '訳アリ',
+    '展示品', '展示処分', 'B級品',
+    '未使用品',  # 未使用と書かれていても「中古扱いの未使用品」のことが多い
+]
+
+# 新品を示す日本語マーカー（あれば信頼度上がる）
+NEW_MARKERS = [
+    '【新品】', '[新品]', '(新品)', '新品未開封', '新品未使用',
+    '正規品', '日本正規品', '国内正規品',
+    'ブランド新品', 'NEW', '新品 ', '新品・',
+]
+
+
+def _infer_condition(text: str) -> str:
+    """タイトル文字列から新品/中古/不明を推定。"""
+    if not text:
+        return 'unknown'
+    for m in USED_MARKERS:
+        if m in text:
+            return 'used'
+    for m in NEW_MARKERS:
+        if m in text:
+            return 'new'
+    return 'unknown'
 
 
 # ---- public --------------------------------------------------------------
@@ -186,10 +221,12 @@ def search_by_keyword(
     max_items: int = 30,
     sort: str = 'standard',
     in_stock_only: bool = True,
+    new_only: bool = True,
 ) -> list[dict]:
     """
     キーワード検索結果をカード一覧として返す。
     sort: standard / +affiliateRate / -updateTimestamp / +itemPrice / -itemPrice / -reviewCount
+    new_only=True で「中古」と判定された商品を除外する。
     """
     # 楽天は %20 ではなく + 区切りを期待する。quote_plus を使う。
     base = f'https://search.rakuten.co.jp/search/mall/{urllib.parse.quote_plus(keyword)}/'
@@ -207,6 +244,8 @@ def search_by_keyword(
         return []
     raw_items = _extract_items(state)
     items = [_normalize_item(it) for it in raw_items[:max_items]]
+    if new_only:
+        items = [it for it in items if it.get('condition') != 'used']
     return items
 
 
@@ -215,11 +254,12 @@ def search_by_jan(jan: str, max_items: int = 10) -> list[dict]:
     return search_by_keyword(jan, max_items=max_items, in_stock_only=True)
 
 
-def cheapest_match(items: list[dict]) -> Optional[dict]:
-    """価格範囲ありの商品（hasPriceRange）と売り切れを除外して最安値を返す。"""
+def cheapest_match(items: list[dict], *, exclude_used: bool = True) -> Optional[dict]:
+    """価格範囲ありの商品（hasPriceRange）と売り切れと中古を除外して最安値を返す。"""
     valid = [
         it for it in items
         if it['price_jpy'] > 0 and not it['has_price_range'] and not it.get('is_sold_out')
+        and (not exclude_used or it.get('condition') != 'used')
     ]
     if not valid:
         return None
