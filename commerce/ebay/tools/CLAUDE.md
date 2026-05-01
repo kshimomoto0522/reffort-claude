@@ -27,8 +27,9 @@
 |--------|--------|------|--------------|
 | ⚠️ 改善中 | **ASICSツール** | **旧exe暫定稼働中 / v2.3待機** | v2の成功率改善・旧ツールとの差分分析 |
 | ✅ 稼働中 | **adidasツール（scrape_adidas_v1.py）** | **テスト完了・タスク登録済み** | 商品追加に応じてモニタリング |
+| 🟢 NEW | **無在庫リサーチツール Ver.1**（`research/`） | **2026-04-30 完成・5/31デモ用** | 楽天/Yahoo APIキー登録＋Marketplace Insights API申請（社長判断） |
 | 🟠 高 | HIROUNエクセル精査ツール | 未着手 | HIROUNのエクセル形式を確認してClaudeで試作 |
-| 🟠 高 | 競合リサーチツール（eBay API版） | 未着手 | eBay Finding APIで試作 |
+| 🟠 高 | 競合リサーチツール（eBay API版） | **無在庫リサーチに統合済み** | research/ で並行カバー |
 | 🟡 中 | 価格調整ツール（提案型） | 未着手 | 競合リサーチツール完成後 |
 | 🟢 将来 | 出品補助ツール（AIタイトル生成） | 未着手 | BayChat AI Reply完成後 |
 
@@ -175,6 +176,19 @@ ss = SpreadsheetClass(KEY)
 ws = ss._get_worksheet('【ASICS】在庫管理')
 rows = ws.get_all_values()
 ```
+
+---
+
+## 無在庫リサーチツール Ver.1（`research/`）— 要点のみ
+
+- **概要**: eBay Browse API で「日本セラーが米国向けに売っている商品」を取得 → 楽天/Yahoo!ショッピングで仕入候補を自動検索 → 全コスト（FVF・送料・関税・為替）込みの純利益を計算
+- **完成日**: 2026-04-30（一晩構築・5/31 Campers ウェビナー実例デモ用）
+- **使い方**: `python research/orchestrator.py --quick`（4 キーワード × 4 件・約 2 分） / `python research/orchestrator.py`（13 キーワード × 6 件・約 30 分）
+- **コア構成**: ebay_app_token.py（client_credentials）/ ebay_browse.py / rakuten_search.py / yahoo_shopping.py / matcher.py / pricing.py / fx.py / orchestrator.py / report.py
+- **2026 年版前提反映**: De Minimis $800 廃止 + Section 122 10% + スニーカー $150+ FVF 8%（StockX 対抗）+ EMS 米国向け停止
+- **Ver.1 の限界**: SOLD データ × / 楽天/Yahoo は HTML スクレイピング暫定 / Amazon/メルカリ未対応
+- **社長判断待ち**: 楽天 Application ID 登録（5 分・無料）/ Yahoo Client ID 登録（10 分・無料）/ eBay Marketplace Insights 申請（30 分＋数日待ち）
+- **詳細**: `research/README.md` + `research/handoff_20260430_morning.md`
 
 ---
 

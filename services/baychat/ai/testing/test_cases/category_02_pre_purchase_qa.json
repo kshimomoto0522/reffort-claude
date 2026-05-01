@@ -1,0 +1,273 @@
+[
+  {
+    "id": "cat02_01_size_availability",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Sneakers",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks if a specific size is in stock before purchasing.",
+    "buyer_ebay": "B11",
+    "buyer_message": "Hi, do you have these in US size 10.5? I don't see it in the size dropdown.",
+    "buyer_message_ja": "こんにちは、これのUS 10.5サイズは在庫ありますか？サイズの選択肢に出てきません。",
+    "history_ja": [
+      "こんにちは、これのUS 10.5サイズは在庫ありますか？サイズの選択肢に出てきません。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"325918473266\", \"Title\": \"Onitsuka Tiger MEXICO 66 D4J2L 1183C102 Multiple Sizes\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"150.00\", \"CurrentPrice\": \"150.00\", \"Quantity\": \"32\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"30.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\", \"Variations\": [{\"SKU\": \"V0265-7-57\", \"Size\": \"US 7\", \"Quantity\": \"3\"}, {\"SKU\": \"V0265-8-57\", \"Size\": \"US 8\", \"Quantity\": \"5\"}, {\"SKU\": \"V0265-9-57\", \"Size\": \"US 9\", \"Quantity\": \"4\"}, {\"SKU\": \"V0265-10-57\", \"Size\": \"US 10\", \"Quantity\": \"2\"}, {\"SKU\": \"V0265-11-57\", \"Size\": \"US 11\", \"Quantity\": \"1\"}]}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-26T11:23:08.000Z] Hi, do you have these in US size 10.5? I don't see it in the size dropdown."
+      }
+    ]
+  },
+  {
+    "id": "cat02_02_material_check",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Vintage Clothing",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks about the material composition before purchasing a vintage item.",
+    "buyer_ebay": "B12",
+    "buyer_message": "Hello, is this jacket real leather or synthetic? The listing doesn't say. Thanks!",
+    "buyer_message_ja": "こんにちは、このジャケットは本革ですか、それとも合成皮革ですか？商品ページに記載がありません。よろしくお願いします！",
+    "history_ja": [
+      "こんにちは、このジャケットは本革ですか、それとも合成皮革ですか？商品ページに記載がありません。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"285174839205\", \"Title\": \"Vintage 1970s Brown Bomber Jacket Men's Size L\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Clothing:Coats, Jackets & Vests\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"185.00\", \"CurrentPrice\": \"185.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-27T15:42:11.000Z] Hello, is this jacket real leather or synthetic? The listing doesn't say. Thanks!"
+      }
+    ]
+  },
+  {
+    "id": "cat02_03_brand_new_or_used",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Watches",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer wants to confirm whether the watch is brand new and unworn.",
+    "buyer_ebay": "B13",
+    "buyer_message": "Is this watch brand new and never worn? Comes with original box and papers?",
+    "buyer_message_ja": "この時計は新品で未使用ですか？元箱と付属書類は付いていますか？",
+    "history_ja": [
+      "この時計は新品で未使用ですか？元箱と付属書類は付いていますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"194726385014\", \"Title\": \"Seiko Prospex SPB143J1 Diver Automatic 200M Brand New\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Wristwatches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1150.00\", \"CurrentPrice\": \"1150.00\", \"Quantity\": \"2\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"60.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-25T08:11:39.000Z] Is this watch brand new and never worn? Comes with original box and papers?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_04_color_variant_question",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Sneakers",
+    "emotion": "casual",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks if a different colorway is also available in stock.",
+    "buyer_ebay": "B14",
+    "buyer_message": "Hi! Do you also have these in the all-black version? Saw them online but can't find them on your store.",
+    "buyer_message_ja": "こんにちは！これのオールブラック版も持っていますか？ネットで見たのですがあなたのストアには見当たりません。",
+    "history_ja": [
+      "こんにちは！これのオールブラック版も持っていますか？ネットで見たのですがあなたのストアには見当たりません。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"305742839106\", \"Title\": \"New Balance 2002R M2002RDD Protection Pack White Grey US 10\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"175.00\", \"CurrentPrice\": \"175.00\", \"Quantity\": \"8\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"US_ExpeditedSppedPAK\", \"ShippingServiceCost\": \"30.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"YOKOHAMA\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-28T20:14:55.000Z] Hi! Do you also have these in the all-black version? Saw them online but can't find them on your store."
+      }
+    ]
+  },
+  {
+    "id": "cat02_05_authenticity_question",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Luxury Handbags",
+    "emotion": "concerned",
+    "language": "en",
+    "situation": "Stage 1. Buyer is cautious about authenticity of a high-priced luxury bag and asks for proof.",
+    "buyer_ebay": "B15",
+    "buyer_message": "Hello, can you guarantee this is 100% authentic? Do you have a receipt or any authentication paperwork I can see?",
+    "buyer_message_ja": "こんにちは、こちら100%本物だと保証していただけますか？レシートや鑑定書類があれば見せていただけますか？",
+    "history_ja": [
+      "こんにちは、こちら100%本物だと保証していただけますか？レシートや鑑定書類があれば見せていただけますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"165834720146\", \"Title\": \"Louis Vuitton Speedy 30 Monogram Canvas Handbag M41526\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1280.00\", \"CurrentPrice\": \"1280.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-26T03:48:22.000Z] Hello, can you guarantee this is 100% authentic? Do you have a receipt or any authentication paperwork I can see?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_06_used_condition_detail",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Vintage Cameras",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks for detailed condition info on a used vintage camera (scratches/marks).",
+    "buyer_ebay": "B16",
+    "buyer_message": "Hi, could you describe the condition more in detail? Are there any scratches, dents, or signs of wear on the body or lens? Also is the shutter working properly at all speeds?",
+    "buyer_message_ja": "こんにちは、状態についてもう少し詳しく教えていただけますか？ボディやレンズに傷、へこみ、使用感はありますか？また、シャッターは全スピードで正常に作動しますか？",
+    "history_ja": [
+      "こんにちは、状態についてもう少し詳しく教えていただけますか？ボディやレンズに傷、へこみ、使用感はありますか？また、シャッターは全スピードで正常に作動しますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"395817463029\", \"Title\": \"Leica M6 Classic 35mm Rangefinder Camera Black Body Vintage\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:Rangefinder\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3850.00\", \"CurrentPrice\": \"3850.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"85.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-25T23:08:14.000Z] Hi, could you describe the condition more in detail? Are there any scratches, dents, or signs of wear on the body or lens? Also is the shutter working properly at all speeds?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_07_year_origin",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Vintage Instruments",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer wants to confirm year of manufacture and country of origin (collector concern).",
+    "buyer_ebay": "B17",
+    "buyer_message": "Hello, what year was this guitar made and where? The serial number should tell us. Also is it the original Made in Japan version?",
+    "buyer_message_ja": "こんにちは、このギターは何年製でどこで作られましたか？シリアル番号でわかると思います。また、これはオリジナルの日本製版ですか？",
+    "history_ja": [
+      "こんにちは、このギターは何年製でどこで作られましたか？シリアル番号でわかると思います。また、これはオリジナルの日本製版ですか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"275918274639\", \"Title\": \"Fender Stratocaster Electric Guitar Sunburst Used\", \"PrimaryCategoryName\": \"Musical Instruments & Gear:Guitars & Basses:Electric Guitars\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1450.00\", \"CurrentPrice\": \"1450.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"120.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-27T07:22:45.000Z] Hello, what year was this guitar made and where? The serial number should tell us. Also is it the original Made in Japan version?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_08_box_accessories",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Trading Cards",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks whether the original box, certificates, and protective case are included.",
+    "buyer_ebay": "B18",
+    "buyer_message": "Quick question: does this come with the original case and the PSA certification card? Want to make sure before I buy.",
+    "buyer_message_ja": "ちょっと質問です。これはオリジナルケースとPSA鑑定書付きですか？購入前に確認したいです。",
+    "history_ja": [
+      "ちょっと質問です。これはオリジナルケースとPSA鑑定書付きですか？購入前に確認したいです。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"166291847306\", \"Title\": \"Pokemon TCG Pikachu Illustrator Promo Card PSA 9 Holo\", \"PrimaryCategoryName\": \"Toys & Hobbies:Collectible Card Games:Pokémon TCG\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"4500.00\", \"CurrentPrice\": \"4500.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"65.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-28T16:39:50.000Z] Quick question: does this come with the original case and the PSA certification card? Want to make sure before I buy.",
+        "_note": "buyer asks for two specific accessories"
+      }
+    ]
+  },
+  {
+    "id": "cat02_09_specs_question_non_native",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Lenses",
+    "emotion": "neutral",
+    "language": "en_non_native",
+    "situation": "Stage 1. Non-native English speaker buyer asks a slightly broken-English question about lens specifications.",
+    "buyer_ebay": "B19",
+    "buyer_message": "Hello. This lens working with my Sony A7 IV camera? Is full frame yes? Also which mount, please?",
+    "buyer_message_ja": "こんにちは。このレンズは私のSony A7 IVカメラで使えますか？フルフレーム対応ですか？マウントの種類も教えてください。",
+    "history_ja": [
+      "こんにちは。このレンズは私のSony A7 IVカメラで使えますか？フルフレーム対応ですか？マウントの種類も教えてください。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"205814739206\", \"Title\": \"Sigma 35mm f/1.4 DG HSM Art Lens for Sony E-Mount\", \"PrimaryCategoryName\": \"Cameras & Photo:Lenses & Filters:Lenses\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"685.00\", \"CurrentPrice\": \"685.00\", \"Quantity\": \"3\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-26T19:05:33.000Z] Hello. This lens working with my Sony A7 IV camera? Is full frame yes? Also which mount, please?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_10_extra_photos_request",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Action Figures",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks for additional photos of specific parts before purchasing.",
+    "buyer_ebay": "B20",
+    "buyer_message": "Hi there, would it be possible to send me a few more photos of the back of the box and the figure's accessories? I want to see the condition more clearly. Thanks!",
+    "buyer_message_ja": "こんにちは、箱の裏面とフィギュアの付属品の追加写真を送っていただくことは可能ですか？状態をもう少し詳しく確認したいです。よろしくお願いします！",
+    "history_ja": [
+      "こんにちは、箱の裏面とフィギュアの付属品の追加写真を送っていただくことは可能ですか？状態をもう少し詳しく確認したいです。よろしくお願いします！"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"196817243905\", \"Title\": \"Bandai Tamashii Nations S.H. Figuarts Iron Man Mark 85 Action Figure\", \"PrimaryCategoryName\": \"Toys & Hobbies:Action Figures:Movies, TV & Video Games\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"125.00\", \"CurrentPrice\": \"125.00\", \"Quantity\": \"4\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"40.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-28T11:18:27.000Z] Hi there, would it be possible to send me a few more photos of the back of the box and the figure's accessories? I want to see the condition more clearly. Thanks!"
+      }
+    ]
+  }
+]

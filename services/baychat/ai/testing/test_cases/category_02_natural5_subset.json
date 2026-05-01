@@ -1,0 +1,138 @@
+[
+  {
+    "id": "cat02_03_brand_new_or_used",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Watches",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer wants to confirm whether the watch is brand new and unworn.",
+    "buyer_ebay": "B13",
+    "buyer_message": "Is this watch brand new and never worn? Comes with original box and papers?",
+    "buyer_message_ja": "この時計は新品で未使用ですか？元箱と付属書類は付いていますか？",
+    "history_ja": [
+      "この時計は新品で未使用ですか？元箱と付属書類は付いていますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"194726385014\", \"Title\": \"Seiko Prospex SPB143J1 Diver Automatic 200M Brand New\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Wristwatches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1150.00\", \"CurrentPrice\": \"1150.00\", \"Quantity\": \"2\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"60.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Seller\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-25T08:11:39.000Z] Is this watch brand new and never worn? Comes with original box and papers?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_05_authenticity_question",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Luxury Handbags",
+    "emotion": "concerned",
+    "language": "en",
+    "situation": "Stage 1. Buyer is cautious about authenticity of a high-priced luxury bag and asks for proof.",
+    "buyer_ebay": "B15",
+    "buyer_message": "Hello, can you guarantee this is 100% authentic? Do you have a receipt or any authentication paperwork I can see?",
+    "buyer_message_ja": "こんにちは、こちら100%本物だと保証していただけますか？レシートや鑑定書類があれば見せていただけますか？",
+    "history_ja": [
+      "こんにちは、こちら100%本物だと保証していただけますか？レシートや鑑定書類があれば見せていただけますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"165834720146\", \"Title\": \"Louis Vuitton Speedy 30 Monogram Canvas Handbag M41526\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1280.00\", \"CurrentPrice\": \"1280.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-26T03:48:22.000Z] Hello, can you guarantee this is 100% authentic? Do you have a receipt or any authentication paperwork I can see?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_06_used_condition_detail",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Vintage Cameras",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks for detailed condition info on a used vintage camera (scratches/marks).",
+    "buyer_ebay": "B16",
+    "buyer_message": "Hi, could you describe the condition more in detail? Are there any scratches, dents, or signs of wear on the body or lens? Also is the shutter working properly at all speeds?",
+    "buyer_message_ja": "こんにちは、状態についてもう少し詳しく教えていただけますか？ボディやレンズに傷、へこみ、使用感はありますか？また、シャッターは全スピードで正常に作動しますか？",
+    "history_ja": [
+      "こんにちは、状態についてもう少し詳しく教えていただけますか？ボディやレンズに傷、へこみ、使用感はありますか？また、シャッターは全スピードで正常に作動しますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"395817463029\", \"Title\": \"Leica M6 Classic 35mm Rangefinder Camera Black Body Vintage\", \"PrimaryCategoryName\": \"Cameras & Photo:Film Cameras:Rangefinder\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"3850.00\", \"CurrentPrice\": \"3850.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"85.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-25T23:08:14.000Z] Hi, could you describe the condition more in detail? Are there any scratches, dents, or signs of wear on the body or lens? Also is the shutter working properly at all speeds?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_07_year_origin",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Vintage Instruments",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer wants to confirm year of manufacture and country of origin (collector concern).",
+    "buyer_ebay": "B17",
+    "buyer_message": "Hello, what year was this guitar made and where? The serial number should tell us. Also is it the original Made in Japan version?",
+    "buyer_message_ja": "こんにちは、このギターは何年製でどこで作られましたか？シリアル番号でわかると思います。また、これはオリジナルの日本製版ですか？",
+    "history_ja": [
+      "こんにちは、このギターは何年製でどこで作られましたか？シリアル番号でわかると思います。また、これはオリジナルの日本製版ですか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"275918274639\", \"Title\": \"Fender Stratocaster Electric Guitar Sunburst Used\", \"PrimaryCategoryName\": \"Musical Instruments & Gear:Guitars & Basses:Electric Guitars\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1450.00\", \"CurrentPrice\": \"1450.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"120.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-27T07:22:45.000Z] Hello, what year was this guitar made and where? The serial number should tell us. Also is it the original Made in Japan version?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_08_box_accessories",
+    "category": "pre_purchase_qa",
+    "stage": "S1",
+    "product_category": "Trading Cards",
+    "emotion": "neutral",
+    "language": "en",
+    "situation": "Stage 1. Buyer asks whether the original box, certificates, and protective case are included.",
+    "buyer_ebay": "B18",
+    "buyer_message": "Quick question: does this come with the original case and the PSA certification card? Want to make sure before I buy.",
+    "buyer_message_ja": "ちょっと質問です。これはオリジナルケースとPSA鑑定書付きですか？購入前に確認したいです。",
+    "history_ja": [
+      "ちょっと質問です。これはオリジナルケースとPSA鑑定書付きですか？購入前に確認したいです。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"166291847306\", \"Title\": \"Pokemon TCG Pikachu Illustrator Promo Card PSA 9 Holo\", \"PrimaryCategoryName\": \"Toys & Hobbies:Collectible Card Games:Pokémon TCG\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"4500.00\", \"CurrentPrice\": \"4500.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"65.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-28T16:39:50.000Z] Quick question: does this come with the original case and the PSA certification card? Want to make sure before I buy.",
+        "_note": "buyer asks for two specific accessories"
+      }
+    ]
+  }
+]

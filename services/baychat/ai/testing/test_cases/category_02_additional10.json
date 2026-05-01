@@ -1,0 +1,302 @@
+[
+  {
+    "id": "cat02_11_shipping_cost_question",
+    "category": "pre_purchase_qa",
+    "stage": "stage1",
+    "product_category": "headphones",
+    "emotion": "neutral",
+    "language": "english",
+    "situation": "Buyer asks about shipping cost before purchase (single message).",
+    "buyer_ebay": "B21",
+    "buyer_message": "Hi, could you tell me the shipping cost to the USA? I don't see it clearly on the listing.",
+    "buyer_message_ja": "こんにちは、アメリカまでの送料を教えていただけますか？出品ページではよく分からないのですが。",
+    "history_ja": ["こんにちは、アメリカまでの送料を教えていただけますか？出品ページではよく分からないのですが。"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"395012348071\", \"Title\": \"Sony WH-1000XM5 Wireless Noise Cancelling Headphones Black New\", \"PrimaryCategoryName\": \"Consumer Electronics:Portable Audio & Headphones:Headphones\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"389.00\", \"CurrentPrice\": \"389.00\", \"Quantity\": \"3\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"42.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T03:11:00.000Z] Hi, could you tell me the shipping cost to the USA? I don't see it clearly on the listing."
+      }
+    ]
+  },
+  {
+    "id": "cat02_12_shipping_time_question",
+    "category": "pre_purchase_qa",
+    "stage": "stage1",
+    "product_category": "gaming_console",
+    "emotion": "curious",
+    "language": "english",
+    "situation": "Buyer asks how long shipping will take to their country (single message).",
+    "buyer_ebay": "B22",
+    "buyer_message": "Hello! How many days does shipping usually take to Australia? I'd love to have it before next weekend.",
+    "buyer_message_ja": "こんにちは！オーストラリアまでの発送は通常何日くらいかかりますか?来週末までに到着するとうれしいのですが。",
+    "history_ja": ["こんにちは！オーストラリアまでの発送は通常何日くらいかかりますか?来週末までに到着するとうれしいのですが。"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"275998812334\", \"Title\": \"Nintendo Switch OLED Console White - Brand New Sealed Japan Region\", \"PrimaryCategoryName\": \"Video Games & Consoles:Video Game Consoles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"310.00\", \"CurrentPrice\": \"310.00\", \"Quantity\": \"5\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T05:42:18.000Z] Hello! How many days does shipping usually take to Australia? I'd love to have it before next weekend."
+      }
+    ]
+  },
+  {
+    "id": "cat02_13_bundle_discount_request",
+    "category": "pre_purchase_qa",
+    "stage": "stage1",
+    "product_category": "vinyl_records",
+    "emotion": "negotiating",
+    "language": "english",
+    "situation": "Buyer requests a bundle/combined-shipping discount when buying multiple items (single message).",
+    "buyer_ebay": "B23",
+    "buyer_message": "Hi, I'm interested in this LP and two others from your store. Would you offer a bundle discount or combined shipping if I buy all three together?",
+    "buyer_message_ja": "こんにちは、このLPと貴店の他2点に興味があります。3点まとめて購入したらバンドル割引または同梱配送に対応していただけますか?",
+    "history_ja": ["こんにちは、このLPと貴店の他2点に興味があります。3点まとめて購入したらバンドル割引または同梱配送に対応していただけますか?"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"176233994128\", \"Title\": \"Pink Floyd Dark Side of the Moon Original 1973 UK 1st Press LP A2/B2 EX\", \"PrimaryCategoryName\": \"Music:Records\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"285.00\", \"CurrentPrice\": \"285.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"38.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Yokohama\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T09:18:55.000Z] Hi, I'm interested in this LP and two others from your store. Would you offer a bundle discount or combined shipping if I buy all three together?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_14_payment_method_question",
+    "category": "pre_purchase_qa",
+    "stage": "stage1",
+    "product_category": "antique_watch",
+    "emotion": "neutral",
+    "language": "english",
+    "situation": "Buyer asks what payment methods are accepted (single message).",
+    "buyer_ebay": "B24",
+    "buyer_message": "Hello, what payment methods do you accept for this pocket watch? Can I pay with PayPal directly, or only through eBay's checkout?",
+    "buyer_message_ja": "こんにちは、この懐中時計の支払い方法は何が使えますか?PayPalで直接支払いできますか、それともeBayのチェックアウト経由のみでしょうか？",
+    "history_ja": ["こんにちは、この懐中時計の支払い方法は何が使えますか?PayPalで直接支払いできますか、それともeBayのチェックアウト経由のみでしょうか？"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"166512773309\", \"Title\": \"Antique Waltham Pocket Watch 17 Jewels 14k Gold Filled c.1908 Working\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Pocket Watches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"495.00\", \"CurrentPrice\": \"495.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Economy\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T11:04:22.000Z] Hello, what payment methods do you accept for this pocket watch? Can I pay with PayPal directly, or only through eBay's checkout?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_15_return_policy_question",
+    "category": "pre_purchase_qa",
+    "stage": "stage1",
+    "product_category": "designer_bag",
+    "emotion": "cautious",
+    "language": "english",
+    "situation": "Buyer asks about return policy before committing to purchase (single message).",
+    "buyer_ebay": "B25",
+    "buyer_message": "Hi, I'd like to confirm the return policy before buying. If the bag doesn't match what I expected, can I return it for a full refund? Who covers the return shipping?",
+    "buyer_message_ja": "こんにちは、購入前に返品ポリシーを確認させてください。万が一バッグが期待と違っていた場合、全額返金で返品できますか?返送料はどちら負担になりますか？",
+    "history_ja": ["こんにちは、購入前に返品ポリシーを確認させてください。万が一バッグが期待と違っていた場合、全額返金で返品できますか?返送料はどちら負担になりますか？"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"305627881143\", \"Title\": \"Burberry Heritage Trench Tote Bag Camel Check Canvas Leather - Authentic\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"720.00\", \"CurrentPrice\": \"720.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"58.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T13:27:10.000Z] Hi, I'd like to confirm the return policy before buying. If the bag doesn't match what I expected, can I return it for a full refund? Who covers the return shipping?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_16_two_consecutive_questions",
+    "category": "pre_purchase_qa",
+    "stage": "stage3",
+    "product_category": "gaming_console",
+    "emotion": "neutral",
+    "language": "english",
+    "situation": "Buyer sends two separate questions back-to-back without waiting for a reply. AI must answer BOTH (charging cable + firmware version).",
+    "buyer_ebay": "B26",
+    "buyer_message": "Sorry one more - what firmware version is the console currently on?",
+    "buyer_message_ja": "すみません、もうひとつ - 本体は現在どのファームウェアバージョンで動いていますか？",
+    "history_ja": [
+      "こんにちは、コントローラーの純正充電ケーブルは付属していますか?",
+      "すみません、もうひとつ - 本体は現在どのファームウェアバージョンで動いていますか？"
+    ],
+    "num_messages": 2,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"285998241177\", \"Title\": \"Sony PlayStation 5 Disc Edition Console CFI-1215A White Used Excellent\", \"PrimaryCategoryName\": \"Video Games & Consoles:Video Game Consoles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"380.00\", \"CurrentPrice\": \"380.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"60.00\", \"ConditionDisplayName\": \"Used\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T07:02:11.000Z] Hi, does this console come with the original USB-C charging cable for the controllers?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T07:03:48.000Z] Sorry one more - what firmware version is the console currently on?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_17_correction_followup",
+    "category": "pre_purchase_qa",
+    "stage": "stage3",
+    "product_category": "fountain_pen",
+    "emotion": "neutral",
+    "language": "english",
+    "situation": "Buyer first asks about the fastest shipping option, then in a follow-up message specifies the destination country (Germany). AI must combine BOTH into one coherent answer (fastest option + Germany feasibility).",
+    "buyer_ebay": "B27",
+    "buyer_message": "Sorry, I forgot to mention I'm in Germany. Can you ship there? And which option would be fastest?",
+    "buyer_message_ja": "すみません、私はドイツにいることを書き忘れていました。ドイツに発送いただけますか?また、どの方法が一番早いですか？",
+    "history_ja": [
+      "こんにちは、最速の発送方法はどれになりますか?到着までの目安日数も教えていただけますと幸いです。",
+      "すみません、私はドイツにいることを書き忘れていました。ドイツに発送いただけますか?また、どの方法が一番早いですか？"
+    ],
+    "num_messages": 2,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"126677009881\", \"Title\": \"Pelikan M1000 Souveran Black Resin Fountain Pen 18C Gold Nib EF Brand New\", \"PrimaryCategoryName\": \"Collectibles:Pens & Writing Instruments:Pens:Fountain Pens\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"835.00\", \"CurrentPrice\": \"835.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Calculated\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T08:21:33.000Z] Hi, what would be your fastest shipping option for this pen? And could you give me a rough idea of how many days it takes?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T08:23:09.000Z] Sorry, I forgot to mention I'm in Germany. Can you ship there? And which option would be fastest?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_18_ongoing_addon_question",
+    "category": "pre_purchase_qa",
+    "stage": "stage2",
+    "product_category": "luxury_watch",
+    "emotion": "interested",
+    "language": "english",
+    "situation": "Buyer first asks about water resistance, seller answers, then buyer follows up with a separate question about box and papers. AI must give a Stage 2 ongoing-conversation reply that handles ONLY the latest question naturally without re-greeting heavily.",
+    "buyer_ebay": "B28",
+    "buyer_message": "Great, thanks for confirming. Can you also let me know if the original box and papers are included?",
+    "buyer_message_ja": "ご確認いただきありがとうございます。あわせて、オリジナルの箱と書類は付属するかも教えていただけますか？",
+    "history_ja": [
+      "こんにちは、この時計は防水仕様ですか？",
+      "ご質問ありがとうございます。はい、こちらのRolex Submarinerは300m防水仕様です。",
+      "ご確認いただきありがとうございます。あわせて、オリジナルの箱と書類は付属するかも教えていただけますか？"
+    ],
+    "num_messages": 3,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"335442780921\", \"Title\": \"Rolex Submariner Date 126610LN Black Stainless Steel 41mm 2023 Used Excellent\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Wristwatches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"13800.00\", \"CurrentPrice\": \"13800.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"95.00\", \"ConditionDisplayName\": \"Used\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_60\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-30T22:14:08.000Z] Hi, is this watch waterproof? I'd want to wear it diving occasionally."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-30T22:48:31.000Z] Hello B28,\n\nThank you for your message. Yes, this Rolex Submariner Date 126610LN is rated for 300m water resistance and is suitable for recreational diving.\n\nIf you have any further questions, please feel free to ask.\n\nKind regards,\nrioxxrinaxjapan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T01:05:42.000Z] Great, thanks for confirming. Can you also let me know if the original box and papers are included?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_19_progressive_detail_request",
+    "category": "pre_purchase_qa",
+    "stage": "stage2",
+    "product_category": "graded_card",
+    "emotion": "detail_oriented",
+    "language": "english",
+    "situation": "Buyer first asks if the card is authentic, seller confirms, then buyer follows up asking about the slab condition specifically. AI must give a Stage 2 reply that addresses slab condition without re-asserting the broad authenticity claim.",
+    "buyer_ebay": "B29",
+    "buyer_message": "Thanks. One more thing — can you describe the condition of the slab itself? Any scuffing, hairlines on the case, or yellowing on the label?",
+    "buyer_message_ja": "ありがとうございます。もう一点、スラブ自体のコンディションを教えていただけますか?ケースの擦り傷・細かい線・ラベルの黄ばみなどはありますか？",
+    "history_ja": [
+      "こんにちは、こちらのカードは本物ですか？",
+      "ご質問ありがとうございます。はい、こちらは正真正銘のPSA鑑定済 1952 Topps Mickey Mantle PSA 7です。",
+      "ありがとうございます。もう一点、スラブ自体のコンディションを教えていただけますか?ケースの擦り傷・細かい線・ラベルの黄ばみなどはありますか？"
+    ],
+    "num_messages": 3,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"176641889224\", \"Title\": \"1952 Topps Mickey Mantle #311 PSA 7 NM Vintage Baseball Card New York Yankees\", \"PrimaryCategoryName\": \"Sports Mem, Cards & Fan Shop:Sports Trading Cards:Trading Card Singles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"185000.00\", \"CurrentPrice\": \"185000.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority Insured\", \"ShippingServiceCost\": \"180.00\", \"ConditionDisplayName\": \"Used\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-30T18:30:00.000Z] Hi, is this card authentic? Just want to be safe given the price."
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-30T19:11:52.000Z] Hello B29,\n\nThank you for your message. Yes, this is a genuine PSA-graded 1952 Topps Mickey Mantle #311 (PSA 7 NM). We list authentic graded cards only.\n\nIf you have any further questions, please feel free to ask.\n\nKind regards,\nrioxxrinaxjapan"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T02:48:21.000Z] Thanks. One more thing — can you describe the condition of the slab itself? Any scuffing, hairlines on the case, or yellowing on the label?"
+      }
+    ]
+  },
+  {
+    "id": "cat02_20_three_consecutive_brazil",
+    "category": "pre_purchase_qa",
+    "stage": "stage3",
+    "product_category": "camera_lens",
+    "emotion": "curious",
+    "language": "english",
+    "situation": "Buyer sends THREE separate consecutive messages without seller reply, all related to shipping to Brazil (feasibility, customs, duration). AI must consolidate ALL THREE into one coherent reply.",
+    "buyer_ebay": "B30",
+    "buyer_message": "Sorry one more — how long does shipping usually take to Brazil?",
+    "buyer_message_ja": "すみません、もうひとつ - ブラジルまでの配送は通常どのくらいの期間がかかりますか？",
+    "history_ja": [
+      "こんにちは、ブラジルへ発送していただけますか？",
+      "また、ブラジルでの通関プロセスはどのような感じになるのでしょうか？",
+      "すみません、もうひとつ - ブラジルまでの配送は通常どのくらいの期間がかかりますか？"
+    ],
+    "num_messages": 3,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"315002773482\", \"Title\": \"Leica Summilux-M 50mm f/1.4 ASPH Black 11891 Brand New M Mount\", \"PrimaryCategoryName\": \"Cameras & Photo:Lenses & Filters:Lenses\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"4180.00\", \"CurrentPrice\": \"4180.00\", \"Quantity\": \"2\", \"ListingStatus\": \"Active\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority Insured\", \"ShippingServiceCost\": \"110.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T04:12:09.000Z] Hello, do you ship to Brazil?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T04:13:41.000Z] Also, what would the customs process look like for Brazil?"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-01T04:14:55.000Z] Sorry one more — how long does shipping usually take to Brazil?"
+      }
+    ]
+  }
+]

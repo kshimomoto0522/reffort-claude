@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>eBay 無在庫リサーチツール — 結果レポート</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; padding:0; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  h1 { color: #a78bfa; border-bottom: 3px solid #a78bfa; padding-bottom: 8px; }
+  .summary { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .summary .item { text-align: center; }
+  .summary .item .label { font-size: 12px; color:#94a3b8; }
+  .summary .item .val { font-size: 24px; font-weight: bold; color: #a78bfa; }
+  .card { background: #1e293b; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: grid; grid-template-columns: 60px 140px 1fr; gap: 16px; }
+  .rank { font-size: 32px; font-weight: bold; color: #a78bfa; }
+  .thumb img { width: 140px; max-height: 140px; object-fit: contain; border-radius: 8px; background: #0f172a; }
+  .title a { color: #f1f5f9; text-decoration: none; font-size: 16px; font-weight: 600; }
+  .title a:hover { color: #a78bfa; }
+  .meta { font-size: 12px; color: #94a3b8; margin: 8px 0 12px; }
+  .meta a { color: #c4b5fd; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; color: white; margin-right: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .col { background: #0f172a; border-radius: 8px; padding: 12px; border: 2px solid transparent; }
+  .col.profit { background: #0c1426; }
+  .col h4 { margin: 0 0 8px; font-size: 11px; color: #94a3b8; text-transform: uppercase; }
+  .col p { margin: 4px 0; }
+  .col .big { font-size: 18px; font-weight: 600; color: #f1f5f9; }
+  .col .huge { font-size: 28px; font-weight: bold; }
+  .col small { font-size: 12px; color: #94a3b8; }
+  .col table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .col table td { padding: 2px 0; }
+  .col table td:last-child { text-align: right; font-weight: 500; }
+  .muted { color: #64748b; font-size: 11px; }
+  code { background: #0f172a; padding: 2px 6px; border-radius: 4px; }
+  .footer { margin-top: 32px; padding: 16px; color: #64748b; font-size: 11px; line-height: 1.6; }
+  .footer h4 { color: #94a3b8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔎 eBay 無在庫リサーチツール — 結果レポート</h1>
+  <div class="summary">
+    <div class="item"><div class="label">候補総数</div><div class="val">5</div></div>
+    <div class="item"><div class="label">黒字候補</div><div class="val" style="color:#4ade80">3</div></div>
+    <div class="item"><div class="label">USD/JPY</div><div class="val">159.74</div></div>
+    <div class="item"><div class="label">生成日時</div><div class="val" style="font-size:14px">20260429_221851</div></div>
+  </div>
+
+  
+        <div class="card">
+          <div class="rank">#1</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/PJgAAOSwiFlmTage/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/255888989829?_skw=Nike+Dunk+Low&amp;hash=item3b942c1e85:g:PJgAAOSwiFlmTage" target="_blank" rel="noopener">DH0957-001 Nike Dunk Low Crazy Black Multi Camo Khaki Oil Green Orange (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$177.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$177.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥5,918 <small>($33.68)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/auc-life-sendai/6b26408am0005ha24/?variantId=6b26408am0005ha24" target="_blank" rel="noopener">rakuten</a>
+                  ／ ブランド古着 ライフ楽天市場店
+                  ／ <span class="badge" style="background:#22c55e">一致 98.5点</span>
+                </p>
+                <p class="muted">NIKE ナイキ DH0957-001 Dunk Low SE Black Multi Camo ダンク ロー SE ブラック マルチカモ ローカットスニーカー</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$20.80</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$33.68</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.40</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$53.10 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$86.69</p>
+                <p class="big">¥13,849</p>
+                <p>マージン <b>48.98%</b></p>
+                <p class="muted">損益分岐仕入: ¥21,151</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#2</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/0jYAAOSw1e1nd5Al/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/196926192660?_skw=Sony+Alpha+7C&amp;hash=item2dd9b73c14:g:0jYAAOSw1e1nd5Al&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZ%2FkDJibIN7KK%2FoCC%2BAEY6gWItaOvnFlB0%2FpsBHLW%2FH4B0KMo7TpNemVC70W9gce0t6DttJ9nMd4QeUXG%2FoFPUIEkAyh1yv5e1SQ%2F1MeP9YqVy3Zh9QSrwI4TKe6nyzsJUA7J0V5MISl4jVDFasORSV1Ef45ckJ%2BKRiZ%2BJukUQaCKoFsMHHJCLWJZGK2w8t1ODQTzlUhEUg%2BnTXIT%2Fq9HSUPcrsajBQMpsA9bJ5VSWVqHALKu%2BkoNjSz3UFIBZqlJc2yTQURVoDd7SqTdg1%2BennAIfVp6IInKlsDpAx3wF%2BNA%3D%3D" target="_blank" rel="noopener">Sony Digitalcamera Ever Ready Leather Case - Black For Alpha A7C/ILCE-7C/7CL</a></div>
+            <div class="meta">
+              キーワード: <code>Sony Alpha 7C</code> ／
+              出品者: <a href="https://www.ebay.com/usr/sscamerastore" target="_blank">sscamerastore</a>
+              <span class="muted">(100.0% / 1196)</span>
+              <span class="badge" style="background:#475569">FVF: cameras</span>
+              <span class="badge" style="background:#7c3aed">関税: cameras</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.2kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$65.20<small> ＋ 送料 $30.00</small></p>
+                <p>合計 <b>$95.20</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥2,248 <small>($12.79)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/keitaiichiba/sya7c-t02z-h201031.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ keitaiichiba
+                  ／ <span class="badge" style="background:#22c55e">一致 91.6点</span>
+                </p>
+                <p class="muted">SONY α7C ILCE-7C / ILCE-7CL 一眼レフ カメラバッグ メンズ カメラバッグ ショルダー 手提げ ショルダー・ベルト取り付け 対応 一眼</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$14.35</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$12.79</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$0.72</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$6.52 (10%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$32.91</p>
+                <p class="big">¥5,257</p>
+                <p>マージン <b>34.57%</b></p>
+                <p class="muted">損益分岐仕入: ¥8,029</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#3</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/P3EAAeSwcpBotkzL/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/255938804087?_skw=Nike+Dunk+Low&amp;hash=item3b97243977:g:P3EAAeSwcpBotkzL&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbE%2BXOijSJ%2Bre%2BZUigWlAxxnwDWtwNxbTzAD9tz3hA2reyKzPqM1tUYGynEv0mXolenn%2F%2Bm93ZnmaY6PM1UQItZQ4PhRgihLjRjeD1S6qGb1iY%2FKpXadme%2ByXfH8HvyDIHsUUv6L8zdxlp9gj%2FAHOImfctW0n7C6mFzAPop8PgoVUMGYxCP%2FS2jq1vekFzeCv2rB%2B0tSkGUUTpxSVd78Xpo8E1pM1%2BdpbpnLtAxOmzlPCFdpjTQ%2FGLkuipQT4DN418q0CDJIYKlzOZTt%2F4ugJTj9XF7YL%2FD3awJYx4rf9uMiA%3D%3D" target="_blank" rel="noopener">DB0500-200 Nike Dunk Low Scrap Archeo Brown Mosaic Bicoastal Sport Spice (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$317.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$317.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥40,950 <small>($233.05)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/s-0010183/" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 97.6点</span>
+                </p>
+                <p class="muted">【海外限定 お取り寄せ商品】NIKE DUNK LOW SCRAP ARCHEO BROWN ナイキ ダンク ロー スクラップ アーキオブラウン DB0500-</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$37.25</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$233.05</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$2.50</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$95.10 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#fbbf24">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#fbbf24">$9.77</p>
+                <p class="big">¥1,561</p>
+                <p>マージン <b>3.08%</b></p>
+                <p class="muted">損益分岐仕入: ¥42,666</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#4</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/hEEAAeSwoPposT0n/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/256759953853?_skw=Nike+Dunk+Low&amp;hash=item3bc815f9bd:g:hEEAAeSwoPposT0n&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGazv%2Bn%2B6%2BuWA%2B1%2BS8En5LiS9jM8JEmdNu8dnEu%2F0lzcwwTnF1het9v06RSvTVzNjKZtEQEV1o1I9V1QJDTa6GDUM1jMbRSGbNNZTHL%2Bn4rjvPCRC92hCUWvNFV3eLzVkRIbCugYY4Hbv66hLOAngLGrjghy46GS%2F2%2F5OwrpxbSTHjmFkQsA0%2FWn%2F0OfVv4wRC0Cg73ivEYI1wYFPqbL5Vfn6VUwfzGT%2FIAhnLwKEIXCtOQLsKZjhS9rQlQQEtr0fI0FDfnWVMKYxdjBk%2Ff2n%2FXcg9l7ViDN53nT5ZtH1AjNGw%3D%3D" target="_blank" rel="noopener">HV5980-231 Nike Dunk Low Retro Year of The Snake (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$215.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$215.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥31,250 <small>($177.85)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/r-0036067/" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【お取り寄せ商品】NIKE DUNK LOW RETRO YEAR OF THE SNAKE ナイキ ダンク ロー レトロ イヤー オブ ザ スネーク HV59</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$25.26</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$177.85</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.70</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$64.50 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-24.24</p>
+                <p class="big">¥-3,872</p>
+                <p>マージン <b>-11.27%</b></p>
+                <p class="muted">損益分岐仕入: ¥26,991</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#5</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/qJUAAeSwIbBoa2EK/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/255933640320?_skw=Nike+Dunk+Low&amp;hash=item3b96d56e80:g:qJUAAeSwIbBoa2EK&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZD7SsLiuD70oGlmIYd1mdCVj9Dbc06YKEA9UZCFKSE0A%2F2QyZAfwx1m3H9q9%2FG8IMTbTFgqMqD3Qrf7RseGZS5j03c8TBZu%2FnQFmmreh3UunJOs8fdd8wVrCP8SyGaeA7bj1%2BpStUAGM2RlXLGKvRjvfhTvR%2ByM6ppY6V1eLCvWaKBaA7WedAbFr6PN%2BLYx0srRqGLFj1BXNDBDViSG8O9bYOPaJ%2Fktc9wHye2s7rBhSoVwEj%2FnoZcGDlfNZ67ErktxYCKr60YsokvR7ebRzttOnf%2Fk1TJMd7i%2BjxbvQax%2BA%3D%3D" target="_blank" rel="noopener">DA6125-900 Nike Dunk Low City Market Red White Beige Multi Green Yellow (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$290.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$290.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥79,800 <small>($454.14)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/asty-shop/e2-1zmvdu2hud-fwx8/?variantId=e2-1zmvdu2hud-fwx8" target="_blank" rel="noopener">rakuten</a>
+                  ／ asty
+                  ／ <span class="badge" style="background:#22c55e">一致 95.9点</span>
+                </p>
+                <p class="muted">Nike ナイキ メンズ スニーカー 【Nike Dunk Low &#x27;City Market&#x27; DA6125-900】 サイズ US_M_3.5</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$34.08</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$454.14</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$2.29</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$87.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-234.94</p>
+                <p class="big">¥-37,529</p>
+                <p>マージン <b>-81.01%</b></p>
+                <p class="muted">損益分岐仕入: ¥38,517</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+  <div class="footer">
+    <h4>本ツールについて（Ver.1）</h4>
+    <p>
+      <b>手段</b>:<br>
+      ① eBay Browse API（公式・OAuth Application Token）で「米国マーケットに日本セラーが出している商品」を取得<br>
+      ② タイトルから型番（例: DD1391-100）・ブランド・キーワードを抽出<br>
+      ③ 楽天市場 + Yahoo!ショッピングの検索ページ（HTML 内 __INITIAL_STATE__ / __NEXT_DATA__ JSON 抽出）で同一商品を探索<br>
+      ④ 一致スコア 45 点以上の最安候補を採用<br>
+      ⑤ 全コスト（FVF・送料・関税・為替・国内コスト）を入れた純利益を試算
+    </p>
+    <p>
+      <b>2026 年版の重要前提</b>:<br>
+      ・米国 De Minimis $800 免税は <b>2025/8/29 廃止・継続中</b> → 全パッケージ関税対象<br>
+      ・Section 122 全国 10% 追加関税は <b>2026/2/24 施行・2026/7/24 失効予定</b><br>
+      ・スニーカー $150 以上は <b>FVF 8% / per-order 免除</b>（StockX 対抗で 2024 年導入）<br>
+      ・売上税は eBay が買い手から徴収して州に直接送金 → セラー粗利には含めない
+    </p>
+    <p>
+      <b>限界・Ver.2 で改善予定</b>:<br>
+      ・SOLD（実販売）データは Marketplace Insights API 申請後に追加（現状は「ライバル日本セラーが出品中」を需要シグナルとして使用）<br>
+      ・楽天/Yahoo は公式 API キー登録後に切替（取得安定性 + JAN 直叩き）<br>
+      ・Amazon.co.jp / メルカリ / 駿河屋 / モノタロウ等の追加仕入先<br>
+      ・Claude API による商品画像・タイトル類似性のセマンティック判定<br>
+      ・カテゴリ ID と HTS コードの対応表精緻化（重量推定 / 関税精度向上）
+    </p>
+  </div>
+</div>
+</body>
+</html>

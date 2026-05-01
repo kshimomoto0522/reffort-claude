@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BayChat AI Reply モデル比較レポート — トーン FRIENDLY (フレンドリー)</title>
+<style>
+    body {
+        font-family: 'Yu Gothic UI', 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+        background: #f5f3ff;
+        color: #1f2937;
+        margin: 0; padding: 0;
+    }
+    .container { max-width: 1600px; margin: 0 auto; padding: 32px; }
+    header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 24px;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.25);
+    }
+    header h1 { margin: 0 0 4px; font-size: 24px; }
+    header .subtitle { opacity: 0.88; font-size: 14px; }
+
+    h2 {
+        color: #5b21b6;
+        border-bottom: 3px solid #7c3aed;
+        padding-bottom: 6px; margin-top: 32px;
+    }
+    h3 { color: #5b21b6; }
+
+    .summary-section {
+        background: white; padding: 24px; border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+
+    table.agg-table {
+        width: 100%; border-collapse: collapse; margin-top: 12px;
+        font-size: 13px;
+    }
+    table.agg-table th, table.agg-table td {
+        border: 1px solid #e5e7eb; padding: 8px 10px;
+        text-align: left; vertical-align: middle;
+    }
+    table.agg-table th {
+        background: #ede9fe; color: #5b21b6;
+        font-weight: 600; text-align: center;
+    }
+    table.agg-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.agg-table td.num.score { font-weight: 700; color: #5b21b6; font-size: 15px; }
+    table.agg-table td.model-name { white-space: nowrap; }
+
+    .badge-winner {
+        background: #7c3aed; color: white; padding: 2px 8px;
+        border-radius: 10px; font-size: 11px; margin-left: 4px;
+    }
+
+    /* 補足情報 + 再生成ボタン */
+    .supplemental-block {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 2px solid #f59e0b;
+        border-radius: 10px; padding: 16px; margin-top: 16px;
+    }
+    .supplemental-label {
+        display: block; font-weight: 700; color: #78350f;
+        margin-bottom: 8px; font-size: 13px;
+    }
+    .supplemental-label small { font-weight: 400; color: #92400e; }
+    .supplemental-input {
+        width: 100%; box-sizing: border-box;
+        border: 1px solid #f59e0b; border-radius: 6px;
+        padding: 10px 12px; font-size: 13px;
+        font-family: inherit; resize: vertical;
+        background: white;
+    }
+    .supplemental-input:focus {
+        outline: none; border-color: #d97706;
+        box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+    }
+    .supplemental-actions {
+        margin-top: 10px; display: flex; align-items: center; gap: 12px;
+    }
+    .regen-btn {
+        background: #d97706; color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; font-weight: 700;
+        font-size: 14px; cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(217,119,6,0.3);
+    }
+    .regen-btn:hover {
+        background: #b45309; transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(217,119,6,0.4);
+    }
+    .regen-btn:disabled {
+        background: #9ca3af; cursor: wait;
+        transform: none; box-shadow: none;
+    }
+    .regen-status {
+        font-size: 13px; color: #78350f; font-weight: 600;
+    }
+    .regen-status.error { color: #dc2626; }
+    .regen-status.success { color: #15803d; }
+
+    /* 再生成中の reply-card のオーバーレイ */
+    .reply-card.regenerating { position: relative; opacity: 0.6; }
+    .reply-card.regenerating::after {
+        content: "再生成中..."; position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: #7c3aed; color: white;
+        padding: 8px 16px; border-radius: 8px; font-weight: 700;
+    }
+    .reply-card.regenerated {
+        animation: highlight 1.5s ease-out;
+    }
+    @keyframes highlight {
+        0% { background: #fef3c7; }
+        100% { background: white; }
+    }
+    .meta-elapsed.fast b { color: #15803d; }
+    .meta-elapsed.slow b { color: #dc2626; }
+
+    .case-card {
+        background: white; margin-top: 20px; padding: 20px;
+        border-radius: 12px; border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .case-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .case-header h3 { margin: 0; font-size: 16px; }
+    .category-pill {
+        background: #ede9fe; color: #5b21b6;
+        padding: 3px 10px; border-radius: 10px; font-size: 12px;
+    }
+
+    .buyer-block {
+        background: #f5f3ff; padding: 14px;
+        border-left: 4px solid #7c3aed; border-radius: 8px;
+        margin-bottom: 14px;
+    }
+    .block-label {
+        font-size: 12px; font-weight: 700; color: #5b21b6;
+        margin-bottom: 8px;
+    }
+
+    /* 会話履歴全体のタイムライン */
+    .history-block {
+        margin-bottom: 16px; background: #fafafa;
+        border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px;
+    }
+    .history-header {
+        font-weight: 700; color: #5b21b6;
+        font-size: 13px; padding: 2px 0 8px;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 8px;
+    }
+    /* タイムライン：最大450pxでスクロール表示 */
+    .history-timeline {
+        max-height: 450px;
+        overflow-y: auto;
+        padding: 10px 4px 10px 4px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+    }
+    .history-timeline::-webkit-scrollbar {
+        width: 10px;
+    }
+    .history-timeline::-webkit-scrollbar-thumb {
+        background: #a78bfa;
+        border-radius: 5px;
+    }
+    .history-timeline::-webkit-scrollbar-track {
+        background: #f5f3ff;
+    }
+    .product-info {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px 12px; margin: 10px 0;
+        font-size: 12px;
+    }
+    .product-label {
+        display: block; color: #5b21b6;
+        font-weight: 700; margin-bottom: 6px; font-size: 11px;
+    }
+    .product-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 6px;
+    }
+    .msg {
+        margin: 6px 0; padding: 8px 12px;
+        border-radius: 8px; font-size: 12px;
+    }
+    .msg-role {
+        display: inline-block; font-weight: 700; font-size: 11px;
+        margin-bottom: 4px;
+    }
+    .msg-body {
+        white-space: pre-wrap; word-break: break-word;
+        font-size: 12px; line-height: 1.55;
+    }
+    .msg-system {
+        background: #eef2ff; border-left: 3px solid #6366f1; color: #4338ca;
+        font-size: 11px;
+    }
+    .msg-assistant {
+        background: #f0fdf4; border-left: 3px solid #22c55e;
+        margin-left: 30px;  /* セラー側はインデント */
+    }
+    .msg-assistant .msg-role { color: #15803d; }
+    .msg-user {
+        background: #ede9fe; border-left: 3px solid #7c3aed;
+    }
+    .msg-user .msg-role { color: #5b21b6; }
+    /* 最終バイヤーメッセージは強調 */
+    .msg-user-latest {
+        background: #fef3c7 !important;
+        border-left: 4px solid #f59e0b !important;
+        box-shadow: 0 0 0 2px #fbbf24 inset;
+    }
+    .msg-user-latest .msg-role { color: #b45309 !important; }
+    /* 履歴の日本語訳ブロック（各メッセージの下に小さく表示） */
+    .msg-body-ja {
+        margin-top: 6px; padding-top: 6px;
+        border-top: 1px dashed #e5e7eb;
+        font-size: 11px; line-height: 1.5;
+        color: #6b7280;
+        white-space: pre-wrap; word-break: break-word;
+    }
+    .msg-body-ja .ja-label {
+        display: inline-block; font-size: 10px;
+        color: #5b21b6; font-weight: 700;
+        margin-right: 4px;
+    }
+
+    /* ケース内勝者バッジ */
+    .case-winners { display: flex; gap: 4px; }
+    .case-winner-badge {
+        padding: 2px 8px; border-radius: 10px;
+        font-size: 10px; font-weight: 700; color: white;
+    }
+    .win-score { background: #7c3aed; }
+    .win-speed { background: #0ea5e9; }
+    .win-cost { background: #f59e0b; }
+
+    .bilingual {
+        display: grid; grid-template-columns: 1fr; gap: 12px;
+    }
+    .bilingual pre {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px; margin: 4px 0 0;
+        white-space: pre-wrap; word-break: break-word; font-size: 13px;
+        font-family: inherit; max-height: 260px; overflow-y: auto;
+    }
+    .lang-label {
+        font-size: 11px; color: #6b7280; font-weight: 600;
+    }
+
+    .reply-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+        gap: 12px;
+    }
+    .reply-card {
+        background: #f5f3ff; padding: 14px;
+        border-radius: 10px; border: 1px solid #a78bfa;
+    }
+    .reply-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px; flex-wrap: wrap; gap: 6px;
+    }
+    .model-badge {
+        background: #7c3aed; color: white; padding: 4px 10px;
+        border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+    .score-total { font-size: 12px; color: #6b7280; }
+    .score-total b { color: #5b21b6; font-size: 14px; }
+    .score-detail { margin-bottom: 10px; }
+    .score-pill {
+        display: inline-block; background: white; border: 1px solid #e5e7eb;
+        padding: 2px 8px; border-radius: 10px; font-size: 11px; margin: 2px 2px 0 0;
+    }
+    .score-pill b { color: #5b21b6; }
+    .judge-summary {
+        margin-top: 10px; padding: 8px 10px; background: white;
+        border: 1px dashed #a78bfa; border-radius: 6px;
+        font-size: 12px; color: #6b7280;
+    }
+
+    /* フィードバック入力欄 */
+    .feedback-block {
+        margin-top: 16px; padding: 14px;
+        background: #fefce8;  /* ここだけ淡いクリーム色で目立たせる（注意喚起ではなく「入力エリア」として） */
+        border: 2px dashed #a78bfa;
+        border-radius: 10px;
+    }
+    .feedback-label {
+        display: block; font-size: 13px; font-weight: 600;
+        color: #5b21b6; margin-bottom: 6px;
+    }
+    .feedback-label small {
+        font-weight: 400; color: #6b7280; font-size: 11px;
+    }
+    .feedback-input {
+        width: 100%; box-sizing: border-box; padding: 10px;
+        border: 1px solid #e5e7eb; border-radius: 6px;
+        font-family: inherit; font-size: 13px;
+        resize: vertical;
+    }
+    .feedback-input:focus {
+        outline: none; border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+
+    /* フローティングボタン */
+    .floating-download {
+        position: fixed; bottom: 24px; right: 24px;
+        background: #7c3aed; color: white;
+        padding: 14px 22px; border-radius: 30px; border: none;
+        font-size: 14px; font-weight: 600; cursor: pointer;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+        z-index: 1000;
+    }
+    .floating-download:hover { background: #5b21b6; }
+    .floating-status {
+        position: fixed; bottom: 80px; right: 24px;
+        background: white; border: 1px solid #a78bfa;
+        padding: 6px 12px; border-radius: 20px; font-size: 12px;
+        color: #5b21b6; z-index: 1000;
+    }
+
+    footer {
+        text-align: center; margin-top: 48px; padding-bottom: 80px;
+        color: #6b7280; font-size: 12px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>BayChat AI Reply モデル比較レポート — トーン FRIENDLY (フレンドリー)</h1>
+        <div class="subtitle">
+            <span style="background: #0d9488; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 16px; margin-right: 12px;">トーン: FRIENDLY / フレンドリー</span>
+            3モデル × 5ケース | 生成日時: 2026-05-01 14:31<br>
+            社長のフィードバックは各ケース下の入力欄に書いてください。自動保存されます。
+        </div>
+    </header>
+
+    <section class="summary-section">
+        <h2>📊 モデル別集計</h2>
+        <p>集計データなし</p>
+        
+        
+    <h3 style="margin-top:28px">⏱ 速度ばらつき（差分TOP10）</h3>
+    <p style="font-size:13px;color:#6b7280">
+    同じケースでもモデルによって応答時間が大きく違うケースの一覧。
+    「モデル平均」だけでは見えない外れ値の傾向がわかる。
+    </p>
+    <table class="agg-table">
+        <thead><tr><th>ケース</th><th>最速モデル</th><th>最遅モデル</th><th>差分</th></tr></thead>
+        <tbody>
+        <tr>
+            <td>cat02_05_authenticity_question</td>
+            <td>GPT-4.1-Mini <small>(3.2秒)</small></td>
+            <td>GPT-5-Mini <small>(6.9秒)</small></td>
+            <td class="num"><strong>+3.7秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_06_used_condition_detail</td>
+            <td>GPT-4.1-Mini <small>(3.8秒)</small></td>
+            <td>GPT-5-Mini <small>(7.5秒)</small></td>
+            <td class="num"><strong>+3.7秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_07_year_origin</td>
+            <td>GPT-4o-Mini <small>(4.2秒)</small></td>
+            <td>GPT-5-Mini <small>(6.7秒)</small></td>
+            <td class="num"><strong>+2.5秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_08_box_accessories</td>
+            <td>GPT-4.1-Mini <small>(3.0秒)</small></td>
+            <td>GPT-5-Mini <small>(5.2秒)</small></td>
+            <td class="num"><strong>+2.2秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_03_brand_new_or_used</td>
+            <td>GPT-4.1-Mini <small>(2.3秒)</small></td>
+            <td>GPT-5-Mini <small>(2.7秒)</small></td>
+            <td class="num"><strong>+0.4秒</strong></td>
+        </tr></tbody>
+    </table>
+    
+    </section>
+
+    <h2>📌 全5ケース（返信内容 + フィードバック入力欄）</h2>
+    <p style="color:#6b7280">
+    各ケースの一番下に「社長の理想フィードバック」入力欄があります。書き込むと即座にブラウザに自動保存。
+    最下部の <strong>紫ボタン</strong> から全フィードバックをJSONでダウンロードできます。
+    </p>
+    
+    <article class="case-card" data-case-id="cat02_03_brand_new_or_used">
+        <div class="case-header">
+            <h3>📩 cat02_03_brand_new_or_used</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Seiko Prospex SPB143J1 Diver Automatic 200M Brand New</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 1150.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-04-25T08:11:39.000Z] Is this watch brand new and never worn? Comes with original box and papers?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> この時計は新品で未使用ですか？元箱と付属書類は付いていますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Is this watch brand new and never worn? Comes with original box and papers?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>この時計は新品で未使用ですか？元箱と付属書類は付いていますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_03_brand_new_or_used" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>2.3</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.420</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hi B13,
+
+This watch is brand new and unworn. It comes with the original box and papers. Please feel confident in your purchase.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB13様、
+
+こちらの時計は新品未使用で、オリジナルの箱と書類が付属しております。安心してお求めください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_03_brand_new_or_used" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>2.6</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.160</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B13,
+
+Yes, this watch is brand new and unworn. It comes with the original box and papers as standard, so you can be assured of its authenticity.
+
+If you have any other questions, feel free to reach out anytime.
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB13、
+
+この時計は新品で未使用です。オリジナルの箱と書類が付属していますので、ご安心ください。
+
+何か他にご質問があれば、お気軽にお知らせください。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_03_brand_new_or_used" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>2.7</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.280</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B13,
+
+Yes — this watch is brand new and unworn. It comes with the original box and papers as standard for a new Seiko Prospex.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B13,
+
+こちらは未使用の新品です。箱と保証書などの付属書類は、ブランドの標準的な未使用品に付属する「オリジナルの箱とペーパー」が含まれます。
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_03_brand_new_or_used">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_03_brand_new_or_used"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_03_brand_new_or_used', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_03_brand_new_or_used"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_05_authenticity_question">
+        <div class="case-header">
+            <h3>📩 cat02_05_authenticity_question</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Louis Vuitton Speedy 30 Monogram Canvas Handbag M41526</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 1280.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-04-26T03:48:22.000Z] Hello, can you guarantee this is 100% authentic? Do you have a receipt or any authentication paperwork I can see?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、こちら100%本物だと保証していただけますか？レシートや鑑定書類があれば見せていただけますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hello, can you guarantee this is 100% authentic? Do you have a receipt or any authentication paperwork I can see?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、こちら100%本物だと保証していただけますか？レシートや鑑定書類があれば見せていただけますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_05_authenticity_question" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.450</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B15,
+
+I can confidently assure you that this item is a genuine Louis Vuitton product. Our store only sells authentic items, so you can rest assured. However, I have not recorded any receipt or authentication paperwork for this item and cannot provide such documents. Please refer to the product page for all the details I have documented.
+
+If you have any other questions, feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB15様、
+
+こちらの商品はルイヴィトンの正規品であることを自信を持ってお伝えいたします。当店では正規品のみを取り扱っておりますのでご安心ください。ただし、購入時のレシートや認証書などの書類は当店で保管しておらず、お付けできません。商品の詳細は商品ページにてご確認いただけますので、そちらもご参照ください。
+
+ご不明な点がございましたらお気軽にお尋ねください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_05_authenticity_question" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.4</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.170</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B15,
+
+I can assure you that this item is authentic. Our store only lists genuine products, and we take pride in providing trustworthy items.
+
+However, I do not have a receipt or authentication paperwork available. Please refer to the information provided on the product page for more details.
+
+If you have any other questions, feel free to reach out anytime.
+
+Best,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB15、
+
+この商品は本物であることをお約束いたします。私たちのストアでは、正規品のみを取り扱っており、信頼できる商品を提供しています。
+
+ただし、レシートや認証書類はご用意しておりません。商品ページに記載されている情報をご確認いただければと思います。
+
+何か他にご質問があれば、お気軽にお知らせください。
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_05_authenticity_question" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>6.9</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.380</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B15,
+
+Thanks for asking.
+
+Yes, this Louis Vuitton Speedy 30 Monogram that I listed is a genuine item — I source, inspect, photograph, and list items from our own inventory, and we only sell authentic goods.
+
+Regarding receipts or authentication paperwork, what I documented on the product page (photos and description) is everything I recorded for this item. Some listings include original receipts or third-party authentication paperwork, but not all do. If you need a specific document, please tell me which one you are looking for and I will confirm whether it is included for this bag.
+
+If there are particular areas you want to see or verify (for example, the date code location, interior photos, or any specific wear spots), let me know and I will respond with what I can confirm from our records.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B15,
+
+お問い合わせありがとうございます。
+
+はい、当店が出品しているこのルイ・ヴィトン Speedy 30 モノグラムは、当店が自社で仕入れ、撮影し、検品して出品している正規品です。私たちは本物のみを取り扱っています。
+
+ただし、領収書やメーカー発行の購入証明書、第三者鑑定書などの特定の書類については、商品ページに記載しているものが出品時点で私が確認・記録した全てです。個別の追加書類があるかどうかは商品ごとに異なりますので、特定の書類が必要でしたらどの書類かを教えてください。商品ページに掲載している写真や説明が私が確認した内容の全てです。
+
+ご不明点や確認したい箇所（シリアルの位置や内側の写真、ダメージの有無など）があればお知らせください。可能な範囲で写真の指示や詳細説明にお答えします。
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_05_authenticity_question">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_05_authenticity_question"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_05_authenticity_question', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_05_authenticity_question"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_06_used_condition_detail">
+        <div class="case-header">
+            <h3>📩 cat02_06_used_condition_detail</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Leica M6 Classic 35mm Rangefinder Camera Black Body Vintage</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 3850.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-04-25T23:08:14.000Z] Hi, could you describe the condition more in detail? Are there any scratches, dents, or signs of wear on the body or lens? Also is the shutter working properly at all speeds?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、状態についてもう少し詳しく教えていただけますか？ボディやレンズに傷、へこみ、使用感はありますか？また、シャッターは全スピードで正常に作動しますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hi, could you describe the condition more in detail? Are there any scratches, dents, or signs of wear on the body or lens? Also is the shutter working properly at all speeds?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、状態についてもう少し詳しく教えていただけますか？ボディやレンズに傷、へこみ、使用感はありますか？また、シャッターは全スピードで正常に作動しますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_06_used_condition_detail" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.8</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.470</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hi B16,
+
+Thank you for your inquiry. This Leica M6 Classic 35mm rangefinder camera is listed as a used item with some signs of use. For specific details about any scratches, dents, or wear on the body or lens, please kindly refer to the photos I took and included on the product page.
+
+Regarding the shutter, I haven&#x27;t run a separate test on all shutter speeds, so I am not able to confirm its operation at every speed.
+
+If you have any other questions, please feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB16様、
+
+ご質問ありがとうございます。こちらのLeica M6クラシック35mmレンジファインダーカメラのボディやレンズに関しては、使用感がある中古品として出品しております。具体的な傷やへこみの有無については、商品ページに掲載している写真をご確認いただければと思います。
+
+シャッターの動作については、すべての速度での動作確認は行っておりませんので、正確な動作状況をお伝えすることができません。ご理解いただけますと幸いです。
+
+何か他にご不明な点がございましたら、お気軽にお尋ねください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_06_used_condition_detail" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.7</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.180</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B16,
+
+Thank you for your inquiry about the condition of the camera. I haven&#x27;t recorded specific details regarding scratches, dents, or signs of wear on the body or lens. I listed it as &#x27;Used - Excellent&#x27;, which generally means there may be minor signs of use, but nothing particularly noticeable.
+
+As for the shutter operation, I haven&#x27;t run a separate test on it, so I&#x27;m unable to confirm its performance at all speeds. I recommend checking the photos on the product page for a better understanding of its condition.
+
+If you have any further questions, feel free to reach out anytime.
+
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB16、
+
+カメラの状態についてお尋ねいただきありがとうございます。ボディやレンズに関して、具体的な傷やへこみ、使用感についての詳細は記録していません。全体的に「中古 - 優良」としてリストしており、通常の使用による小さな傷があるかもしれませんが、特に目立つダメージはないと考えています。
+
+シャッターの動作については、個別にテストを行っていないため、すべての速度での動作を確認することはできません。商品ページの写真をご覧いただければ、状態についての詳細が確認できると思います。
+
+何か他にご質問があれば、お気軽にお知らせください。</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_06_used_condition_detail" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>7.5</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.400</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B16,
+
+Thanks for your message. This is the Leica M6 Classic black body listed as Used. The photos I took and uploaded to the product page are everything I documented for the camera body and lens area, and they show the visible wear I noted (such as paint wear, small marks, or any scratches that are visible in the shots).
+
+I have not performed a speed-by-speed shutter test myself, so I do not have a recorded confirmation that the shutter works properly at every speed. The information I provided on the product page is everything I documented for this item.
+
+If there is a specific spot or concern you want me to address (for example a particular side of the body, dust or fungus in the viewfinder, or testing a specific shutter speed), tell me which one and I will respond based on what I recorded. Please note I do not provide additional inspections or photos beyond what is on the listing by default, so the product page is the primary record.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B16,
+
+お問い合わせありがとうございます。こちらはLeica M6 Classicの中古ブラックボディ、出品時の記載は「Used」です。私が撮影して商品ページに載せた写真が、ボディとレンズまわりの状態を確認するために私が用意した全ての記録です。写真で目立つ箇所（塗装の擦れ、小さな打痕、光の反射で見えやすいキズなど）は掲載しています。
+
+シャッターについては、私は個別のスピードごとの詳細なシャッターテストは行っておらず、出品ページにも私が記載した情報が全てです。従って私の方では全速度での完全な動作確認結果を記録しておりません。
+
+もし特に気になる箇所（たとえば特定の側面の擦りキズ、ファインダー内のカビやホコリ、シャッターの特定速度での動作確認など）があれば、その点をお知らせください。出品時に私が記載した情報以外の追加検査や追加写真は現在ご用意しておりませんので、まずは商品ページの写真と説明をご確認ください。
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_06_used_condition_detail">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_06_used_condition_detail"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_06_used_condition_detail', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_06_used_condition_detail"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_07_year_origin">
+        <div class="case-header">
+            <h3>📩 cat02_07_year_origin</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Fender Stratocaster Electric Guitar Sunburst Used</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 1450.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-04-27T07:22:45.000Z] Hello, what year was this guitar made and where? The serial number should tell us. Also is it the original Made in Japan version?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、このギターは何年製でどこで作られましたか？シリアル番号でわかると思います。また、これはオリジナルの日本製版ですか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hello, what year was this guitar made and where? The serial number should tell us. Also is it the original Made in Japan version?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、このギターは何年製でどこで作られましたか？シリアル番号でわかると思います。また、これはオリジナルの日本製版ですか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_07_year_origin" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.6</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.440</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B17,
+
+I haven&#x27;t recorded the serial number for this guitar, so I can&#x27;t confirm the year it was made or the manufacturing location. I also can&#x27;t confirm whether it is the original Made in Japan version. Everything I can confirm is on the product page, so please take a look there.
+
+If you have any other questions, feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB17様、
+
+このギターの製造年や製造場所については、シリアルナンバーを記録しておらず、確認できません。オリジナルの日本製かどうかも同様にお答えできません。商品ページに記載している情報が私たちが確認できる全てですので、そちらをご覧ください。
+
+何か他にご質問があればお気軽にお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_07_year_origin" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.170</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B17,
+
+The year and place of manufacture for this guitar are typically indicated by the serial number. However, I haven&#x27;t recorded that serial number, so I can&#x27;t provide specific details about the year or whether it&#x27;s the original Made in Japan version.
+
+Please refer to the product page for any information I can confirm. If you have any other questions, feel free to reach out!
+
+Best,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB17、
+
+このギターの製造年や製造場所については、シリアルナンバーが重要です。しかし、私たちはそのシリアルナンバーを記録していないため、正確な情報をお伝えすることができません。製造国についても、情報がないため、元々の日本製かどうかを確認することはできません。
+
+商品ページに記載されている情報をご確認いただければと思います。何か他にお手伝いできることがあればお知らせください。
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_07_year_origin" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>6.7</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.360</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B17,
+
+Thanks for your question. I haven’t transcribed the serial number for this guitar, so I can’t determine the year or country of manufacture from our records right now. Everything I documented about the item is on the product page; if a serial number is visible in the photos please check there.
+
+If you share the serial number here, I will try to read it and confirm whether it indicates the year and whether it’s a Made in Japan model. Please note that because I did not record the country of manufacture in the listing, I cannot confirm it unless the serial number (or a clear marking in the photos) shows it.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B17,
+
+お問い合わせありがとうございます。シリアル番号から製造年や製造国を確認するには、私がそのシリアル番号を記録していないため、現時点では確定できません。私が出品時に記載している情報は商品ページに載せた内容がすべてです。写真にシリアルが写っている場合はそちらをご確認ください。もしシリアル番号をここに教えていただければ、私の側で読める範囲で確認して年と生産国がわかるかお調べします。ただし、出品情報に製造国（Made in Japan）を明記していないため、シリアルを確認できない限り「日本製のオリジナル版」かどうかは判断できません。
+
+ご希望でしたらシリアル番号をお知らせください。確認できる範囲でお答えします。
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_07_year_origin">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_07_year_origin"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_07_year_origin', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_07_year_origin"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_08_box_accessories">
+        <div class="case-header">
+            <h3>📩 cat02_08_box_accessories</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Pokemon TCG Pikachu Illustrator Promo Card PSA 9 Holo</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 4500.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-04-28T16:39:50.000Z] Quick question: does this come with the original case and the PSA certification card? Want to make sure before I buy.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ちょっと質問です。これはオリジナルケースとPSA鑑定書付きですか？購入前に確認したいです。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Quick question: does this come with the original case and the PSA certification card? Want to make sure before I buy.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>ちょっと質問です。これはオリジナルケースとPSA鑑定書付きですか？購入前に確認したいです。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_08_box_accessories" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.0</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.450</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hi B18,
+
+Thanks for asking! This Pokémon TCG Pikachu Illustrator Promo Card is listed as a PSA 9 holo card. However, I haven&#x27;t packed a separate original case or PSA certification card beyond the graded slab itself. Everything I can confirm is shown on the product page, so please take a look there before purchasing.
+
+If you have any other questions, feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB18様、
+
+ご質問ありがとうございます。このポケモンTCGピカチュウイラストレーターのプロモカードは、PSA 9のホロカードとして出品しておりますが、オリジナルケースやPSA認証カードの別添えは私たちの記録にはありません。商品ページに掲載している内容が私たちが確認している全てですので、ご購入前にご確認いただければ幸いです。
+
+何か他にご不明な点がございましたら、お気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_08_box_accessories" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.3</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.170</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B18,
+
+Thank you for your question. This Pokémon TCG Pikachu Illustrator promo card is graded PSA 9 and will be shipped in its slabbed condition, but it does not come with the original case or PSA certification card. You will receive only the card in its slab.
+
+If you have any other questions, feel free to reach out!
+
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB18、
+
+ご質問ありがとうございます。このポケモンTCGピカチュウイラストレーターのプロモカードは、PSA 9の評価を受けており、スラブに入った状態でお届けしますが、オリジナルのケースやPSA認証カードは含まれていません。お手元に届くのは、スラブに入ったカードのみです。
+
+他に何かご質問があれば、お気軽にお知らせください。
+
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_08_box_accessories" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.340</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B18,
+
+Thanks for asking. This item is the PSA-graded slabbed promo card graded PSA 9, and the slab shown in the photos is the actual item I will send. I have not recorded or listed any separate &quot;original case&quot; or a separate PSA paper certification in the product details, so I will not be including additional accessory items beyond what is shown in the photos and on the product page.
+
+If you want me to confirm any other detail before buying, let me know. Thanks for considering this item.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B18,
+
+ありがとうございます。こちらはPSAで封入されたスラブ（PSA 9）のホロカードとして出品しています。スラブ本体は写真に写っているものが送付される実物です。ただし、出品ページに私が別途「オリジナルのケース」や「PSAの別紙認定カード（紙の証明書）」を明記していないため、私はその別添アクセサリーを記録しておりません。写真と商品ページに掲載しているものが、私がご用意する全てになります。
+
+ご購入前に他に確認したい点があれば教えてください。ご検討ありがとうございます。
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_08_box_accessories">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_08_box_accessories"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_08_box_accessories', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_08_box_accessories"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+
+    <footer>
+        BayChat AI Reply テストレポート / ソース: test_gpt_gpt4omini_gpt5mini_v2.3_baseline_natural2_prodOFF_20260430_201902.xlsx<br>
+        フィードバックは localStorage（このブラウザ）に自動保存されます。
+    </footer>
+</div>
+
+<div class="floating-status" id="saveStatus">💾 変更なし</div>
+<button class="floating-download" onclick="downloadFeedback()">
+    📥 全フィードバックをJSONダウンロード
+</button>
+
+<script>
+// localStorage キー（このレポート固有）
+const STORAGE_KEY = 'baychat_feedback_20260501_1431';
+const statusEl = document.getElementById('saveStatus');
+
+// 初期化：保存済みフィードバックを復元
+function restoreFeedback() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.feedback-input').forEach(ta => {
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        });
+        const count = Object.keys(data).filter(k => data[k]).length;
+        statusEl.textContent = `💾 保存済み ${count}件`;
+    } catch (e) { console.error(e); }
+}
+
+// 自動保存
+function saveFeedback() {
+    const data = {};
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const count = Object.keys(data).length;
+    statusEl.textContent = `💾 保存 ${count}件 (${new Date().toLocaleTimeString('ja-JP')})`;
+}
+
+document.querySelectorAll('.feedback-input').forEach(ta => {
+    ta.addEventListener('input', saveFeedback);
+});
+
+// ダウンロード
+function downloadFeedback() {
+    const data = {
+        exported_at: new Date().toISOString(),
+        report_source: 'test_gpt_gpt4omini_gpt5mini_v2.3_baseline_natural2_prodOFF_20260430_201902.xlsx',
+        feedback: {}
+    };
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data.feedback[cid] = ta.value;
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    a.download = `baychat_feedback_${ts}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+restoreFeedback();
+
+// ==========================================================
+// 補足情報 + 再生成API
+// ==========================================================
+const REGENERATE_API = 'http://127.0.0.1:8765/api/regenerate';
+const TONE = 'friendly';
+const PROMPT_VERSION = '2.3_baseline_natural2';
+const TEST_CASE_PATH = 'test_cases/category_02_natural5_subset.json';
+
+// 速度目標（秒）
+const SPEED_TARGET_STANDARD = 3.0;  // 標準
+const SPEED_TARGET_COMPLEX = 6.0;   // 複雑
+const SPEED_TARGET_APOLOGY = 8.0;   // 謝罪
+
+function colorizeElapsed(span, elapsed) {
+    span.classList.remove('fast', 'slow');
+    const target = (TONE === 'apologetic') ? SPEED_TARGET_APOLOGY : SPEED_TARGET_STANDARD;
+    if (elapsed <= target) span.classList.add('fast');
+    else if (elapsed > SPEED_TARGET_COMPLEX) span.classList.add('slow');
+}
+
+async function regenerateCase(caseId, btn) {
+    const block = document.querySelector(`.supplemental-block[data-case-id="${caseId}"]`);
+    if (!block) return;
+    const ta = block.querySelector('.supplemental-input');
+    const statusEl = block.querySelector('.regen-status');
+    const supplemental = (ta.value || '').trim();
+
+    // 同じケースの全 reply-card を取得（同 case-card 内）
+    const caseCard = block.closest('.case-card');
+    const replyCards = caseCard.querySelectorAll('.reply-card');
+
+    // ローディング表示
+    btn.disabled = true;
+    btn.textContent = '⏳ 生成中...';
+    statusEl.classList.remove('error','success');
+    statusEl.textContent = `${replyCards.length}モデルで再生成中...`;
+    replyCards.forEach(c => c.classList.add('regenerating'));
+
+    try {
+        const resp = await fetch(REGENERATE_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                case_id: caseId,
+                supplemental: supplemental,
+                tone: TONE,
+                prompt_version: PROMPT_VERSION,
+                test_case_path: TEST_CASE_PATH,
+            }),
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        const data = await resp.json();
+
+        // 各モデルの結果を画面更新
+        let updated = 0;
+        let errors = [];
+        data.results.forEach(r => {
+            if (r.error) { errors.push(`${r.model_name||r.model_id}: ${r.error}`); return; }
+            const card = caseCard.querySelector(`.reply-card[data-model-name="${r.model_name}"]`);
+            if (!card) return;
+            card.querySelector('.reply-en').textContent = r.buyer_reply;
+            card.querySelector('.reply-ja').textContent = r.jpn_reply;
+            const elapsedEl = card.querySelector('.meta-elapsed');
+            elapsedEl.innerHTML = `⏱ <b>${r.elapsed.toFixed(1)}</b>秒`;
+            colorizeElapsed(elapsedEl, r.elapsed);
+            const costEl = card.querySelector('.meta-cost');
+            costEl.innerHTML = `💴 <b>¥${r.cost_jpy.toFixed(3)}</b>`;
+            card.classList.remove('regenerating');
+            card.classList.add('regenerated');
+            setTimeout(() => card.classList.remove('regenerated'), 1500);
+            updated++;
+        });
+
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        if (errors.length > 0) {
+            statusEl.classList.add('error');
+            statusEl.textContent = `⚠️ ${updated}件成功 / ${errors.length}件エラー: ${errors.join('; ')}`;
+        } else {
+            statusEl.classList.add('success');
+            statusEl.textContent = `✅ ${updated}モデル再生成完了`;
+        }
+    } catch (e) {
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        statusEl.classList.add('error');
+        statusEl.textContent = `❌ 失敗: ${e.message}（result_server.py が起動しているか確認してください）`;
+        console.error(e);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🔁 補足込みで再生成（3モデル）';
+    }
+}
+
+// 補足情報の自動保存（localStorageに別キーで）
+const SUPP_KEY = 'baychat_supplemental_20260501_1431';
+function restoreSupplemental() {
+    const saved = localStorage.getItem(SUPP_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.supplemental-input').forEach(ta => {
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        });
+    } catch (e) { console.error(e); }
+}
+function saveSupplemental() {
+    const data = {};
+    document.querySelectorAll('.supplemental-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    });
+    localStorage.setItem(SUPP_KEY, JSON.stringify(data));
+}
+document.querySelectorAll('.supplemental-input').forEach(ta => {
+    ta.addEventListener('input', saveSupplemental);
+});
+restoreSupplemental();
+
+// 初期表示の応答時間を色付け
+document.querySelectorAll('.meta-elapsed').forEach(el => {
+    const m = el.textContent.match(/([\d.]+)秒/);
+    if (m) colorizeElapsed(el, parseFloat(m[1]));
+});
+</script>
+</body>
+</html>

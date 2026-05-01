@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BayChat AI Reply モデル比較レポート — トーン FRIENDLY (フレンドリー)</title>
+<style>
+    body {
+        font-family: 'Yu Gothic UI', 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+        background: #f5f3ff;
+        color: #1f2937;
+        margin: 0; padding: 0;
+    }
+    .container { max-width: 1600px; margin: 0 auto; padding: 32px; }
+    header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 24px;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.25);
+    }
+    header h1 { margin: 0 0 4px; font-size: 24px; }
+    header .subtitle { opacity: 0.88; font-size: 14px; }
+
+    h2 {
+        color: #5b21b6;
+        border-bottom: 3px solid #7c3aed;
+        padding-bottom: 6px; margin-top: 32px;
+    }
+    h3 { color: #5b21b6; }
+
+    .summary-section {
+        background: white; padding: 24px; border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+
+    table.agg-table {
+        width: 100%; border-collapse: collapse; margin-top: 12px;
+        font-size: 13px;
+    }
+    table.agg-table th, table.agg-table td {
+        border: 1px solid #e5e7eb; padding: 8px 10px;
+        text-align: left; vertical-align: middle;
+    }
+    table.agg-table th {
+        background: #ede9fe; color: #5b21b6;
+        font-weight: 600; text-align: center;
+    }
+    table.agg-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.agg-table td.num.score { font-weight: 700; color: #5b21b6; font-size: 15px; }
+    table.agg-table td.model-name { white-space: nowrap; }
+
+    .badge-winner {
+        background: #7c3aed; color: white; padding: 2px 8px;
+        border-radius: 10px; font-size: 11px; margin-left: 4px;
+    }
+
+    /* 補足情報 + 再生成ボタン */
+    .supplemental-block {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 2px solid #f59e0b;
+        border-radius: 10px; padding: 16px; margin-top: 16px;
+    }
+    .supplemental-label {
+        display: block; font-weight: 700; color: #78350f;
+        margin-bottom: 8px; font-size: 13px;
+    }
+    .supplemental-label small { font-weight: 400; color: #92400e; }
+    .supplemental-input {
+        width: 100%; box-sizing: border-box;
+        border: 1px solid #f59e0b; border-radius: 6px;
+        padding: 10px 12px; font-size: 13px;
+        font-family: inherit; resize: vertical;
+        background: white;
+    }
+    .supplemental-input:focus {
+        outline: none; border-color: #d97706;
+        box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+    }
+    .supplemental-actions {
+        margin-top: 10px; display: flex; align-items: center; gap: 12px;
+    }
+    .regen-btn {
+        background: #d97706; color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; font-weight: 700;
+        font-size: 14px; cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(217,119,6,0.3);
+    }
+    .regen-btn:hover {
+        background: #b45309; transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(217,119,6,0.4);
+    }
+    .regen-btn:disabled {
+        background: #9ca3af; cursor: wait;
+        transform: none; box-shadow: none;
+    }
+    .regen-status {
+        font-size: 13px; color: #78350f; font-weight: 600;
+    }
+    .regen-status.error { color: #dc2626; }
+    .regen-status.success { color: #15803d; }
+
+    /* 再生成中の reply-card のオーバーレイ */
+    .reply-card.regenerating { position: relative; opacity: 0.6; }
+    .reply-card.regenerating::after {
+        content: "再生成中..."; position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: #7c3aed; color: white;
+        padding: 8px 16px; border-radius: 8px; font-weight: 700;
+    }
+    .reply-card.regenerated {
+        animation: highlight 1.5s ease-out;
+    }
+    @keyframes highlight {
+        0% { background: #fef3c7; }
+        100% { background: white; }
+    }
+    .meta-elapsed.fast b { color: #15803d; }
+    .meta-elapsed.slow b { color: #dc2626; }
+
+    .case-card {
+        background: white; margin-top: 20px; padding: 20px;
+        border-radius: 12px; border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .case-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .case-header h3 { margin: 0; font-size: 16px; }
+    .category-pill {
+        background: #ede9fe; color: #5b21b6;
+        padding: 3px 10px; border-radius: 10px; font-size: 12px;
+    }
+
+    .buyer-block {
+        background: #f5f3ff; padding: 14px;
+        border-left: 4px solid #7c3aed; border-radius: 8px;
+        margin-bottom: 14px;
+    }
+    .block-label {
+        font-size: 12px; font-weight: 700; color: #5b21b6;
+        margin-bottom: 8px;
+    }
+
+    /* 会話履歴全体のタイムライン */
+    .history-block {
+        margin-bottom: 16px; background: #fafafa;
+        border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px;
+    }
+    .history-header {
+        font-weight: 700; color: #5b21b6;
+        font-size: 13px; padding: 2px 0 8px;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 8px;
+    }
+    /* タイムライン：最大450pxでスクロール表示 */
+    .history-timeline {
+        max-height: 450px;
+        overflow-y: auto;
+        padding: 10px 4px 10px 4px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+    }
+    .history-timeline::-webkit-scrollbar {
+        width: 10px;
+    }
+    .history-timeline::-webkit-scrollbar-thumb {
+        background: #a78bfa;
+        border-radius: 5px;
+    }
+    .history-timeline::-webkit-scrollbar-track {
+        background: #f5f3ff;
+    }
+    .product-info {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px 12px; margin: 10px 0;
+        font-size: 12px;
+    }
+    .product-label {
+        display: block; color: #5b21b6;
+        font-weight: 700; margin-bottom: 6px; font-size: 11px;
+    }
+    .product-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 6px;
+    }
+    .msg {
+        margin: 6px 0; padding: 8px 12px;
+        border-radius: 8px; font-size: 12px;
+    }
+    .msg-role {
+        display: inline-block; font-weight: 700; font-size: 11px;
+        margin-bottom: 4px;
+    }
+    .msg-body {
+        white-space: pre-wrap; word-break: break-word;
+        font-size: 12px; line-height: 1.55;
+    }
+    .msg-system {
+        background: #eef2ff; border-left: 3px solid #6366f1; color: #4338ca;
+        font-size: 11px;
+    }
+    .msg-assistant {
+        background: #f0fdf4; border-left: 3px solid #22c55e;
+        margin-left: 30px;  /* セラー側はインデント */
+    }
+    .msg-assistant .msg-role { color: #15803d; }
+    .msg-user {
+        background: #ede9fe; border-left: 3px solid #7c3aed;
+    }
+    .msg-user .msg-role { color: #5b21b6; }
+    /* 最終バイヤーメッセージは強調 */
+    .msg-user-latest {
+        background: #fef3c7 !important;
+        border-left: 4px solid #f59e0b !important;
+        box-shadow: 0 0 0 2px #fbbf24 inset;
+    }
+    .msg-user-latest .msg-role { color: #b45309 !important; }
+    /* 履歴の日本語訳ブロック（各メッセージの下に小さく表示） */
+    .msg-body-ja {
+        margin-top: 6px; padding-top: 6px;
+        border-top: 1px dashed #e5e7eb;
+        font-size: 11px; line-height: 1.5;
+        color: #6b7280;
+        white-space: pre-wrap; word-break: break-word;
+    }
+    .msg-body-ja .ja-label {
+        display: inline-block; font-size: 10px;
+        color: #5b21b6; font-weight: 700;
+        margin-right: 4px;
+    }
+
+    /* ケース内勝者バッジ */
+    .case-winners { display: flex; gap: 4px; }
+    .case-winner-badge {
+        padding: 2px 8px; border-radius: 10px;
+        font-size: 10px; font-weight: 700; color: white;
+    }
+    .win-score { background: #7c3aed; }
+    .win-speed { background: #0ea5e9; }
+    .win-cost { background: #f59e0b; }
+
+    .bilingual {
+        display: grid; grid-template-columns: 1fr; gap: 12px;
+    }
+    .bilingual pre {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px; margin: 4px 0 0;
+        white-space: pre-wrap; word-break: break-word; font-size: 13px;
+        font-family: inherit; max-height: 260px; overflow-y: auto;
+    }
+    .lang-label {
+        font-size: 11px; color: #6b7280; font-weight: 600;
+    }
+
+    .reply-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+        gap: 12px;
+    }
+    .reply-card {
+        background: #f5f3ff; padding: 14px;
+        border-radius: 10px; border: 1px solid #a78bfa;
+    }
+    .reply-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px; flex-wrap: wrap; gap: 6px;
+    }
+    .model-badge {
+        background: #7c3aed; color: white; padding: 4px 10px;
+        border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+    .score-total { font-size: 12px; color: #6b7280; }
+    .score-total b { color: #5b21b6; font-size: 14px; }
+    .score-detail { margin-bottom: 10px; }
+    .score-pill {
+        display: inline-block; background: white; border: 1px solid #e5e7eb;
+        padding: 2px 8px; border-radius: 10px; font-size: 11px; margin: 2px 2px 0 0;
+    }
+    .score-pill b { color: #5b21b6; }
+    .judge-summary {
+        margin-top: 10px; padding: 8px 10px; background: white;
+        border: 1px dashed #a78bfa; border-radius: 6px;
+        font-size: 12px; color: #6b7280;
+    }
+
+    /* フィードバック入力欄 */
+    .feedback-block {
+        margin-top: 16px; padding: 14px;
+        background: #fefce8;  /* ここだけ淡いクリーム色で目立たせる（注意喚起ではなく「入力エリア」として） */
+        border: 2px dashed #a78bfa;
+        border-radius: 10px;
+    }
+    .feedback-label {
+        display: block; font-size: 13px; font-weight: 600;
+        color: #5b21b6; margin-bottom: 6px;
+    }
+    .feedback-label small {
+        font-weight: 400; color: #6b7280; font-size: 11px;
+    }
+    .feedback-input {
+        width: 100%; box-sizing: border-box; padding: 10px;
+        border: 1px solid #e5e7eb; border-radius: 6px;
+        font-family: inherit; font-size: 13px;
+        resize: vertical;
+    }
+    .feedback-input:focus {
+        outline: none; border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+
+    /* フローティングボタン */
+    .floating-download {
+        position: fixed; bottom: 24px; right: 24px;
+        background: #7c3aed; color: white;
+        padding: 14px 22px; border-radius: 30px; border: none;
+        font-size: 14px; font-weight: 600; cursor: pointer;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+        z-index: 1000;
+    }
+    .floating-download:hover { background: #5b21b6; }
+    .floating-status {
+        position: fixed; bottom: 80px; right: 24px;
+        background: white; border: 1px solid #a78bfa;
+        padding: 6px 12px; border-radius: 20px; font-size: 12px;
+        color: #5b21b6; z-index: 1000;
+    }
+
+    footer {
+        text-align: center; margin-top: 48px; padding-bottom: 80px;
+        color: #6b7280; font-size: 12px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>BayChat AI Reply モデル比較レポート — トーン FRIENDLY (フレンドリー)</h1>
+        <div class="subtitle">
+            <span style="background: #0d9488; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 16px; margin-right: 12px;">トーン: FRIENDLY / フレンドリー</span>
+            3モデル × 10ケース | 生成日時: 2026-05-01 17:01<br>
+            社長のフィードバックは各ケース下の入力欄に書いてください。自動保存されます。
+        </div>
+    </header>
+
+    <section class="summary-section">
+        <h2>📊 モデル別集計</h2>
+        <p>集計データなし</p>
+        
+        
+    <h3 style="margin-top:28px">⏱ 速度ばらつき（差分TOP10）</h3>
+    <p style="font-size:13px;color:#6b7280">
+    同じケースでもモデルによって応答時間が大きく違うケースの一覧。
+    「モデル平均」だけでは見えない外れ値の傾向がわかる。
+    </p>
+    <table class="agg-table">
+        <thead><tr><th>ケース</th><th>最速モデル</th><th>最遅モデル</th><th>差分</th></tr></thead>
+        <tbody>
+        <tr>
+            <td>cat02_17_correction_followup</td>
+            <td>GPT-4o-Mini <small>(2.9秒)</small></td>
+            <td>GPT-5-Mini <small>(8.3秒)</small></td>
+            <td class="num"><strong>+5.4秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_13_bundle_discount_request</td>
+            <td>GPT-4o-Mini <small>(3.8秒)</small></td>
+            <td>GPT-5-Mini <small>(8.2秒)</small></td>
+            <td class="num"><strong>+4.4秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_11_shipping_cost_question</td>
+            <td>GPT-4o-Mini <small>(1.4秒)</small></td>
+            <td>GPT-5-Mini <small>(5.6秒)</small></td>
+            <td class="num"><strong>+4.2秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_15_return_policy_question</td>
+            <td>GPT-4o-Mini <small>(2.3秒)</small></td>
+            <td>GPT-5-Mini <small>(6.2秒)</small></td>
+            <td class="num"><strong>+3.9秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_19_progressive_detail_request</td>
+            <td>GPT-4.1-Mini <small>(5.6秒)</small></td>
+            <td>GPT-4o-Mini <small>(9.0秒)</small></td>
+            <td class="num"><strong>+3.4秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_16_two_consecutive_questions</td>
+            <td>GPT-4o-Mini <small>(3.7秒)</small></td>
+            <td>GPT-5-Mini <small>(7.1秒)</small></td>
+            <td class="num"><strong>+3.4秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_12_shipping_time_question</td>
+            <td>GPT-4.1-Mini <small>(3.9秒)</small></td>
+            <td>GPT-5-Mini <small>(7.1秒)</small></td>
+            <td class="num"><strong>+3.2秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_14_payment_method_question</td>
+            <td>GPT-4.1-Mini <small>(3.1秒)</small></td>
+            <td>GPT-5-Mini <small>(4.9秒)</small></td>
+            <td class="num"><strong>+1.8秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_18_ongoing_addon_question</td>
+            <td>GPT-4o-Mini <small>(2.7秒)</small></td>
+            <td>GPT-5-Mini <small>(4.4秒)</small></td>
+            <td class="num"><strong>+1.7秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat02_20_three_consecutive_brazil</td>
+            <td>GPT-4o-Mini <small>(5.5秒)</small></td>
+            <td>GPT-5-Mini <small>(7.2秒)</small></td>
+            <td class="num"><strong>+1.7秒</strong></td>
+        </tr></tbody>
+    </table>
+    
+    </section>
+
+    <h2>📌 全10ケース（返信内容 + フィードバック入力欄）</h2>
+    <p style="color:#6b7280">
+    各ケースの一番下に「社長の理想フィードバック」入力欄があります。書き込むと即座にブラウザに自動保存。
+    最下部の <strong>紫ボタン</strong> から全フィードバックをJSONでダウンロードできます。
+    </p>
+    
+    <article class="case-card" data-case-id="cat02_11_shipping_cost_question">
+        <div class="case-header">
+            <h3>📩 cat02_11_shipping_cost_question</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Sony WH-1000XM5 Wireless Noise Cancelling Headphones Black New</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 389.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T03:11:00.000Z] Hi, could you tell me the shipping cost to the USA? I don&#x27;t see it clearly on the listing.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、アメリカまでの送料を教えていただけますか？出品ページではよく分からないのですが。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hi, could you tell me the shipping cost to the USA? I don&#x27;t see it clearly on the listing.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、アメリカまでの送料を教えていただけますか？出品ページではよく分からないのですが。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_11_shipping_cost_question" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.0</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.370</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B21,
+
+Thank you for your inquiry.
+
+The shipping cost to the USA is $42.00 using FedEx International Priority. Please note that the shipping fee is paid by the buyer.
+
+If you have any other questions, feel free to ask anytime.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">B21様、お問い合わせいただきありがとうございます。
+
+アメリカへの送料は42.00米ドルで、FedEx International Priorityを利用して発送いたします。送料はお客様のご負担となりますので、ご了承ください。
+
+ご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_11_shipping_cost_question" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>1.4</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.130</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Thank you for your message. The shipping cost to the USA is $42.00. If you have any further questions, feel free to ask!</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">ご連絡ありがとうございます。アメリカへの送料は42.00ドルです。ご不明な点がございましたら、お気軽にお知らせください。</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_11_shipping_cost_question" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.6</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.300</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">...</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">お問い合わせありがとうございます。私たちは東京からFedEx International Priorityで発送しており、出品ページに記載の通り送料はUS$42.00で、送料は購入者様のご負担になります。発送は平常時、営業日での処理となりますので、ご注文後の取り扱いは商品ページの発送目安をご確認ください。発送後の通関や現地配達の日数は国によって変わりますので、到着日の保証はできません。ご不明な点があればお気軽にご連絡ください。&quot;,&quot;buyerLanguage&quot;:&quot;Thank you for your inquiry.
+
+I ship from Tokyo using FedEx International Priority. The shipping fee to the USA is shown on the listing as US$42.00, and shipping is paid by the buyer.
+
+I handle orders on business days for dispatch; please check the listing for the handling/dispatch timeframe. Transit time after dispatch depends on customs and local delivery in the US, so I cannot guarantee a specific arrival date.
+
+If you’d like any further details, please let me know.
+
+Best regards,
+rioxxrinaxjapan&quot;} PMID:395012348071)]}]}ชชีน JSON valid. Note: ensure no extra text. However I accidentally added trailing characters at end? I see extra text after JSON: </pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_11_shipping_cost_question">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_11_shipping_cost_question"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_11_shipping_cost_question', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_11_shipping_cost_question"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_12_shipping_time_question">
+        <div class="case-header">
+            <h3>📩 cat02_12_shipping_time_question</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Nintendo Switch OLED Console White - Brand New Sealed Japan Region</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 310.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T05:42:18.000Z] Hello! How many days does shipping usually take to Australia? I&#x27;d love to have it before next weekend.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは！オーストラリアまでの発送は通常何日くらいかかりますか?来週末までに到着するとうれしいのですが。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hello! How many days does shipping usually take to Australia? I&#x27;d love to have it before next weekend.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは！オーストラリアまでの発送は通常何日くらいかかりますか?来週末までに到着するとうれしいのですが。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_12_shipping_time_question" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.9</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.400</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B22,
+
+Thank you for your message. We dispatch within 3 business days after your order. After that, shipping is via DHL Express and typically takes about 3 to 7 business days depending on customs and local delivery in Australia.
+
+While I cannot guarantee it will arrive before next weekend, we will ship as quickly as possible. Thank you for your understanding.
+
+If you have any other questions, please feel free to ask anytime.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちは、B22様。
+
+お問い合わせいただきありがとうございます。オーストラリアへの発送は、当店ではご注文後3営業日以内に発送いたします。その後、DHL Expressでの配送となり、通常は通関や現地配達の状況により3〜7営業日ほどかかります。
+
+次の週末までにお届けできるかは確約できませんが、できるだけ早く発送いたします。ご理解のほどよろしくお願いいたします。
+
+何かご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_12_shipping_time_question" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.9</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.150</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B22,
+
+Shipping to Australia usually takes about 3-7 business days after dispatch. I dispatch within 3 business days, so whether it arrives before next weekend will depend on customs and local delivery. I can&#x27;t guarantee a specific arrival date, but I&#x27;ll do my best to get it to you as quickly as possible.
+
+If you have any other questions, feel free to reach out anytime.
+
+Best,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB22、
+
+オーストラリアへの配送は、通常、発送から約3〜7営業日かかります。私たちは、購入後3営業日以内に発送を行いますので、次の週末までにお届けできるかどうかは、通関や現地の配送状況によります。具体的な到着日を保証することはできませんが、できるだけ早くお届けできるよう努めます。
+
+何か他にご質問があれば、お気軽にお知らせください。 
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_12_shipping_time_question" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>7.1</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.330</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Thank you for your inquiry.
+
+I ship from Osaka using DHL Express. I dispatch items within up to 3 business days (DispatchTimeMax = 3 business days). After dispatch, international transit time varies with customs and local delivery, but typically takes about 4–7 business days. So please allow roughly 5–10 business days from order to arrival.
+
+I cannot guarantee the item will arrive before next weekend because international transit and customs can cause delays. If you need it urgently, ordering as soon as possible gives the best chance for earlier delivery.
+
+Thanks,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">お問い合わせありがとうございます。
+
+発送についてご案内します。私は大阪からDHL Expressで発送します。私たちはご注文を受けてから最大3営業日以内に商品を発送します（DispatchTimeMaxは3営業日です）。発送後の国際輸送（トランジット）は通関や現地配達状況により変わりますが、通常は発送後おおよそ4〜7営業日程度かかることが多いです。つまり、注文から到着まで合計で概ね5〜10営業日を見込んでください。
+
+ただし、国際輸送は税関処理や現地配達の遅延要因があり、確実に「次の週末」までに到着すると保証することはできません。もしお急ぎの場合は、早めにご注文いただければ発送を可能な限り迅速に行います。
+
+ご不明点やご注文のご希望があればお知らせください。
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_12_shipping_time_question">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_12_shipping_time_question"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_12_shipping_time_question', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_12_shipping_time_question"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_13_bundle_discount_request">
+        <div class="case-header">
+            <h3>📩 cat02_13_bundle_discount_request</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Pink Floyd Dark Side of the Moon Original 1973 UK 1st Press LP A2/B2 EX</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 285.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T09:18:55.000Z] Hi, I&#x27;m interested in this LP and two others from your store. Would you offer a bundle discount or combined shipping if I buy all three together?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、このLPと貴店の他2点に興味があります。3点まとめて購入したらバンドル割引または同梱配送に対応していただけますか?</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hi, I&#x27;m interested in this LP and two others from your store. Would you offer a bundle discount or combined shipping if I buy all three together?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、このLPと貴店の他2点に興味があります。3点まとめて購入したらバンドル割引または同梱配送に対応していただけますか?</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_13_bundle_discount_request" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.400</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B23,
+
+Thank you for your message. Regarding a bundle discount or combined shipping for purchasing three LPs together, please let me know which items you are considering, and I will calculate the total shipping cost for you.
+
+We ship via EMS International, and we dispatch within 3 business days. Transit usually takes about 5 to 10 business days depending on customs and local delivery.
+
+If you have any questions, feel free to ask.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちは、B23様。
+
+お問い合わせいただきありがとうございます。3枚まとめてご購入の場合のセット割引や送料のまとめについてですが、どのアイテムをご検討か教えていただければ、送料の合計を計算してお知らせいたします。
+
+発送はEMS国際便を利用しており、発送は通常3営業日以内に行います。配送には通常約5〜10営業日かかりますが、通関や現地の配送状況により変動することがあります。
+
+ご不明な点があればお気軽にお尋ねください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_13_bundle_discount_request" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.8</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.150</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B23,
+
+Thank you for your message. I appreciate your interest in the LP and the other two records. While I can&#x27;t offer a bundle discount or combined shipping, I can calculate the total shipping cost if you let me know which items you&#x27;re considering.
+
+If you have any other questions, feel free to reach out anytime.
+
+Best,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB23、
+
+メッセージありがとうございます。お求めのLPと他の2枚のレコードを一緒に購入される場合、バンドル割引や送料の割引を提供することはできませんが、複数のアイテムを購入される際には、送料の合計を計算することができます。どのアイテムを考えているか教えていただければ、合計金額をお知らせします。
+
+何か他にご質問があれば、お気軽にお知らせください。
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_13_bundle_discount_request" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>8.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.320</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Thank you for your inquiry.
+
+I can do combined shipping for the three items. Please tell me which three listings you want to buy by sending the eBay titles or ItemIDs for each. Once I have those, I will calculate the combined total (items plus adjusted EMS International shipping) and reply with the final amount.
+
+For reference, I ship from Yokohama, Japan using EMS International and the single-item shipping cost shown on the listing is USD 38.00. For multiple items I will recalculate shipping based on the actual combined package size and weight and give you the adjusted shipping charge.
+
+Please send the three titles or ItemIDs and I will provide the total right away.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">お問い合わせありがとうございます。
+
+3点まとめてのご購入について、まとめて発送（Combined shipping）は対応可能です。どの3点をまとめたいか、購入予定のそれぞれのeBay商品ページのタイトルかItemIDを教えてください。商品の組み合わせを確認した上で、合計金額（商品合計＋EMS国際送料の調整額）をすぐにお知らせします。
+
+なお、当店の発送は日本（Yokohama）からEMS Internationalで行っており、各出品ページに記載の送料（USD 38.00）が基準になります。複数購入の場合は実際の梱包サイズ・重量に基づいて送料を再計算します。ご希望の3点を教えてください。
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_13_bundle_discount_request">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_13_bundle_discount_request"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_13_bundle_discount_request', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_13_bundle_discount_request"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_14_payment_method_question">
+        <div class="case-header">
+            <h3>📩 cat02_14_payment_method_question</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Antique Waltham Pocket Watch 17 Jewels 14k Gold Filled c.1908 Working</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 495.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T11:04:22.000Z] Hello, what payment methods do you accept for this pocket watch? Can I pay with PayPal directly, or only through eBay&#x27;s checkout?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、この懐中時計の支払い方法は何が使えますか?PayPalで直接支払いできますか、それともeBayのチェックアウト経由のみでしょうか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hello, what payment methods do you accept for this pocket watch? Can I pay with PayPal directly, or only through eBay&#x27;s checkout?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、この懐中時計の支払い方法は何が使えますか?PayPalで直接支払いできますか、それともeBayのチェックアウト経由のみでしょうか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_14_payment_method_question" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.1</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.380</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B24,
+
+Thank you for your message.
+
+Regarding payment methods, our store accepts payments through eBay&#x27;s checkout system. Direct PayPal payments outside of eBay are not supported.
+
+If you have any other questions, please feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちは、メッセージありがとうございます。
+
+お支払い方法についてですが、当店ではeBayのチェックアウトを通じてのお支払いをお願いしております。PayPalでの直接支払いは対応しておりませんので、ご了承ください。
+
+ご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_14_payment_method_question" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.1</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.140</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B24,
+
+Thank you for your inquiry about the payment methods for this pocket watch. Our store accepts payments through PayPal, but you will need to complete the payment via eBay&#x27;s checkout process. Direct payments through PayPal are not possible.
+
+If you have any further questions, feel free to reach out anytime.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB24、
+
+このポケットウォッチの支払い方法についてお尋ねいただきありがとうございます。私たちのストアでは、PayPalを通じての支払いが可能です。eBayのチェックアウトを通じてお支払いを行っていただく必要がありますので、直接PayPalでの支払いはできません。 
+
+他にご質問があれば、お気軽にお知らせください。 
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_14_payment_method_question" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.9</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.280</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B24,
+
+Thank you for your inquiry.
+
+Please complete payment through eBay checkout. eBay will show the payment methods available for this listing at checkout (for example PayPal or card options if enabled), so choose the method shown there when you pay.
+
+If you need any further help, please let me know.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B24,
+
+お問い合わせありがとうございます。
+
+当店では購入手続きはeBayのチェックアウトを通じて行っていただくのが基本です。eBayのチェックアウトでは出品時に設定された支払い方法（PayPal、クレジットカード、その他のオプション）が表示されますので、そちらでご利用可能な決済方法をご選択ください。
+
+何かご不明点があればお知らせください。
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_14_payment_method_question">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_14_payment_method_question"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_14_payment_method_question', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_14_payment_method_question"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_15_return_policy_question">
+        <div class="case-header">
+            <h3>📩 cat02_15_return_policy_question</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Burberry Heritage Trench Tote Bag Camel Check Canvas Leather - Authentic</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 720.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T13:27:10.000Z] Hi, I&#x27;d like to confirm the return policy before buying. If the bag doesn&#x27;t match what I expected, can I return it for a full refund? Who covers the return shipping?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、購入前に返品ポリシーを確認させてください。万が一バッグが期待と違っていた場合、全額返金で返品できますか?返送料はどちら負担になりますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Hi, I&#x27;d like to confirm the return policy before buying. If the bag doesn&#x27;t match what I expected, can I return it for a full refund? Who covers the return shipping?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>こんにちは、購入前に返品ポリシーを確認させてください。万が一バッグが期待と違っていた場合、全額返金で返品できますか?返送料はどちら負担になりますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_15_return_policy_question" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.390</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B25,
+
+Thank you for your inquiry.
+
+Our store accepts returns within 30 days if the bag does not meet your expectations. We offer a full refund upon return.
+
+Please note that the buyer is responsible for the return shipping cost.
+
+If you have any further questions, feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB25様、
+
+お問い合わせいただきありがとうございます。
+
+当店では、商品がお客様のご期待に沿わない場合、商品到着後30日以内であれば返品を承っております。返品に伴う返金は全額対応いたしますのでご安心ください。
+
+ただし、返品にかかる送料はお客様のご負担となりますので、ご了承ください。
+
+ご不明な点がございましたら、どうぞお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_15_return_policy_question" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>2.3</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.140</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Thank you for your inquiry. I would like to inform you about our return policy. If the bag does not meet your expectations, you can return it for a full refund. Please note that the return shipping cost will be covered by the buyer. If you have any further questions, feel free to reach out.</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">ご連絡ありがとうございます。返品ポリシーについてお知らせいたします。商品が期待に合わない場合、全額返金のために返品することができます。返品の際の送料は購入者様のご負担となりますので、ご了承ください。何か他にご質問があれば、お気軽にお知らせください。</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_15_return_policy_question" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>6.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.320</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B25,
+
+Thank you for your inquiry.
+
+If the bag does not match your expectations, I accept returns within 30 days of purchase and will refund the purchase price once the return is approved. The refund will be issued to the original payment method.
+
+Per the listing settings, return shipping is paid by the buyer. I ship from Tokyo, Japan using EMS International, so return postage would be the buyer’s responsibility (international EMS or equivalent, actual cost applies).
+
+If you have any other questions before buying, please let me know. Please return the item in the same condition it arrived in.
+
+Thanks! 
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B25,
+
+ご連絡ありがとうございます。
+
+もしバッグがご期待と異なる場合は、ご購入後30日以内であれば返品をお受けします。返品が承認され次第、購入代金は返金いたします（返金方法はご注文時の支払方法に準じます）。
+
+返品にかかる送料は出品情報の設定に従い、購入者さま（Buyer）がご負担となります。発送元は東京、日本からEMS Internationalで発送しておりますので、返品の際の送料も国際EMS等の実費でご負担ください。
+
+返品前にご不明点があればお知らせください。ご返品の際は、商品が到着したときと同じ状態でお戻しください。
+
+Thanks! 
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_15_return_policy_question">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_15_return_policy_question"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_15_return_policy_question', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_15_return_policy_question"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_16_two_consecutive_questions">
+        <div class="case-header">
+            <h3>📩 cat02_16_two_consecutive_questions</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Sony PlayStation 5 Disc Edition Console CFI-1215A White Used Excellent</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 380.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-05-01T07:02:11.000Z] Hi, does this console come with the original USB-C charging cable for the controllers?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、コントローラーの純正充電ケーブルは付属していますか?</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T07:03:48.000Z] Sorry one more - what firmware version is the console currently on?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> すみません、もうひとつ - 本体は現在どのファームウェアバージョンで動いていますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Sorry one more - what firmware version is the console currently on?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>すみません、もうひとつ - 本体は現在どのファームウェアバージョンで動いていますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_16_two_consecutive_questions" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.8</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.390</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B26,
+
+Thank you for your inquiry.
+
+Regarding the USB-C charging cable for the controllers, what is included is exactly what you see in the photos. Please refer to the pictures for the complete set of accessories.
+
+As for the current firmware version of the console, I have not recorded that information.
+
+If you have any other questions, please feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">B26様
+
+お問い合わせいただきありがとうございます。
+
+コントローラーのUSB-C充電ケーブルについてですが、当店では商品の写真に写っているものがすべての付属品となっております。写真をご確認いただければ幸いです。
+
+また、現在の本体のファームウェアバージョンについては、当店で記録しておりません。ご理解のほどよろしくお願いいたします。
+
+ご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_16_two_consecutive_questions" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.7</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.150</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B26,
+
+Thank you for your inquiry. Regarding whether the console comes with the original USB-C charging cable for the controllers, I haven&#x27;t recorded that information. Please refer to the photos on the product page for details on what is included.
+
+As for the current firmware version, I also haven&#x27;t recorded the specific version, so I&#x27;m unable to confirm that. I recommend checking the information available on the product page.
+
+If you have any other questions, feel free to reach out anytime.</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB26、
+
+ご質問ありがとうございます。コントローラー用のUSB-C充電ケーブルが付属しているかどうかについてですが、私の方ではその情報を記録しておりません。出品ページの写真をご確認いただければ、付属品の詳細がわかります。
+
+また、現在のファームウェアバージョンについてですが、こちらも具体的なバージョンを記録していないため、確認できません。出品ページの情報をご覧いただくことをお勧めします。
+
+何か他にご質問があれば、いつでもお気軽にお知らせください。</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_16_two_consecutive_questions" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>7.1</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.330</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Thank you for your inquiry.
+
+Regarding the USB-C charging cable for the controllers: what I include with the sale is exactly what is shown in the listing photos and description. Please check the pictures on the product page — those images are the complete record of the items I will send.
+
+About the console firmware (system software) version: I have not recorded the current firmware version for this unit in the listing. I do not have a separate log of the firmware, so I cannot provide a specific version number. Everything I can confirm about inclusions and condition is shown on the product page. Once you receive the console you can check the firmware version and update it if needed; let me know if you would like guidance on how to do that.
+
+Thanks,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">お問い合わせありがとうございます。
+
+ご質問いただいた点についてお答えします。コントローラー用のUSB-C充電ケーブルについては、私が出品ページで掲載している写真と説明が、そのまま同梱物の記録となります。掲載写真にケーブルが写っているかをご確認ください。写真に写っているものが発送する内容の全てです。
+
+本体の現在のファームウェア（システムソフトウェア）バージョンについては、私の出品情報には明記しておりません。手元で確認した記録を私は残していないため、出品ページに掲載した写真と記載が確認できる内容の全てです。お手元に届いた後でバージョン確認やアップデートは可能ですので、気になる点があればお知らせください。
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_16_two_consecutive_questions">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_16_two_consecutive_questions"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_16_two_consecutive_questions', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_16_two_consecutive_questions"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_17_correction_followup">
+        <div class="case-header">
+            <h3>📩 cat02_17_correction_followup</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Pelikan M1000 Souveran Black Resin Fountain Pen 18C Gold Nib EF Brand New</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 835.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-05-01T08:21:33.000Z] Hi, what would be your fastest shipping option for this pen? And could you give me a rough idea of how many days it takes?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、最速の発送方法はどれになりますか?到着までの目安日数も教えていただけますと幸いです。</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T08:23:09.000Z] Sorry, I forgot to mention I&#x27;m in Germany. Can you ship there? And which option would be fastest?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> すみません、私はドイツにいることを書き忘れていました。ドイツに発送いただけますか?また、どの方法が一番早いですか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Sorry, I forgot to mention I&#x27;m in Germany. Can you ship there? And which option would be fastest?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>すみません、私はドイツにいることを書き忘れていました。ドイツに発送いただけますか?また、どの方法が一番早いですか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_17_correction_followup" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.390</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B27,
+
+Thank you for your inquiry. Our fastest shipping option for this pen is FedEx International Priority, shipping from Tokyo. We dispatch within 3 business days. We can ship to Germany, and the transit time usually takes about 3 to 7 business days after dispatch, depending on customs and local delivery conditions.
+
+If you have any further questions, please feel free to ask.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちは、B27様。
+
+お問い合わせいただきありがとうございます。このペンの最速の配送方法はFedEx International Priorityで、発送元は東京です。発送は通常、3営業日以内に行います。ドイツへの配送も可能で、配送にかかる日数は通関手続きや現地の配達状況によりますが、通常は発送後約3〜7営業日程度です。
+
+ご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_17_correction_followup" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>2.9</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.140</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B27,
+
+I appreciate your inquiry about the fastest shipping option for the pen. We use FedEx International Priority, and after dispatch, it typically takes about 3-7 business days for transit. I can confirm that shipping to Germany is possible as well.
+
+If you have any further questions, feel free to reach out anytime.</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB27、
+
+このペンの最速の配送オプションについてお答えします。当店では、FedExインターナショナルプライオリティを使用しており、発送後のトランジットには通常約3〜7営業日かかります。ただし、ドイツへの配送も可能ですのでご安心ください。
+
+何か他にご質問があれば、お気軽にお知らせください。</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_17_correction_followup" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>8.3</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.360</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Thank you for your inquiry.
+
+Yes, I can ship to Germany. I ship this pen via the service shown on the listing: FedEx International Priority. The shipping cost shown on the listing is 55.00 USD, and shipping is paid by the buyer.
+
+Please note the handling (dispatch) time is shown on the listing as DispatchTimeMax and is expressed in business days — please check the product page for that exact value. After I dispatch the package, international transit with FedEx International Priority typically takes about 3–7 business days, depending on customs and local delivery. I cannot guarantee a specific arrival date because customs and local courier conditions may cause delays.
+
+If you would like me to confirm the DispatchTimeMax value from the listing for you, please let me know and I will reference it. Thank you.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">お問い合わせありがとうございます。
+
+ドイツへの発送は可能です。当方の出荷方法は商品ページに記載の通り「FedEx International Priority」です。出品ページに表示されている送料は55.00 USD（購入者負担）となります。
+
+発送の流れについてご案内します。私はご注文を受けてから商品を梱包し、通常の取り扱い時間に基づき指定の発送業務を行います。出荷までの取り扱い（ハンドリング）時間は出品情報のDispatchTimeMax（営業日）に従って表記しています（商品ページでご確認ください）。
+
+国際輸送の所要日数は通関状況や現地配達事情で変動しますが、FedEx International Priorityをご利用の場合、当店から発送後は通常おおよそ3〜7ビジネス日程度が目安です（通関処理や現地配達により前後します）。到着日を確約することはできませんので、ご了承ください。
+
+何か他にご不明点があればお知らせください。よろしくお願いいたします。
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_17_correction_followup">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_17_correction_followup"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_17_correction_followup', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_17_correction_followup"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_18_ongoing_addon_question">
+        <div class="case-header">
+            <h3>📩 cat02_18_ongoing_addon_question</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Rolex Submariner Date 126610LN Black Stainless Steel 41mm 2023 Used Excellent</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 13800.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-30T22:14:08.000Z] Hi, is this watch waterproof? I&#x27;d want to wear it diving occasionally.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、この時計は防水仕様ですか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-30T22:48:31.000Z] Hello B28,
+
+Thank you for your message. Yes, this Rolex Submariner Date 126610LN is rated for 300m water resistance and is suitable for recreational diving.
+
+If you have any further questions, please feel free to ask.
+
+Kind regards,
+rioxxrinaxjapan</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ご質問ありがとうございます。はい、こちらのRolex Submarinerは300m防水仕様です。</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T01:05:42.000Z] Great, thanks for confirming. Can you also let me know if the original box and papers are included?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ご確認いただきありがとうございます。あわせて、オリジナルの箱と書類は付属するかも教えていただけますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Great, thanks for confirming. Can you also let me know if the original box and papers are included?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>ご確認いただきありがとうございます。あわせて、オリジナルの箱と書類は付属するかも教えていただけますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_18_ongoing_addon_question" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>3.0</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.390</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B28,
+
+Thank you for confirming. Regarding the original box and papers, I haven&#x27;t recorded them as included with this item. What you see in the photos on the product page is everything our store will be sending.
+
+Please feel free to ask if you have any other questions.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB28様、
+
+ご質問ありがとうございます。こちらの時計に関しては、付属のオリジナルボックスや書類については、私が記録している情報には含まれておりません。商品ページの写真に写っているものが、私どもが発送する全ての内容となりますので、そちらをご確認いただけますと幸いです。
+
+ご不明な点がございましたら、どうぞお気軽にお尋ねください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_18_ongoing_addon_question" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>2.7</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.150</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B28,
+
+Thank you for your question. Regarding the original box and papers, please refer to the photos in the listing for what is included. The photos serve as the complete record of what comes with this item, so do take a look there.
+
+If you have any other questions, feel free to reach out anytime.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB28、
+
+ご質問ありがとうございます。元の箱と書類についてですが、具体的に何が含まれているかは、掲載されている写真を参照してください。写真がこの商品の付属品の完全な記録となっていますので、ぜひご確認ください。
+
+他に何か質問があれば、お気軽にお知らせください。
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_18_ongoing_addon_question" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.4</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.290</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hi B28,
+
+Thank you for confirming.
+
+Because this is a used item, the photos and description on the product page are the record of what will be included. Please check the listing photos to see whether the original box and papers are pictured — whatever is shown in the photos is everything I will send.
+
+If you have any other questions, please let me know.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hi B28、
+
+ご連絡ありがとうございます。
+
+この時計は中古品扱いですので、同梱される付属品については商品ページの写真と説明が送付内容の記録になります。お手数ですが、同梱の箱や保証書（オリジナルの箱・書類）が写っているかは出品ページの写真をご確認ください。写真に写っているものが発送する内容の全てです。
+
+ご不明な点があれば遠慮なくお知らせください。
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_18_ongoing_addon_question">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_18_ongoing_addon_question"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_18_ongoing_addon_question', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_18_ongoing_addon_question"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_19_progressive_detail_request">
+        <div class="case-header">
+            <h3>📩 cat02_19_progressive_detail_request</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> 1952 Topps Mickey Mantle #311 PSA 7 NM Vintage Baseball Card New York Yankees</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 185000.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-04-30T18:30:00.000Z] Hi, is this card authentic? Just want to be safe given the price.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、こちらのカードは本物ですか？</div>
+            </div>
+            
+            <div class="msg msg-assistant">
+                <span class="msg-role">🏪 セラー（過去の返信）</span>
+                <div class="msg-body">[2026-04-30T19:11:52.000Z] Hello B29,
+
+Thank you for your message. Yes, this is a genuine PSA-graded 1952 Topps Mickey Mantle #311 (PSA 7 NM). We list authentic graded cards only.
+
+If you have any further questions, please feel free to ask.
+
+Kind regards,
+rioxxrinaxjapan</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ご質問ありがとうございます。はい、こちらは正真正銘のPSA鑑定済 1952 Topps Mickey Mantle PSA 7です。</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T02:48:21.000Z] Thanks. One more thing — can you describe the condition of the slab itself? Any scuffing, hairlines on the case, or yellowing on the label?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> ありがとうございます。もう一点、スラブ自体のコンディションを教えていただけますか?ケースの擦り傷・細かい線・ラベルの黄ばみなどはありますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Thanks. One more thing — can you describe the condition of the slab itself? Any scuffing, hairlines on the case, or yellowing on the label?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>ありがとうございます。もう一点、スラブ自体のコンディションを教えていただけますか?ケースの擦り傷・細かい線・ラベルの黄ばみなどはありますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_19_progressive_detail_request" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.6</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.410</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hi B29,
+
+Thank you for your inquiry.
+
+Regarding the condition of the slab itself, I have not conducted a detailed inspection myself, so I cannot provide precise information about any scuffing, hairlines, or yellowing on the label. The photos I took are the complete record of the slab condition I documented, so please take a look at them on the product page.
+
+If you have any other questions, please feel free to ask.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB29様、
+
+お問い合わせありがとうございます。
+
+スラブの状態についてですが、私自身で詳細な検査を行っているわけではないため、細かな擦り傷やヘアライン、ラベルの黄ばみの有無については正確にお伝えできません。私が記録した状態の記録は商品ページの写真がすべてとなりますので、ご確認いただければ幸いです。
+
+何か他にご質問がございましたら、お気軽にお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_19_progressive_detail_request" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>9.0</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.150</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B29,
+
+Regarding the condition of the slab, I haven&#x27;t personally checked for specific scuffing, hairlines, or yellowing. The photos I took are the record of the slab condition, so please review them on the product page for any specific points you&#x27;re checking.
+
+If you have any other questions, feel free to reach out anytime.
+
+Best,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB29、
+
+スラブの状態についてですが、具体的な傷や黄ばみ、スラブ自体の状態については、私自身が確認したわけではありません。商品のページに掲載している写真が、スラブの状態を示す記録となっていますので、そちらをご確認いただければと思います。
+
+他に何かご質問があれば、お気軽にお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_19_progressive_detail_request" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.7</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.330</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hi B29,
+
+Thanks for the question. I photographed the PSA slab when I listed the card, and those photos are the record of the slab condition. Please review the listing photos for any scuffs, hairlines, or label yellowing — that is the documented evidence I can confirm.
+
+If any specific area is hard to judge from the pictures (for example a small scratch in a corner), tell me which part you are concerned about and I will point you to the corresponding photo on the product page. My current notes do not include a separate, more detailed inspection report beyond the photos I took.
+
+Thanks,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hi B29, のご連絡ありがとうございます。
+
+当店で扱っているこの1952 Topps Mickey Mantle #311（PSA 7）について、スラブ（ケース）自体の状態に関するご質問を承りました。私が出品時に撮影した写真がスラブの外観を記録していますので、細かなスレ、ヘアライン、ラベルの変色などご心配な点は、商品ページの写真をご確認ください。写真が記録になっております。
+
+写真で判別しにくい箇所や追加で気になられる点があればお知らせください。こちらの手元の記録に記載がない具体的な検査結果（例：肉眼で確認した細かいヘアラインの有無や非常に微細な擦り傷の見落とし）は、私の出品写真が唯一の記録となりますので、写真を基にご判断いただければ幸いです。
+
+よろしくお願いします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_19_progressive_detail_request">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_19_progressive_detail_request"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_19_progressive_detail_request', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_19_progressive_detail_request"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat02_20_three_consecutive_brazil">
+        <div class="case-header">
+            <h3>📩 cat02_20_three_consecutive_brazil</h3>
+            <span class="category-pill">pre_purchase_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Leica Summilux-M 50mm f/1.4 ASPH Black 11891 Brand New M Mount</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 4180.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-05-01T04:12:09.000Z] Hello, do you ship to Brazil?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> こんにちは、ブラジルへ発送していただけますか？</div>
+            </div>
+            
+            <div class="msg msg-user">
+                <span class="msg-role">👤 バイヤー</span>
+                <div class="msg-body">[2026-05-01T04:13:41.000Z] Also, what would the customs process look like for Brazil?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> また、ブラジルでの通関プロセスはどのような感じになるのでしょうか？</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-01T04:14:55.000Z] Sorry one more — how long does shipping usually take to Brazil?</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> すみません、もうひとつ - ブラジルまでの配送は通常どのくらいの期間がかかりますか？</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Sorry one more — how long does shipping usually take to Brazil?</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>すみません、もうひとつ - ブラジルまでの配送は通常どのくらいの期間がかかりますか？</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat02_20_three_consecutive_brazil" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>6.1</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.440</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B30,
+
+Thank you for your message.
+
+Yes, we do ship to Brazil. We use FedEx International Priority Insured for shipping, and the shipping cost is $110 USD, which is paid by the buyer.
+
+Regarding customs in Brazil, import taxes and duties may apply. The specific customs process and fees depend on Brazilian customs regulations, so we recommend checking with your local customs office for detailed information.
+
+Shipping usually takes up to 3 business days for us to prepare and dispatch the item, and then FedEx typically takes about 7 to 14 business days for delivery, depending on customs clearance and local delivery conditions. Please note that transit times can vary.
+
+If you have any other questions, feel free to ask anytime.
+
+Thanks!
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">B30様
+
+お問い合わせいただきありがとうございます。
+
+はい、ブラジルへの発送は可能です。発送はFedEx International Priority Insuredを利用しており、送料は110ドルとなります。送料はお客様のご負担となりますのでご了承ください。
+
+ブラジルの通関手続きについては、輸入税や関税がかかる場合がありますが、具体的な手続きや費用は現地の税関により異なりますので、詳しくはブラジルの税関にお問い合わせいただくことをおすすめします。
+
+発送は通常、当店からの発送準備に最大3営業日かかり、その後FedExの配送でおおよそ7〜14営業日程度かかることが多いですが、通関状況や現地の配送状況により変動しますので、あらかじめご了承ください。
+
+ご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_20_three_consecutive_brazil" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.5</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.160</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B30,
+
+Yes, I can ship to Brazil. I use FedEx International Priority Insured for shipping, and the cost is $110.00.
+
+Regarding the customs process for Brazil, there may be customs duties and taxes applied, which can vary. I recommend checking with your local customs office for specific procedures.
+
+I typically dispatch within 3 business days, and after that, shipping usually takes about 3-7 business days depending on customs and local delivery. I can&#x27;t guarantee a specific arrival date, but it should be within that range.
+
+If you have any other questions, feel free to reach out anytime.</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB30、
+
+ブラジルへの発送は可能です。私たちはFedEx International Priority Insuredを使用しており、発送費用は110.00ドルです。
+
+ブラジルの通関プロセスについては、通常、関税や税金が適用される場合があります。具体的な手続きは、ブラジルの税関によって異なるため、詳細は現地の税関に確認することをお勧めします。
+
+発送には通常、3営業日以内に処理し、その後、通関や現地の配達によって約3〜7営業日かかります。具体的な到着日は保証できませんが、通常はこの範囲内でお届けできると思います。
+
+何か他に質問があれば、いつでもお気軽にお問い合わせください。</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat02_20_three_consecutive_brazil" data-model-name="GPT-5-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-5-Mini</div>
+                <div class="case-winners"></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>7.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.380</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Thank you for your inquiry.
+
+Yes, I can ship to Brazil. I will send the item via FedEx International Priority Insured. The shipping charge is $110.00 USD as shown on the listing, and shipping costs are paid by the buyer.
+
+Regarding customs in Brazil, import duties, taxes (such as IPI/ICMS/PIS-COFINS where applicable) and customs clearance fees may be applied by Brazilian customs and are the buyer’s responsibility. I cannot provide exact tax amounts or complete the customs formalities on your behalf — for precise costs and the clearance process please check with Brazilian customs or your local courier/import agent. I can only confirm that customs charges may be assessed on import.
+
+As for timing, I dispatch according to the listing’s handling time in business days. Transit after dispatch depends on the carrier and customs processing; typically international shipments can take anywhere from several business days up to one to two weeks depending on customs, but I cannot guarantee a specific delivery date.
+
+If you’d like to proceed or have any other questions, please let me know.
+
+Best,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">お問い合わせありがとうございます。
+
+はい、ブラジルへ発送しています。私たちは FedEx International Priority Insured で発送いたします。配送費は出品ページに記載のとおり110.00 USDで、送料は購入者様ご負担になります。
+
+ブラジルの通関については、輸入関税や消費税、通関手数料などが現地の規定に基づいて課される可能性があります。これらの税・手数料は購入者様のご負担となりますので、正確な金額や手続きについてはブラジル税関または現地の郵便・宅配業者にご確認ください。私の側でお伝えできるのは、通関時に関税が課されることがあるという一般的な点までです。
+
+発送期間についてですが、私は商品の発送を出荷業務の営業日ベースで行っています（出品ページのDispatchTimeMaxに従います）。出荷後の輸送日数はキャリアと通関状況によって変動しますが、通常は通関の状況にもよるためおおよそ数営業日から1〜2週間程度とお考えください。具体的な到着日を保証することはできません。
+
+ご不明点があればお知らせください。</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat02_20_three_consecutive_brazil">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat02_20_three_consecutive_brazil"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat02_20_three_consecutive_brazil', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat02_20_three_consecutive_brazil"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+
+    <footer>
+        BayChat AI Reply テストレポート / ソース: test_gpt_gpt4omini_gpt5mini_v2.3_baseline_natural3_prodOFF_20260501_165939.xlsx<br>
+        フィードバックは localStorage（このブラウザ）に自動保存されます。
+    </footer>
+</div>
+
+<div class="floating-status" id="saveStatus">💾 変更なし</div>
+<button class="floating-download" onclick="downloadFeedback()">
+    📥 全フィードバックをJSONダウンロード
+</button>
+
+<script>
+// localStorage キー（このレポート固有）
+const STORAGE_KEY = 'baychat_feedback_20260501_1701';
+const statusEl = document.getElementById('saveStatus');
+
+// 初期化：保存済みフィードバックを復元
+function restoreFeedback() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.feedback-input').forEach(ta => {
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        });
+        const count = Object.keys(data).filter(k => data[k]).length;
+        statusEl.textContent = `💾 保存済み ${count}件`;
+    } catch (e) { console.error(e); }
+}
+
+// 自動保存
+function saveFeedback() {
+    const data = {};
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const count = Object.keys(data).length;
+    statusEl.textContent = `💾 保存 ${count}件 (${new Date().toLocaleTimeString('ja-JP')})`;
+}
+
+document.querySelectorAll('.feedback-input').forEach(ta => {
+    ta.addEventListener('input', saveFeedback);
+});
+
+// ダウンロード
+function downloadFeedback() {
+    const data = {
+        exported_at: new Date().toISOString(),
+        report_source: 'test_gpt_gpt4omini_gpt5mini_v2.3_baseline_natural3_prodOFF_20260501_165939.xlsx',
+        feedback: {}
+    };
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data.feedback[cid] = ta.value;
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    a.download = `baychat_feedback_${ts}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+restoreFeedback();
+
+// ==========================================================
+// 補足情報 + 再生成API
+// ==========================================================
+const REGENERATE_API = 'http://127.0.0.1:8765/api/regenerate';
+const TONE = 'friendly';
+const PROMPT_VERSION = '2.3_baseline_natural2';
+const TEST_CASE_PATH = 'test_cases/category_02_additional10.json';
+
+// 速度目標（秒）
+const SPEED_TARGET_STANDARD = 3.0;  // 標準
+const SPEED_TARGET_COMPLEX = 6.0;   // 複雑
+const SPEED_TARGET_APOLOGY = 8.0;   // 謝罪
+
+function colorizeElapsed(span, elapsed) {
+    span.classList.remove('fast', 'slow');
+    const target = (TONE === 'apologetic') ? SPEED_TARGET_APOLOGY : SPEED_TARGET_STANDARD;
+    if (elapsed <= target) span.classList.add('fast');
+    else if (elapsed > SPEED_TARGET_COMPLEX) span.classList.add('slow');
+}
+
+async function regenerateCase(caseId, btn) {
+    const block = document.querySelector(`.supplemental-block[data-case-id="${caseId}"]`);
+    if (!block) return;
+    const ta = block.querySelector('.supplemental-input');
+    const statusEl = block.querySelector('.regen-status');
+    const supplemental = (ta.value || '').trim();
+
+    // 同じケースの全 reply-card を取得（同 case-card 内）
+    const caseCard = block.closest('.case-card');
+    const replyCards = caseCard.querySelectorAll('.reply-card');
+
+    // ローディング表示
+    btn.disabled = true;
+    btn.textContent = '⏳ 生成中...';
+    statusEl.classList.remove('error','success');
+    statusEl.textContent = `${replyCards.length}モデルで再生成中...`;
+    replyCards.forEach(c => c.classList.add('regenerating'));
+
+    try {
+        const resp = await fetch(REGENERATE_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                case_id: caseId,
+                supplemental: supplemental,
+                tone: TONE,
+                prompt_version: PROMPT_VERSION,
+                test_case_path: TEST_CASE_PATH,
+            }),
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        const data = await resp.json();
+
+        // 各モデルの結果を画面更新
+        let updated = 0;
+        let errors = [];
+        data.results.forEach(r => {
+            if (r.error) { errors.push(`${r.model_name||r.model_id}: ${r.error}`); return; }
+            const card = caseCard.querySelector(`.reply-card[data-model-name="${r.model_name}"]`);
+            if (!card) return;
+            card.querySelector('.reply-en').textContent = r.buyer_reply;
+            card.querySelector('.reply-ja').textContent = r.jpn_reply;
+            const elapsedEl = card.querySelector('.meta-elapsed');
+            elapsedEl.innerHTML = `⏱ <b>${r.elapsed.toFixed(1)}</b>秒`;
+            colorizeElapsed(elapsedEl, r.elapsed);
+            const costEl = card.querySelector('.meta-cost');
+            costEl.innerHTML = `💴 <b>¥${r.cost_jpy.toFixed(3)}</b>`;
+            card.classList.remove('regenerating');
+            card.classList.add('regenerated');
+            setTimeout(() => card.classList.remove('regenerated'), 1500);
+            updated++;
+        });
+
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        if (errors.length > 0) {
+            statusEl.classList.add('error');
+            statusEl.textContent = `⚠️ ${updated}件成功 / ${errors.length}件エラー: ${errors.join('; ')}`;
+        } else {
+            statusEl.classList.add('success');
+            statusEl.textContent = `✅ ${updated}モデル再生成完了`;
+        }
+    } catch (e) {
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        statusEl.classList.add('error');
+        statusEl.textContent = `❌ 失敗: ${e.message}（result_server.py が起動しているか確認してください）`;
+        console.error(e);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🔁 補足込みで再生成（3モデル）';
+    }
+}
+
+// 補足情報の自動保存（localStorageに別キーで）
+const SUPP_KEY = 'baychat_supplemental_20260501_1701';
+function restoreSupplemental() {
+    const saved = localStorage.getItem(SUPP_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.supplemental-input').forEach(ta => {
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        });
+    } catch (e) { console.error(e); }
+}
+function saveSupplemental() {
+    const data = {};
+    document.querySelectorAll('.supplemental-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    });
+    localStorage.setItem(SUPP_KEY, JSON.stringify(data));
+}
+document.querySelectorAll('.supplemental-input').forEach(ta => {
+    ta.addEventListener('input', saveSupplemental);
+});
+restoreSupplemental();
+
+// 初期表示の応答時間を色付け
+document.querySelectorAll('.meta-elapsed').forEach(el => {
+    const m = el.textContent.match(/([\d.]+)秒/);
+    if (m) colorizeElapsed(el, parseFloat(m[1]));
+});
+</script>
+</body>
+</html>

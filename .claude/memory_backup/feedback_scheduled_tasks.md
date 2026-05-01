@@ -102,10 +102,10 @@ ts・カーソル・cursor_token等で「前回の続き」から処理する定
 - 新規タスク設計時の二択（**2026-04-29 さらに見直し**）：
   - **Claudeセッション固有のMCP（chatwork/slack/Claude判断）が必須 → Claude scheduled-task**（biweekly-claude-maintenance / 週1の monday-* 系）
   - **APIで完結（Claudeへの判断は anthropic SDK 経由でPythonから直接呼ぶ）→ Windows タスクスケジューラ直接起動**
-- 4/29時点でWindows化済み: DailyXDigest / CampersMemberRemoval / **ChatworkAIReply（新）** / **BayChatSlackCheck（新・SLACK_BOT_TOKEN待ち）**
+- 4/29時点でWindows化済み: DailyXDigest / CampersMemberRemoval / ChatworkAIReply / BayChatSlackCheck / **DailyGithubBackup（毎日0:05・旧 daily-github-backup を移管）**
 - スクリプト側に必ず try/except + Chatwork失敗DM を仕込む（サイレント停止を python 層で防ぐ）
 - bat ラッパーは `logs/<task>_<timestamp>.log` 形式で全出力を保存
-- 残候補（Windows化検討）: `daily-github-backup`, `monday-ebay-report-delivery`（週1なので延命中）
+- 残候補（Windows化検討）: `monday-ebay-report-delivery` / `monday-report-requests-review` / `biweekly-claude-maintenance`（いずれも週1低頻度なので延命中。詰まったらWindows化）
 - Windows タスク登録方法：
   - 単一発火/日次の Daily Trigger は `Register-ScheduledTask -Trigger (New-ScheduledTaskTrigger -Daily -At ...)` でOK
   - **30分間隔等の繰り返しは PowerShell の RepetitionDuration バグを避けるため CIM で直接Repetitionプロパティを上書きする**：

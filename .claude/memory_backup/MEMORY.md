@@ -8,12 +8,16 @@
 - [意思決定ログ](decisions_log.md) — 主要な経営判断と根拠の記録（Campers引継ぎ・Cowatech継続・BayPack非公開理由・フォルダ再編成・竹案リファクタ等）
 
 ## フィードバック（最重要・姿勢）
+- [Claudeの立ち位置（Reffort一従業員）](feedback_role_identity.md) — BayChat AI Reply開発の一担当者・社外連絡で社長の名前を勝手に使わない（なりすまし禁止）
 - [口調と分析の徹底度](feedback_tone_and_depth.md) — 敬語厳守・指摘される前に徹底的に考え抜く・最初から徹底版
 - [経営パートナーとしての在り方](feedback_proactive_partner.md) — 言いなり禁止・指示の目的を理解し先回り提案
 - [常にベストから逆算する思考ルール](feedback_best_first_thinking.md) — ハードル/コストで切り捨てず松竹梅でベストを推奨
 - [宣言は必ず実装とセット](feedback_declaration_to_implementation.md) — 時間トリガー宣言→scheduled-task/hook/スクリプトに落とすまで完了しない
+- [実装・修正は社長に渡す前に動作テストまで](feedback_test_before_handoff.md) — ビルド成功≠動作OK・起動テストまでやって出鼻くじかれない状態で渡す
 - [API調査は根本を掘る](feedback_api_investigation_depth.md) — 自社他プロダクトで動いているならAPIに必ずある・安易な回避策前に根本調査
 - [BayChat AI Reply 進行時のスタンス](feedback_baychat_ai_reply_stance.md) — 設計図理解前提・Cowatech前に自力解決・5原則厳守
+- [BayChat AI Reply 英文自然さは Claude 主体で担保](feedback_baychat_natural_english.md) — 社長の英語チェックに頼らない・反映前に自主チェックリスト・違和感候補は先に列挙
+- [BayChat AI Reply 80点原則と4大ルール](feedback_baychat_ai_80point_principle.md) — 補足情報なし80点目標・事実根拠厳格化（セラー本人視点）・追加作業禁止・誤ポリシー禁止・トーン不変
 
 ## フィードバック（コミュニケーション・報告）
 - [コミュニケーション・運用スタイル](feedback_communication.md) — Chatwork確認運用・報告先の好み・作業可視性
@@ -33,7 +37,7 @@
 
 ## フィードバック（ツール・作業）
 - [ASICSブロック誤判定ミス](feedback_asics_block.md) — Bot検出をIPブロックと誤認する繰り返しミス・無限監視ループ禁止
-- [ファイル作成後は即座に開く](feedback_file_delivery.md) — startコマンドで開くかエクスプローラーで見える状態にする
+- [ファイル作成後は厳選して開く](feedback_file_delivery.md) — 成果物・結果・社長確認必須のみ開く。内部更新は開かない
 - [モデル判断は社長・Effortは自動調整](feedback_model_effort_policy.md) — モデル切替は提案しない・Opus基本
 - [事業実践のコンテンツ記録ルール](feedback_content_recording.md) — AI運用の発見・テスト・結果をSNS/Note/コンサル向け記録
 - [コンテンツ素材の対象者・2軸フレーミング](feedback_content_audience_framing.md) — Campers実名向け/匿名X→Note向けの切り分け・**BayChat は Campers 参考例のみ・匿名X/Note 一切禁止**（2026-04-29明確化）
@@ -54,6 +58,7 @@
 - [X情報ダイジェスト](project_x_digest.md) — X投稿自動収集→Claude要約→Chatwork個人DM配信（毎日9:40）
 - [スプレッドシート操作はAIコース必須テーマ](project_spreadsheet_automation_content.md) — Campers/コンサル教材の必須コンテンツ・記録蓄積先・扱い方針
 - [月次請求書 半自動化ツール](project_invoice_automation.md) — eBay外注3名の請求書自動作成（/月次請求書 YYYYMM）・3シート跨ぎ・列ごと型変換
+- [eBay 無在庫リサーチツール Ver.1](project_research_tool.md) — 2026-04-30完成・5/31ウェビナーデモ用・全コスト込み利益計算+楽天/Yahoo自動マッチング・社長判断待ちAPIキー3件
 
 ## 参照なし（archive/・通常ロードしない）
 - `archive/README.md` — archive/ 配下のルール

@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-PostToolUse hook: 社長向けファイルをWrite/Edit直後に自動オープン。
+PostToolUse hook: 社長が直接操作するファイルのみWrite/Edit直後に自動オープン。
 
-旧 env_auto_open.py を汎用化したもの。
-feedback_env_file_handling.md / feedback_file_delivery.md / feedback_proactive_partner.md
-の機械的バックボーン。
+■ 自動オープン対象（厳選）:
+  .env / .env.*    : 値入力用（社長が手入力する必要がある）
+  .xlsx / .xlsm    : 表計算（成果物・納品物）
+  .pptx            : スライド（成果物・納品物）
+  .pdf             : 文書（成果物・納品物）
 
-対象拡張子（社長が見る/編集する可能性のあるファイル）:
-  .env / .env.*    : 値入力用
-  .md              : ドキュメント（HTMLレンダリング後オープン）
-  .html            : 直接ブラウザで開く
-  .txt / .csv      : テキスト/データ
-  .xlsx / .xlsm    : 表計算
-  .pptx            : スライド
-  .pdf             : 文書
+■ 自動オープン対象外（Claudeが手動判断で開く）:
+  .md / .html / .txt / .csv : 頻繁に編集されるため自動オープンすると大量に開く。
+    Claudeが成果物・結果・社長確認必要と判断した時だけ手動で start する。
+  .py / .json / .yml / .toml / .sh 等 : コード/設定ファイル
 
-対象外（コード/設定/内部ファイル）:
-  .py / .json / .yml / .toml / .sh など
-  + 以下のディレクトリ配下は全種類除外:
-    .claude/, archive/, memory/, node_modules/, .git/, __pycache__/
-  + ファイル名 CLAUDE.md / index.md（設定/ナビ系で頻繁に編集される）
+■ ディレクトリ除外:
+  .claude/, archive/, memory/, node_modules/, .git/, __pycache__/
 """
 import json
 import sys
@@ -36,53 +31,14 @@ except Exception:
 
 
 ENV_BASENAME_RE = re.compile(r"^\.env(\..+)?$")
-PRESIDENT_FACING_EXTS = {".md", ".html", ".htm", ".txt", ".csv", ".xlsx", ".xlsm", ".pptx", ".pdf"}
+# 成果物・社長が直接操作するファイルのみ（.md/.html/.txt/.csvはClaude手動判断）
+DELIVERABLE_EXTS = {".xlsx", ".xlsm", ".pptx", ".pdf"}
 EXCLUDE_DIR_NAMES = {".claude", "archive", "memory", "node_modules", ".git", "__pycache__"}
-EXCLUDE_BASENAMES_LOWER = {"claude.md", "index.md", "readme.md", "memory.md"}
 
 
 def is_excluded_path(p: Path) -> bool:
     parts_lower = {part.lower() for part in p.parts}
-    if EXCLUDE_DIR_NAMES & parts_lower:
-        return True
-    if p.name.lower() in EXCLUDE_BASENAMES_LOWER:
-        return True
-    return False
-
-
-def render_md_to_html(md_path: Path) -> Path | None:
-    """同じディレクトリに `<basename>.preview.html` を生成して返す。失敗時はNone。"""
-    try:
-        import markdown
-    except Exception:
-        return None
-    try:
-        text = md_path.read_text(encoding="utf-8")
-        body = markdown.markdown(text, extensions=["tables", "fenced_code", "toc"])
-        css = (
-            "body{font-family:'Yu Gothic UI','Segoe UI',sans-serif;max-width:920px;"
-            "margin:32px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;}"
-            "h1,h2,h3{border-bottom:2px solid #2563eb;padding-bottom:6px;}"
-            "h2{margin-top:32px;}h3{border-bottom-color:#94a3b8;}"
-            "table{border-collapse:collapse;margin:12px 0;}"
-            "th,td{border:1px solid #cbd5e1;padding:6px 12px;}"
-            "th{background:#f1f5f9;}"
-            "code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:0.92em;}"
-            "pre{background:#f3f4f6;padding:12px;border-radius:6px;overflow:auto;}"
-            "pre code{background:transparent;padding:0;}"
-            "blockquote{border-left:4px solid #94a3b8;color:#475569;margin:0;padding:0 16px;}"
-            "a{color:#2563eb;}"
-        )
-        html = (
-            f"<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'>"
-            f"<title>{md_path.name}</title><style>{css}</style></head>"
-            f"<body>{body}</body></html>"
-        )
-        out = md_path.with_suffix(".preview.html")
-        out.write_text(html, encoding="utf-8")
-        return out
-    except Exception:
-        return None
+    return bool(EXCLUDE_DIR_NAMES & parts_lower)
 
 
 def main() -> None:
@@ -111,31 +67,18 @@ def main() -> None:
     is_env = bool(ENV_BASENAME_RE.match(basename))
 
     if is_env:
-        # .envは除外パスチェックをスキップ（どこにあっても開く）
         target = p
     else:
-        # 除外パスチェック
         if is_excluded_path(p):
             sys.exit(0)
-        # 拡張子チェック
-        if suffix not in PRESIDENT_FACING_EXTS:
+        if suffix not in DELIVERABLE_EXTS:
             sys.exit(0)
-
-        # .md は HTMLレンダリングして開く
-        if suffix == ".md":
-            html_path = render_md_to_html(p)
-            if html_path is not None:
-                target = html_path
-            else:
-                # マークダウン変換失敗時は生.mdを開く（フォールバック）
-                target = p
-        else:
-            target = p
+        target = p
 
     # 既定アプリで開く
     try:
         os.startfile(str(target))  # type: ignore[attr-defined]
-        kind = ".env(値入力用)" if is_env else f"{suffix}({'HTMLプレビュー' if suffix == '.md' and target != p else '直接'})"
+        kind = ".env(値入力用)" if is_env else f"{suffix}(成果物)"
         print(
             f"[file_auto_open] Opened: {target} [{kind}]\n"
             f"[file_auto_open] REMINDER: 社長に「{target.name} を開きました」と必ず先に宣言してから次に進むこと。",

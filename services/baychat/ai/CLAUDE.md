@@ -21,12 +21,12 @@
 
 ## AI Reply — 現状要点（最重要開発案件）
 
-- **プロンプト**: v2.4 本番運用中 / **v2.6 ドラフト**（合成40ケーステスト済）
-- **モデル仮決定**: GPT-5-Nano（admin切替可能）・Gemini 2.5 Flash は速度NGで優先度最低
+- **プロンプト**: v2.4 本番運用中 / **v2.3_baseline_natural3 (iter8)** = cat02 確定版（テスト中）
+- **本番モデル候補**: **GPT-4.1-Mini / GPT-4o-Mini**（標準目標3秒近接で達成）。GPT-5-Mini は **2026-05-01 本番除外決定**（余計なことを言う・コントロール困難・推論モデル特性で速度遅い）
+- **cat02 完成**: 全15ケース（subset5 + additional10）で社長OK判定済（2026-05-01）。社長フィードバック ABCDEF 全解消・品質100%クリーン
 - **Cowatech stg+prd 反映完了**（2026-04-22 23:58）：FORCED_TEMPLATE除去＋プレースホルダ `{sellerAccountEbay}/{buyerAccountEbay}` 注入対応
-- **🔴 設計図同期問題 顕在化**：Cowatech命名 vs 設計図命名のズレ。次セッション判断待ち
-- **設計図**: `design-doc/` v0.2（22ファイル・単一参照源）
-- **次セッション冒頭必読**: `handoff_20260423_cowatech_prd_sync.md`
+- **本番反映待ち**: natural3 系の改修を Cowatech に反映依頼するタイミングは社長判断（cat03 まで完了後の一括反映が候補）
+- **次セッション冒頭必読**: `handoff_20260501_evening_cat02_complete.md`
 
 👉 **詳細全量: `ai-reply-status.md`**（開発状況・本番ペイロード構造・モデル選定・プロンプト管理・テスト環境・今後の機能）
 
@@ -34,16 +34,20 @@
 
 ## 進行中・今後のタスク（未完了分）
 
-### 現在進行中（2026-04-23 朝〜）
-- [x] admin_prompt v2.6 ドラフト作成完了（合成40ケース・社長フィードバック待ち）
-- [ ] Cowatech stg+prd反映への設計図同期（進め方X/Y/Z 社長判断待ち）
-- [ ] クエットさんへのお礼Slack返信（未送信・タイミング判断待ち）
-- [ ] testing/payload_builder.py を v2.6 対応に更新
+### 現在進行中（2026-05-01 〜）
+- [x] cat02 完成（全15ケース・natural3 / iter8・社長OK判定）
+- [x] GPT-5-Mini 本番除外決定（社長判断 2026-05-01）
+- [x] 比較HTMLに補足情報入力UI + 再生成APIサーバー実装（result_server.py / port 8765）
+- [ ] cat03（配送関連 / 購入後質問）テスト着手 — 次セッション
+- [ ] cat03 で APOLOGY トーン込みテスト・5-Mini を念のため最終挙動確認 → 完全除外
+- [ ] SpeedPAK 業者対応辞書を admin_prompt に組み込むか・Cowatech 仕様書追加するか判断
+- [ ] natural3 系の Cowatech 本番反映タイミング判断
+- [ ] testing/payload_builder.py の v2.6 対応は不要（v2.3_baseline 系で完結）
 
 ### 次セッション冒頭の確認事項
-- 社長判断（進め方X/Y/Z・共有方法A/B/C/D）
-- Slackスレッド（thread_ts: 1776427836.602699）の状況
-- admin画面 v2.6 アップロード判断
+- `handoff_20260501_evening_cat02_complete.md` を読んで cat02 状態と cat03 着手内容を把握
+- cat03 設計（10ケース・single 5 + multi 5）→ 社長レビュー → テスト
+- 速度改善（3モデル → 2モデル化 + 並列実行検討）
 
 ### 並行継続
 - [ ] v2.4での本番運用継続（品質担保済み）

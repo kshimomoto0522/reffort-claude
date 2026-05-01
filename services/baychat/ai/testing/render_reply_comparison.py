@@ -339,6 +339,10 @@ def build_case_card(case_id, category, buyer_en, buyer_ja, rows_by_model, input_
 
     history_html = build_conversation_history(input_messages, history_ja=history_ja)
 
+    # モデル名をdata属性として安全に使えるID化
+    def _slug(s): return "".join(c if c.isalnum() else "-" for c in (s or ""))
+    case_slug = _slug(case_id)
+
     reply_cards = ""
     for model_name, row in rows_by_model.items():
         total = row.get("合計(/25)", 0) or 0
@@ -370,35 +374,48 @@ def build_case_card(case_id, category, buyer_en, buyer_ja, rows_by_model, input_
         )
 
         reply_cards += f"""
-        <div class="reply-card">
+        <div class="reply-card" data-case-id="{esc(case_id)}" data-model-name="{esc(model_name)}">
             <div class="reply-header">
                 <div class="model-badge">{esc(model_name)}</div>
                 <div class="case-winners">{case_badges}</div>
                 <div class="score-total">
-                    スコア <b>{total}</b>/25 ・ ⏱ {elapsed:.1f}秒 ・ 💴 ¥{cost:.3f}
+                    <span class="meta-elapsed">⏱ <b>{elapsed:.1f}</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥{cost:.3f}</b></span>
                 </div>
             </div>
-            <div class="score-detail">{score_pills}</div>
             <div class="bilingual">
                 <div class="en">
                     <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
-                    <pre>{esc(buyer_reply)}</pre>
+                    <pre class="reply-en">{esc(buyer_reply)}</pre>
                 </div>
                 <div class="ja">
                     <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
-                    <pre>{esc(jpn_reply)}</pre>
+                    <pre class="reply-ja">{esc(jpn_reply)}</pre>
                 </div>
-            </div>
-            <div class="judge-summary">
-                🧑‍⚖️ AI審判コメント: {esc(summary)}
             </div>
         </div>
         """
 
-    feedback_textarea = f"""
+    supplemental_block = f"""
+    <div class="supplemental-block" data-case-id="{esc(case_id)}">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="{esc(case_id)}"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('{esc(case_id)}', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
     <div class="feedback-block">
         <label class="feedback-label">
-            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。内容は自動保存・最下部からJSONダウンロード可能)</small>
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
         </label>
         <textarea class="feedback-input"
                   data-case-id="{esc(case_id)}"
@@ -406,6 +423,8 @@ def build_case_card(case_id, category, buyer_en, buyer_ja, rows_by_model, input_
                   rows="4"></textarea>
     </div>
     """
+    # 旧コードとの互換のため変数名を維持
+    feedback_textarea = supplemental_block
 
     return f"""
     <article class="case-card" data-case-id="{esc(case_id)}">
@@ -421,8 +440,24 @@ def build_case_card(case_id, category, buyer_en, buyer_ja, rows_by_model, input_
     """
 
 
-def render_comparison_html(excel_path, test_cases_path, top_n=12):
-    """Excelから結果を読み込み、サマリー + 全ケース詳細 + feedbackのHTML生成"""
+def render_comparison_html(excel_path, test_cases_path, top_n=12, tone=None):
+    """Excelから結果を読み込み、サマリー + 全ケース詳細 + feedbackのHTML生成
+
+    tone: "polite" | "friendly" | "apologetic" | None
+          指定するとHTML title / header / 出力ファイル名にトーンラベルを表示
+    """
+    # トーンラベル定義
+    tone_label_map = {
+        "polite": ("POLITE", "丁寧", "#5b21b6"),
+        "friendly": ("FRIENDLY", "フレンドリー", "#0d9488"),
+        "apologetic": ("APOLOGY", "謝罪", "#b45309"),
+    }
+    tone_info = tone_label_map.get(tone) if tone else None
+    tone_en = tone_info[0] if tone_info else ""
+    tone_ja = tone_info[1] if tone_info else ""
+    tone_color = tone_info[2] if tone_info else "#5b21b6"
+    tone_suffix_title = f" — トーン {tone_en} ({tone_ja})" if tone_info else ""
+
     results, agg_rows = read_excel(excel_path)
 
     # test_casesから追加情報を取得
@@ -487,7 +522,7 @@ def render_comparison_html(excel_path, test_cases_path, top_n=12):
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>BayChat AI Reply モデル比較レポート（フィードバック対応版）</title>
+<title>BayChat AI Reply モデル比較レポート{tone_suffix_title}</title>
 <style>
     body {{
         font-family: 'Yu Gothic UI', 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
@@ -536,6 +571,70 @@ def render_comparison_html(excel_path, test_cases_path, top_n=12):
         background: {COLOR_PRIMARY}; color: white; padding: 2px 8px;
         border-radius: 10px; font-size: 11px; margin-left: 4px;
     }}
+
+    /* 補足情報 + 再生成ボタン */
+    .supplemental-block {{
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 2px solid #f59e0b;
+        border-radius: 10px; padding: 16px; margin-top: 16px;
+    }}
+    .supplemental-label {{
+        display: block; font-weight: 700; color: #78350f;
+        margin-bottom: 8px; font-size: 13px;
+    }}
+    .supplemental-label small {{ font-weight: 400; color: #92400e; }}
+    .supplemental-input {{
+        width: 100%; box-sizing: border-box;
+        border: 1px solid #f59e0b; border-radius: 6px;
+        padding: 10px 12px; font-size: 13px;
+        font-family: inherit; resize: vertical;
+        background: white;
+    }}
+    .supplemental-input:focus {{
+        outline: none; border-color: #d97706;
+        box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+    }}
+    .supplemental-actions {{
+        margin-top: 10px; display: flex; align-items: center; gap: 12px;
+    }}
+    .regen-btn {{
+        background: #d97706; color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; font-weight: 700;
+        font-size: 14px; cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(217,119,6,0.3);
+    }}
+    .regen-btn:hover {{
+        background: #b45309; transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(217,119,6,0.4);
+    }}
+    .regen-btn:disabled {{
+        background: #9ca3af; cursor: wait;
+        transform: none; box-shadow: none;
+    }}
+    .regen-status {{
+        font-size: 13px; color: #78350f; font-weight: 600;
+    }}
+    .regen-status.error {{ color: #dc2626; }}
+    .regen-status.success {{ color: #15803d; }}
+
+    /* 再生成中の reply-card のオーバーレイ */
+    .reply-card.regenerating {{ position: relative; opacity: 0.6; }}
+    .reply-card.regenerating::after {{
+        content: "再生成中..."; position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: {COLOR_PRIMARY}; color: white;
+        padding: 8px 16px; border-radius: 8px; font-weight: 700;
+    }}
+    .reply-card.regenerated {{
+        animation: highlight 1.5s ease-out;
+    }}
+    @keyframes highlight {{
+        0% {{ background: #fef3c7; }}
+        100% {{ background: white; }}
+    }}
+    .meta-elapsed.fast b {{ color: #15803d; }}
+    .meta-elapsed.slow b {{ color: #dc2626; }}
 
     .case-card {{
         background: white; margin-top: 20px; padding: 20px;
@@ -659,7 +758,7 @@ def render_comparison_html(excel_path, test_cases_path, top_n=12):
     .win-cost {{ background: #f59e0b; }}
 
     .bilingual {{
-        display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        display: grid; grid-template-columns: 1fr; gap: 12px;
     }}
     .bilingual pre {{
         background: white; border: 1px solid {COLOR_BORDER};
@@ -752,8 +851,9 @@ def render_comparison_html(excel_path, test_cases_path, top_n=12):
 <body>
 <div class="container">
     <header>
-        <h1>BayChat AI Reply モデル比較レポート</h1>
+        <h1>BayChat AI Reply モデル比較レポート{tone_suffix_title}</h1>
         <div class="subtitle">
+            {('<span style="background: ' + tone_color + '; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 16px; margin-right: 12px;">トーン: ' + tone_en + ' / ' + tone_ja + '</span>') if tone_info else ''}
             {len(models)}モデル × {len(selected_cases)}ケース | 生成日時: {timestamp}<br>
             社長のフィードバックは各ケース下の入力欄に書いてください。自動保存されます。
         </div>
@@ -842,13 +942,138 @@ function downloadFeedback() {{
 }}
 
 restoreFeedback();
+
+// ==========================================================
+// 補足情報 + 再生成API
+// ==========================================================
+const REGENERATE_API = 'http://127.0.0.1:8765/api/regenerate';
+const TONE = '{tone or "polite"}';
+const PROMPT_VERSION = '2.3_baseline_natural2';
+const TEST_CASE_PATH = '{(test_cases_path.replace(os.sep, "/").split("testing/")[-1]) if test_cases_path else "test_cases/category_02_natural5_subset.json"}';
+
+// 速度目標（秒）
+const SPEED_TARGET_STANDARD = 3.0;  // 標準
+const SPEED_TARGET_COMPLEX = 6.0;   // 複雑
+const SPEED_TARGET_APOLOGY = 8.0;   // 謝罪
+
+function colorizeElapsed(span, elapsed) {{
+    span.classList.remove('fast', 'slow');
+    const target = (TONE === 'apologetic') ? SPEED_TARGET_APOLOGY : SPEED_TARGET_STANDARD;
+    if (elapsed <= target) span.classList.add('fast');
+    else if (elapsed > SPEED_TARGET_COMPLEX) span.classList.add('slow');
+}}
+
+async function regenerateCase(caseId, btn) {{
+    const block = document.querySelector(`.supplemental-block[data-case-id="${{caseId}}"]`);
+    if (!block) return;
+    const ta = block.querySelector('.supplemental-input');
+    const statusEl = block.querySelector('.regen-status');
+    const supplemental = (ta.value || '').trim();
+
+    // 同じケースの全 reply-card を取得（同 case-card 内）
+    const caseCard = block.closest('.case-card');
+    const replyCards = caseCard.querySelectorAll('.reply-card');
+
+    // ローディング表示
+    btn.disabled = true;
+    btn.textContent = '⏳ 生成中...';
+    statusEl.classList.remove('error','success');
+    statusEl.textContent = `${{replyCards.length}}モデルで再生成中...`;
+    replyCards.forEach(c => c.classList.add('regenerating'));
+
+    try {{
+        const resp = await fetch(REGENERATE_API, {{
+            method: 'POST',
+            headers: {{ 'Content-Type': 'application/json' }},
+            body: JSON.stringify({{
+                case_id: caseId,
+                supplemental: supplemental,
+                tone: TONE,
+                prompt_version: PROMPT_VERSION,
+                test_case_path: TEST_CASE_PATH,
+            }}),
+        }});
+        if (!resp.ok) throw new Error(`HTTP ${{resp.status}}: ${{await resp.text()}}`);
+        const data = await resp.json();
+
+        // 各モデルの結果を画面更新
+        let updated = 0;
+        let errors = [];
+        data.results.forEach(r => {{
+            if (r.error) {{ errors.push(`${{r.model_name||r.model_id}}: ${{r.error}}`); return; }}
+            const card = caseCard.querySelector(`.reply-card[data-model-name="${{r.model_name}}"]`);
+            if (!card) return;
+            card.querySelector('.reply-en').textContent = r.buyer_reply;
+            card.querySelector('.reply-ja').textContent = r.jpn_reply;
+            const elapsedEl = card.querySelector('.meta-elapsed');
+            elapsedEl.innerHTML = `⏱ <b>${{r.elapsed.toFixed(1)}}</b>秒`;
+            colorizeElapsed(elapsedEl, r.elapsed);
+            const costEl = card.querySelector('.meta-cost');
+            costEl.innerHTML = `💴 <b>¥${{r.cost_jpy.toFixed(3)}}</b>`;
+            card.classList.remove('regenerating');
+            card.classList.add('regenerated');
+            setTimeout(() => card.classList.remove('regenerated'), 1500);
+            updated++;
+        }});
+
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        if (errors.length > 0) {{
+            statusEl.classList.add('error');
+            statusEl.textContent = `⚠️ ${{updated}}件成功 / ${{errors.length}}件エラー: ${{errors.join('; ')}}`;
+        }} else {{
+            statusEl.classList.add('success');
+            statusEl.textContent = `✅ ${{updated}}モデル再生成完了`;
+        }}
+    }} catch (e) {{
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        statusEl.classList.add('error');
+        statusEl.textContent = `❌ 失敗: ${{e.message}}（result_server.py が起動しているか確認してください）`;
+        console.error(e);
+    }} finally {{
+        btn.disabled = false;
+        btn.textContent = '🔁 補足込みで再生成（3モデル）';
+    }}
+}}
+
+// 補足情報の自動保存（localStorageに別キーで）
+const SUPP_KEY = 'baychat_supplemental_{timestamp.replace(" ", "_").replace(":", "").replace("-", "")}';
+function restoreSupplemental() {{
+    const saved = localStorage.getItem(SUPP_KEY);
+    if (!saved) return;
+    try {{
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.supplemental-input').forEach(ta => {{
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        }});
+    }} catch (e) {{ console.error(e); }}
+}}
+function saveSupplemental() {{
+    const data = {{}};
+    document.querySelectorAll('.supplemental-input').forEach(ta => {{
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    }});
+    localStorage.setItem(SUPP_KEY, JSON.stringify(data));
+}}
+document.querySelectorAll('.supplemental-input').forEach(ta => {{
+    ta.addEventListener('input', saveSupplemental);
+}});
+restoreSupplemental();
+
+// 初期表示の応答時間を色付け
+document.querySelectorAll('.meta-elapsed').forEach(el => {{
+    const m = el.textContent.match(/([\d.]+)秒/);
+    if (m) colorizeElapsed(el, parseFloat(m[1]));
+}});
 </script>
 </body>
 </html>
 """
 
     timestamp_fn = datetime.now().strftime("%Y%m%d_%H%M%S")
-    outpath = os.path.join(RESULTS_DIR, f"comparison_{timestamp_fn}.html")
+    tone_fn_suffix = f"_{tone}" if tone else ""
+    outpath = os.path.join(RESULTS_DIR, f"comparison{tone_fn_suffix}_{timestamp_fn}.html")
     with open(outpath, "w", encoding="utf-8") as f:
         f.write(html)
 
@@ -860,8 +1085,11 @@ if __name__ == "__main__":
     parser.add_argument("--excel", type=str, required=True)
     parser.add_argument("--cases", type=str, required=True)
     parser.add_argument("--top", type=int, default=12)
+    parser.add_argument("--tone", type=str, default=None,
+                        choices=["polite", "friendly", "apologetic"],
+                        help="トーン（HTML title / header / ファイル名にラベル表示）")
     args = parser.parse_args()
 
-    html_path = render_comparison_html(args.excel, args.cases, args.top)
+    html_path = render_comparison_html(args.excel, args.cases, args.top, tone=args.tone)
     print(f"HTML生成完了: {html_path}")
     os.startfile(html_path)

@@ -27,6 +27,34 @@ originSessionId: cad5d328-fbe2-462e-8502-6ca7c9ebaa09
 
 ---
 
+## 🚨 2026-04-29 重大インシデント発覚：eBay OAuth tokens が GitHub Private repo に commit されていた
+
+DailyGithubBackup の Windows 化作業中、Pythonスクリプト側の機密ファイル混入チェックが `commerce/ebay/analytics/ebay_oauth_tokens.json` と `ebay_seller_cache.json` を検出。`git log` で確認すると、両ファイルは **2026-04-23 の初回大規模push（commit 6761123）から最新まで履歴に含まれていた**。
+
+**漏洩リスク評価：**
+- リポジトリは Private（kshimomoto0522/reffort-claude）
+- アクセス権は社長（owner）と Claude Code セッションのみ
+- 即時の漏洩リスクは低いが、リポジトリが Public 化／アカウント乗っ取り／GitHub側障害があれば全 OAuth トークンが漏洩
+- ベストプラクティス的にはトークンrotate＋履歴削除（git filter-repo / BFG）すべき
+
+**実施した応急処置（2026-04-29）：**
+1. `.gitignore` に追加：`**/ebay_oauth_tokens.json` `**/ebay_seller_cache.json` `**/oauth_tokens*.json` `**/*_oauth_state.json`
+2. `git rm --cached` で tracking 解除
+3. commit `21bd3bd` 「security: remove sensitive eBay OAuth token files from tracking」をpush
+4. 以後、daily-github-backup の Windows 版（github_backup.py）が自動で「A/M」のみ機密チェックする実装になっており、再混入は構造的にブロック
+
+**残タスク（社長判断）：**
+- ⚠️ **eBay OAuth refresh token の rotate**（最も推奨。漏洩していなくても安全側に倒す）
+- ⚠️ git history から該当ファイルを完全削除（git filter-repo or BFG・履歴を書き換える破壊的操作）
+- 並行：他のjson（`weekly_history.json` `weekly_notes.json` `removal-queue.json`）が機密を含まないかレビュー
+
+**How to apply:**
+- 新規Pythonスクリプトでトークンキャッシュを書き出す時は **必ず** その時点で `.gitignore` 追加とセットで実施
+- タスク作成・引継ぎ時は「このスクリプトはどこにキャッシュ／状態ファイルを書くか？」を最初に確認
+- daily-github-backup（github_backup.py）の機密検出ロジックは「最後の防衛線」として常にON。検出されたら必ず社長報告
+
+---
+
 ## ⚠️ .env の中身を絶対にチャットに出力しない（2026-04-15 追加・最重要）
 
 ### 絶対ルール

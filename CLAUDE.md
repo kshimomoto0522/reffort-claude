@@ -21,6 +21,7 @@
 - settings.json deny化推奨判断時は「deny設定にしますか？」と提案
 - APIトークンは `.env` 管理・コード直書き禁止（`memory/feedback_security.md`準拠）
 - **.env作業時3原則**：①会話文脈から対象.envを自動特定（曖昧でないのに社長に聞くのは違反・真に不明な時のみ確認）②Write/Edit直後にhookが自動オープン（`.claude/hooks/file_auto_open.py`）③「開きました」を必ず先に宣言してから次の作業へ
+- **ファイルオープン厳選ルール**：hookが自動オープンするのは `.env` と Office/PDF成果物（`.xlsx/.xlsm/.pptx/.pdf`）のみ。`.md/.html/.csv/.txt` 等は「社長が今すぐ見る必要がある成果物・結果」の時だけClaude手動で `start` する。内部ドキュメント更新やルーチン編集は開かない
 - **誠実性最優先**：実行不可能な事を偽装しない/無理にやらない/嘘の完了報告をしない。優先度＝誠実性 > 自己完結 > 言葉遣い（詳細 `.claude/rules/honesty_and_self_completion.md`）
 - **自己完結原則**：Claudeが出来る事（開く/探す/確認/実行/読む）を社長に依頼するのは禁止。NGフレーズ「ダブルクリックして」「探してください」「開いて確認」「パスは〇〇です」等。例外白リスト（認証/物理/事業判断/.env値入力等）は同上ファイル参照
 
@@ -61,12 +62,11 @@
 
 | タスクID | 内容 | スケジュール | 起動経路 |
 |----------|------|------------|---------|
-| `daily-github-backup` | reffort＋memoryフォルダをGitHubにバックアップ | 毎日深夜0時 | Claude scheduled-task |
 | `monday-ebay-report-delivery` | eBay週次レポート配信 | 毎週月曜 10:00 | Claude scheduled-task |
 | `biweekly-claude-maintenance` | Claude Code運用の肥大化監視＋最新情報取込＋改善提案 | 第1・第3月曜 10:00 | Claude scheduled-task |
 | `monday-report-requests-review` | 先週のレポート改善要望を社長DMへ報告 | 毎週月曜 9:50 | Claude scheduled-task |
-| `monday-ebay-report-delivery` | eBay週次レポート自動配信 | 毎週月曜 10:00 | Claude scheduled-task |
 | `CampersMemberRemoval` | Campersメンバー削除（Playwright版） | 毎日 5:00 | **Windowsタスクスケジューラ直接** |
+| `DailyGithubBackup` | reffort＋memoryフォルダをGitHubにバックアップ（旧 `daily-github-backup`） | 毎日 0:05 | **Windowsタスクスケジューラ直接** |
 | `DailyXDigest` | X情報ダイジェスト配信（旧 `daily-x-digest`） | 毎日 9:40 | **Windowsタスクスケジューラ直接** |
 | `ChatworkAIReply` | 【AI】eBay運営Gメンション自動応答（旧 `chatwork-ai-reply`・頻度10分→1日に変更） | 毎日 10:00 | **Windowsタスクスケジューラ直接** |
 | `BayChatSlackCheck` ⏸ | BayChat Slack監視（旧 `baychat-slack-hourly-check`・頻度1時間→30分に変更） | 30分ごと | **Windowsタスクスケジューラ直接**（SLACK_BOT_TOKEN設定後に有効化） |
@@ -75,9 +75,11 @@
 
 ---
 
-## 🚨 次セッション冒頭で必ず読むファイル（2026-04-29更新）
+## 🚨 次セッション冒頭で必ず読むファイル（2026-05-01更新）
 
-- **🔥 最優先：コンテンツ蓄積基盤整備 完了引継ぎ**: `.claude/handoff_20260429_content_infrastructure_complete.md`（業務縦軸構造に根本刷新完了・5/31ウェビナー骨子v0.1＋AIコースカリキュラムv0.1完成・残タスクは社長コミット4点＋判断待ち5点）
+- **🔥 BayChat AI Reply cat02 完成・cat03 引継ぎ**: `services/baychat/ai/handoff_20260501_evening_cat02_complete.md`（iter1〜8自走改善で品質100%クリーン・GPT-5-Mini本番除外決定・補足情報UI/再生成APIサーバー実装済・cat03で APOLOGY トーン込みテスト着手予定）
+- **🔥 eBay リサーチツール Ver.1 完成（5/31ウェビナーデモ用）**: `commerce/ebay/tools/research/handoff_20260430_morning.md`（一晩構築・最大マージン49% / 黒字3件・楽天/Yahoo APIキー登録 + Marketplace Insights API申請が社長判断待ち）
+- **🔥 コンテンツ基盤整備 完了引継ぎ**: `.claude/handoff_20260429_content_infrastructure_complete.md`（業務縦軸構造に根本刷新完了・5/31ウェビナー骨子v0.1＋AIコースカリキュラムv0.1完成・残タスクは社長コミット4点＋判断待ち5点）
 - **配信ダッシュボード**: `education/campers/content-projects/INDEX.md`（全体の取り出し窓口・最初に開く）
 - **2軸戦略コンテンツ前提**: `memory/project_consulting.md` + `memory/feedback_content_audience_framing.md`（**BayChat は Campers のみ・Note/X 完全禁止**）
 - **直近イベント**: 2026-05-31（日）Campersウェビナー（`memory/project_campers_webinar.md`）
@@ -92,4 +94,4 @@
 
 ---
 
-*最終更新: 2026-04-29（コンテンツ蓄積基盤を業務縦軸12段階構造に根本刷新・content-projects/ 完成・5/31ウェビナー骨子＋AIコースカリキュラム枠組み完成）*
+*最終更新: 2026-05-01（BayChat AI Reply cat02 完成・iter1〜8自走改善で 100%クリーン・GPT-5-Mini本番除外決定・admin_prompt v2.3_baseline_natural3 確定・補足情報UI+再生成APIサーバー実装・cat03 引継ぎ済）*

@@ -20,6 +20,12 @@ reffort-sheets-*.json
 **/oauth_tokens*.json
 **/*_oauth_state.json
 
+# 動的に生成されるトークンキャッシュ全般（2026-05-01 追加・research/ツール対応）
+# tools/research/cache/ebay_app_token.json 等のApplication Tokenキャッシュを除外
+**/cache/*token*.json
+**/cache/*credentials*.json
+**/cache/*secret*.json
+
 # バックアップファイル（ローカル作業用・GitHub不要）
 *.bak
 *.backup_*

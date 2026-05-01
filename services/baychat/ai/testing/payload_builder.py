@@ -151,7 +151,7 @@ def _substitute_admin_prompt(admin_prompt_text, tone, description,
     # descriptionが空の場合は {sellerSetting} をそのまま残す（本番の実挙動に合わせる）
 
     # FORCED_TEMPLATE 除去後のadmin_prompt内プレースホルダ置換が必要なバージョン
-    if prompt_version in ("2.5", "2.3_baseline"):
+    if prompt_version in ("2.5", "2.3_baseline") or prompt_version.startswith("2.3_baseline"):
         result = result.replace("{buyer_name}", buyer_name or "")
         result = result.replace("{seller_name}", seller_name or "")
         # Cowatech実装側の命名にも対応
@@ -228,7 +228,7 @@ def build_production_payload(
         raise ValueError(f"tone は polite/friendly/apologetic のいずれか: {tone}")
 
     # FORCED_TEMPLATE 除去構成（Cowatech prd 2026-04-22 反映と一致）
-    if prompt_version in ("2.5", "2.3_baseline"):
+    if prompt_version in ("2.5", "2.3_baseline") or prompt_version.startswith("2.3_baseline"):
         include_forced_template = False
 
     original = test_case.get("input") or test_case.get("messages") or []

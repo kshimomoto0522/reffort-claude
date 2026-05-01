@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>eBay 無在庫リサーチツール — 結果レポート</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; padding:0; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  h1 { color: #a78bfa; border-bottom: 3px solid #a78bfa; padding-bottom: 8px; }
+  .summary { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .summary .item { text-align: center; }
+  .summary .item .label { font-size: 12px; color:#94a3b8; }
+  .summary .item .val { font-size: 24px; font-weight: bold; color: #a78bfa; }
+  .card { background: #1e293b; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: grid; grid-template-columns: 60px 140px 1fr; gap: 16px; }
+  .rank { font-size: 32px; font-weight: bold; color: #a78bfa; }
+  .thumb img { width: 140px; max-height: 140px; object-fit: contain; border-radius: 8px; background: #0f172a; }
+  .title a { color: #f1f5f9; text-decoration: none; font-size: 16px; font-weight: 600; }
+  .title a:hover { color: #a78bfa; }
+  .meta { font-size: 12px; color: #94a3b8; margin: 8px 0 12px; }
+  .meta a { color: #c4b5fd; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; color: white; margin-right: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .col { background: #0f172a; border-radius: 8px; padding: 12px; border: 2px solid transparent; }
+  .col.profit { background: #0c1426; }
+  .col h4 { margin: 0 0 8px; font-size: 11px; color: #94a3b8; text-transform: uppercase; }
+  .col p { margin: 4px 0; }
+  .col .big { font-size: 18px; font-weight: 600; color: #f1f5f9; }
+  .col .huge { font-size: 28px; font-weight: bold; }
+  .col small { font-size: 12px; color: #94a3b8; }
+  .col table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .col table td { padding: 2px 0; }
+  .col table td:last-child { text-align: right; font-weight: 500; }
+  .muted { color: #64748b; font-size: 11px; }
+  code { background: #0f172a; padding: 2px 6px; border-radius: 4px; }
+  .footer { margin-top: 32px; padding: 16px; color: #64748b; font-size: 11px; line-height: 1.6; }
+  .footer h4 { color: #94a3b8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔎 eBay 無在庫リサーチツール — 結果レポート</h1>
+  <div class="summary">
+    <div class="item"><div class="label">候補総数</div><div class="val">31</div></div>
+    <div class="item"><div class="label">黒字候補</div><div class="val" style="color:#4ade80">15</div></div>
+    <div class="item"><div class="label">USD/JPY</div><div class="val">159.74</div></div>
+    <div class="item"><div class="label">生成日時</div><div class="val" style="font-size:14px">20260429_222214</div></div>
+  </div>
+
+  
+        <div class="card">
+          <div class="rank">#1</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/FKsAAOSwU5xnzRj5/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/315333742309?_skw=Asics+Gel-Lyte+III&amp;hash=item496b5b0ee5:g:FKsAAOSwU5xnzRj5" target="_blank" rel="noopener">Sneaker Freaker x Atmos x Asics Gel-Lyte III 1201A529-020 Men&#x27;s Size</a></div>
+            <div class="meta">
+              キーワード: <code>Asics Gel-Lyte III</code> ／
+              出品者: <a href="https://www.ebay.com/usr/yumara13" target="_blank">yumara13</a>
+              <span class="muted">(99.8% / 12703)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$284.50<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$284.50</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥11,946 <small>($67.99)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/modescape/rc_it6azramldso_v3sr/?variantId=rc_it6azramldso_v3sr" target="_blank" rel="noopener">rakuten</a>
+                  ／ MODESCAPE 楽天市場店
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">asics アシックス SNEAKER FREAKER ATMOS GEL-LYTE 3 OG sスニーカー 1201A529-020 グレー パープル 29c</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$33.43</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$67.99</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$2.25</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$85.35 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$146.41</p>
+                <p class="big">¥23,387</p>
+                <p>マージン <b>51.46%</b></p>
+                <p class="muted">損益分岐仕入: ¥37,671</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#2</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/oxUAAOSw0-Jnq3FV/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/235953984036?_skw=Canon+EOS+R6&amp;hash=item36eff41224:g:oxUAAOSw0-Jnq3FV" target="_blank" rel="noopener">CANON Battery Grip BG-R20 for EOS R5 Mark II/EOS R5/EOS R6 Mark II/EOS R6</a></div>
+            <div class="meta">
+              キーワード: <code>Canon EOS R6</code> ／
+              出品者: <a href="https://www.ebay.com/usr/semba-market" target="_blank">semba-market</a>
+              <span class="muted">(99.9% / 3593)</span>
+              <span class="badge" style="background:#475569">FVF: default</span>
+              <span class="badge" style="background:#7c3aed">関税: default</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.0kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$475.00<small> ＋ 送料 $50.00</small></p>
+                <p>合計 <b>$525.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥50,000 <small>($284.55)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/ebest/4549292236330/?variantId=4549292236330" target="_blank" rel="noopener">rakuten</a>
+                  ／ イーベストPC・家電館
+                  ／ <span class="badge" style="background:#22c55e">一致 95.5点</span>
+                </p>
+                <p class="muted">CANON キヤノン BG-R20 バッテリーグリップ EOS R5 Mark II対応 BGR20</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$91.49</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$18.91</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$284.55</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$3.89</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$71.25 (15%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$123.03</p>
+                <p class="big">¥19,654</p>
+                <p>マージン <b>23.44%</b></p>
+                <p class="muted">損益分岐仕入: ¥71,618</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#3</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/2Z0AAeSwedFphyLV/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/314585252676?_skw=Onitsuka+Tiger+Mexico+66&amp;hash=item493ebe0344:g:2Z0AAeSwedFphyLV&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGaFNkk3EiKxtYLOyFQ96osVEItwBFAn3Zw4HManI9q2nv2c6g8HKEUlIXCsWuB1KUuItyfelnE9U%2BfqOXVq5nuIFHqV5jLiXWMmzNva7O%2BnuN9XOX%2BmlrMZDkz6RMgUbgW2NJRHjwE6KzApmTsnaImwKodgPC8DDiqFBBpGSrIh8an1x85De1CWkU9V6E2KIN2v%2FCW623QLDa4g7vQv2DV1sV4kISE0JEZ7i1Q%2FlNlarVGCYLVHONioktl3JX4zyWA8pQdobmxzOI7s9RGAHaB%2BMo9Rod2Nmur8%2FfhJ%2BoGjMQ%3D%3D" target="_blank" rel="noopener">Onitsuka Tiger MEXICO 66 Sneakers Unisex 1183C102 16Colors Unisex Size</a></div>
+            <div class="meta">
+              キーワード: <code>Onitsuka Tiger Mexico 66</code> ／
+              出品者: <a href="https://www.ebay.com/usr/yumara13" target="_blank">yumara13</a>
+              <span class="muted">(99.8% / 12703)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$361.28<small> ＋ 送料 $30.00</small></p>
+                <p>合計 <b>$391.28</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥35,300 <small>($200.89)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/aclo/ot-1183c102104/" target="_blank" rel="noopener">rakuten</a>
+                  ／ セレクトショップ a-clo
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">Onitsuka Tiger オニツカタイガー スニーカー MEXICO 66 メキシコ66 1183C102.104 シューズ WHITE ホワイト メンズ </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$45.98</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$200.89</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$3.09</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$108.38 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$106.89</p>
+                <p class="big">¥17,075</p>
+                <p>マージン <b>27.32%</b></p>
+                <p class="muted">損益分岐仕入: ¥54,081</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#4</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/tFkAAeSwMcVpp9pl/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/116463483105?_skw=Canon+EOS+R6&amp;hash=item1b1dc3b8e1:g:tFkAAeSwMcVpp9pl" target="_blank" rel="noopener">New CANON BG-R20 Battery Grip for EOS R5/R5II/R6/R6II</a></div>
+            <div class="meta">
+              キーワード: <code>Canon EOS R6</code> ／
+              出品者: <a href="https://www.ebay.com/usr/nyjbloom" target="_blank">nyjbloom</a>
+              <span class="muted">(99.8% / 7152)</span>
+              <span class="badge" style="background:#475569">FVF: default</span>
+              <span class="badge" style="background:#7c3aed">関税: default</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.0kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$378.67<small> ＋ 送料 $125.00</small></p>
+                <p>合計 <b>$503.67</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥50,000 <small>($284.55)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/ebest/4549292236330/?variantId=4549292236330" target="_blank" rel="noopener">rakuten</a>
+                  ／ イーベストPC・家電館
+                  ／ <span class="badge" style="background:#22c55e">一致 97.6点</span>
+                </p>
+                <p class="muted">CANON キヤノン BG-R20 バッテリーグリップ EOS R5 Mark II対応 BGR20</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$87.79</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$18.91</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$284.55</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$3.73</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$56.80 (15%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$105.56</p>
+                <p class="big">¥16,863</p>
+                <p>マージン <b>20.96%</b></p>
+                <p class="muted">損益分岐仕入: ¥68,548</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#5</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/NmEAAeSw3w1p7Nts/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/147283640947?_skw=Onitsuka+Tiger+Mexico+66&amp;hash=item224aca0273:g:NmEAAeSw3w1p7Nts" target="_blank" rel="noopener">Onitsuka Tiger MEXICO 66 DELUXE NIPPON MADE White Black 1181A119 US Men 9.5</a></div>
+            <div class="meta">
+              キーワード: <code>Onitsuka Tiger Mexico 66</code> ／
+              出品者: <a href="https://www.ebay.com/usr/seabass_43" target="_blank">seabass_43</a>
+              <span class="muted">(0.0% / 0)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$399.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$399.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥37,970 <small>($216.09)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/beegle/16030169/?variantId=16030169" target="_blank" rel="noopener">rakuten</a>
+                  ／ ブランド古着のBEEGLE by Boo-Bee
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">Onitsuka Tiger オニツカタイガー サイズ:US9(27.0cm) | MEXICO 66 DELUXE NIPPON MADE (1181A119</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$46.88</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$216.09</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$3.15</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$119.70 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$98.45</p>
+                <p class="big">¥15,726</p>
+                <p>マージン <b>24.67%</b></p>
+                <p class="muted">損益分岐仕入: ¥55,268</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#6</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/PJgAAOSwiFlmTage/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/255888989829?_skw=Nike+Dunk+Low&amp;hash=item3b942c1e85:g:PJgAAOSwiFlmTage" target="_blank" rel="noopener">DH0957-001 Nike Dunk Low Crazy Black Multi Camo Khaki Oil Green Orange (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$177.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$177.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥5,918 <small>($33.68)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/auc-life-sendai/6b26408am0005ha24/?variantId=6b26408am0005ha24" target="_blank" rel="noopener">rakuten</a>
+                  ／ ブランド古着 ライフ楽天市場店
+                  ／ <span class="badge" style="background:#22c55e">一致 98.5点</span>
+                </p>
+                <p class="muted">NIKE ナイキ DH0957-001 Dunk Low SE Black Multi Camo ダンク ロー SE ブラック マルチカモ ローカットスニーカー</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$20.80</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$33.68</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.40</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$53.10 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$86.69</p>
+                <p class="big">¥13,849</p>
+                <p>マージン <b>48.98%</b></p>
+                <p class="muted">損益分岐仕入: ¥21,151</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#7</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/QUwAAeSwGWlpVe06/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/256165050819?_skw=Nike+Air+Jordan+1&amp;hash=item3ba4a079c3:g:QUwAAeSwGWlpVe06&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGav6RPvblt5e3uwHT1UCS%2FE2FzwIXL2b8IpoDhjm8Wg1ZjMW%2BJ%2FhR3viNAevmozDOOTlb7VUfeNIsxV5obSBD9ZyNlIC%2BrVUhI8q1sYGfKFokgnHC4Qe6xTbPG8j9htgI8CfM6IDzbdPZJOxicKX0Ghk%2BV05fFbSzA%2F1qEeccirHDzFMLOglUfTpp6k8LLntZNL2yFyRPXvr%2BCo4S8t46NvZ6ep9qWw8ysyE4OafZO36%2BCNLocHDBZfj2%2B0%2FxhZibVm3ximrPM6y8LLjanO6O3wQSevE4NYPYDDUuiyZDlFLQ%3D%3D" target="_blank" rel="noopener">DQ8426-515 Nike Air Jordan 1 Mid Sky J Purple White Light Blueberry (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Air Jordan 1</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$160.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$160.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥7,678 <small>($43.69)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/auc-life-sendai/6c14705am0008hac0/?variantId=6c14705am0008hac0" target="_blank" rel="noopener">rakuten</a>
+                  ／ ブランド古着 ライフ楽天市場店
+                  ／ <span class="badge" style="background:#22c55e">一致 99.3点</span>
+                </p>
+                <p class="muted">NIKE ナイキ DQ8426-515 Air Jordan 1 Mid Sky J Purple エアジョーダン1 ミッド スカイ J パープル ミドルカット</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$18.80</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$43.69</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.26</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$48.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$61.82</p>
+                <p class="big">¥9,874</p>
+                <p>マージン <b>38.63%</b></p>
+                <p class="muted">損益分岐仕入: ¥18,538</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#8</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/FNAAAeSwl5xp5v7t/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/318130225101?_skw=Onitsuka+Tiger+Mexico+66&amp;hash=item4a1209ffcd:g:FNAAAeSwl5xp5v7t&amp;amdata=enc%3AAQALAAABAACCtXRWQnOEpyOqnQQ8KGaLAwkiP%2FMY3KqX8RWM%2BZkzR96hd%2BKXDywD2IzwSaQB3DJ0K7oBILZ5dOBAPCgSzEquvbElsWx7zENPJDUFUxwZWukhoqOl1zpttNc5fRsxrII8vZyeTtshEQ7K08BTaQp8nsF3wzABLJSrwvbwavqhtCTo%2Bpetv1jxQD4tGFzqroUlIV2%2BiOutIJRU7r1AEkbep7XXiiFWO5PLqq7SiZqAHKwBo%2FogDe3mDIaV8Yz%2FdpD80ewHAxt9gznQCA7CujfonRDLG1Rf6hdllWfad2y4UOC1HNvY0odxm28OGV3BUzUwNwWF%2FLXrtXo5%2FgbY8eU%3D" target="_blank" rel="noopener">Onitsuka Tiger MEXICO 66 SLIP-ON 1183A360 6 Colors Unisex Adult Shoes Japan</a></div>
+            <div class="meta">
+              キーワード: <code>Onitsuka Tiger Mexico 66</code> ／
+              出品者: <a href="https://www.ebay.com/usr/you_and_minami" target="_blank">you_and_minami</a>
+              <span class="muted">(99.4% / 608)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$137.89<small> ＋ 送料 $30.00</small></p>
+                <p>合計 <b>$167.89</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥11,215 <small>($63.82)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/zozo/99382264.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ zozo
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">スニーカー Onitsuka Tiger MEXICO 66 SLIP-ON / オニツカタイガー メキシコ 66 スリッポン / 1183A360-</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$20.13</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$63.82</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.32</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$41.37 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$48.19</p>
+                <p class="big">¥7,697</p>
+                <p>マージン <b>28.7%</b></p>
+                <p class="muted">損益分岐仕入: ¥19,681</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#9</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/d5QAAeSwf1Vpw5sg/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/257284310338?_skw=Nike+Air+Jordan+1&amp;hash=item3be7570542:g:d5QAAeSwf1Vpw5sg&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZ7rZs5bhZlN1RcnkKhF2dKpz58FLpk6riMI7yxJkXHeK49VqEDebIgRMsz92n8Kl2yRdUMujptrIuR8rbNJc9g7a4%2B7eiTGZqd2r37Q5P3CXE4BSOEUOJhGwqfgitYKKw0fmdUFgP1WiaVTkJGLWgPIZqCmlXqDWxP20h%2FBV7P6eq8VpiiXsvUpK9BDslNC5L2mUY5CzNNSlneX0%2FyJsFwwhsl5OSgeGnLrXxb3H3fCELFec03dbTJaQqgpGdKVxlf%2B51MShK902BHP8Bi22gYE9YF4fxTLiLOvGevF3AUxg%3D%3D" target="_blank" rel="noopener">IR0842-010 Nike Air Jordan 1 Low Black Denim (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Air Jordan 1</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$149.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$149.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥10,680 <small>($60.78)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/otakarasouko/1-240091401730/?variantId=1-240091401730" target="_blank" rel="noopener">rakuten</a>
+                  ／ お宝創庫
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【中古】NIKE AIR JORDAN 1 Low &quot;Black Denim&quot; サイズ27.0cm IR0842-010 ナイキ[91]</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$17.91</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$60.78</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.17</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$44.70 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$34.71</p>
+                <p class="big">¥5,544</p>
+                <p>マージン <b>23.29%</b></p>
+                <p class="muted">損益分岐仕入: ¥16,778</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#10</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/0jYAAOSw1e1nd5Al/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/196926192660?_skw=Sony+Alpha+7C&amp;hash=item2dd9b73c14:g:0jYAAOSw1e1nd5Al&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZ%2FkDJibIN7KK%2FoCC%2BAEY6gWItaOvnFlB0%2FpsBHLW%2FH4B0KMo7TpNemVC70W9gce0t6DttJ9nMd4QeUXG%2FoFPUIEkAyh1yv5e1SQ%2F1MeP9YqVy3Zh9QSrwI4TKe6nyzsJXXWNjZqxq1gDG3pdpisfX%2Fk0i16c6mGMOhu1JueVNbAQIDWtyXYkiOdNWpEyuGIgIWF7DAOEOE50flWvtev0GSMmEzKUqWaOPTSt31lTq9LwbOakOGRDrU%2Bsc1xjorMHq4vY0fNv1aakvH3lRVDyn3nscD0vI3RjxAVHAzhUkRVw%3D%3D" target="_blank" rel="noopener">Sony Digitalcamera Ever Ready Leather Case - Black For Alpha A7C/ILCE-7C/7CL</a></div>
+            <div class="meta">
+              キーワード: <code>Sony Alpha 7C</code> ／
+              出品者: <a href="https://www.ebay.com/usr/sscamerastore" target="_blank">sscamerastore</a>
+              <span class="muted">(100.0% / 1196)</span>
+              <span class="badge" style="background:#475569">FVF: cameras</span>
+              <span class="badge" style="background:#7c3aed">関税: cameras</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.2kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$65.20<small> ＋ 送料 $30.00</small></p>
+                <p>合計 <b>$95.20</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥2,248 <small>($12.79)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/keitaiichiba/sya7c-t02z-h201031.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ keitaiichiba
+                  ／ <span class="badge" style="background:#22c55e">一致 91.6点</span>
+                </p>
+                <p class="muted">SONY α7C ILCE-7C / ILCE-7CL 一眼レフ カメラバッグ メンズ カメラバッグ ショルダー 手提げ ショルダー・ベルト取り付け 対応 一眼</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$14.35</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$12.79</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$0.72</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$6.52 (10%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$32.91</p>
+                <p class="big">¥5,257</p>
+                <p>マージン <b>34.57%</b></p>
+                <p class="muted">損益分岐仕入: ¥8,029</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#11</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/xI8AAeSw5Jpp8gFD/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/157255767769?_skw=Tamiya+Mini+4WD&amp;hash=item249d2c96d9:g:xI8AAeSw5Jpp8gFD" target="_blank" rel="noopener">TAMIYA GP.424 Mini 4WD Portable Pit 15424</a></div>
+            <div class="meta">
+              キーワード: <code>Tamiya Mini 4WD</code> ／
+              出品者: <a href="https://www.ebay.com/usr/be9innin9.japan" target="_blank">be9innin9.japan</a>
+              <span class="muted">(99.8% / 4113)</span>
+              <span class="badge" style="background:#475569">FVF: default</span>
+              <span class="badge" style="background:#7c3aed">関税: default</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.0kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$80.68<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$80.68</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥2,185 <small>($12.43)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/shoptakumi/item15424.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ shoptakumi
+                  ／ <span class="badge" style="background:#22c55e">一致 84.7点</span>
+                </p>
+                <p class="muted">タミヤ ミニ四駆グレードアップパーツ GP.424 ミニ四駆 ポータブルピット  ITEM15424</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$14.40</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$18.91</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$12.43</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$0.60</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$12.10 (15%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$31.22</p>
+                <p class="big">¥4,987</p>
+                <p>マージン <b>38.69%</b></p>
+                <p class="muted">損益分岐仕入: ¥7,670</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#12</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/U-4AAeSwVltpFWC0/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/357894796613?_skw=Canon+EOS+R6&amp;hash=item5354313545:g:U-4AAeSwVltpFWC0&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGa9xyHHAvZKvHKIoyX%2FuJfPSmf9Nz%2B--3wUsNKWL5Td6PMTuKlg4IylHuMyH9DMhyxF5BFIBRjQiCYZDkXsLEKw3Icb7ugs83Cv%2FwMh94GhJ%2F4IJ2U3NgzpzK8HZjX1VJEyIc5M5Ko5xyqPfZCj3H8HcTgkqx89WfcR85aNEiTE8PZZpMfM%2FVQ6LLxvDWQBSSrshh%2FMl4WpfKvatbBcbfYZL5wxeXFThjjAZQMKQ8NCOX2dbAt7O6arewcMGhP83hqQUeAQimevX6k7rzAPK0EULFZY4x10VQ6YK9mwv3E4xA%3D%3D" target="_blank" rel="noopener">Extendable Eyecup Eyepiece for Canon EOS R6 II R5 R6 R5C EOSR6 II EOSR5 EOSR6</a></div>
+            <div class="meta">
+              キーワード: <code>Canon EOS R6</code> ／
+              出品者: <a href="https://www.ebay.com/usr/7daysmart" target="_blank">7daysmart</a>
+              <span class="muted">(99.5% / 809)</span>
+              <span class="badge" style="background:#475569">FVF: cameras</span>
+              <span class="badge" style="background:#7c3aed">関税: cameras</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.2kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$71.68<small> ＋ 送料 $13.00</small></p>
+                <p>合計 <b>$84.68</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥1,080 <small>($6.14)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/shasinyasan/4977187348835/?variantId=4977187348835" target="_blank" rel="noopener">rakuten</a>
+                  ／ 写真屋さんドットコム
+                  ／ <span class="badge" style="background:#22c55e">一致 93.2点</span>
+                </p>
+                <p class="muted">ハクバ DGF3-CAER6M3 液晶保護フィルムIII Canon EOS R6/R6 Mark III/R6 Mark II/R7専用 【メール便 送料無料</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$12.81</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$6.14</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$0.64</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$7.17 (10%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$30.66</p>
+                <p class="big">¥4,897</p>
+                <p>マージン <b>36.2%</b></p>
+                <p class="muted">損益分岐仕入: ¥6,466</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#13</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/GVEAAeSwcg9p6IIh/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/127823504893?_skw=Nike+Air+Jordan+1&amp;hash=item1dc2dfe5fd:g:GVEAAeSwcg9p6IIh" target="_blank" rel="noopener">Nike AIR JORDAN 1 RETO HIGH OG DZ5485 106   Black Toe  Size 10</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Air Jordan 1</code> ／
+              出品者: <a href="https://www.ebay.com/usr/startlabojapan" target="_blank">startlabojapan</a>
+              <span class="muted">(0.0% / 0)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$100.00<small> ＋ 送料 $35.00</small></p>
+                <p>合計 <b>$135.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥12,760 <small>($72.61)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/kind-u/8001001014234/?variantId=8001001014234" target="_blank" rel="noopener">rakuten</a>
+                  ／ ブランド古着のカインドオル
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【中古】NIKE「AIR JORDAN 1 RETRO HIGH OG」 ハイカットスニーカー DZ5485 402 ダークパウダーブルー サイズ：27.5CM</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$16.26</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$72.61</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.06</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$30.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#fbbf24">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#fbbf24">$10.63</p>
+                <p class="big">¥1,698</p>
+                <p>マージン <b>7.88%</b></p>
+                <p class="muted">損益分岐仕入: ¥14,627</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#14</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/P3EAAeSwcpBotkzL/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/255938804087?_skw=Nike+Dunk+Low&amp;hash=item3b97243977:g:P3EAAeSwcpBotkzL&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbE%2BXOijSJ%2Bre%2BZUigWlAxxnwDWtwNxbTzAD9tz3hA2reyKzPqM1tUYGynEv0mXolenn%2F%2Bm93ZnmaY6PM1UQItZQ4PhRgihLjRjeD1S6qGb1iY%2FKpXadme%2ByXfH8HvyDIF64ahaJ%2BvgLQFGSqKmvwjOtLREb71iVbAU%2B9MuqkuDfb4ox0K%2BXBpIMGR7RxsLRuo7W7FlGcmWZB%2Fv8FnCgbVk%2B7BgBlUxDtaV5A6BomqCsbf3qTzra2OdR5TTqNz0jKmrKQKnjtN8rfmmTsd5GZv0KMlYuN2ROaGnGBAdr4sDtw%3D%3D" target="_blank" rel="noopener">DB0500-200 Nike Dunk Low Scrap Archeo Brown Mosaic Bicoastal Sport Spice (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$317.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$317.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥40,950 <small>($233.05)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/s-0010183/" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 97.6点</span>
+                </p>
+                <p class="muted">【海外限定 お取り寄せ商品】NIKE DUNK LOW SCRAP ARCHEO BROWN ナイキ ダンク ロー スクラップ アーキオブラウン DB0500-</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$37.25</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$233.05</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$2.50</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$95.10 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#fbbf24">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#fbbf24">$9.77</p>
+                <p class="big">¥1,561</p>
+                <p>マージン <b>3.08%</b></p>
+                <p class="muted">損益分岐仕入: ¥42,666</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#15</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/NMMAAOSwGKhmsITD/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/256586169079?_skw=Asics+Gel-Lyte+III&amp;hash=item3bbdba3af7:g:NMMAAOSwGKhmsITD" target="_blank" rel="noopener">1203A579-100 Asics Gel-Lyte 3 Trico 2024 (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Asics Gel-Lyte III</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$265.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$265.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥33,500 <small>($190.65)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/r-0028327/" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 98.7点</span>
+                </p>
+                <p class="muted">【お取り寄せ商品】ASICS GEL-LYTE 3 TRICO 2024 アシックス ゲルライト3 トリコ2024 1203A579-100 メンズ レディース</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$31.14</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$190.65</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$2.09</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$79.50 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#fbbf24">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#fbbf24">$6.69</p>
+                <p class="big">¥1,069</p>
+                <p>マージン <b>2.53%</b></p>
+                <p class="muted">損益分岐仕入: ¥34,675</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#16</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/lZsAAOSworpnDjDu/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/256327109416?_skw=Nike+Dunk+Low&amp;hash=item3bae494b28:g:lZsAAOSworpnDjDu&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZnHCLSujK7y8yG4hPOJHSjn%2BnpKJRlHRpwbSzqV%2F1htP0q3fmClOUPmNhFNSFMN46DWgcz6jEtHY6C90GRK6iwqkiUbtbLtiHUjnxe3RHzH3FFNLp2p3Vylrj6b90AZbllMCKBacvm0xGIf5tlFMagkwyV3tAxolYn6ciOHOwRBWKF7M900OiQkROQ8BW%2FA7%2FFqKtzKRDQz8KRRvmg0mmaKBv5nG3pySrtyfuHSbjkY7RL5nSsXDGQmzXr0nVPtxt36ARJq26hlwL74jF0KZl1nPo99EcTUpi1N5aS5F2jyQ%3D%3D" target="_blank" rel="noopener">DJ6188-200 Nike Dunk Low Retro Judge Grey Khaki White Hazel Rush Brown (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$151.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$151.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥18,700 <small>($106.42)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/heavens21725/1004887/?variantId=1004887" target="_blank" rel="noopener">rakuten</a>
+                  ／ HEAVENS
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">10 (28cm) 国内正規品【NIKE DUNK LOW RETRO DJ6188-200 KHAKI/WHITE-HAZEL RUSH ナイキ ダンク ロー</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$17.74</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$106.42</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.19</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$45.30 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-8.79</p>
+                <p class="big">¥-1,404</p>
+                <p>マージン <b>-5.82%</b></p>
+                <p class="muted">損益分岐仕入: ¥17,155</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#17</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/DycAAOSwfQBmF52X/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/255930268534?_skw=Nike+Dunk+Low&amp;hash=item3b96a1fb76:g:DycAAOSwfQBmF52X&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbxy90%2Bfcu%2FnSBQGf4EO38ZuuYsk9sD%2FGf88FBLppT%2B%2BWDDte0WuFe0%2FkSPn2t7mXvMQ6ikBdGueo6o7564u56jMsW5eaK9KJ0Wi4Czb2O5SjaJAO8U2jJCSYW%2B6rmpJYlsoMSnYH%2B6exeHm3sVpqw0%2B97CXvjl%2BW9OuYTvhGsqhTw0Anq3U4vD4on2VXy0diFYf4XRiETrLLEtJXJiJWRqzL2C7wqPGrRrkcQcf4lPz80t%2FcrxqZSTGrrPE3gccs9NWthpXifWgKlgoPolKn7E7S2iErG5l%2FlsPc1gKBbxAw%3D%3D" target="_blank" rel="noopener">DD1391-300 Nike Dunk Low Miami Hurricanes Gorge Green Total Orange (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$130.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$130.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥16,500 <small>($93.90)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/palm-nut/dd1391-300/" target="_blank" rel="noopener">rakuten</a>
+                  ／ PALM NUT
+                  ／ <span class="badge" style="background:#22c55e">一致 99.3点</span>
+                </p>
+                <p class="muted">2022 NIKE / ナイキDunk Low Retro&quot;Gorge Green and Total Orange&quot; /ダンク ロー レトロゴージ グリーン </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$15.68</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$93.90</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.02</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$39.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-15.03</p>
+                <p class="big">¥-2,400</p>
+                <p>マージン <b>-11.56%</b></p>
+                <p class="muted">損益分岐仕入: ¥13,858</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#18</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/7JYAAOSwu05mYnfH/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/315345728539?_skw=Asics+Gel-Lyte+III&amp;hash=item496c11f41b:g:7JYAAOSwu05mYnfH" target="_blank" rel="noopener">ASICS GEL-Lyte III 3 OG x ATMOS NYC Subway 1201A528-200 Men&#x27;s Size</a></div>
+            <div class="meta">
+              キーワード: <code>Asics Gel-Lyte III</code> ／
+              出品者: <a href="https://www.ebay.com/usr/yumara13" target="_blank">yumara13</a>
+              <span class="muted">(99.8% / 12703)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$198.02<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$198.02</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥27,350 <small>($155.65)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/r-0020341/" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【お取り寄せ商品】ASICS GEL-LYTE 3 OG NYC SUBWAY アシックス ゲルライト3 OG NYC サブウェイ 1201A528-200 メ</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$23.27</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$155.65</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.56</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$59.41 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-16.89</p>
+                <p class="big">¥-2,698</p>
+                <p>マージン <b>-8.53%</b></p>
+                <p class="muted">損益分岐仕入: ¥24,381</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#19</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/bCUAAOSwupJlrpQi/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/315113505007?_skw=Onitsuka+Tiger+Mexico+66&amp;hash=item495e3a80ef:g:bCUAAOSwupJlrpQi&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGYbOcH2ntjrHdEU36NZsUR6naMo%2BT9BUnJ%2FjqzSFuTcYYWbDoFcSManZUOm8N8bPD7tiqdYhNV4P1GyWZlRDRbV8uy8FOfa1IzJHnqJ%2FlpRwuTwdNn9L6isb3LbeHcEBVvciiTVRd6c1P7N4hN5JMMC7rKiA0XpeUDXuIBqP8dXMgfS5WOA0MFWCJf0strWCRnr4%2BtPnYlVipajm9DOGvEV4LAyOyPxh8rT56ezBj6%2B186hl1FbzNMATrPD3vZ48DLFPdjEVW%2B2T%2FVT9%2Fz2Sh3nhpZWeNmv7m%2BK8%2FCB9HFYSA%3D%3D" target="_blank" rel="noopener">Authentic Onitsuka Tiger MEXICO 66 1183C102 751 YELLOW BLACK</a></div>
+            <div class="meta">
+              キーワード: <code>Onitsuka Tiger Mexico 66</code> ／
+              出品者: <a href="https://www.ebay.com/usr/good-value-japan" target="_blank">good-value-japan</a>
+              <span class="muted">(100.0% / 2422)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$139.00<small> ＋ 送料 $39.00</small></p>
+                <p>合計 <b>$178.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥24,970 <small>($142.10)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/precious-place/6822/" target="_blank" rel="noopener">rakuten</a>
+                  ／ PRECIOUS PLACE
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【15時までのご注文で即日発送！！】Onitsuka Tiger オニツカタイガー メキシコ スニーカー MEXICO 66 &quot;Yellow/Black&quot; ( </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$21.32</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$142.10</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.40</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$41.70 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-21.25</p>
+                <p class="big">¥-3,394</p>
+                <p>マージン <b>-11.94%</b></p>
+                <p class="muted">損益分岐仕入: ¥21,235</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#20</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/hEEAAeSwoPposT0n/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/256759953853?_skw=Nike+Dunk+Low&amp;hash=item3bc815f9bd:g:hEEAAeSwoPposT0n&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGazv%2Bn%2B6%2BuWA%2B1%2BS8En5LiS9jM8JEmdNu8dnEu%2F0lzcwwTnF1het9v06RSvTVzNjKZtEQEV1o1I9V1QJDTa6GDUM1jMbRSGbNNZTHL%2Bn4rjvPCRC92hCUWvNFV3eLzVkRId8Rn9vgfEHSGIhuxs93X1bdmYD0jlQEYuU4qnRjMOFrfZOD2kh4hKAa9G0QIgnC8XuH9GH5r1JDtONicz%2BzFygY%2B0aY9E%2FH6weT4NUCNpyJ3riTLhHf0qcZFKmDJPZgFB1jlNtJHwXHES6BXgdKSPg4vbxnt13%2FLp9itVQZgqpA%3D%3D" target="_blank" rel="noopener">HV5980-231 Nike Dunk Low Retro Year of The Snake (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$215.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$215.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥31,250 <small>($177.85)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/r-0036067/" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【お取り寄せ商品】NIKE DUNK LOW RETRO YEAR OF THE SNAKE ナイキ ダンク ロー レトロ イヤー オブ ザ スネーク HV59</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$25.26</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$177.85</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.70</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$64.50 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-24.24</p>
+                <p class="big">¥-3,872</p>
+                <p>マージン <b>-11.27%</b></p>
+                <p class="muted">損益分岐仕入: ¥26,991</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#21</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/XyoAAOSwQxRmkP86/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/305670095528?_skw=Boss+GT-1000&amp;hash=item472b5b82a8:g:XyoAAOSwQxRmkP86" target="_blank" rel="noopener">Boss GT-1000 Core Electric Guitar Multi-Effects Processor Pedal Black w/Adapter</a></div>
+            <div class="meta">
+              キーワード: <code>Boss GT-1000</code> ／
+              出品者: <a href="https://www.ebay.com/usr/samuraisoul142142" target="_blank">samuraisoul142142</a>
+              <span class="muted">(99.9% / 12189)</span>
+              <span class="badge" style="background:#475569">FVF: musical_inst</span>
+              <span class="badge" style="background:#7c3aed">関税: musical_inst</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 3.0kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$534.11<small> ＋ 送料 $133.00</small></p>
+                <p>合計 <b>$667.11</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥94,800 <small>($539.51)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/ishibashi-shops/06-2800005215335/?variantId=06-2800005215335" target="_blank" rel="noopener">rakuten</a>
+                  ／ イシバシ楽器 17Shops
+                  ／ <span class="badge" style="background:#22c55e">一致 99.3点</span>
+                </p>
+                <p class="muted">【中古】BOSS / GT-1000 Guitar Effects Processor 【新宿店】【3/26 値下げ！】</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$111.47</td></tr>
+                  <tr><td>国際送料 (¥7,000)</td><td>$43.82</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$539.51</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$4.99</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$89.20 (17%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-35.81</p>
+                <p class="big">¥-5,720</p>
+                <p>マージン <b>-5.37%</b></p>
+                <p class="muted">損益分岐仕入: ¥88,506</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#22</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/DQ4AAOSwkoxlh7KT/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/355315032752?_skw=Onitsuka+Tiger+Mexico+66&amp;hash=item52ba6d22b0:g:DQ4AAOSwkoxlh7KT&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGaBKBxQpIUseX7CAmIA5VMZHNG%2FjzwowUqqwKh5fpfAx4epsgmem3EPcG9RCdbwla8xwB6vV6hdT%2FjgpfcCImxFRmdia3FjHEGKgfDIzRZhRIcJNGtK4a6%2FK1cXbO86Tu66zAcJgYrhKgDvrWsFXWBiEVVSTlNZZZ4moi04T6EuQj9tcw2FVd%2Blf5Gj99%2BkJIUagn64fMcMrCrpjs344QiSOxnfPHGlPWLrHqFNWbyr7Jnsqxe%2FzfBIyKv32qeBO%2B3ILGSFEthyIPcZ9J0XdK0FCwybZq6%2Fr3mzhKK1d0hxqA%3D%3D" target="_blank" rel="noopener">Onitsuka Tiger MEXICO 66 Kill Bill 1183C102 751 YELLOW BLACK</a></div>
+            <div class="meta">
+              キーワード: <code>Onitsuka Tiger Mexico 66</code> ／
+              出品者: <a href="https://www.ebay.com/usr/rioxxrinaxjapan" target="_blank">rioxxrinaxjapan</a>
+              <span class="muted">(99.8% / 9464)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$150.00<small> ＋ 送料 $30.00</small></p>
+                <p>合計 <b>$180.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥33,290 <small>($189.45)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/upsuke/sn-ot23-83c102002/" target="_blank" rel="noopener">rakuten</a>
+                  ／ upsuke
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">オニツカタイガー スニーカー Onitsuka Tiger メンズ レディース MEXICO 66 メキシコ 66 BLACK ブラック 1183C102.00</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$21.15</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$189.45</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.42</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$45.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-66.45</p>
+                <p class="big">¥-10,615</p>
+                <p>マージン <b>-36.92%</b></p>
+                <p class="muted">損益分岐仕入: ¥21,612</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#23</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/YDAAAOSwhUVoNBwv/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/256513107144?_skw=Nike+Air+Jordan+1&amp;hash=item3bb95f64c8:g:YDAAAOSwhUVoNBwv&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbomuxCoWmtWIsKng292GUN4vKul%2FKwVsfu7MyGt%2FsHtt0SB29j4Z60uKOGgZGJiicGCqVZxKkOl7i3%2BH5BtwE6D0VVinjsAtBlBzjbjq0zwB7EFn30nMpzgYsT8PAEjnds7aMox8M%2BrrzeMtqI%2BtspORBRRgtoSidt0M%2FflNaXqyYk5UKLvTLmk8WitTxv8CgnClDznt2X7AN5CK2L6Nm9U%2B8%2BZ4%2FmF9GrJYtqwHR%2F4SlvlplS87q1B8bXIApZ%2FgVjnjJKtAPNCP8%2FWa6f%2FY%2Fg0JI62QA4J9uuSD6QwzZV7g%3D%3D" target="_blank" rel="noopener">DM1206-060 Nike Air Jordan 1 Low EasyOn Black Cement (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Air Jordan 1</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$160.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$160.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥31,000 <small>($176.42)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/r-0025727/?variantId=26cm" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【お取り寄せ商品】NIKE AIR JORDAN 1 LOW EASYON BLACK CEMENT ナイキ エアジョーダン1 ロー イージーオン ブラックセメ</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$18.80</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$176.42</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.26</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$48.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-70.91</p>
+                <p class="big">¥-11,328</p>
+                <p>マージン <b>-44.32%</b></p>
+                <p class="muted">損益分岐仕入: ¥18,538</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#24</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/evIAAeSwVZdpq-O5/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/317778351286?_skw=Onitsuka+Tiger+Mexico+66&amp;hash=item49fd10d4b6:g:evIAAeSwVZdpq-O5&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZU1S0%2Ffa1B9i%2B7b5H3RJ1mSDL7AtdFtXUf0L%2FTFptBdIoldSwcBJynX1aYUmD25TIKB%2FBjDEcHwQLNTUmIUrLjH7v1l%2BpLMNW%2B9aACp5BaHsdluzdBBqDN8RWQPq%2B13%2FaBv%2FolbSk%2B3OSZenUMcSv6II6g%2BHqFn6G9u2DL%2FYgWLegsVP59SaNpg8AyZf%2BYfRYALGzWfquP9s1Ma7hJGiv8Y3RUUPRxzJTlM5rqKfm5Z2OG832xdcs0w2aCNykGiSSfaEapPQ1xtd7UCvtpF0HTAngIZvM%2FSxL1znX9StOguA%3D%3D" target="_blank" rel="noopener">Onitsuka Tiger MEXICO 66 Sneakers Unisex Shoes 1183C102 Various colors Size</a></div>
+            <div class="meta">
+              キーワード: <code>Onitsuka Tiger Mexico 66</code> ／
+              出品者: <a href="https://www.ebay.com/usr/tsun1818-japan" target="_blank">tsun1818-japan</a>
+              <span class="muted">(99.4% / 806)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$145.00<small> ＋ 送料 $30.00</small></p>
+                <p>合計 <b>$175.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥33,290 <small>($189.45)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/upsuke/sn-ot23-83c102002/" target="_blank" rel="noopener">rakuten</a>
+                  ／ upsuke
+                  ／ <span class="badge" style="background:#22c55e">一致 98.3点</span>
+                </p>
+                <p class="muted">オニツカタイガー スニーカー Onitsuka Tiger メンズ レディース MEXICO 66 メキシコ 66 BLACK ブラック 1183C102.00</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$20.96</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$189.45</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.38</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$43.50 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-71.22</p>
+                <p class="big">¥-11,377</p>
+                <p>マージン <b>-40.7%</b></p>
+                <p class="muted">損益分岐仕入: ¥20,774</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#25</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/6TMAAeSwv6JpsMkR/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/257274345305?_skw=Nike+Air+Jordan+1&amp;hash=item3be6bef759:g:6TMAAeSwv6JpsMkR&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbl25iyjbivYvJrFWx9lWNx7EHIkXub0t98TgkJieh2hik%2F1WAHmOjDtDFco%2BhUWplUow8XVMeUXzuyrcMDTXH1req8Yngz1NOC8EjG42gMLV5P4I1qdYQw3ZplVuT2Ojylb8giVmm0umChmZnYn3RkLChIgpRXkDPdTovGMpthw5ZhKD64UQT%2FET1FOfcxfZz%2FikrVO%2B9cgcUtk65hpuLWCiz9lJ9rOjk3yR0Q%2B1lbZtWtHogzVIP%2B3AXeTISYkrPL5PiSFrDP2HeLTlABTeHSP2hKYiXSl9aP07AEPMXPzg%3D%3D" target="_blank" rel="noopener">IO7449-600 Nike Air Jordan 1 Mid Team Red (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Air Jordan 1</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$158.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$158.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥32,750 <small>($186.38)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/raise-sneaker/r-0047120/" target="_blank" rel="noopener">rakuten</a>
+                  ／ RAISE
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">【お取り寄せ商品】NIKE AIR JORDAN 1 MID TEAM RED ナイキ エアジョーダン1 ミッド チームレッド IO7449-600 メンズ レ</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$18.57</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$186.38</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.25</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$47.40 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-82.62</p>
+                <p class="big">¥-13,198</p>
+                <p>マージン <b>-52.29%</b></p>
+                <p class="muted">損益分岐仕入: ¥18,231</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#26</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/Yv8AAeSwDTNp1Jtl/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/358323980030?_skw=Boss+GT-1000&amp;hash=item536dc606fe:g:Yv8AAeSwDTNp1Jtl&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGYTIu7JtWZWA8R1AGReHCySQd8QFODdKAMIAjTbE2H3EP%2BO2hfpswDz9GdSeVFbE7aj1TZT6V9CVjPGRXMKi6PU8nrTJtJV2c%2BKnLQUSZkoMl%2F2Z628qbopH%2BrNODejBKkjeCRHJMN2OUnzVHZWUpF7dfVBceGq60rG6xdP6G%2BakAgQvY6M3xo3a7DAWXk6ao9ie9ctBzHoqxPC3DZaSmzalblOdBAlqXD1VkQzRDifH82aB62q5sweMBtGS%2FOc%2FdrEHrwhujJQJha2b%2BcrHqKCbJ4k4b0%2B%2BsaFqbsiowGk7w%3D%3D" target="_blank" rel="noopener">BOSS GT-1000 CORE Guitar Effects Processor</a></div>
+            <div class="meta">
+              キーワード: <code>Boss GT-1000</code> ／
+              出品者: <a href="https://www.ebay.com/usr/sakurasoundlab" target="_blank">sakurasoundlab</a>
+              <span class="muted">(95.7% / 223)</span>
+              <span class="badge" style="background:#475569">FVF: musical_inst</span>
+              <span class="badge" style="background:#7c3aed">関税: musical_inst</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 3.0kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$581.59<small> ＋ 送料 $155.44</small></p>
+                <p>合計 <b>$737.03</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥132,000 <small>($751.21)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/ishibashi/83-4957054512507/?variantId=83-4957054512507" target="_blank" rel="noopener">rakuten</a>
+                  ／ イシバシ楽器 WEB SHOP
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">BOSS / GT-1000 Guitar Effects Processor 【Version 4.0】ギター/ベース用マルチエフェクター ボス エフェクター</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$123.12</td></tr>
+                  <tr><td>国際送料 (¥7,000)</td><td>$43.82</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$751.21</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$5.51</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$97.13 (17%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-189.76</p>
+                <p class="big">¥-30,312</p>
+                <p>マージン <b>-25.75%</b></p>
+                <p class="muted">損益分岐仕入: ¥98,655</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#27</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/RN4AAOSwBHloU2Jw/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/396761704530?_skw=Asics+Gel-Lyte+III&amp;hash=item5c60d72852:g:RN4AAOSwBHloU2Jw" target="_blank" rel="noopener">Asics Gel-Lyte III Trico 2024 White Blue 1203A579-100 Men&#x27;s Sneakers Authentic</a></div>
+            <div class="meta">
+              キーワード: <code>Asics Gel-Lyte III</code> ／
+              出品者: <a href="https://www.ebay.com/usr/limitto" target="_blank">limitto</a>
+              <span class="muted">(99.6% / 1768)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$205.33<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$205.33</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥61,800 <small>($351.70)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/asty-shop/e2-gyszjnxaqw-4673/?variantId=e2-gyszjnxaqw-4673" target="_blank" rel="noopener">rakuten</a>
+                  ／ asty
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">ASICS アシックス メンズ スニーカー 【ASICS Gel-Lyte III OG &#x27;White Blue&#x27; 1203A579-100】 サイズ US_9</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$24.13</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$351.70</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.62</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$61.60 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-206.55</p>
+                <p class="big">¥-32,995</p>
+                <p>マージン <b>-100.59%</b></p>
+                <p class="muted">損益分岐仕入: ¥25,505</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#28</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/Z0oAAOSwrGxm19VM/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/356011850658?_skw=Asics+Gel-Lyte+III&amp;hash=item52e3f5bba2:g:Z0oAAOSwrGxm19VM&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGaee53r9icchRhnFeTwjImDA6w3%2BIeCcvNFpAuO0ceGmQ8JGgSS8txZxlZa%2Fc1n%2BpikhRcyTckLgLJAuGOUHhCXF2KYehfjvmKkJyk0JuNARrPskGmZk0KkqIo3j%2BMEOMVBAnBL2OxjU2iNKaAlgjHaVYe3G9oCMDKAkAN1bgD4yAZJuTFSVhLidZEINqwkRGB6rTtdr%2FllxHuAdJf19XmfNrVgBZ26tkdn71ZD3WceVaOdr3zgFa70Ewjcl%2FbTBfMQtIpUXAqR7GIEGNGOGlO8X3l4Y5oU9BLo9oWY3PpP5g%3D%3D" target="_blank" rel="noopener">ASICS GEL-LYTE III OG 1203A579 100 WHITE BLUE Sports Style Shoes</a></div>
+            <div class="meta">
+              キーワード: <code>Asics Gel-Lyte III</code> ／
+              出品者: <a href="https://www.ebay.com/usr/rioxxrinaxjapan" target="_blank">rioxxrinaxjapan</a>
+              <span class="muted">(99.8% / 9464)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$150.00<small> ＋ 送料 $30.00</small></p>
+                <p>合計 <b>$180.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥61,800 <small>($351.70)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/asty-shop/e2-gyszjnxaqw-4673/?variantId=e2-gyszjnxaqw-4673" target="_blank" rel="noopener">rakuten</a>
+                  ／ asty
+                  ／ <span class="badge" style="background:#22c55e">一致 98.4点</span>
+                </p>
+                <p class="muted">ASICS アシックス メンズ スニーカー 【ASICS Gel-Lyte III OG &#x27;White Blue&#x27; 1203A579-100】 サイズ US_9</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$21.15</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$351.70</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.42</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$45.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-228.71</p>
+                <p class="big">¥-36,533</p>
+                <p>マージン <b>-127.06%</b></p>
+                <p class="muted">損益分岐仕入: ¥21,612</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#29</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/qJUAAeSwIbBoa2EK/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/255933640320?_skw=Nike+Dunk+Low&amp;hash=item3b96d56e80:g:qJUAAeSwIbBoa2EK&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZD7SsLiuD70oGlmIYd1mdCVj9Dbc06YKEA9UZCFKSE0A%2F2QyZAfwx1m3H9q9%2FG8IMTbTFgqMqD3Qrf7RseGZS5j03c8TBZu%2FnQFmmreh3UunJOs8fdd8wVrCP8SyGaeA7drmYMb1JHvpOm4%2BTaAQw8O5t4AuUS9J5IfspzDPZnoWgRc62PQfTL0isHsyv6mpxceE%2FQAsSP3xq3Nq1I63U9b6aP3dl%2FoKQS02v5C3HH00PzjSI468cWQEYXDcXpXlIBn1YznU4e6ovRjhCSJsG8bc6jcNmfq%2BEMYoyrGlTlXg%3D%3D" target="_blank" rel="noopener">DA6125-900 Nike Dunk Low City Market Red White Beige Multi Green Yellow (Men&#x27;s)</a></div>
+            <div class="meta">
+              キーワード: <code>Nike Dunk Low</code> ／
+              出品者: <a href="https://www.ebay.com/usr/badsneakersjp" target="_blank">badsneakersjp</a>
+              <span class="muted">(99.9% / 11305)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$290.00<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$290.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥79,800 <small>($454.14)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/asty-shop/e2-1zmvdu2hud-fwx8/?variantId=e2-1zmvdu2hud-fwx8" target="_blank" rel="noopener">rakuten</a>
+                  ／ asty
+                  ／ <span class="badge" style="background:#22c55e">一致 95.9点</span>
+                </p>
+                <p class="muted">Nike ナイキ メンズ スニーカー 【Nike Dunk Low &#x27;City Market&#x27; DA6125-900】 サイズ US_M_3.5</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$34.08</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$454.14</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$2.29</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$87.00 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-234.94</p>
+                <p class="big">¥-37,529</p>
+                <p>マージン <b>-81.01%</b></p>
+                <p class="muted">損益分岐仕入: ¥38,517</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#30</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/fB8AAOSwa9tmc4pt/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/285926303496?_skw=Asics+Gel-Lyte+III&amp;hash=item4292892708:g:fB8AAOSwa9tmc4pt&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGYni%2F6HBS9jXmlRLibJBacfuQ7g6HM54dGluCn90PTawzfQBS0XX2fAyX9dWvs8CG8J4E%2BMaCTJzE%2FndDTep4eo4NqECpHjYYGP%2BiwC18mq3dREm2t3kVagQkmUuwTVW3jZflNxn5rJPpTQbLMq3Skx5AcX1k%2FThhcQm%2BKDEPh69HvvLRkz%2BLsBE2A92eLR8dpoVoFpuJwfisv6kuCV1uQrFgJZ9N0QTu0Buaf9si%2BqB6s8FNaqZXtzQehp1VyKMwMtGvL4sGM7BcMkUH6gftcESAudXPxMPGNBLByqzeG1CQ%3D%3D" target="_blank" rel="noopener">ASICS GEL-Lyte III 3 OG Aged Map atmos 1201A856-300</a></div>
+            <div class="meta">
+              キーワード: <code>Asics Gel-Lyte III</code> ／
+              出品者: <a href="https://www.ebay.com/usr/arumik_co" target="_blank">arumik_co</a>
+              <span class="muted">(99.2% / 2002)</span>
+              <span class="badge" style="background:#475569">FVF: sneakers_high</span>
+              <span class="badge" style="background:#7c3aed">関税: sneakers_textile_rubber</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.5kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$208.40<small> ＋ 送料 $44.95</small></p>
+                <p>合計 <b>$253.35</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥87,800 <small>($499.67)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/asty-shop/e2-246udpwwmb-elq9/?variantId=e2-246udpwwmb-elq9" target="_blank" rel="noopener">rakuten</a>
+                  ／ asty
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                </p>
+                <p class="muted">ASICS アシックス メンズ スニーカー 【ASICS x atmos Gel-Lyte 3 OG &#x27;Aged Map&#x27; 1201A856-300】 サイズ </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$29.77</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.30</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$499.67</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$2.00</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$62.52 (30%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-312.52</p>
+                <p class="big">¥-49,923</p>
+                <p>マージン <b>-123.36%</b></p>
+                <p class="muted">損益分岐仕入: ¥32,884</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#31</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/bhQAAeSwsI9olnJG/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title"><a href="https://www.ebay.com/itm/406754097792?_skw=Canon+EOS+R6&amp;hash=item5eb46efa80:g:bhQAAeSwsI9olnJG&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGY4gOrWHlBbeGsTZ%2BH9%2FT%2FXiUj%2BirKNDmIrzL6mLKqDgX98sbX3CTERkoOz5Jor1%2BEHZrhjrZl4niBl07nYvtEZ8MUxKmQH8NM%2Fm5%2B%2FoaRSCLNoPYWiJQChTg6qgziTy%2B96MTu87ev6%2BIgOnpAvRqL9j8S%2FXWMSVSf%2FprqDm91QIzhEr5YcVOJidDcgtkqptcepBfG2Kw2%2BKk5B5v012re7oTxiUhgmYMHe4wx1Dq3ChRw2H3IFxkxRw9UzUVLYz7Hu4S1FHI3PXl7U44UhrqMjsN12fY82X9ehr8NrFxodBw%3D%3D" target="_blank" rel="noopener">OFFICIAL Canon EF-EOS R Mount Adapter for EOS RP EOS R EOS R6 EOS R5 New F/S</a></div>
+            <div class="meta">
+              キーワード: <code>Canon EOS R6</code> ／
+              出品者: <a href="https://www.ebay.com/usr/kenz-1425" target="_blank">kenz-1425</a>
+              <span class="muted">(100.0% / 935)</span>
+              <span class="badge" style="background:#475569">FVF: default</span>
+              <span class="badge" style="background:#7c3aed">関税: default</span>
+              <span class="badge" style="background:#0ea5e9">重量推定: 1.0kg</span>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$199.83<small> ＋ 送料 $0.00</small></p>
+                <p>合計 <b>$199.83</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥247,204 <small>($1,406.85)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/alljapan-online-shop/4549292157253.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ alljapan-online-shop
+                  ／ <span class="badge" style="background:#22c55e">一致 91.4点</span>
+                </p>
+                <p class="muted">Canon キヤノン　 ミラーレスカメラ EOS R6 EOSR6</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$35.07</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$18.91</td></tr>
+                  <tr><td>仕入価格 (税抜)</td><td>$1,406.85</td></tr>
+                  <tr><td>為替差損 (Wise)</td><td>$1.48</td></tr>
+                  <tr class="muted"><td>輸入関税 (買い手払い参考)</td><td>$29.97 (15%)</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#f87171">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#f87171">$-1,265.60</p>
+                <p class="big">¥-202,168</p>
+                <p>マージン <b>-633.34%</b></p>
+                <p class="muted">損益分岐仕入: ¥24,818</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+  <div class="footer">
+    <h4>本ツールについて（Ver.1）</h4>
+    <p>
+      <b>手段</b>:<br>
+      ① eBay Browse API（公式・OAuth Application Token）で「米国マーケットに日本セラーが出している商品」を取得<br>
+      ② タイトルから型番（例: DD1391-100）・ブランド・キーワードを抽出<br>
+      ③ 楽天市場 + Yahoo!ショッピングの検索ページ（HTML 内 __INITIAL_STATE__ / __NEXT_DATA__ JSON 抽出）で同一商品を探索<br>
+      ④ 一致スコア 45 点以上の最安候補を採用<br>
+      ⑤ 全コスト（FVF・送料・関税・為替・国内コスト）を入れた純利益を試算
+    </p>
+    <p>
+      <b>2026 年版の重要前提</b>:<br>
+      ・米国 De Minimis $800 免税は <b>2025/8/29 廃止・継続中</b> → 全パッケージ関税対象<br>
+      ・Section 122 全国 10% 追加関税は <b>2026/2/24 施行・2026/7/24 失効予定</b><br>
+      ・スニーカー $150 以上は <b>FVF 8% / per-order 免除</b>（StockX 対抗で 2024 年導入）<br>
+      ・売上税は eBay が買い手から徴収して州に直接送金 → セラー粗利には含めない
+    </p>
+    <p>
+      <b>限界・Ver.2 で改善予定</b>:<br>
+      ・SOLD（実販売）データは Marketplace Insights API 申請後に追加（現状は「ライバル日本セラーが出品中」を需要シグナルとして使用）<br>
+      ・楽天/Yahoo は公式 API キー登録後に切替（取得安定性 + JAN 直叩き）<br>
+      ・Amazon.co.jp / メルカリ / 駿河屋 / モノタロウ等の追加仕入先<br>
+      ・Claude API による商品画像・タイトル類似性のセマンティック判定<br>
+      ・カテゴリ ID と HTS コードの対応表精緻化（重量推定 / 関税精度向上）
+    </p>
+  </div>
+</div>
+</body>
+</html>

@@ -142,10 +142,34 @@ SENSITIVE_NAME_PATTERNS = [
     re.compile(r"\.(pem|key|p12|pfx)$"),
 ]
 
+# テキスト/コード/ドキュメント拡張子はファイル名に "token" 等を含んでも
+# 通常は機密実体を含まない（ガイド文書・OAuth取得ロジック等）→ 誤検出回避のため除外
+# 機密実体（生のtoken文字列等）は通常 .json/.txt/.csv/.yml/.bin/.pickle に保存される
+NON_SENSITIVE_EXTENSIONS = {
+    ".py", ".js", ".ts", ".tsx", ".jsx",       # コード
+    ".md", ".rst", ".txt",                     # ドキュメント・ただし.txtは要警戒なので除外も検討
+    ".html", ".htm", ".css", ".scss",           # マークアップ・スタイル
+    ".gs", ".gas",                              # Apps Script
+    ".bat", ".sh", ".ps1",                      # スクリプト
+}
+
 
 def detect_sensitive_files(file_list: list[str]) -> list[str]:
+    """ファイル名で機密マッチした場合でも、コード/ドキュメント拡張子は除外する。
+
+    Why: 「EBAY_TOKEN_ROTATE_GUIDE.md」「ebay_app_token.py」などはファイル名に "token" を
+         含むが実体は手順書・コードであり機密ではない。誤検出が運用ノイズになる。
+    機密実体は通常 .json/.txt/.csv/.yml/.pickle 等のデータ形式に保存される。
+    """
     hits = []
     for f in file_list:
+        # 拡張子取得（小文字化）
+        ext = ""
+        if "." in f.rsplit("/", 1)[-1]:
+            ext = "." + f.rsplit(".", 1)[-1].lower()
+        # コード/ドキュメント拡張子は機密判定しない
+        if ext in NON_SENSITIVE_EXTENSIONS:
+            continue
         for pat in SENSITIVE_NAME_PATTERNS:
             if pat.search(f):
                 hits.append(f)

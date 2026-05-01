@@ -46,6 +46,7 @@ AVAILABLE_MODELS = {
     "gpt5mini": ("GPT-5-Mini", "openai", "gpt-5-mini", 0.25, 2.00),
     "gpt5nano": ("GPT-5-Nano", "openai", "gpt-5-nano", 0.05, 0.40),
     "gpt41nano": ("GPT-4.1-Nano", "openai", "gpt-4.1-nano", 0.10, 0.40),
+    "gpt4omini": ("GPT-4o-Mini", "openai", "gpt-4o-mini", 0.15, 0.60),
     "gemini": ("Gemini 2.5 Flash", "gemini", "gemini-2.5-flash", 0.30, 2.50),
     "claude": ("Claude Haiku 4.5", "anthropic", "claude-haiku-4-5-20251001", 0.80, 4.00),
 }
@@ -306,6 +307,15 @@ def save_results_to_excel(all_results, output_path):
         _save_as_csv(all_results, output_path.replace(".xlsx", ".csv"))
 
 
+_ILLEGAL_XLSX_RE = re.compile(r'[\x00-\x08\x0b-\x0c\x0e-\x1f]')
+
+def _xlsx_safe(value):
+    """openpyxlのIllegalCharacterError回避：制御文字を除去"""
+    if isinstance(value, str):
+        return _ILLEGAL_XLSX_RE.sub('', value)
+    return value
+
+
 def _save_as_excel(all_results, output_path):
     """openpyxlでExcelファイルを作成"""
     import openpyxl
@@ -373,12 +383,12 @@ def _save_as_excel(all_results, output_path):
 
     row = 2
     for result in all_results:
-        ws_replies.cell(row=row, column=1, value=result.get("case_id", ""))
-        ws_replies.cell(row=row, column=2, value=result.get("buyer_message", "")[:200])
-        ws_replies.cell(row=row, column=3, value=result.get("model_name", ""))
-        ws_replies.cell(row=row, column=4, value=result.get("prompt_version", ""))
-        ws_replies.cell(row=row, column=5, value=result.get("buyer_reply", ""))
-        ws_replies.cell(row=row, column=6, value=result.get("jpn_reply", ""))
+        ws_replies.cell(row=row, column=1, value=_xlsx_safe(result.get("case_id", "")))
+        ws_replies.cell(row=row, column=2, value=_xlsx_safe(result.get("buyer_message", "")[:200]))
+        ws_replies.cell(row=row, column=3, value=_xlsx_safe(result.get("model_name", "")))
+        ws_replies.cell(row=row, column=4, value=_xlsx_safe(result.get("prompt_version", "")))
+        ws_replies.cell(row=row, column=5, value=_xlsx_safe(result.get("buyer_reply", "")))
+        ws_replies.cell(row=row, column=6, value=_xlsx_safe(result.get("jpn_reply", "")))
         ws_replies.cell(row=row, column=7, value=result.get("score", {}).get("total", 0))
         row += 1
 

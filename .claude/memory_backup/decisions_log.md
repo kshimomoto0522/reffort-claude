@@ -219,9 +219,29 @@ originSessionId: 35eb4679-f28f-4d72-9a30-510e015273e2
 
 ---
 
+### 2026-05-01 BayChat AI Reply：GPT-5-Mini を本番モデル候補から除外
+- **決定**: 本番候補から GPT-5-Mini を外す。残す候補は GPT-4.1-Mini と GPT-4o-Mini
+- **根拠**:
+  - cat02 全15ケーステスト（natural3 / iter8）で 5-Mini が「余計なことを言い過ぎる癖」「コントロールが難しい」と社長判定
+  - 推論モデル特性で速度も遅い（natural3 で 7.03秒 = 複雑目標 6秒も超過）
+  - 4.1-Mini と 4o-Mini は標準目標 3秒に近接（3.86s / 3.46s）
+- **最終確認の余地**: 「トラブル・クレーム対応カテゴリ等で念のため一度テストしてもいい」と社長許可。cat03 の APOLOGY トーンで 5-Mini も走らせて最終挙動確認 → その後完全除外
+- **前決定との関係**: 2026-04-22 に「次期モデル GPT-5-Nano 仮決定」していたが、Nano vs Mini ではなく **Mini級** を中心にテストした結果、Mini級の中で 4.1 と 4o を本番候補と判断
+- **影響**: 今後の cat03〜 テストは 4.1-Mini と 4o-Mini のみで実施。これにより 3モデル順次→2モデル化で速度改善も見込める
+
+### 2026-05-01 BayChat AI Reply：admin_prompt v2.3_baseline_natural3 を cat02 確定版とする
+- **決定**: cat02（購入前Q&A）のテストを v2.3_baseline_natural3（iter 8）で完了。社長OK判定
+- **試行錯誤**: iter 1〜8 で漸進改善（73% → 100%クリーン）
+  - iter 1〜5: 「the listing X」型他人事構文の全面禁止 + 1人称アクション型強制（natural2系）
+  - iter 6〜8: 社長フィードバック ABCDEF（付属品=画像参照、Stage1挨拶必須、handling vs transit、negative禁止、ShippingService引用、jpn訳自然さ）反映 + スリム化（natural3系）
+- **本番反映**: 現在の本番 admin_prompt は v2.4。natural3 系の改修を反映するには Cowatech に admin_prompt 更新依頼が必要。タイミングは社長判断（cat03 まで詰めてから一括 or cat02 で先行）
+
+---
+
 ## 更新ログ
 | 日付 | 内容 |
 |------|------|
+| 2026-05-01 | BayChat AI Reply：cat02 完成（natural3 / iter8）・GPT-5-Mini 本番除外決定・SpeedPAK業者対応辞書を将来課題化 |
 | 2026-04-24 | **Claude Code運用の根本リファクタ実施**（梅案即効解毒＋竹案ハンドオフ作成）。肥大化診断・4点セット設計・隔週メンテサイクル導入・Campers素材化 |
 | 2026-04-21 深夜 | **フォルダ構成を3事業階層に大規模リファクタ**（commerce/services/education/management）。失敗ゼロで完遂 |
 | 2026-04-22 | BayChat AI Reply：次期モデルを **GPT-5-Nano** に仮決定（Gemini 2.5 Flash除外）・admin画面でGPTモデル変更可能を確認・Cowatech依頼不要 |
