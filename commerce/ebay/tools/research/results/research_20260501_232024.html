@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>eBay 無在庫リサーチツール Ver.1.5 — 結果レポート</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; padding:0; }
+  .container { max-width: 1500px; margin: 0 auto; padding: 24px; }
+  h1 { color: #a78bfa; border-bottom: 3px solid #a78bfa; padding-bottom: 8px; }
+  .summary { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 24px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .summary .item { text-align: center; }
+  .summary .item .label { font-size: 12px; color:#94a3b8; }
+  .summary .item .val { font-size: 24px; font-weight: bold; color: #a78bfa; }
+  .gate-info { background: #1e293b; border-left: 4px solid #a78bfa; padding: 12px 20px; margin-bottom: 24px; border-radius: 6px; font-size: 13px; color: #cbd5e1; }
+  .card { background: #1e293b; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: grid; grid-template-columns: 50px 130px 1fr; gap: 16px; }
+  .rank { font-size: 28px; font-weight: bold; color: #a78bfa; }
+  .thumb img { width: 130px; max-height: 130px; object-fit: contain; border-radius: 8px; background: #0f172a; }
+  .title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
+  .title { color: #f1f5f9; text-decoration: none; font-size: 15px; font-weight: 600; flex: 1; }
+  .title:hover { color: #a78bfa; }
+  .evidence-pill { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; color: white; white-space: nowrap; }
+  .meta { font-size: 12px; color: #94a3b8; margin: 6px 0 12px; }
+  .meta a { color: #c4b5fd; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; color: white; margin-right: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+  .col { background: #0f172a; border-radius: 8px; padding: 12px; border: 2px solid transparent; }
+  .col.profit { background: #0c1426; }
+  .col h4 { margin: 0 0 6px; font-size: 11px; color: #94a3b8; text-transform: uppercase; }
+  .col p { margin: 3px 0; }
+  .col .big { font-size: 17px; font-weight: 600; color: #f1f5f9; }
+  .col .huge { font-size: 26px; font-weight: bold; }
+  .col small { font-size: 11px; color: #94a3b8; }
+  .col table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .col table td { padding: 2px 0; }
+  .col table td:last-child { text-align: right; font-weight: 500; }
+  .evidence-block { background: #0f172a; border-radius: 8px; padding: 12px; border-left: 3px solid #a78bfa; }
+  .evidence-block h4 { margin: 0 0 8px; font-size: 11px; color: #a78bfa; text-transform: uppercase; }
+  .signals { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .signal-pill { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; color: white; }
+  .market-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+  .market-table td { padding: 2px 6px; color: #cbd5e1; }
+  .market-table td:nth-child(2), .market-table td:nth-child(4) { color: #f1f5f9; font-weight: 500; }
+  .rationale-text { font-size: 11px; color: #94a3b8; margin: 8px 0 0; line-height: 1.5; }
+  .muted { color: #64748b; font-size: 11px; }
+  code { background: #0f172a; padding: 2px 6px; border-radius: 4px; }
+  .footer { margin-top: 32px; padding: 16px; color: #64748b; font-size: 11px; line-height: 1.6; }
+  .footer h4 { color: #94a3b8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔎 eBay 無在庫リサーチツール Ver.1.5 — 結果レポート</h1>
+  <div class="gate-info">
+    <b>ゲート:</b> 純利益 ≥ $15 ／ マージン ≥ 15% ／ 売れる根拠スコア ≥ 45 点 ／ 仕入候補が新品判定
+     / 全評価 32 件中ゲート通過
+  </div>
+  <div class="summary">
+    <div class="item"><div class="label">候補総数</div><div class="val">19</div></div>
+    <div class="item"><div class="label">対象キーワード</div><div class="val">8</div></div>
+    <div class="item"><div class="label">平均根拠スコア</div><div class="val" style="color:#4ade80">62</div></div>
+    <div class="item"><div class="label">平均マージン</div><div class="val">38%</div></div>
+    <div class="item"><div class="label">合計利益</div><div class="val">$2,741.61</div></div>
+  </div>
+
+  
+        <div class="card">
+          <div class="rank">#1</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/XDIAAeSwswdn43Ou/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/226665300008?_skw=HKS+turbo+Toyota+Supra&amp;hash=item34c64e0028:g:XDIAAeSwswdn43Ou&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGa6ivSLkJfdIeGqmnWWqT7vwtmmxCb1Q4ZOvy5R6by68AUmK66u8TMhn5lq%2Fo2R0kkkjeUj%2BXKK0g%2B8rpyVSWJSce8D96P3GGYm0sS3Ge78sAlypVgZY4yOJ4GtXca%2Fr%2Bk9Fmj8c6QTqhWb1r7e05X1Diz63j61X0z6Y1DSlYGoSODTbDTE0ofufS%2FmrArdNqyvNO%2BJ1BfQbU6i%2BW11u5HeTVnJqywI3xljM05mGDUyRhtEjVJi3wMGC9FJLacvoeqJYoR%2B5paO1lUsm3InDMXDcuflNOFpReZp1XM6pCUSIA%3D%3D" target="_blank" rel="noopener">HKS Intake Fits: 97-02 Toyota Supra Turbo 2JZ-GTE VVT-i 70019-AT106 F/S Air</a>
+              <div class="evidence-pill" style="background:#22c55e">
+                根拠 82 点 / 強い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">HKS turbo Toyota Supra</span>
+              出品者 <a href="https://www.ebay.com/usr/japan-smile_52" target="_blank">japan-smile_52</a>
+              <span class="muted">(99.6% / 577 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: toys</span>
+              <span class="badge" style="background:#0ea5e9">関税: toys (10%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.6kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$448.67 <small>+ 送料 $100.00</small></p>
+                <p>合計 <b>$548.67</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥26,610 <small>($154.51)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/partsya-san/70019at106-1.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ partsya-san
+                  ／ <span class="badge" style="background:#22c55e">一致 83.5点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">HKS スーパーパワーフロー Φ200-100/Green スープラ JZA80 2JZ-GTE 97/08-02/08 70019-AT106</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$102.73</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$154.51</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$4.01</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$44.87</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$264.94</p>
+                <p class="big">¥41,479</p>
+                <p>マージン <b>48.3%</b></p>
+                <p class="muted">損益分岐仕入 ¥72,236</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#4ade80">需要 強</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#a78bfa">価格同等</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>288 件</b></td>
+                  <td>ユニークセラー</td><td><b>37 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 72 名</td>
+                  <td>価格レンジ（USD）</td><td>$33 - $1967</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$446</b> (P75 $790)</td>
+                  <td>自分の想定売価</td><td><b>$449</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=37人(healthy) / 同型番=5セラー / 総出品=288件 / $ 449vs中央$ 446(parity) / 最古出品から4657日 / 上位セラー評価=194767</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#2</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/z1gAAeSwxWNo4xfR/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/235122685858?_skw=Grand+Seiko+SBGA+SBGV&amp;hash=item36be6777a2:g:z1gAAeSwxWNo4xfR&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbOM%2BIGA9aqmFb9tsN4GN1%2F%2BaJ8j5TpGjoP7c81BM6OobEHlbECRR4dwwuL%2FaaGxh2xHaUZPQB9kdEqxdCD0U%2FZbNJegtyVuaLSEw%2Ba34C9WGposj7%2FJ5SA5%2F2CaQdUS%2FYYvHWaxKHcTMV1IKVKIvl2r%2FYFgMAiyPbeiqJOlqIHBokEjW0Egu2C9DTTXtm3BpnnhPn7f3R5BcBQiG2X2VvhbUCr1YEg%2FNzaCqZt5%2FKg6v29uANd3Zj5tpqnaLYorb6fGdANoBpPpY3RXyfRAF9RmB9w6S7MA3FLXvvYBvwTzQ%3D%3D" target="_blank" rel="noopener">Grand Seiko GS link AA1Y3JLK SBGA025 SBGV223 SBGX261 SBGX263 SBGN003 SBGN005 etc</a>
+              <div class="evidence-pill" style="background:#22c55e">
+                根拠 77 点 / 強い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Grand Seiko SBGA SBGV</span>
+              出品者 <a href="https://www.ebay.com/usr/atsuki1860" target="_blank">atsuki1860</a>
+              <span class="muted">(99.5% / 2121 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: watches_under5k</span>
+              <span class="badge" style="background:#0ea5e9">関税: watches (16%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.4kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$97.98 <small>+ 送料 $36.00</small></p>
+                <p>合計 <b>$133.98</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥5,536 <small>($32.14)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/ecwide/aa1y3jlk.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ ecwide
+                  ／ <span class="badge" style="background:#22c55e">一致 98.8点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">Seiko グランドセイコー 純正 ベルト用駒 SBGA025 SBGV223 SBGX261 SBGX263 SBGV221 SBGX053 SBGR067 </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$25.39</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$32.14</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$0.98</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$15.68</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$52.99</p>
+                <p class="big">¥8,296</p>
+                <p>マージン <b>39.5%</b></p>
+                <p class="muted">損益分岐仕入 ¥14,661</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#a78bfa">競合少（ニッチ）</div>
+                <div class="signal-pill" style="background:#4ade80">価格優位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>11 件</b></td>
+                  <td>ユニークセラー</td><td><b>6 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 3 名</td>
+                  <td>価格レンジ（USD）</td><td>$43 - $650</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$100</b> (P75 $150)</td>
+                  <td>自分の想定売価</td><td><b>$98</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=6人(sparse) / 同型番=5セラー / 総出品=11件 / $ 98vs中央$ 100(wins) / 最古出品から995日 / 上位セラー評価=7834</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#3</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/DWcAAOSw1-RnhB-f/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/296940629838?_skw=Japanese+chef+knife+Tojiro+Shun&amp;hash=item45230a6f4e:g:DWcAAOSw1-RnhB-f&amp;amdata=enc%3AAQALAAABAACCtXRWQnOEpyOqnQQ8KGbJ%2FfuaJ0Ebte15uNormmKLJkBL3KPMbs8jAd8fx1pQXa0wlyqJr3zkcNlWYU12%2FssIKf2sHtsAJEL2Vihuhi059DlEA3ADQztuQ2MuUigetHTccpueAsoNOzEuGPEJ1oMc%2FQIdG6bPkp0suLXo%2FPudkUZ5WnlSfdekgj21MBMeGSX6r--vpmkQipHldFGhSwJlhU5HOTNhODwUrNcxMZ9VNfz9dAyhEwS23VPpevakeVlYIegzxBYFt%2BAfqdpCwztTnxqbs9%2B5oURO0uOQjFubyDSQX2%2BGNu86OOaQapReK6Kz4kOVjIEmC7Duzb5pn3Y%3D" target="_blank" rel="noopener">TOJIRO Japanese Chef&#x27;s Kitchen Knife FUJITORA 210mm Made In Japan FU-808 New</a>
+              <div class="evidence-pill" style="background:#22c55e">
+                根拠 76 点 / 強い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Japanese chef knife Tojiro Shun</span>
+              出品者 <a href="https://www.ebay.com/usr/fabec-japan" target="_blank">fabec-japan</a>
+              <span class="muted">(100.0% / 375 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: default</span>
+              <span class="badge" style="background:#0ea5e9">関税: default (15%)</span>
+              <span class="badge" style="background:#475569">重量推定 1.0kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$107.80 <small>+ 送料 $19.80</small></p>
+                <p>合計 <b>$127.60</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥8,650 <small>($50.22)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/biccamera/4960375408084/?variantId=4960375408084" target="_blank" rel="noopener">rakuten</a>
+                  ／ 楽天ビック(ビックカメラ×楽天)
+                  ／ <span class="badge" style="background:#22c55e">一致 82.0点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">藤次郎｜TOJIRO 藤寅作 牛刀 210mm FU-808</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$22.54</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$50.22</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$0.94</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$16.17</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#86efac">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#86efac">$31.41</p>
+                <p class="big">¥4,918</p>
+                <p>マージン <b>24.6%</b></p>
+                <p class="muted">損益分岐仕入 ¥14,058</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#4ade80">価格優位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>122 件</b></td>
+                  <td>ユニークセラー</td><td><b>45 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>55 / 23 名</td>
+                  <td>価格レンジ（USD）</td><td>$39 - $999</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$123</b> (P75 $182)</td>
+                  <td>自分の想定売価</td><td><b>$108</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=45人(healthy) / 同型番=7セラー / 総出品=122件 / $ 108vs中央$ 120(wins) / 最古出品から3069日 / 上位セラー評価=28606</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#4</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/1a4AAOSwnfhjckOn/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/134445055899?_skw=Ibanez+TS808+Tube+Screamer&amp;hash=item1f4d8cbf9b:g:1a4AAOSwnfhjckOn&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZEqt86gMey979YWoPdAuTpL8QX1Ip9HqlBpTDShloawRwFz9meimQs%2FO%2B70ot%2BEGnsYyS2vvzoggGBiW0uriFNiDl8TD0gKiA3nMukHj%2ByogWInITTNS0EL%2Fm%2BT6yTA84EzzzX5OlbS%2FZAVgS1Rv3u4qR4PlXHUKdP4IGX6OW4ANxu9Fnqp%2BIKBuq1R0%2FF2L18X6PoWDqEvL%2FvM8muvzihPudSkcuYsZmtvZeQeAvyasjBeTyU2MXP80HzuKbJvOwX5UXPSne4ky46IpxWxNicmJrbk7%2Fj8RiX0aXZXNOTuA%3D%3D" target="_blank" rel="noopener">Ibanez TS808 Original Vintage Tube Screamer Pedal - Reissue</a>
+              <div class="evidence-pill" style="background:#a78bfa">
+                根拠 74 点 / 中
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Ibanez TS808 Tube Screamer</span>
+              出品者 <a href="https://www.ebay.com/usr/good-job-from-japan" target="_blank">good-job-from-japan</a>
+              <span class="muted">(100.0% / 1036 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: default</span>
+              <span class="badge" style="background:#0ea5e9">関税: default (15%)</span>
+              <span class="badge" style="background:#475569">重量推定 1.0kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$160.00 <small>+ 送料 $0.00</small></p>
+                <p>合計 <b>$160.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥2,090 <small>($12.13)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/alzey/04000026/?variantId=04000026" target="_blank" rel="noopener">rakuten</a>
+                  ／ Alzey部品
+                  ／ <span class="badge" style="background:#22c55e">一致 90.0点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">Ibanez TS808 Tube Screamer Overdriveモデル チューブスクリーマー風 エフェクター自作用基板 メール便なら送料無料</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$28.16</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$12.13</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$1.18</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$24.00</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$96.04</p>
+                <p class="big">¥15,037</p>
+                <p>マージン <b>60.0%</b></p>
+                <p class="muted">損益分岐仕入 ¥18,629</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#f87171">飽和警戒</div>
+                <div class="signal-pill" style="background:#a78bfa">価格同等</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>176 件</b></td>
+                  <td>ユニークセラー</td><td><b>58 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>37 / 43 名</td>
+                  <td>価格レンジ（USD）</td><td>$50 - $340</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$164</b> (P75 $180)</td>
+                  <td>自分の想定売価</td><td><b>$160</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=58人(saturated) / 同型番=39セラー / 総出品=176件 / $ 160vs中央$ 156(parity) / 最古出品から3118日 / 上位セラー評価=465189</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#5</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/sQ0AAOSw9s5lTNl0/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/356856251623?_skw=HKS+turbo+Toyota+Supra&amp;hash=item53164a44e7:g:sQ0AAOSw9s5lTNl0&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGaaKLthFTAMYp9O9GUTXFflV3QtcqTc5Hb35tFZ%2Bn09NxNk3YX6GG6%2FJTGdFSw8psumAB73G7l5Fk8m9dpthuVgX%2FZYONxGTM6Lwf%2F8Vr7zGFX6ZyBUBPOmZl1VtGZdWjnIYx9OKOBIOkZ7u6c5343tssv%2FV9Ydlh%2BAItfR812tw3frpj7%2BFGU8TToHiI%2FoXSBz0cPBw99NE9RO0xauxgFkCX1Hi1WhGbdAUPkQilNZm4EruaknNnIMjumLNC1cwv5zoABx%2BuG121WYkFxVYFKS91wl5z070c8LH%2FCgrYj24Q%3D%3D" target="_blank" rel="noopener">HKS 70019-AT106 Air Intake Filter For 97-02 Toyota Supra Turbo JZA80 2JZGTE VVTi</a>
+              <div class="evidence-pill" style="background:#a78bfa">
+                根拠 70 点 / 中
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">HKS turbo Toyota Supra</span>
+              出品者 <a href="https://www.ebay.com/usr/blackbelt369" target="_blank">blackbelt369</a>
+              <span class="muted">(99.6% / 355 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: toys</span>
+              <span class="badge" style="background:#0ea5e9">関税: toys (10%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.6kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$344.30 <small>+ 送料 $50.00</small></p>
+                <p>合計 <b>$394.30</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥28,649 <small>($166.35)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/powerweb-19/hks23000450/?variantId=hks23000450" target="_blank" rel="noopener">rakuten</a>
+                  ／ パワーウェブ2号店
+                  ／ <span class="badge" style="background:#22c55e">一致 84.3点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">70019-AT106 HKS Super Power Flow (スーパーパワーフロー) トヨタ スープラ JZA80 2JZ-GTE 97/08-02/08</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$73.94</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$166.35</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$2.88</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$34.43</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$128.65</p>
+                <p class="big">¥20,141</p>
+                <p>マージン <b>32.6%</b></p>
+                <p class="muted">損益分岐仕入 ¥50,803</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#4ade80">需要 強</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>288 件</b></td>
+                  <td>ユニークセラー</td><td><b>37 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 72 名</td>
+                  <td>価格レンジ（USD）</td><td>$33 - $1967</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$446</b> (P75 $790)</td>
+                  <td>自分の想定売価</td><td><b>$344</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=37人(healthy) / 同型番=5セラー / 総出品=288件 / $ 344vs中央$ 446(loses) / 最古出品から4657日 / 上位セラー評価=194767</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#6</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/ZrYAAeSwyL1py6ti/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/365563398435?_skw=Grand+Seiko+SBGA+SBGV&amp;hash=item551d46c923:g:ZrYAAeSwyL1py6ti" target="_blank" rel="noopener">SEIKO Grand Seiko AA1Y3JLK Bracelet Link SBGA025 SBGV223 SBGX261 SBGV221</a>
+              <div class="evidence-pill" style="background:#a78bfa">
+                根拠 68 点 / 中
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Grand Seiko SBGA SBGV</span>
+              出品者 <a href="https://www.ebay.com/usr/topnotchjapan" target="_blank">topnotchjapan</a>
+              <span class="muted">(99.7% / 1264 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: watches_under5k</span>
+              <span class="badge" style="background:#0ea5e9">関税: watches (16%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.4kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$89.99 <small>+ 送料 $25.00</small></p>
+                <p>合計 <b>$114.99</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥5,536 <small>($32.14)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/ecwide/aa1y3jlk.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ ecwide
+                  ／ <span class="badge" style="background:#22c55e">一致 94.1点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">Seiko グランドセイコー 純正 ベルト用駒 SBGA025 SBGV223 SBGX261 SBGX263 SBGV221 SBGX053 SBGR067 </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$21.85</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$32.14</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$0.84</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$14.40</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#86efac">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#86efac">$37.68</p>
+                <p class="big">¥5,900</p>
+                <p>マージン <b>32.8%</b></p>
+                <p class="muted">損益分岐仕入 ¥12,024</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#a78bfa">競合少（ニッチ）</div>
+                <div class="signal-pill" style="background:#4ade80">価格優位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>11 件</b></td>
+                  <td>ユニークセラー</td><td><b>6 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 3 名</td>
+                  <td>価格レンジ（USD）</td><td>$43 - $650</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$100</b> (P75 $150)</td>
+                  <td>自分の想定売価</td><td><b>$90</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=6人(sparse) / 同型番=5セラー / 総出品=11件 / $ 90vs中央$ 100(wins) / 最古出品から995日 / 上位セラー評価=7834</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#7</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/HVsAAeSwvb1p4-Ar/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/168316871606?_skw=BOSS+pedal+DD-200+Japan&amp;hash=item273077a3b6:g:HVsAAeSwvb1p4-Ar&amp;amdata=enc%3AAQALAAABAACCtXRWQnOEpyOqnQQ8KGYbgJq6QrfEX%2FG6n6gr4wdGLjscZgLr9oxCFTgG0t4nw9TA1MVzmJAPRSILOSPEP%2B49iAhLourqOAv3niXpmJSiTG%2BmXaQqDsR%2FYCd3gOhtimprihvt3qQE0wrPNydIJNI20jJXiqhL2VEaS5n3uRhVtYIgYxDJ4OZ5uzV%2FjBJgoCHg8mIOW90zqxEYWPH6bpMEUwJOWi6owYd29RMcPoSpc3qxuYD9RU%2F2qdVYGb7a%2B8%2FSfOf1baXatEUPP9WGZLShJjyEZ5Ie2N8V%2B%2FOl2mKVfER8WIMKhRxAuuAe3rLyqtU77w2Wa8cvOpaJRuPRrAo%3D" target="_blank" rel="noopener">NEW Boss DD-200 Digital Delay Pedal Bundle Japan</a>
+              <div class="evidence-pill" style="background:#a78bfa">
+                根拠 61 点 / 中
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">BOSS pedal DD-200 Japan</span>
+              出品者 <a href="https://www.ebay.com/usr/treasures_japan" target="_blank">treasures_japan</a>
+              <span class="muted">(100.0% / 127 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: default</span>
+              <span class="badge" style="background:#0ea5e9">関税: default (15%)</span>
+              <span class="badge" style="background:#475569">重量推定 1.0kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$841.82 <small>+ 送料 $29.00</small></p>
+                <p>合計 <b>$870.82</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥33,000 <small>($191.61)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/chuya-online/161234/?variantId=161234" target="_blank" rel="noopener">rakuten</a>
+                  ／ chuya-online チューヤオンライン
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">BOSS DD-200 DIGITAL DELAY デジタルディレイ ギターエフェクター</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$151.49</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$191.61</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$6.46</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$126.27</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$498.78</p>
+                <p class="big">¥78,089</p>
+                <p>マージン <b>57.3%</b></p>
+                <p class="muted">損益分岐仕入 ¥118,896</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#f87171">飽和警戒</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>118 件</b></td>
+                  <td>ユニークセラー</td><td><b>58 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>41 / 39 名</td>
+                  <td>価格レンジ（USD）</td><td>$120 - $842</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$289</b> (P75 $395)</td>
+                  <td>自分の想定売価</td><td><b>$842</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=58人(saturated) / 同型番=43セラー / 総出品=118件 / $ 842vs中央$ 287(loses) / 最古出品から3182日 / 上位セラー評価=604908</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#8</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/TrYAAeSwh5lp4-Al/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/168316871288?_skw=BOSS+pedal+DD-200+Japan&amp;hash=item273077a278:g:TrYAAeSwh5lp4-Al" target="_blank" rel="noopener">NEW Boss DD-200 Digital Delay Guitar Pedal Japan</a>
+              <div class="evidence-pill" style="background:#a78bfa">
+                根拠 61 点 / 中
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">BOSS pedal DD-200 Japan</span>
+              出品者 <a href="https://www.ebay.com/usr/treasures_japan" target="_blank">treasures_japan</a>
+              <span class="muted">(100.0% / 127 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: musical_inst</span>
+              <span class="badge" style="background:#0ea5e9">関税: musical_inst (17%)</span>
+              <span class="badge" style="background:#475569">重量推定 3.0kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$663.69 <small>+ 送料 $29.00</small></p>
+                <p>合計 <b>$692.69</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥33,000 <small>($191.61)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/ishibashi/83-4957054514600/?variantId=83-4957054514600" target="_blank" rel="noopener">rakuten</a>
+                  ／ イシバシ楽器 WEB SHOP
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">BOSS / DD-200 Digital Delay ディレイ ボス DD200【YRK】【PTNB】</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$115.73</td></tr>
+                  <tr><td>国際送料 (¥7,000)</td><td>$44.71</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$191.61</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$5.18</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$110.84</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$332.26</p>
+                <p class="big">¥52,019</p>
+                <p>マージン <b>48.0%</b></p>
+                <p class="muted">損益分岐仕入 ¥90,219</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#f87171">飽和警戒</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>118 件</b></td>
+                  <td>ユニークセラー</td><td><b>58 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>41 / 39 名</td>
+                  <td>価格レンジ（USD）</td><td>$120 - $842</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$289</b> (P75 $395)</td>
+                  <td>自分の想定売価</td><td><b>$664</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=58人(saturated) / 同型番=43セラー / 総出品=118件 / $ 664vs中央$ 287(loses) / 最古出品から3182日 / 上位セラー評価=604908</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#9</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/8C8AAOSwoelnasOe/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/356409440095?_skw=Ibanez+TS808+Tube+Screamer&amp;hash=item52fba8775f:g:8C8AAOSwoelnasOe" target="_blank" rel="noopener">Ibanez 45th Anniversary TS808 Tube Screamer Effects Pedal Sapphire Blue NEW</a>
+              <div class="evidence-pill" style="background:#a78bfa">
+                根拠 61 点 / 中
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Ibanez TS808 Tube Screamer</span>
+              出品者 <a href="https://www.ebay.com/usr/soundbluesy-japan" target="_blank">soundbluesy-japan</a>
+              <span class="muted">(100.0% / 25 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: default</span>
+              <span class="badge" style="background:#0ea5e9">関税: default (15%)</span>
+              <span class="badge" style="background:#475569">重量推定 1.0kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$340.00 <small>+ 送料 $0.00</small></p>
+                <p>合計 <b>$340.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥16,300 <small>($94.65)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/ikeshibu/763195/?variantId=763195" target="_blank" rel="noopener">rakuten</a>
+                  ／ イケベ楽器 イケシブ
+                  ／ <span class="badge" style="background:#22c55e">一致 87.1点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">翌日配達 Ibanez 【WEB限定在庫処分セール】 TS808 TUBE SCREAMER Overdrive Pro</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$59.39</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$94.65</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$2.52</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$51.00</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$160.96</p>
+                <p class="big">¥25,200</p>
+                <p>マージン <b>47.3%</b></p>
+                <p class="muted">損益分岐仕入 ¥44,019</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#f87171">飽和警戒</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>176 件</b></td>
+                  <td>ユニークセラー</td><td><b>58 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>37 / 43 名</td>
+                  <td>価格レンジ（USD）</td><td>$50 - $340</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$164</b> (P75 $180)</td>
+                  <td>自分の想定売価</td><td><b>$340</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=58人(saturated) / 同型番=39セラー / 総出品=176件 / $ 340vs中央$ 156(loses) / 最古出品から3118日 / 上位セラー評価=465189</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#10</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/WX0AAeSw3Wlp49~S/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/168316870601?_skw=BOSS+pedal+DD-200+Japan&amp;hash=item2730779fc9:g:WX0AAeSw3Wlp49~S" target="_blank" rel="noopener">NEW Boss DD-200 Digital Delay Pedal + Accessories Japan</a>
+              <div class="evidence-pill" style="background:#a78bfa">
+                根拠 61 点 / 中
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">BOSS pedal DD-200 Japan</span>
+              出品者 <a href="https://www.ebay.com/usr/treasures_japan" target="_blank">treasures_japan</a>
+              <span class="muted">(100.0% / 127 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: default</span>
+              <span class="badge" style="background:#0ea5e9">関税: default (15%)</span>
+              <span class="badge" style="background:#475569">重量推定 1.0kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$401.68 <small>+ 送料 $29.00</small></p>
+                <p>合計 <b>$430.68</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥33,000 <small>($191.61)</small></p>
+                <p>
+                  <a href="https://item.rakuten.co.jp/esp/10010872/?variantId=10010872" target="_blank" rel="noopener">rakuten</a>
+                  ／ ESP CRAFT HOUSE楽天市場店
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">【ESP直営店】【お取り寄せ商品】BOSS DD-200 Digital Delay[エフェクター、effectspedal]</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$75.12</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$191.61</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$3.19</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$60.25</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$138.27</p>
+                <p class="big">¥21,647</p>
+                <p>マージン <b>32.1%</b></p>
+                <p class="muted">損益分岐仕入 ¥56,810</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#f87171">飽和警戒</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>118 件</b></td>
+                  <td>ユニークセラー</td><td><b>58 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>41 / 39 名</td>
+                  <td>価格レンジ（USD）</td><td>$120 - $842</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$289</b> (P75 $395)</td>
+                  <td>自分の想定売価</td><td><b>$402</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=58人(saturated) / 同型番=43セラー / 総出品=118件 / $ 402vs中央$ 287(loses) / 最古出品から3182日 / 上位セラー評価=604908</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#11</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/Y-4AAeSwmtFoiLr3/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/317467465971?_skw=Grand+Seiko+SBGA+SBGV&amp;hash=item49ea8918f3:g:Y-4AAeSwmtFoiLr3&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGaQIwFqt21Dknxd5KhAWlVHKTSNruesKaYQBB4LHWucFbd8CGSf4zKMVTrgmDdVqvaOWi74zknRj3GyKmHIK9MwycBymVUVRZw3FOtCxrbL1Tp7uAK4OzZhdCH2xIYps17XCpzaVd1qbC%2BwsNNjAk9kl3%2FXTRN6NjaqwJi9loKPlgUNty%2FSeQy8k6rmi2mFEiOb3GGv1p00sRZ%2BjliyAKG2Ur4jGFzbwbpLGZm89RdUD2AQ3B9vo5AldWlZ3%2FAPFtSixBkW37TFTTNGimkx380TcTIl5VMmgX78zW9JmuwO2A%3D%3D" target="_blank" rel="noopener">Genuine New Grand Seiko Watch Bracelet Link AA1Y3JLK SBGA025 SBGV223</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 58 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Grand Seiko SBGA SBGV</span>
+              出品者 <a href="https://www.ebay.com/usr/j-style.lx" target="_blank">j-style.lx</a>
+              <span class="muted">(99.1% / 5829 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: watches_under5k</span>
+              <span class="badge" style="background:#0ea5e9">関税: watches (16%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.4kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$117.99 <small>+ 送料 $20.00</small></p>
+                <p>合計 <b>$137.99</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥5,536 <small>($32.14)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/ecwide/aa1y3jlk.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ ecwide
+                  ／ <span class="badge" style="background:#22c55e">一致 88.2点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">Seiko グランドセイコー 純正 ベルト用駒 SBGA025 SBGV223 SBGX261 SBGX263 SBGV221 SBGX053 SBGR067 </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$26.14</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$32.14</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$1.01</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$18.88</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$56.23</p>
+                <p class="big">¥8,803</p>
+                <p>マージン <b>40.8%</b></p>
+                <p class="muted">損益分岐仕入 ¥15,218</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#a78bfa">競合少（ニッチ）</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>11 件</b></td>
+                  <td>ユニークセラー</td><td><b>6 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 3 名</td>
+                  <td>価格レンジ（USD）</td><td>$43 - $650</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$100</b> (P75 $150)</td>
+                  <td>自分の想定売価</td><td><b>$118</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=6人(sparse) / 同型番=5セラー / 総出品=11件 / $ 118vs中央$ 100(loses) / 最古出品から995日 / 上位セラー評価=7834</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#12</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/VqMAAeSwLy1pa0Fk/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/127290905592?_skw=Grand+Seiko+SBGA+SBGV&amp;hash=item1da32113f8:g:VqMAAeSwLy1pa0Fk" target="_blank" rel="noopener">Seiko Grand Seiko Genuine Link AA1Y3JLK for SBGA025/SBGV223/SBGX261 Bracelet</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 58 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Grand Seiko SBGA SBGV</span>
+              出品者 <a href="https://www.ebay.com/usr/sweetcorn-japan" target="_blank">sweetcorn-japan</a>
+              <span class="muted">(100.0% / 177 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: watches_under5k</span>
+              <span class="badge" style="background:#0ea5e9">関税: watches (16%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.4kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$77.19 <small>+ 送料 $18.00</small></p>
+                <p>合計 <b>$95.19</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥5,536 <small>($32.14)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/ecwide/aa1y3jlk.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ ecwide
+                  ／ <span class="badge" style="background:#22c55e">一致 92.6点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">Seiko グランドセイコー 純正 ベルト用駒 SBGA025 SBGV223 SBGX261 SBGX263 SBGV221 SBGX053 SBGR067 </p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$18.15</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$32.14</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$0.69</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$12.35</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#86efac">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#86efac">$21.72</p>
+                <p class="big">¥3,401</p>
+                <p>マージン <b>22.8%</b></p>
+                <p class="muted">損益分岐仕入 ¥9,275</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#a78bfa">競合少（ニッチ）</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>11 件</b></td>
+                  <td>ユニークセラー</td><td><b>6 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 3 名</td>
+                  <td>価格レンジ（USD）</td><td>$43 - $650</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$100</b> (P75 $150)</td>
+                  <td>自分の想定売価</td><td><b>$77</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=6人(sparse) / 同型番=5セラー / 総出品=11件 / $ 77vs中央$ 100(loses) / 最古出品から995日 / 上位セラー評価=7834</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#13</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/1acAAeSwpFxp27wz/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/354602906419?fits=Submodel%3ATurbo%7CModel%3ASupra%7CMake%3AToyota&amp;_skw=HKS+turbo+Toyota+Supra&amp;hash=item528ffaf333:g:1acAAeSwpFxp27wz" target="_blank" rel="noopener">HKS Cam Gears 2 SET 1 / 2JZ-GTE For Toyota Lexus Aristo GS300 SC300 Soarer Supra</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 58 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">HKS turbo Toyota Supra</span>
+              出品者 <a href="https://www.ebay.com/usr/obsolete_22" target="_blank">obsolete_22</a>
+              <span class="muted">(99.8% / 16459 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: toys</span>
+              <span class="badge" style="background:#0ea5e9">関税: toys (10%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.6kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$260.00 <small>+ 送料 $95.00</small></p>
+                <p>合計 <b>$355.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥13,992 <small>($81.24)</small></p>
+                <p>
+                  <a href="https://www.amazon.co.jp/dp/B0CJLQN1DY" target="_blank" rel="noopener">amazon</a>
+                  ／ Amazon.co.jp
+                  ／ <span class="badge" style="background:#22c55e">一致 80.5点</span>
+                  ／ <span class="badge" style="background:#475569">new</span>
+                </p>
+                <p class="muted">DIXCEL ディクセル ブレーキパッド Mタイプ リア グリース付き LEXUS対応 GS200t/GS300 ARL10 315543 M</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$66.61</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$81.24</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$2.59</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$26.00</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$182.08</p>
+                <p class="big">¥28,506</p>
+                <p>マージン <b>51.3%</b></p>
+                <p class="muted">損益分岐仕入 ¥45,347</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#4ade80">需要 強</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>288 件</b></td>
+                  <td>ユニークセラー</td><td><b>37 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 72 名</td>
+                  <td>価格レンジ（USD）</td><td>$33 - $1967</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$446</b> (P75 $790)</td>
+                  <td>自分の想定売価</td><td><b>$260</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=37人(healthy) / 同型番=2セラー / 総出品=288件 / $ 260vs中央$ 446(loses) / 最古出品から4657日 / 上位セラー評価=194767</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#14</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/kF4AAeSwKBBpjV4S/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/397598795073?fits=Submodel%3ATurbo%7CModel%3ASupra%7CMake%3AToyota&amp;_skw=HKS+turbo+Toyota+Supra&amp;hash=item5c92bc2541:g:kF4AAeSwKBBpjV4S&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbcdpDkvJAAU5tf9MM0Mb2UjcD03vugHej5V7DECQ1LOqWmWq9RBONrFoatha9hxtkF2Xl3YaRvN6iUx8Joasl6oWY%2Fs4JOgJM2YbEGfMmMCK46qov4aGzoJtv0PB2f1tt0c%2FFZchScvCYqzauQZR0ojF1eNDfUJG5XfRJdvoeTq1OTK082MgFBlH0S7JA4Xavr2ZEL5d61myI4Kc6GCP%2Bd8XDdGhe08EuesovFW0I39nD5BWgR5ri81uoIWvIKyuagBwU4eMt2ZTZcIDO9sOjv15GDEy3ynTiv8tJarvYQ3A%3D%3D" target="_blank" rel="noopener">HKS 1JZGTE 2JZGTE For Toyota Lexus Aristo GS300 SC300 Soarer Supra Cam Gear</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 58 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">HKS turbo Toyota Supra</span>
+              出品者 <a href="https://www.ebay.com/usr/tofuautogarage" target="_blank">tofuautogarage</a>
+              <span class="muted">(100.0% / 370 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: toys</span>
+              <span class="badge" style="background:#0ea5e9">関税: toys (10%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.6kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$157.68 <small>+ 送料 $42.50</small></p>
+                <p>合計 <b>$200.18</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥13,992 <small>($81.24)</small></p>
+                <p>
+                  <a href="https://www.amazon.co.jp/dp/B0CJLQN1DY" target="_blank" rel="noopener">amazon</a>
+                  ／ Amazon.co.jp
+                  ／ <span class="badge" style="background:#22c55e">一致 80.8点</span>
+                  ／ <span class="badge" style="background:#475569">new</span>
+                </p>
+                <p class="muted">DIXCEL ディクセル ブレーキパッド Mタイプ リア グリース付き LEXUS対応 GS200t/GS300 ARL10 315543 M</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$37.73</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$81.24</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$1.46</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$15.77</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$57.26</p>
+                <p class="big">¥8,965</p>
+                <p>マージン <b>28.6%</b></p>
+                <p class="muted">損益分岐仕入 ¥23,852</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#4ade80">需要 強</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>288 件</b></td>
+                  <td>ユニークセラー</td><td><b>37 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 72 名</td>
+                  <td>価格レンジ（USD）</td><td>$33 - $1967</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$446</b> (P75 $790)</td>
+                  <td>自分の想定売価</td><td><b>$158</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=37人(healthy) / 同型番=2セラー / 総出品=288件 / $ 158vs中央$ 446(loses) / 最古出品から4657日 / 上位セラー評価=194767</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#15</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/FNAAAeSwl5xp5v7t/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/318130225101?_skw=Onitsuka+Tiger+Mexico+66+Japan+exclusive&amp;hash=item4a1209ffcd:g:FNAAAeSwl5xp5v7t&amp;amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGaLAwkiP%2FMY3KqX8RWM%2BZkzR96hd%2BKXDywD2IzwSaQB3DJ0K7oBILZ5dOBAPCgSzEquvbElsWx7zENPJDUFUxwZWukhoqOl1zpttNc5fRsxrII8vZyeTtshEQ7K08BTaQqNXWH4PBm%2Bmw6l0lM9fLdLWEDiF3P9OxtkfQW6A4LjJUjYhCHpPsd%2B613Ap7TEyHm3kIdbUqYT%2Bg6FUldEK3X83IN54TYrqsdGkYBoSub08nam%2F1yK%2BXTazdIJrhOOChwEiplzkrmY61dXTTlUMJGjAZox2OXaHBUTJJA7BIqFNQz2AlUOo3pr0bbnQWTJJvW58n%2FUkxYs%2Fmw2HcV1qxtp" target="_blank" rel="noopener">Onitsuka Tiger MEXICO 66 SLIP-ON 1183A360 6 Colors Unisex Adult Shoes Japan</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 58 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Onitsuka Tiger Mexico 66 Japan exclusive</span>
+              出品者 <a href="https://www.ebay.com/usr/you_and_minami" target="_blank">you_and_minami</a>
+              <span class="muted">(99.4% / 613 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: sneakers_high</span>
+              <span class="badge" style="background:#0ea5e9">関税: sneakers_textile_rubber (30%)</span>
+              <span class="badge" style="background:#475569">重量推定 1.5kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$137.89 <small>+ 送料 $30.00</small></p>
+                <p>合計 <b>$167.89</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥11,215 <small>($65.12)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/zozo/99382264.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ zozo
+                  ／ <span class="badge" style="background:#22c55e">一致 100.0点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">スニーカー Onitsuka Tiger MEXICO 66 SLIP-ON / オニツカタイガー メキシコ 66 スリッポン / 1183A360-</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$20.13</td></tr>
+                  <tr><td>国際送料 (¥5,000)</td><td>$31.94</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$65.12</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$1.32</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$41.37</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#86efac">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#86efac">$46.19</p>
+                <p class="big">¥7,232</p>
+                <p>マージン <b>27.5%</b></p>
+                <p class="muted">損益分岐仕入 ¥19,169</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#4ade80">需要 強</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>8,013 件</b></td>
+                  <td>ユニークセラー</td><td><b>45 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>16 / 3 名</td>
+                  <td>価格レンジ（USD）</td><td>$45 - $395</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$66</b> (P75 $100)</td>
+                  <td>自分の想定売価</td><td><b>$138</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=45人(healthy) / 同型番=2セラー / 総出品=8013件 / $ 138vs中央$ 66(loses) / 最古出品から1310日 / 上位セラー評価=12779</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#16</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/SyIAAeSwtRBpzzPA/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/406755432261?_skw=Yu-Gi-Oh+25th+secret+rare+Japanese&amp;hash=item5eb4835745:g:SyIAAeSwtRBpzzPA" target="_blank" rel="noopener">Yu-Gi-Oh! Official Card Game Duel Monsters 25DS-JP002 25th Secret Rare</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 53 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Yu-Gi-Oh 25th secret rare Japanese</span>
+              出品者 <a href="https://www.ebay.com/usr/greensunjapan" target="_blank">greensunjapan</a>
+              <span class="muted">(100.0% / 386 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: default</span>
+              <span class="badge" style="background:#0ea5e9">関税: default (15%)</span>
+              <span class="badge" style="background:#475569">重量推定 1.0kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$35.00 <small>+ 送料 $50.00</small></p>
+                <p>合計 <b>$85.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥185 <small>($1.07)</small></p>
+                <p>
+                  <a href="https://www.amazon.co.jp/dp/B01JUOLZ5U" target="_blank" rel="noopener">amazon</a>
+                  ／ Amazon.co.jp
+                  ／ <span class="badge" style="background:#eab308">一致 79.5点</span>
+                  ／ <span class="badge" style="background:#475569">new</span>
+                </p>
+                <p class="muted">【 3枚セット 】遊戯王 日本語版 SPDS-JP002 D-HERO ダイナマイトガイ (ノーマル)</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$15.15</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$1.07</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$0.63</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$5.25</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#86efac">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#86efac">$45.67</p>
+                <p class="big">¥7,150</p>
+                <p>マージン <b>53.7%</b></p>
+                <p class="muted">損益分岐仕入 ¥8,049</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>43 件</b></td>
+                  <td>ユニークセラー</td><td><b>21 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>25 / 15 名</td>
+                  <td>価格レンジ（USD）</td><td>$32 - $515</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$60</b> (P75 $100)</td>
+                  <td>自分の想定売価</td><td><b>$35</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=21人(healthy) / 同型番=1セラー / 総出品=43件 / $ 35vs中央$ 56(loses) / 最古出品から1154日 / 上位セラー評価=652979</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#17</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/EA0AAOSw~XBiNt6K/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/376505500815?_skw=Seiko+Prospex+SPB+Japan&amp;hash=item57a97a048f:g:EA0AAOSw~XBiNt6K" target="_blank" rel="noopener">SEIKO Prospex SBDC157 SPB257J1 Automatic Stainless watch</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 51 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Seiko Prospex SPB Japan</span>
+              出品者 <a href="https://www.ebay.com/usr/ippojapanwatch" target="_blank">ippojapanwatch</a>
+              <span class="muted">(97.2% / 1308 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: watches_under5k</span>
+              <span class="badge" style="background:#0ea5e9">関税: watches (16%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.4kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$1,141.19 <small>+ 送料 $29.99</small></p>
+                <p>合計 <b>$1,171.18</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥110,000 <small>($638.73)</small></p>
+                <p>
+                  <a href="https://paypayfleamarket.yahoo.co.jp/item/z580935226" target="_blank" rel="noopener">yahoo_furima</a>
+                  ／ フリマ:p68787528
+                  ／ <span class="badge" style="background:#22c55e">一致 97.1点</span>
+                  ／ <span class="badge" style="background:#475569">new</span>
+                </p>
+                <p class="muted">セイコー　SEIKO PROSPEX SPB257J1 5500本限定 SBDC157★新品未使用</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$218.83</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$638.73</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$8.56</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$182.59</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$282.59</p>
+                <p class="big">¥44,242</p>
+                <p>マージン <b>24.1%</b></p>
+                <p class="muted">損益分岐仕入 ¥158,664</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#4ade80">需要 強</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>474 件</b></td>
+                  <td>ユニークセラー</td><td><b>34 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>1 / 60 名</td>
+                  <td>価格レンジ（USD）</td><td>$67 - $1700</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$830</b> (P75 $995)</td>
+                  <td>自分の想定売価</td><td><b>$1141</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=34人(healthy) / 同型番=0セラー / 総出品=474件 / $ 1141vs中央$ 800(loses) / 最古出品から3294日 / 上位セラー評価=53657</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#18</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/j5EAAOSwwfdn17mi/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/336414215246?_skw=Seiko+Prospex+SPB+Japan&amp;hash=item4e53d98c4e:g:j5EAAOSwwfdn17mi&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGb0pPDHOND5w4DrF234zXQd%2Fe2BN5%2BIU3v5vNLyzW2p%2Fx6mogexumqpCqZFFJNWE%2BbxY1JOGw9dO%2F6ZZhe%2FGyhf9dAI16z3AQzawev4a3UILrCCMvTadxj4GHSi8r0vWtu76LygRtbPo7nsJeGqFIW3n%2FLlTd4C0UJVuVKPySYdpD4WJ3VBcaNYxZO%2FCVIRjDa5dthQUEp%2BFbtsAvTDo%2BTyBzmoxXnyH9w%2B5gyrITr9kYmP5lvdCEubzTWWIhyyJLcF8koT6Erk2t9oslniSWGAYMUdvVA0vTt7JP1lU93dWA%3D%3D" target="_blank" rel="noopener">Seiko SBDC197/SPB453 PROSPEX DIVER SCUBA 1965 Heritage Japan Import NEW</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 51 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Seiko Prospex SPB Japan</span>
+              出品者 <a href="https://www.ebay.com/usr/premium-japan" target="_blank">premium-japan</a>
+              <span class="muted">(99.6% / 10522 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: watches_under5k</span>
+              <span class="badge" style="background:#0ea5e9">関税: watches (16%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.4kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$1,140.00 <small>+ 送料 $215.00</small></p>
+                <p>合計 <b>$1,355.00</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥140,520 <small>($815.95)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/tokei10/sbdc197.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ tokei10
+                  ／ <span class="badge" style="background:#22c55e">一致 96.1点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">【純正シリコンバンド プレゼント】 SEIKOプロスペックス SBDC197 PROSPEX 1965メカニカルダイバーズ 現代デザイン</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$253.11</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$815.95</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$9.90</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$182.40</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$253.56</p>
+                <p class="big">¥39,697</p>
+                <p>マージン <b>18.7%</b></p>
+                <p class="muted">損益分岐仕入 ¥184,186</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#4ade80">需要 強</div>
+                <div class="signal-pill" style="background:#4ade80">健全な競争</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>474 件</b></td>
+                  <td>ユニークセラー</td><td><b>34 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>1 / 60 名</td>
+                  <td>価格レンジ（USD）</td><td>$67 - $1700</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$830</b> (P75 $995)</td>
+                  <td>自分の想定売価</td><td><b>$1140</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=34人(healthy) / 同型番=1セラー / 総出品=474件 / $ 1140vs中央$ 800(loses) / 最古出品から3294日 / 上位セラー評価=53657</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="rank">#19</div>
+          <div class="thumb"><img src="https://i.ebayimg.com/images/g/HSgAAOSwL7VnlYMZ/s-l225.jpg" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row">
+              <a class="title" href="https://www.ebay.com/itm/235582765841?_skw=Grand+Seiko+SBGA+SBGV&amp;hash=item36d9d3bb11:g:HSgAAOSwL7VnlYMZ&amp;amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGZ8hB3xkjLKbXzPYphj2yTi4yPlj%2FW4YKdqitGRK%2B38g%2BGtw8uuc%2BW%2Bl8V8sZ4ecA%2BekbR2ibdLmOCjA%2FSnGK11awIVTeSA9zm9b4L4n9Dinfp8Pp1ts0ouLWj4dq8tc228T8P4%2BheSkaT0%2FD%2BKtRCV0IZ0LV55RK8jkpxxCBGhspXnXK18CfPZESVGY%2FAheSKiMFbN%2BjxFOrWP%2FAhbTXZGPK2TOl4iP9CZbzmZeuZrF9tNywpvNk7LMzuFvPxE47FXDNWKLMgo%2BUz7kEYZOUxFsGFj%2BSU55zei5J%2FrIZZV7g%3D%3D" target="_blank" rel="noopener">Grand Seiko GS link Titanium AA031TLK SBGX067 SBGX069 SBGX267 SBGA211 SBGX127etc</a>
+              <div class="evidence-pill" style="background:#eab308">
+                根拠 45 点 / 弱い
+              </div>
+            </div>
+            <div class="meta">
+              <span class="badge" style="background:#475569">Grand Seiko SBGA SBGV</span>
+              出品者 <a href="https://www.ebay.com/usr/atsuki1860" target="_blank">atsuki1860</a>
+              <span class="muted">(99.5% / 2121 評価)</span>
+              <span class="badge" style="background:#7c3aed">FVF: watches_under5k</span>
+              <span class="badge" style="background:#0ea5e9">関税: watches (16%)</span>
+              <span class="badge" style="background:#475569">重量推定 0.4kg</span>
+            </div>
+
+            <div class="grid">
+              <div class="col">
+                <h4>① eBay 売価（収入）</h4>
+                <p class="big">$149.99 <small>+ 送料 $36.00</small></p>
+                <p>合計 <b>$185.99</b></p>
+              </div>
+              <div class="col">
+                <h4>② 日本仕入候補</h4>
+                <p class="big">¥12,526 <small>($72.73)</small></p>
+                <p>
+                  <a href="https://store.shopping.yahoo.co.jp/ecwide/aa031tlk.html?sc_i=shopping-pc-web-result-item-rsltlst-title" target="_blank" rel="noopener">yahoo_shopping</a>
+                  ／ ecwide
+                  ／ <span class="badge" style="background:#22c55e">一致 93.5点</span>
+                  ／ <span class="badge" style="background:#475569">unknown</span>
+                </p>
+                <p class="muted">Seiko グランドセイコー純正 SBGX067 SBGX069 ベルト用 駒  AA03321T9純正バンド用 AA031TLK</p>
+              </div>
+              <div class="col">
+                <h4>③ コスト内訳</h4>
+                <table>
+                  <tr><td>eBay 手数料合計</td><td>$35.09</td></tr>
+                  <tr><td>国際送料 (¥3,020)</td><td>$19.29</td></tr>
+                  <tr><td>仕入価格（税抜）</td><td>$72.73</td></tr>
+                  <tr><td>為替差損（Wise）</td><td>$1.36</td></tr>
+                  <tr class="muted"><td>関税（買い手払い参考）</td><td>$24.00</td></tr>
+                </table>
+              </div>
+              <div class="col profit" style="border-color:#4ade80">
+                <h4>④ 純利益</h4>
+                <p class="huge" style="color:#4ade80">$54.33</p>
+                <p class="big">¥8,506</p>
+                <p>マージン <b>29.2%</b></p>
+                <p class="muted">損益分岐仕入 ¥21,882</p>
+              </div>
+            </div>
+
+            <div class="evidence-block">
+              <h4>⑤ 売れる根拠（市場シグナル）</h4>
+              <div class="signals">
+                <div class="signal-pill" style="background:#a78bfa">需要 中</div>
+                <div class="signal-pill" style="background:#a78bfa">競合少（ニッチ）</div>
+                <div class="signal-pill" style="background:#f87171">価格劣位</div>
+              </div>
+              <table class="market-table">
+                <tr>
+                  <td>eBay 全体 出品総数</td><td><b>11 件</b></td>
+                  <td>ユニークセラー</td><td><b>6 名</b></td>
+                </tr>
+                <tr>
+                  <td>日本セラー / 米国セラー</td><td>7 / 3 名</td>
+                  <td>価格レンジ（USD）</td><td>$43 - $650</td>
+                </tr>
+                <tr>
+                  <td>市場中央値</td><td><b>$100</b> (P75 $150)</td>
+                  <td>自分の想定売価</td><td><b>$150</b></td>
+                </tr>
+              </table>
+              <p class="rationale-text">競合セラー=6人(sparse) / 同型番=2セラー / 総出品=11件 / $ 150vs中央$ 100(loses) / 最古出品から995日 / 上位セラー評価=7834</p>
+            </div>
+          </div>
+        </div>
+        
+
+  <div class="footer">
+    <h4>本ツール Ver.1.5 について</h4>
+    <p>
+      <b>手段</b>:<br>
+      ① eBay Browse API（Application Token）で米国マーケット全体スナップショット（出品総数・価格分布・ユニークセラー数・JP/US 比率）取得<br>
+      ② 同 API で日本セラー（itemLocationCountry=JP）の出品を抽出<br>
+      ③ 各商品のタイトルから型番・ブランド抽出 → 楽天市場・Yahoo!ショッピング・Amazon.co.jp・Yahoo!フリマ・駿河屋を並列検索<br>
+      ④ 中古マーカーを除外（タイトルに【中古】等を含むものは新品リサーチでは弾く）<br>
+      ⑤ 一致スコア 45 点以上の最安候補を採用<br>
+      ⑥ 全コスト（FVF・送料・関税・為替・国内コスト）の純利益試算<br>
+      ⑦ 「売れる根拠スコア」を 7 シグナルから 0-100 で計算（需要総数・競合数・同型番セラー数・価格優位性・出品の長寿性・上位セラー実績）<br>
+      ⑧ ゲート通過のみを出力
+    </p>
+    <p>
+      <b>2026 年版の重要前提</b>:<br>
+      ・米国 De Minimis $800 免税は <b>2025/8/29 廃止・継続中</b>。$1 でも関税申告対象<br>
+      ・Section 122 全国 10% 追加関税は <b>2026/2/24 施行・2026/7/24 失効予定</b><br>
+      ・スニーカー $150 以上は <b>FVF 8% / per-order 免除</b>（2024 StockX 対抗）<br>
+      ・eBay User Agreement 改訂（2026/2/20）で AI/LLM bot 検索ページスクレイピング全面禁止 → Browse API のみ使用
+    </p>
+    <p>
+      <b>Ver.1.5 の限界（5/31 までに改善予定）</b>:<br>
+      ・SOLD（実販売実績）データは未取得：Marketplace Insights API 申請後に追加（現状は「現在出品中の競合厚み」を需要シグナルの代理指標）<br>
+      ・watchCount は申請承認制：App Check 申請通過後に追加<br>
+      ・楽天/Yahoo!ショッピング/Yahoo!フリマは公式 API キー登録後に切替予定<br>
+      ・Amazon.co.jp はスクレイピング暫定動作（curl_cffi + chrome131 偽装で 2026/5 時点動作確認）<br>
+      ・Reffort 自社販売実績起点モード（過去 90 日に売れた商品からの逆引き）は未実装<br>
+      ・メルカリ・ヨドバシ・サウンドハウスは Sprint 2 で追加予定
+    </p>
+    <p>
+      <b>Ver.1（2026/4/30 版）の問題点と Ver.1.5 の対処</b>:<br>
+      ・[Ver.1] 中古商品が新品リサーチに混入 → [Ver.1.5] 中古マーカー除外・Amazon の condition 推定追加<br>
+      ・[Ver.1] スニーカー偏重（14 中 6 件）→ [Ver.1.5] 12 カテゴリ全網羅・スニーカー 2 銘柄に縮小<br>
+      ・[Ver.1] 赤字 16 件混入 → [Ver.1.5] 利益 $15 + マージン 15% + 根拠 45 点 のゲートで除外<br>
+      ・[Ver.1] 仕入先 2 サイト → [Ver.1.5] 5 サイト並列<br>
+      ・[Ver.1] 売れる根拠ゼロ → [Ver.1.5] 7 シグナル合成 0-100 スコア
+    </p>
+  </div>
+</div>
+</body>
+</html>
