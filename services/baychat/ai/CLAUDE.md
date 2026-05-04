@@ -40,7 +40,7 @@
 - [x] 比較HTMLに補足情報入力UI + 再生成APIサーバー実装（result_server.py / port 8765）
 - [ ] cat03（配送関連 / 購入後質問）テスト着手 — 次セッション
 - [ ] cat03 で APOLOGY トーン込みテスト・5-Mini を念のため最終挙動確認 → 完全除外
-- [ ] SpeedPAK 業者対応辞書を admin_prompt に組み込むか・Cowatech 仕様書追加するか判断
+- [⏸ 保留] SpeedPAK 業者対応辞書（admin_prompt 組み込み判断・社長Q1〜Q4回答待ち・cat03 完了後に再着手）
 - [ ] natural3 系の Cowatech 本番反映タイミング判断
 - [ ] testing/payload_builder.py の v2.6 対応は不要（v2.3_baseline 系で完結）
 

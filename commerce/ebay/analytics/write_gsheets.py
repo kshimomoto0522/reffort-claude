@@ -380,6 +380,43 @@ def _init_ctx(g):
 
     return ctx
 
+def _apply_exclude_filter(ctx):
+    """備考欄が『削除』のアイテムを全カテゴリリストから除外する。
+    高橋紗英 2026-04-21 要望「備考欄に『削除』と記載のある行は、行ごと削除してほしい」反映。
+    判定: trim後の備考が完全一致『削除』（『削除NG』『削除しない』等の否定形は対象外）。
+    """
+    excluded = {iid for iid, note in ctx.notes.items()
+                if note and str(note).strip() == '削除'}
+    ctx.excluded_count = len(excluded)
+    if not excluded:
+        return
+
+    print(f'   🗑️ 「削除」マーク行の除外: {len(excluded)}件（高橋紗英 要望反映）')
+
+    def _drop(seq):
+        return [i for i in seq if i.get('id') not in excluded]
+
+    ctx.items = _drop(ctx.items)
+    ctx.items_by_id = {iid: i for iid, i in ctx.items_by_id.items() if iid not in excluded}
+    ctx.top15 = _drop(ctx.top15)
+    ctx.top15_ids = [iid for iid in ctx.top15_ids if iid not in excluded]
+    ctx.コア落ち = _drop(ctx.コア落ち)
+    ctx.準売れ筋 = _drop(ctx.準売れ筋)
+    ctx.育成 = _drop(ctx.育成)
+    ctx.要調査 = _drop(ctx.要調査)
+    ctx.要調査_ids = [iid for iid in ctx.要調査_ids if iid not in excluded]
+    ctx.削除L1 = _drop(ctx.削除L1)
+    ctx.削除L1_ids = [iid for iid in ctx.削除L1_ids if iid not in excluded]
+    ctx.削除L2 = _drop(ctx.削除L2)
+    ctx.削除L2_ids = [iid for iid in ctx.削除L2_ids if iid not in excluded]
+
+    ctx.準売れ筋_cnt = len({i['id'] for i in ctx.準売れ筋})
+    ctx.育成_cnt = len({i['id'] for i in ctx.育成})
+    ctx.要調査_cnt = len({i['id'] for i in ctx.要調査})
+    ctx.削除L1_cnt = len({i['id'] for i in ctx.削除L1})
+    ctx.削除L2_cnt = len({i['id'] for i in ctx.削除L2})
+
+
 def _swl(ctx, idx):
     """短縮週ラベル（W1, W2, etc.）"""
     return ctx.weeks[idx][0].split('\n')[0]
@@ -980,13 +1017,24 @@ def _write_investigate(sh, ws, ctx):
 
 def _write_delete(sh, ws, ctx):
     """🗑 削除候補（備考欄追加）― 終了済み商品を除外"""
-    ncols = 13
+    ncols = 14  # 「⚠️ 重複」列を追加（佐藤大将 2026-04-10 要望反映）
 
     # 終了済み商品を除外
     filtered_l1 = [item for item in ctx.削除L1 if not _is_ended_item(ctx, item)]
     filtered_l2 = [item for item in ctx.削除L2 if not _is_ended_item(ctx, item)]
     l1_cnt = len(filtered_l1)
     l2_cnt = len(filtered_l2)
+
+    # 重複出品の検出：削除候補（L1+L2）内で同一SKUが複数Item IDに紐づくケース
+    sku_to_count = {}
+    for item in filtered_l1 + filtered_l2:
+        s, _, _, _, _ = ctx.get_item_api_data(item['id'])
+        if s and str(s).strip():
+            sku_to_count[s] = sku_to_count.get(s, 0) + 1
+
+    def _dup_warning(s):
+        n = sku_to_count.get(s, 0) if s else 0
+        return f'⚠️ 重複出品の可能性 ({n}件)' if n >= 2 else ''
 
     title = f'🗑 削除候補 — L1即削除: {l1_cnt}件SKU ／ L2要確認: {l2_cnt}件SKU'
 
@@ -996,7 +1044,8 @@ def _write_delete(sh, ws, ctx):
     # L1ヘッダー
     hdr_l1 = [f'【L1：即削除】インプ・PV・売上すべてゼロ（{l1_cnt}件SKU）',
               'Item ID', 'SKU', '価格(USD)', '在庫数', '掲載日数', '広告状態',
-              'ウォッチ(API)', '生涯販売(API)', '前週カテゴリ', '削除判定', '削除済✅', '備考']
+              'ウォッチ(API)', '生涯販売(API)', '前週カテゴリ', '削除判定',
+              '⚠️ 重複', '削除済✅', '備考']
     rows.append(hdr_l1)
 
     fmts = [
@@ -1021,7 +1070,8 @@ def _write_delete(sh, ws, ctx):
 
         rows.append([item['title'], item['id'], sku,
                      price_str, int(item['qty']), f'{item["days"]}日', item['promo'],
-                     w, ls, prev_cat, judge, '', note])
+                     w, ls, prev_cat, judge,
+                     _dup_warning(sku), '', note])
         fmts.append({'range': _rng(r, 1, r, ncols), 'format': _body(bg)})
         r += 1
 
@@ -1032,7 +1082,8 @@ def _write_delete(sh, ws, ctx):
     hdr_l2 = [f'【L2：要確認削除】掲載180日以上・インプ50未満・売上ゼロ（{l2_cnt}件SKU）',
               'Item ID', 'SKU', '価格(USD)', 'インプ', 'PV',
               '在庫数', '掲載日数', 'ウォッチ(API)',
-              '前週カテゴリ', '削除判定', '削除済✅', '備考']
+              '前週カテゴリ', '削除判定',
+              '⚠️ 重複', '削除済✅', '備考']
     rows.append(hdr_l2)
     fmts.append({'range': _rng(r, 1, r, ncols), 'format': _hdr('7B1FA2')})
     r += 1
@@ -1050,7 +1101,8 @@ def _write_delete(sh, ws, ctx):
         rows.append([item['title'], item['id'], sku,
                      price_str, f'{item["imps"]:,}', int(item['pv']),
                      int(item['qty']), f'{item["days"]}日', w,
-                     prev_cat, judge, '', note])
+                     prev_cat, judge,
+                     _dup_warning(sku), '', note])
         fmts.append({'range': _rng(r, 1, r, ncols), 'format': _body(bg)})
         r += 1
 
@@ -1059,12 +1111,12 @@ def _write_delete(sh, ws, ctx):
     _add_links(ws, 1, id_row_pairs)  # B列（0-indexed: 1）にハイパーリンク
     _merge_cells(sh, ws, f'A1:{_cl(ncols-1)}1')
     _merge_cells(sh, ws, f'A2:{_cl(ncols-1)}2')
-    _set_widths(sh, ws, [330, 110, 95, 75, 65, 65, 90, 75, 75, 100, 90, 65, 150])
+    _set_widths(sh, ws, [330, 110, 95, 75, 65, 65, 90, 75, 75, 100, 90, 140, 65, 150])
     ws.freeze(rows=3)
 
-    # ドロップダウン（削除済✅列: L列=index11）
+    # ドロップダウン（削除済✅列: M列=index12 / 重複列追加で1つシフト）
     if r > 4:
-        _add_dropdown(sh, ws, 11, 4, r, ['✅', ''])
+        _add_dropdown(sh, ws, 12, 4, r, ['✅', ''])
 
 
 def _write_core_monthly(sh, ws, ctx):
@@ -1119,14 +1171,14 @@ def _write_core_monthly(sh, ws, ctx):
 
 def _write_delete_monthly(sh, ws, ctx):
     """🗑 削除候補（月間）― 4週間ずっと売上ゼロの長期死蔵"""
-    ncols = 11
+    ncols = 12  # 「⚠️ 重複」列を追加
     title = f'🗑 削除候補（月間）― 4週間売上ゼロ・掲載90日以上'
 
     rows = [[title] + [''] * (ncols - 1)]
     rows.append(['月間版：週次と異なり4週間の合計で判定。確実に死蔵している商品を特定する'] + [''] * (ncols - 1))
 
     hdr = ['商品タイトル', 'Item ID', 'SKU', '価格(USD)', 'インプ(全期間)', 'PV(全期間)',
-           '掲載日数', 'ウォッチ(API)', '生涯販売(API)', '削除判定', '備考']
+           '掲載日数', 'ウォッチ(API)', '生涯販売(API)', '削除判定', '⚠️ 重複', '備考']
     rows.append(hdr)
 
     fmts = [
@@ -1140,6 +1192,17 @@ def _write_delete_monthly(sh, ws, ctx):
         [i for i in ctx.items if i['sold'] == 0 and i['days'] >= 90],
         key=lambda x: x['imps']
     )[:50]  # TOP50
+
+    # 重複出品の検出：月間死蔵候補内で同一SKUが複数Item IDに紐づくケース
+    sku_to_count = {}
+    for it in monthly_dead:
+        s, _, _, _, _ = ctx.get_item_api_data(it['id'])
+        if s and str(s).strip():
+            sku_to_count[s] = sku_to_count.get(s, 0) + 1
+
+    def _dup_warning(s):
+        n = sku_to_count.get(s, 0) if s else 0
+        return f'⚠️ 重複出品の可能性 ({n}件)' if n >= 2 else ''
 
     # Item IDリンク用ペア収集
     id_row_pairs = []
@@ -1156,7 +1219,8 @@ def _write_delete_monthly(sh, ws, ctx):
 
         rows.append([item['title'], item['id'], sku,
                      price_str, f'{item["imps"]:,}', int(item['pv']),
-                     f'{item["days"]}日', w, ls, judge, note])
+                     f'{item["days"]}日', w, ls, judge,
+                     _dup_warning(sku), note])
         fmts.append({'range': _rng(row_num, 1, row_num, ncols), 'format': _body(bg)})
 
     ws.update(values=rows, range_name='A1')
@@ -1164,7 +1228,7 @@ def _write_delete_monthly(sh, ws, ctx):
     _add_links(ws, 1, id_row_pairs)  # B列（0-indexed: 1）にハイパーリンク
     _merge_cells(sh, ws, f'A1:{_cl(ncols-1)}1')
     _merge_cells(sh, ws, f'A2:{_cl(ncols-1)}2')
-    _set_widths(sh, ws, [330, 110, 95, 75, 90, 65, 65, 75, 75, 90, 150])
+    _set_widths(sh, ws, [330, 110, 95, 75, 90, 65, 65, 75, 75, 90, 140, 150])
     ws.freeze(rows=3)
 
 
@@ -1375,6 +1439,9 @@ def write_report(g):
     ctx.notes = merged
     print(f'   ✅ 備考 {len(ctx.notes)}件を読み取り')
 
+    # 備考欄が「削除」のアイテムを全シートから除外（高橋紗英 2026-04-21 要望）
+    _apply_exclude_filter(ctx)
+
     # シートセットアップ
     print('   📋 シートを準備中...')
     _setup_sheets(sh)
@@ -1400,6 +1467,15 @@ def write_report(g):
         try:
             ws = sh.worksheet(name)
             ws.clear()
+            # 既存のセルマージをクリア（ncols変更時のmergeCellsエラー回避）
+            try:
+                sh.batch_update({'requests': [{'unmergeCells': {
+                    'range': {'sheetId': ws.id,
+                              'startRowIndex': 0, 'endRowIndex': 1000,
+                              'startColumnIndex': 0, 'endColumnIndex': 30}
+                }}]})
+            except Exception:
+                pass
             time.sleep(0.5)
             writer_fn(sh, ws, ctx)
             print(f'   ✅ {name}')

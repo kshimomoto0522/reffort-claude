@@ -1,0 +1,119 @@
+[
+  {
+    "id": "cat03_11_customs_refund_demand_assertive",
+    "category": "post_purchase_shipping_qa",
+    "stage": "stage3",
+    "product_category": "camera_assertive",
+    "emotion": "angry",
+    "language": "english",
+    "situation": "Buyer paid customs at delivery and demands a refund, calling it a scam (single message, Stage 3 — delivered. Expected tone ASSERTIVE).",
+    "buyer_ebay": "B41",
+    "buyer_message": "I had to pay $80 in customs when this was delivered today!! I never agreed to this. I want a full refund of the customs charge. This feels like a scam — you should have warned me!",
+    "buyer_message_ja": "今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！",
+    "history_ja": [
+      "今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"285556789012\", \"Title\": \"Sony A7 III Mirrorless Camera Body Black ILCE-7M3 Excellent Used Japan\", \"PrimaryCategoryName\": \"Cameras & Photo:Digital Cameras\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1180.00\", \"CurrentPrice\": \"1180.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"68.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-25T03:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-26T01:00:00.000Z] shipped"
+      },
+      {
+        "role": "system",
+        "content": "[2026-05-04T13:00:00.000Z] delivered"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-04T14:05:33.000Z] I had to pay $80 in customs when this was delivered today!! I never agreed to this. I want a full refund of the customs charge. This feels like a scam — you should have warned me!"
+      }
+    ]
+  },
+  {
+    "id": "cat03_12_counterfeit_accusation_assertive",
+    "category": "post_purchase_shipping_qa",
+    "stage": "stage3",
+    "product_category": "designer_bag_assertive",
+    "emotion": "accusatory",
+    "language": "english",
+    "situation": "Buyer received a vintage designer bag and accuses the seller of selling a fake (single message, Stage 3 — delivered. Expected tone ASSERTIVE).",
+    "buyer_ebay": "B42",
+    "buyer_message": "This bag is FAKE!! The stitching doesn't match what I've seen on authentic ones online, and the lining feels cheap. I'm going to open a return and report you to eBay if you don't refund me immediately.",
+    "buyer_message_ja": "このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。",
+    "history_ja": [
+      "このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"166445998123\", \"Title\": \"Louis Vuitton Vintage Speedy 30 Monogram Hand Bag Brown Authentic\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"685.00\", \"CurrentPrice\": \"685.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-26T05:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-26T08:00:00.000Z] shipped"
+      },
+      {
+        "role": "system",
+        "content": "[2026-05-04T11:00:00.000Z] delivered"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-04T15:22:18.000Z] This bag is FAKE!! The stitching doesn't match what I've seen on authentic ones online, and the lining feels cheap. I'm going to open a return and report you to eBay if you don't refund me immediately."
+      }
+    ]
+  },
+  {
+    "id": "cat03_13_address_blame_buyer_fault_assertive",
+    "category": "post_purchase_shipping_qa",
+    "stage": "stage3",
+    "product_category": "game_console_assertive",
+    "emotion": "angry",
+    "language": "english",
+    "situation": "Package was returned because buyer entered the wrong address; buyer now blames the seller (single message, Stage 3 — delivered to wrong address per eBay registered address. Expected tone ASSERTIVE).",
+    "buyer_ebay": "B43",
+    "buyer_message": "Why didn't you deliver the console to my correct address?! It went to my old address and now I have to figure out how to get it. You sent it to the WRONG place. This is your responsibility to fix!",
+    "buyer_message_ja": "なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！",
+    "history_ja": [
+      "なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"395887223344\", \"Title\": \"Sony PlayStation 5 PS5 Standard Disc Edition Console Japan Region NEW Sealed\", \"PrimaryCategoryName\": \"Video Games & Consoles:Video Game Consoles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"498.00\", \"CurrentPrice\": \"498.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-25T02:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-26T03:00:00.000Z] shipped"
+      },
+      {
+        "role": "system",
+        "content": "[2026-05-04T09:00:00.000Z] delivered"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-04T16:14:55.000Z] Why didn't you deliver the console to my correct address?! It went to my old address and now I have to figure out how to get it. You sent it to the WRONG place. This is your responsibility to fix!"
+      }
+    ]
+  }
+]

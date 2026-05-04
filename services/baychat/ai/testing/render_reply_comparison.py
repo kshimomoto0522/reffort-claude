@@ -443,7 +443,7 @@ def build_case_card(case_id, category, buyer_en, buyer_ja, rows_by_model, input_
 def render_comparison_html(excel_path, test_cases_path, top_n=12, tone=None):
     """Excelから結果を読み込み、サマリー + 全ケース詳細 + feedbackのHTML生成
 
-    tone: "polite" | "friendly" | "apologetic" | None
+    tone: "polite" | "friendly" | "apologetic" | "assertive" | None
           指定するとHTML title / header / 出力ファイル名にトーンラベルを表示
     """
     # トーンラベル定義
@@ -451,6 +451,7 @@ def render_comparison_html(excel_path, test_cases_path, top_n=12, tone=None):
         "polite": ("POLITE", "丁寧", "#5b21b6"),
         "friendly": ("FRIENDLY", "フレンドリー", "#0d9488"),
         "apologetic": ("APOLOGY", "謝罪", "#b45309"),
+        "assertive": ("ASSERTIVE", "主張", "#dc2626"),
     }
     tone_info = tone_label_map.get(tone) if tone else None
     tone_en = tone_info[0] if tone_info else ""
@@ -1086,7 +1087,7 @@ if __name__ == "__main__":
     parser.add_argument("--cases", type=str, required=True)
     parser.add_argument("--top", type=int, default=12)
     parser.add_argument("--tone", type=str, default=None,
-                        choices=["polite", "friendly", "apologetic"],
+                        choices=["polite", "friendly", "apologetic", "assertive"],
                         help="トーン（HTML title / header / ファイル名にラベル表示）")
     args = parser.parse_args()
 

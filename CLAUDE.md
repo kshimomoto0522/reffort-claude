@@ -62,7 +62,7 @@
 
 | タスクID | 内容 | スケジュール | 起動経路 |
 |----------|------|------------|---------|
-| `monday-ebay-report-delivery` | eBay週次レポート配信 | 毎週月曜 10:00 | Claude scheduled-task |
+| `WeeklyEbayReport` | eBay週次レポート配信（旧 `monday-ebay-report-delivery`・2026-05-04 移管） | 毎週月曜 10:05 | **Windowsタスクスケジューラ直接** |
 | `biweekly-claude-maintenance` | Claude Code運用の肥大化監視＋最新情報取込＋改善提案 | 第1・第3月曜 10:00 | Claude scheduled-task |
 | `monday-report-requests-review` | 先週のレポート改善要望を社長DMへ報告 | 毎週月曜 9:50 | Claude scheduled-task |
 | `CampersMemberRemoval` | Campersメンバー削除（Playwright版） | 毎日 5:00 | **Windowsタスクスケジューラ直接** |

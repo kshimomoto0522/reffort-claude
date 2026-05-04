@@ -19,6 +19,7 @@ import re
 import time
 import argparse
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Windows環境の文字化け対策
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
@@ -471,6 +472,85 @@ def _save_as_csv(all_results, output_path):
 
 
 # ============================================================
+# 1モデル分タスク（ThreadPoolExecutor 並列実行用）
+# ============================================================
+
+def _run_one_model_task(model_spec, messages, case_id, version, buyer_msg,
+                         product_info, conv_history, use_production_payload,
+                         prod_response_format, prod_temperature,
+                         enable_judge, judge_model):
+    """
+    1モデル分の生成 + AI採点を実行する。
+    各テストケース内のモデルループを ThreadPoolExecutor で並列化するために
+    1関数化したもの。スレッド内の状態は完全独立（共有変数なし）。
+    """
+    mid, label, provider, model_id, in_price, out_price = model_spec
+
+    result = {
+        "case_id": case_id,
+        "model_id": mid,
+        "model_name": label,
+        "prompt_version": version,
+        "buyer_message": buyer_msg,
+    }
+
+    try:
+        # AI Reply生成（本番再現モード時は temperature=0.2 + json_schema strict）
+        if use_production_payload and provider == "openai":
+            result_text, in_tok, out_tok, elapsed = call_model(
+                provider, model_id, messages,
+                response_format=prod_response_format,
+                temperature_override=prod_temperature,
+            )
+        else:
+            result_text, in_tok, out_tok, elapsed = call_model(provider, model_id, messages)
+
+        # コスト計算
+        cost_usd = (in_tok / 1_000_000 * in_price) + (out_tok / 1_000_000 * out_price)
+        cost_jpy = cost_usd * JPY_RATE
+
+        # JSON解析（buyerLanguage / jpnLanguage を取り出す）
+        try:
+            result_json = json.loads(result_text)
+            buyer_reply = result_json.get("buyerLanguage", result_text)
+            jpn_reply = result_json.get("jpnLanguage", "")
+        except json.JSONDecodeError:
+            buyer_reply = result_text
+            jpn_reply = "（JSONパース失敗）"
+
+        result.update({
+            "buyer_reply": buyer_reply,
+            "jpn_reply": jpn_reply,
+            "input_tokens": in_tok,
+            "output_tokens": out_tok,
+            "elapsed": elapsed,
+            "cost_usd": cost_usd,
+            "cost_jpy": cost_jpy,
+            "raw_output": result_text,
+        })
+
+        # AI採点
+        if enable_judge:
+            try:
+                from ai_judge import judge_reply
+                score = judge_reply(
+                    buyer_message=buyer_msg,
+                    ai_reply=buyer_reply,
+                    product_info=product_info,
+                    conversation_history=conv_history,
+                    judge_model=judge_model
+                )
+                result["score"] = score
+            except Exception as e:
+                result["score"] = {"total": 0, "summary_ja": f"採点エラー: {e}"}
+
+    except Exception as e:
+        result["error"] = str(e)
+
+    return result
+
+
+# ============================================================
 # メイン処理
 # ============================================================
 
@@ -552,6 +632,9 @@ def run_batch_test(model_ids, prompt_versions, cases, judge_model="openai",
         prod_temperature = PRODUCTION_TEMPERATURE
         print(f"  [本番再現モード] temperature={prod_temperature} / json_schema strict / "
               f"forced_template={forced_template} / tone={tone}")
+    else:
+        prod_response_format = None
+        prod_temperature = None
 
     for case in cases:
         case_id = case["id"]
@@ -586,78 +669,44 @@ def run_batch_test(model_ids, prompt_versions, cases, judge_model="openai",
                 # 旧来: 既存messagesのadmin promptだけ差し替え
                 messages = replace_admin_prompt(messages_orig, prompts[version])
 
-            for mid, label, provider, model_id, in_price, out_price in models:
-                current += 1
-                print(f"[{current}/{total_combinations}] {case_id} | {label} | v{version} ...", end="", flush=True)
-
-                result = {
-                    "case_id": case_id,
-                    "model_id": mid,
-                    "model_name": label,
-                    "prompt_version": version,
-                    "buyer_message": buyer_msg,
-                }
-
-                try:
-                    # AI Reply生成（本番再現モード時は temperature=0.2 + json_schema strict）
-                    if use_production_payload and provider == "openai":
-                        result_text, in_tok, out_tok, elapsed = call_model(
-                            provider, model_id, messages,
-                            response_format=prod_response_format,
-                            temperature_override=prod_temperature,
-                        )
+            # モデルループを ThreadPoolExecutor で並列実行（質に影響なし・速度短縮）
+            # 各モデルは完全独立な API 呼び出しなのでスレッド競合なし
+            # 合計時間 = max(各モデル時間) になり、5-Mini除外時の2モデルなら半減見込み
+            print(f"  [並列] {case_id} | v{version} | {len(models)}モデル同時実行開始")
+            with ThreadPoolExecutor(max_workers=max(1, len(models))) as executor:
+                futures = [
+                    executor.submit(
+                        _run_one_model_task,
+                        model_spec, messages, case_id, version, buyer_msg,
+                        product_info, conv_history,
+                        use_production_payload,
+                        prod_response_format,
+                        prod_temperature,
+                        enable_judge, judge_model,
+                    )
+                    for model_spec in models
+                ]
+                for future in as_completed(futures):
+                    result = future.result()
+                    current += 1
+                    label = result.get("model_name", "?")
+                    if "error" in result:
+                        print(f"  [{current}/{total_combinations}] {case_id} | {label} | v{version} ... エラー: {result['error']}")
                     else:
-                        result_text, in_tok, out_tok, elapsed = call_model(provider, model_id, messages)
+                        elapsed = result.get("elapsed", 0)
+                        in_tok = result.get("input_tokens", 0)
+                        out_tok = result.get("output_tokens", 0)
+                        cost = result.get("cost_jpy", 0)
+                        score = result.get("score") or {}
+                        score_total = score.get("total", "?")
+                        summary = score.get("summary_ja", "")
+                        suffix = f" | スコア: {score_total}/25 — {summary}" if enable_judge else ""
+                        print(f"  [{current}/{total_combinations}] {case_id} | {label} | v{version} ... "
+                              f"{elapsed:.1f}秒 | {in_tok}+{out_tok}tok | ¥{cost:.3f}{suffix}")
+                    all_results.append(result)
 
-                    # コスト計算
-                    cost_usd = (in_tok / 1_000_000 * in_price) + (out_tok / 1_000_000 * out_price)
-                    cost_jpy = cost_usd * JPY_RATE
-
-                    # JSON解析（buyerLanguage / jpnLanguage を取り出す）
-                    try:
-                        result_json = json.loads(result_text)
-                        buyer_reply = result_json.get("buyerLanguage", result_text)
-                        jpn_reply = result_json.get("jpnLanguage", "")
-                    except json.JSONDecodeError:
-                        buyer_reply = result_text
-                        jpn_reply = "（JSONパース失敗）"
-
-                    result.update({
-                        "buyer_reply": buyer_reply,
-                        "jpn_reply": jpn_reply,
-                        "input_tokens": in_tok,
-                        "output_tokens": out_tok,
-                        "elapsed": elapsed,
-                        "cost_usd": cost_usd,
-                        "cost_jpy": cost_jpy,
-                        "raw_output": result_text,
-                    })
-
-                    print(f" {elapsed:.1f}秒 | {in_tok}+{out_tok}tok | ¥{cost_jpy:.3f}")
-
-                    # AI採点
-                    if enable_judge:
-                        print(f"  → AI採点中...", end="", flush=True)
-                        try:
-                            score = judge_reply(
-                                buyer_message=buyer_msg,
-                                ai_reply=buyer_reply,
-                                product_info=product_info,
-                                conversation_history=conv_history,
-                                judge_model=judge_model
-                            )
-                            result["score"] = score
-                            print(f" スコア: {score.get('total', '?')}/25 — {score.get('summary_ja', '')}")
-                        except Exception as e:
-                            result["score"] = {"total": 0, "summary_ja": f"採点エラー: {e}"}
-                            print(f" 採点エラー: {e}")
-
-                except Exception as e:
-                    result["error"] = str(e)
-                    print(f" エラー: {e}")
-
-                all_results.append(result)
-                time.sleep(1)  # レート制限対策
+        # ケース間 sleep のみ（モデル間 sleep は並列実行のため削除）
+        time.sleep(1)
 
     return all_results
 
@@ -685,7 +734,7 @@ if __name__ == "__main__":
     parser.add_argument("--no-forced-template", action="store_true",
                         help="本番再現モード時、FORCED TEMPLATEブロックを外す（A/B比較用）")
     parser.add_argument("--tone", type=str, default="polite",
-                        choices=["polite", "friendly", "apologetic"],
+                        choices=["polite", "friendly", "apologetic", "assertive"],
                         help="tone設定（本番再現モード時）")
     parser.add_argument("--seller-name", type=str, default="rioxxrinaxjapan",
                         help="FORCED TEMPLATE用のseller_name")

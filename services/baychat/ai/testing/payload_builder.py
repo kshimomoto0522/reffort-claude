@@ -168,6 +168,7 @@ def _build_forced_template_content(tone, buyer_name, seller_name):
     elif tone == "apologetic":
         template = FORCED_TEMPLATE_APOLOGETIC
     else:
+        # POLITE と ASSERTIVE は同じテンプレ（"Best regards,"）を使用
         template = FORCED_TEMPLATE_POLITE
     # {seller_name_value}と{buyer_name_value}のみ置換（他の{}はテンプレ本文の一部なので残す）
     return (
@@ -224,8 +225,8 @@ def build_production_payload(
     返り値:
       list[dict] — OpenAI chat completions互換のmessages配列
     """
-    if tone not in ("polite", "friendly", "apologetic"):
-        raise ValueError(f"tone は polite/friendly/apologetic のいずれか: {tone}")
+    if tone not in ("polite", "friendly", "apologetic", "assertive"):
+        raise ValueError(f"tone は polite/friendly/apologetic/assertive のいずれか: {tone}")
 
     # FORCED_TEMPLATE 除去構成（Cowatech prd 2026-04-22 反映と一致）
     if prompt_version in ("2.5", "2.3_baseline") or prompt_version.startswith("2.3_baseline"):

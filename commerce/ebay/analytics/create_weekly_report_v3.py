@@ -1218,7 +1218,10 @@ if FETCH_EBAY_API:
         if sample:
             try:
                 age = (TODAY - datetime.strptime(sample, '%Y-%m-%d').date()).days
-                if age < EBAY_CACHE_DAYS:
+                # 週次レポート基準日（月曜）は前週新規出品がseller_cacheに反映されていないとTOP15等が空表示になるため強制再取得
+                if TODAY.weekday() == 0 and age >= 1:
+                    print(f'🔄 月曜のためseller_cache強制再取得（前回:{sample} / {age}日前 → 前週新規出品の取りこぼし防止）')
+                elif age < EBAY_CACHE_DAYS:
                     cache_valid = True
                     print(f'✅ eBay APIキャッシュ利用（取得日:{sample} / {age}日前 / {len(seller_cache)}件）')
             except Exception:
@@ -2225,12 +2228,24 @@ if len(要調査) > 0:
 # ─────────────────────────────────────────────────────────────
 ws6 = wb.create_sheet('🗑 削除候補')
 ws6.sheet_view.showGridLines = False
-# A:タイトル B:ItemID C:SKU D:在庫 E:掲載日数 F:広告状態 G:ウォッチ数 H:生涯販売数 I:前週カテゴリ J:削除判定 K:削除済✅ L:メモ
-for col, w in zip('ABCDEFGHIJKL', [W_TITLE, W_ITEM_ID, W_SKU, W_QTY, W_DAYS, W_PROMO,
-                                    W_MEMO, W_MEMO, W_PREV_CAT, W_RANK+4, W_CHECK, W_MEMO]):
+
+# 重複出品の検出：削除候補（L1+L2）内で同一SKUが複数Item IDに紐づくケース（佐藤大将 2026-04-10 要望）
+_削除候補_sku_count = {}
+for _it in (削除L1 + 削除L2):
+    _s, _, _, _, _ = get_item_api_data(_it['id'])
+    if _s and str(_s).strip():
+        _削除候補_sku_count[_s] = _削除候補_sku_count.get(_s, 0) + 1
+
+def _dup_warning_xlsx(s):
+    n = _削除候補_sku_count.get(s, 0) if s else 0
+    return f'⚠️ 重複出品の可能性 ({n}件)' if n >= 2 else ''
+
+# A:タイトル B:ItemID C:SKU D:在庫 E:掲載日数 F:広告状態 G:ウォッチ数 H:生涯販売数 I:前週カテゴリ J:削除判定 K:⚠️重複 L:削除済✅ M:メモ
+for col, w in zip('ABCDEFGHIJKLM', [W_TITLE, W_ITEM_ID, W_SKU, W_QTY, W_DAYS, W_PROMO,
+                                     W_MEMO, W_MEMO, W_PREV_CAT, W_RANK+4, W_MEMO+2, W_CHECK, W_MEMO]):
     ws6.column_dimensions[col].width = w
 
-ws6.merge_cells('A1:L1')
+ws6.merge_cells('A1:M1')
 c = ws6['A1']
 c.value = f'🗑 削除候補 — L1即削除: {削除L1_sku_cnt}件（SKU） ／ L2要確認削除: {削除L2_sku_cnt}件（SKU）'
 c.font = Font(name=FONT, size=11, bold=True, color='FFFFFF')
@@ -2238,7 +2253,7 @@ c.fill = hdr_fill(C_RED_HDR)
 c.alignment = center()
 ws6.row_dimensions[1].height = 24
 
-ws6.merge_cells('A2:L2')
+ws6.merge_cells('A2:M2')
 note6 = ws6['A2']
 note6.value = '⚠️ 削除前に必ずeBayで確認：① ウォッチ数（関心度）② 生涯販売数（過去実績） → 両方ゼロに近い場合のみ削除推奨'
 note6.font = Font(name=FONT, size=9, color='B71C1C', bold=True)
@@ -2251,7 +2266,8 @@ apply_header_row(ws6, 3,
      ('Item ID', W_ITEM_ID), ('SKU', W_SKU),
      ('在庫数', W_QTY), ('掲載日数', W_DAYS), ('広告状態', W_PROMO),
      ('ウォッチ数\n(API自動)', W_MEMO), ('生涯販売数\n(API自動)', W_MEMO),
-     ('前週カテゴリ', W_PREV_CAT), ('削除判定', W_RANK+4), ('削除済✅\n（▼選択）', W_CHECK),
+     ('前週カテゴリ', W_PREV_CAT), ('削除判定', W_RANK+4),
+     ('⚠️ 重複\n(同SKU)', W_MEMO+2), ('削除済✅\n（▼選択）', W_CHECK),
      ('メモ\n（記入）', W_MEMO)],
     C_RED_HDR, row_height=30)
 
@@ -2267,14 +2283,15 @@ for item in 削除L1:
         item['title'], item['id'],
         sku,
         int(item['qty']), f'{item["days"]}日', item['promo'],
-        w, ls, prev_cat, judge, '', '',
+        w, ls, prev_cat, judge,
+        _dup_warning_xlsx(sku), '', '',
     ], bg_color=bg)
     add_ebay_link(ws6, r, 2, item['id'])  # B列=Item ID
     r += 1
 
 r += 1
 
-ws6.merge_cells(f'A{r}:L{r}')
+ws6.merge_cells(f'A{r}:M{r}')
 c2 = ws6.cell(row=r, column=1,
     value=f'【L2：要確認削除】掲載180日以上・インプ50未満・売上ゼロ（{削除L2_sku_cnt}件SKU）― 削除前に上記の確認必須')
 c2.font = Font(name=FONT, size=10, bold=True, color='FFFFFF')
@@ -2287,7 +2304,8 @@ apply_header_row(ws6, r,
     [('商品タイトル', W_TITLE), ('Item ID', W_ITEM_ID), ('SKU', W_SKU),
      ('インプ', W_IMPS), ('PV', W_PV),
      ('在庫数', W_QTY), ('掲載日数', W_DAYS), ('ウォッチ数\n(API自動)', W_MEMO),
-     ('前週カテゴリ', W_PREV_CAT), ('削除判定', W_RANK+4), ('削除済✅\n（▼選択）', W_CHECK),
+     ('前週カテゴリ', W_PREV_CAT), ('削除判定', W_RANK+4),
+     ('⚠️ 重複\n(同SKU)', W_MEMO+2), ('削除済✅\n（▼選択）', W_CHECK),
      ('メモ\n（記入）', W_MEMO)],
     '7B1FA2', row_height=30)
 r += 1
@@ -2304,15 +2322,16 @@ for item in 削除L2:
         sku,
         f'{item["imps"]:,.0f}', int(item['pv']),
         int(item['qty']), f'{item["days"]}日', w,
-        prev_cat, judge, '', '',
+        prev_cat, judge,
+        _dup_warning_xlsx(sku), '', '',
     ], bg_color=bg)
     add_ebay_link(ws6, r, 2, item['id'])  # B列=Item ID
     r += 1
 
-# 削除候補シートのK列にドロップダウン（✅選択式チェックボックス）を追加
+# 削除候補シートのL列にドロップダウン（✅選択式チェックボックス）― 重複列追加でK→Lにシフト
 if r > 4:
     dv_del = DataValidation(type='list', formula1='"✅,"', allow_blank=True, showDropDown=False)
-    dv_del.sqref = f'K4:K{r}'
+    dv_del.sqref = f'L4:L{r}'
     ws6.add_data_validation(dv_del)
 
 # ─────────────────────────────────────────────────────────────

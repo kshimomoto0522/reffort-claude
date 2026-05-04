@@ -4,4 +4,4 @@
 スタッフ詳細・事業概要・広告戦略は `analytics/CLAUDE.md` に集約。ツール詳細は `tools/CLAUDE.md`。
 
 ## 定常タスク
-- 毎週月曜10:00：週次レポート自動配信（`monday-ebay-report-delivery`）
+- 毎週月曜10:05：週次レポート自動配信（Windowsタスク `WeeklyEbayReport`・旧 `monday-ebay-report-delivery`）
