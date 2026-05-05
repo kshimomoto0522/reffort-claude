@@ -1,0 +1,147 @@
+[
+  {
+    "id": "hold01_wholesale_inquiry",
+    "category": "holdmode_validation",
+    "stage": "stage1",
+    "product_category": "fashion_general",
+    "emotion": "businesslike",
+    "language": "english",
+    "situation": "Retail store owner asking about long-term wholesale arrangement (50 units/month, wholesale pricing, combined shipping, fast-track processing). Requires CEO-level business decision; AI cannot answer immediately.",
+    "buyer_ebay": "B51",
+    "buyer_message": "Hi, I run a retail boutique in NY. I'd like to order around 50 units of this product every month going forward. Could you offer wholesale pricing, combined shipping per order, and any way to fast-track processing? I'm open to a long-term arrangement if we can work out the right numbers.",
+    "buyer_message_ja": "こんにちは、NYで小売店を営んでいる者です。今後この商品を毎月50個ほど継続発注したいと考えています。卸価格・同梱配送・優先処理は可能でしょうか？条件が合えば長期取引も視野に入れています。",
+    "history_ja": ["こんにちは、NYで小売店を営んでいる者です。今後この商品を毎月50個ほど継続発注したいと考えています。卸価格・同梱配送・優先処理は可能でしょうか？条件が合えば長期取引も視野に入れています。"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"285999111003\", \"Title\": \"Comme des Garcons PLAY x Converse Chuck Taylor Black Heart Logo US 9\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Shoes:Athletic Shoes\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"168.00\", \"CurrentPrice\": \"168.00\", \"Quantity\": \"3\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New with tags\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"38.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-05T02:14:09.000Z] Hi, I run a retail boutique in NY. I'd like to order around 50 units of this product every month going forward. Could you offer wholesale pricing, combined shipping per order, and any way to fast-track processing? I'm open to a long-term arrangement if we can work out the right numbers."
+      }
+    ]
+  },
+  {
+    "id": "hold02_shipment_status_inquiry",
+    "category": "holdmode_validation",
+    "stage": "stage3",
+    "product_category": "watch",
+    "emotion": "anxious",
+    "language": "english",
+    "situation": "Buyer asks about a delayed package after 10 days. Seller needs to contact carrier directly to investigate; AI cannot answer immediately.",
+    "buyer_ebay": "B52",
+    "buyer_message": "Hi, it's been 10 days since you shipped my watch and the tracking still shows it stuck in transit. Where is my package? I'm getting worried something happened to it.",
+    "buyer_message_ja": "こんにちは、時計を発送していただいてから10日が経ちましたが、トラッキングがまだ配送中で止まっています。荷物はどこにあるのでしょうか？何かあったのではないかと心配しています。",
+    "history_ja": ["こんにちは、時計を発送していただいてから10日が経ちましたが、トラッキングがまだ配送中で止まっています。荷物はどこにあるのでしょうか？何かあったのではないかと心配しています。"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"176447889120\", \"Title\": \"Grand Seiko SBGA211 Snowflake Spring Drive Titanium 41mm Watch Japan\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Wristwatches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"5800.00\", \"CurrentPrice\": \"5800.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"95.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-23T03:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-25T01:00:00.000Z] shipped"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-05T03:30:55.000Z] Hi, it's been 10 days since you shipped my watch and the tracking still shows it stuck in transit. Where is my package? I'm getting worried something happened to it."
+      }
+    ]
+  },
+  {
+    "id": "hold03_compound_deal_request",
+    "category": "holdmode_validation",
+    "stage": "stage1",
+    "product_category": "camera",
+    "emotion": "negotiating",
+    "language": "english",
+    "situation": "Buyer requests a compound deal: $50 discount AND free express shipping AND 60-day return window. Requires CEO judgment on margin/repeat-customer value tradeoff.",
+    "buyer_ebay": "B53",
+    "buyer_message": "Hello, I'm seriously interested in this camera but I'd need some flexibility — could we do $1,150 instead of $1,200, AND include free express shipping, AND extend the return window to 60 days? I'm a regular eBay shopper with a great history. If we can make this work I'll commit today.",
+    "buyer_message_ja": "こんにちは、このカメラに本気で興味があるのですが、いくつかご相談させてください — $1,200を$1,150にしていただき、加えて速達送料無料、さらに返品期限を60日に延長していただけませんか？eBayでの購入履歴は良好です。条件が合えば今日購入します。",
+    "history_ja": ["こんにちは、このカメラに本気で興味があるのですが、いくつかご相談させてください — $1,200を$1,150にしていただき、加えて速達送料無料、さらに返品期限を60日に延長していただけませんか？eBayでの購入履歴は良好です。条件が合えば今日購入します。"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"285223445566\", \"Title\": \"Leica Q3 Digital Compact Camera 60.3MP Full Frame Black Excellent Used\", \"PrimaryCategoryName\": \"Cameras & Photo:Digital Cameras\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1200.00\", \"CurrentPrice\": \"1200.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"68.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-05T04:55:18.000Z] Hello, I'm seriously interested in this camera but I'd need some flexibility — could we do $1,150 instead of $1,200, AND include free express shipping, AND extend the return window to 60 days? I'm a regular eBay shopper with a great history. If we can make this work I'll commit today."
+      }
+    ]
+  },
+  {
+    "id": "hold04_damage_claim_refund",
+    "category": "holdmode_validation",
+    "stage": "stage3",
+    "product_category": "guitar",
+    "emotion": "upset",
+    "language": "english",
+    "situation": "Buyer received a damaged item and demands refund. Seller needs to verify photos, assess damage severity, and decide between full refund / partial refund / replacement / return-and-refund.",
+    "buyer_ebay": "B54",
+    "buyer_message": "Just received the guitar today and the headstock has a crack that wasn't shown in the listing photos. The strings are also corroded. This isn't what was advertised. I want a full refund, please.",
+    "buyer_message_ja": "本日ギターを受け取りましたが、出品写真には写っていなかったヘッドストックのひび割れがあります。弦も腐食しています。これは説明と違います。全額返金をお願いします。",
+    "history_ja": ["本日ギターを受け取りましたが、出品写真には写っていなかったヘッドストックのひび割れがあります。弦も腐食しています。これは説明と違います。全額返金をお願いします。"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"395775882134\", \"Title\": \"Gibson Les Paul Standard 1959 Reissue Sunburst Electric Guitar Used\", \"PrimaryCategoryName\": \"Musical Instruments & Gear:Guitars & Basses\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"4250.00\", \"CurrentPrice\": \"4250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"180.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-25T03:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-26T01:00:00.000Z] shipped"
+      },
+      {
+        "role": "system",
+        "content": "[2026-05-05T08:00:00.000Z] delivered"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-05T09:14:33.000Z] Just received the guitar today and the headstock has a crack that wasn't shown in the listing photos. The strings are also corroded. This isn't what was advertised. I want a full refund, please."
+      }
+    ]
+  },
+  {
+    "id": "hold05_spec_detail_inquiry",
+    "category": "holdmode_validation",
+    "stage": "stage1",
+    "product_category": "camera",
+    "emotion": "curious",
+    "language": "english",
+    "situation": "Buyer asks about a specific feature (manual focus mode availability) that is not in the listing. Seller needs to verify on the actual unit or check manufacturer specs.",
+    "buyer_ebay": "B55",
+    "buyer_message": "Hi, I'm thinking about buying this camera but I need to confirm — does it have a true manual focus mode (with focus peaking), or is it autofocus only? The listing doesn't mention it.",
+    "buyer_message_ja": "こんにちは、このカメラの購入を検討しているのですが、ひとつ確認させてください — 完全なマニュアルフォーカスモード（ピーキング機能付き）はありますか？それともオートフォーカスのみでしょうか？出品ページに記載がなくて。",
+    "history_ja": ["こんにちは、このカメラの購入を検討しているのですが、ひとつ確認させてください — 完全なマニュアルフォーカスモード（ピーキング機能付き）はありますか？それともオートフォーカスのみでしょうか？出品ページに記載がなくて。"],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"176889112233\", \"Title\": \"Fujifilm X100V Premium Compact Digital Camera Silver 26.1MP Used Excellent\", \"PrimaryCategoryName\": \"Cameras & Photo:Digital Cameras\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1485.00\", \"CurrentPrice\": \"1485.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-05T10:08:21.000Z] Hi, I'm thinking about buying this camera but I need to confirm — does it have a true manual focus mode (with focus peaking), or is it autofocus only? The listing doesn't mention it."
+      }
+    ]
+  }
+]

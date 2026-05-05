@@ -116,7 +116,7 @@ function addStatCard(slide, x, y, w, h, number, label, numColor) {
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_16x9";
-pres.author = "下元 敬介（株式会社Reffort）";
+pres.author = "下元 敬介（株式会社リフォート）";
 pres.title = "eBay × AI運営 ウェビナー 2026.04.26";
 
 const TOTAL = 24;
@@ -159,7 +159,7 @@ slideNum++;
     x: 0.8, y: 3.65, w: 5, h: 0.35,
     fontSize: 14, fontFace: F.body, color: C.ice, margin: 0,
   });
-  s.addText("下元 敬介 ─ 株式会社Reffort 代表", {
+  s.addText("下元 敬介 ─ 株式会社リフォート 代表取締役", {
     x: 0.8, y: 4.0, w: 5, h: 0.35,
     fontSize: 13, fontFace: F.body, color: "7A8BAD", margin: 0,
   });

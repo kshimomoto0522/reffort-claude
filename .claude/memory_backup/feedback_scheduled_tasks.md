@@ -125,3 +125,24 @@ ts・カーソル・cursor_token等で「前回の続き」から処理する定
 **How to apply:**
 - 新規タスクで頻度が「1日1回より多い」場合は最初から Windows タスクスケジューラを選ぶ
 - 既存タスクで頻度が高いものを延命させる必要があれば、Run nowで承認焼き直しを月1回以上ルーティン化（ただしUIに「常に許可」が出ないので根本解決にならない）
+
+---
+
+## ルール7: bat の改行コードは CRLF・タスクは VBSラッパー経由で起動（2026-05-05 確立）
+
+Windows タスクスケジューラが bat を起動する際、**LF改行のbatは cmd が正しくパースできず REM 行をコマンドとして解釈してエラーを画面表示** する＋**bat直接起動は黒いcmd窓が一瞬表示される**。社長から「最近頻繁に黒い画面が出る」報告で発覚。
+
+**Why:**
+- LF改行：Git Bash や VS Code 等の Unix 系エディタで bat を保存すると LF になり、cmd は `@echo off` を解釈できないまま REM 行に進み、`'BayChat'/'Every'/'Replaces' is not recognized as ...` のようなエラーを社長画面に出す。文字化けすると `'M' is not recognized` のように見える
+- 黒窓問題：タスクスケジューラの Action.Execute を bat 直接にすると、起動のたびに conhost.exe が cmd窓を一瞬出す。社長の作業中に視界に入ってストレス源になる
+- 「ユーザーがログオンしているかどうかにかかわらず実行（S4U）」モードは管理者権限が必要で実行不可
+
+**How to apply:**
+- **bat保存時は必ず CRLF 改行**（PowerShell `[System.IO.File]::WriteAllBytes` でバイナリ生成する場合は明示的に `0x0D 0x0A` を入れる・通常の Write tool は CRLF が保たれるか確認する）
+- **タスクスケジューラの Action は `wscript.exe` + `.shared/run_hidden.vbs` + bat の3段構成**にする（bat直接起動は禁止）
+  - vbs 中身：`CreateObject("WScript.Shell").Run """" & WScript.Arguments(0) & """", 0, False`
+  - Action.Execute = `wscript.exe`、Arguments = `"<vbs path>" "<bat path>"`
+- 既存タスクの Action 変更は管理者権限不要（`Set-ScheduledTask -Action ...`）
+- 副作用：wscript経由は fire-and-forget なので **bat の exit_code がタスクスケジューラに伝わらない**。失敗検知は bat 内部で Chatwork DM 送信＋ログファイルで担保する（既存の各 reffort バッチは元々この設計なので影響なし）
+- Audit コマンド：`Get-ChildItem *.bat -Recurse | ForEach-Object { ... 0x0A vs 0x0D 0x0A 検査 ... }` を新規bat追加時にチェック
+- 2026-05-05時点で適用済み: BayChatSlackCheck / ChatworkAIReply / DailyGithubBackup / DailyXDigest / WeeklyEbayReport / CampersMemberRemoval（reffort管理タスク全6個）

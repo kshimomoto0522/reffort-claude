@@ -223,7 +223,7 @@ def md_to_elements(md_path, styles):
     elements.append(Spacer(1, 15 * mm))
     elements.append(Paragraph("2026年4月26日（土）", styles["cover_info"]))
     elements.append(Paragraph("対象：Campersメンバー", styles["cover_info"]))
-    elements.append(Paragraph("話者：下元 敬介（株式会社Reffort 代表）", styles["cover_info"]))
+    elements.append(Paragraph("話者：下元 敬介（株式会社リフォート 代表取締役）", styles["cover_info"]))
     elements.append(Spacer(1, 20 * mm))
     elements.append(Paragraph("※ 草案第2版。【要確認】箇所は社長確認後に修正", styles["cover_info"]))
     elements.append(PageBreak())

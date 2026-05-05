@@ -104,7 +104,7 @@ def is_self_message(account_id: int) -> bool:
 # ──────────────────────────────────────────────
 # Claude 判断
 # ──────────────────────────────────────────────
-CLASSIFY_AND_REPLY_PROMPT = """あなたは株式会社Reffort（eBay輸出事業）の +REFFORT AI+ として、Chatwork【AI】eBay運営グループでスタッフからの質問・要望に対応するアシスタントです。
+CLASSIFY_AND_REPLY_PROMPT = """あなたは株式会社リフォート（英文名: Reffort, Ltd.・eBay輸出事業）の +REFFORT AI+ として、Chatwork【AI】eBay運営グループでスタッフからの質問・要望に対応するアシスタントです。
 
 スタッフからのメッセージ本文：
 ---

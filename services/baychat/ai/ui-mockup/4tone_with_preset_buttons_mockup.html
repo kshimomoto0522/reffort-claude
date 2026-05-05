@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BayChat AI Reply — 4トーン + 補足欄プリセットボタン UI 仮デザイン</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 24px;
+    color: #1f2937;
+  }
+  h1 { font-size: 18px; color: #6b21a8; margin: 0 0 6px 0; }
+  .meta { font-size: 12px; color: #6b7280; margin-bottom: 18px; }
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(91, 33, 182, 0.10);
+    padding: 18px;
+  }
+  .legend {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .legend strong { color: #6b21a8; }
+
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 8px;
+    border-bottom: 1px solid #e5e7eb;
+    flex-wrap: wrap;
+  }
+  .control-row + .control-row { border-bottom: none; }
+
+  .tone-group { display: flex; gap: 8px; }
+
+  .tone-btn {
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .tone-btn:hover { border-color: #c4b5fd; background: #faf5ff; }
+  .tone-btn.active {
+    background: #6d28d9;
+    color: #fff;
+    border-color: #6d28d9;
+    box-shadow: 0 2px 6px rgba(109, 40, 217, 0.3);
+  }
+  .tone-btn .emoji { font-size: 16px; }
+
+  .right-spacer { flex: 1; }
+
+  .select {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: #374151;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .select::after { content: "▾"; color: #9ca3af; font-size: 11px; margin-left: 4px; }
+
+  .generate-btn {
+    background: #6d28d9;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(109, 40, 217, 0.25);
+    transition: all 0.15s;
+  }
+  .generate-btn:hover { background: #5b21b6; }
+
+  .toFrom-row .select { padding: 6px 12px; font-size: 12px; }
+  .toFrom-label { font-size: 11px; color: #9ca3af; margin-right: 4px; }
+
+  /* ===== 補足欄プリセットボタン群 ===== */
+  .preset-section {
+    margin-top: 12px;
+    padding: 12px;
+    background: #fdfaff;
+    border: 1px solid #f3e8ff;
+    border-radius: 10px;
+  }
+  .preset-label {
+    font-size: 11.5px;
+    color: #6b21a8;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .preset-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .preset-btn {
+    background: #fff;
+    border: 1px solid #ddd6fe;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #5b21b6;
+    cursor: pointer;
+    transition: all 0.12s;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .preset-btn:hover {
+    background: #ede9fe;
+    border-color: #c4b5fd;
+    transform: translateY(-1px);
+  }
+  .preset-btn:active {
+    background: #ddd6fe;
+    transform: translateY(0);
+  }
+  .preset-btn .emoji { font-size: 13px; }
+
+  .preset-edit-link {
+    font-size: 11px;
+    color: #9ca3af;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: auto;
+  }
+  .preset-edit-link:hover { color: #6b7280; }
+
+  .desc-area {
+    width: 100%;
+    border: 1.5px solid #e9d5ff;
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    min-height: 60px;
+    resize: vertical;
+    color: #1f2937;
+    transition: border-color 0.2s;
+  }
+  .desc-area:focus { outline: none; border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15); }
+  .desc-area::placeholder { color: #9ca3af; }
+
+  .test-hint {
+    background: #faf5ff;
+    border: 1px dashed #c4b5fd;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #5b21b6;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+  .test-hint code {
+    background: #fff;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid #ddd6fe;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>BayChat AI Reply — 4トーン + 補足欄プリセットボタン UI 仮デザイン</h1>
+  <p class="meta">保留モードは廃止 → 補足欄に「よく使う短文ワンクリック挿入」プリセットボタンを設置</p>
+
+  <div class="legend">
+    <strong>これが「補足欄プリセットボタン」</strong>:<br>
+    補足欄の<strong>上に小さな丸ボタンを並べ</strong>、押すと補足欄にその文言が自動入力されます。<br>
+    社長運用想定でよく使う短文（在庫確認中・配送業者確認中など）を <strong>ワンクリックで挿入</strong>。<br>
+    挿入後は自由に編集可能・追加情報を書き足すこともできます。<br>
+    保留モードのボタン1クリック性 + 補足入力の柔軟性を <strong>両立</strong> する設計。
+  </div>
+
+  <!-- ===== 操作行1: トーン + 言語 + 返信生成 ===== -->
+  <div class="control-row">
+    <div class="tone-group">
+      <button class="tone-btn active" data-tone="polite"><span class="emoji">🎩</span><span>丁寧</span></button>
+      <button class="tone-btn" data-tone="friendly"><span class="emoji">😊</span><span>フレンドリー</span></button>
+      <button class="tone-btn" data-tone="apologetic"><span class="emoji">🙇</span><span>謝罪</span></button>
+      <button class="tone-btn" data-tone="assertive"><span class="emoji">⚖️</span><span>主張</span></button>
+    </div>
+    <div class="right-spacer"></div>
+    <div class="select"><span>🌐</span><span>バイヤー言語</span></div>
+    <button class="generate-btn">
+      <span>返信を生成</span>
+      <span style="font-size: 14px;">→</span>
+    </button>
+  </div>
+
+  <!-- ===== 操作行2: TO/FROM ===== -->
+  <div class="control-row toFrom-row">
+    <div class="select"><span class="toFrom-label">TO</span><span>バイヤーID</span></div>
+    <div class="select"><span class="toFrom-label">FROM</span><span>セラーID</span></div>
+  </div>
+
+  <!-- ===== 補足欄＋プリセットボタン ===== -->
+  <div class="preset-section">
+    <div class="preset-label">
+      <span>💡 よく使う補足（クリックで補足欄に挿入）</span>
+      <span class="preset-edit-link">プリセット編集</span>
+    </div>
+    <div class="preset-buttons" id="presetButtons">
+      <button class="preset-btn" data-text="現在確認中のため、後ほど改めてご連絡します。"><span class="emoji">🔍</span>確認後ご連絡</button>
+      <button class="preset-btn" data-text="在庫確認中のため、後ほど改めてご連絡します。"><span class="emoji">📦</span>在庫確認中</button>
+      <button class="preset-btn" data-text="配送業者に確認中のため、後ほど改めてご連絡します。"><span class="emoji">🚚</span>配送業者確認中</button>
+      <button class="preset-btn" data-text="サプライヤーに確認中のため、後ほど改めてご連絡します。"><span class="emoji">🏭</span>仕入先確認中</button>
+      <button class="preset-btn" data-text="破損状態の写真を確認後、対応方針をご連絡します。"><span class="emoji">📸</span>破損写真確認中</button>
+      <button class="preset-btn" data-text="特急配送に対応可能です。"><span class="emoji">⚡</span>特急配送可</button>
+      <button class="preset-btn" data-text="数量割引・卸価格は別途ご相談させてください。"><span class="emoji">💰</span>卸交渉別途</button>
+    </div>
+    <textarea class="desc-area" id="descArea" placeholder="（任意）要点を補足すると、より正確な返信が生成されます。上のボタンから挿入もできます。"></textarea>
+  </div>
+
+  <div class="test-hint">
+    <strong>動作確認</strong>:
+    上の <code>🔍 確認後ご連絡</code> 等のボタンをクリックすると、下の補足欄に該当文言が自動挿入されます。
+    複数押すと連結。挿入後は自由に編集できます。
+    社長想定の運用：押す → そのまま「返信を生成」 = ワンクリックで保留応答相当が生成される。
+  </div>
+</div>
+
+<script>
+  // トーン切替
+  document.querySelectorAll('.tone-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // プリセットボタンで補足欄に挿入
+  const descArea = document.getElementById('descArea');
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.text;
+      // 既に文がある場合は改行を入れて追記、なければそのまま入れる
+      if (descArea.value.trim()) {
+        descArea.value = descArea.value.trim() + ' ' + text;
+      } else {
+        descArea.value = text;
+      }
+      descArea.focus();
+    });
+  });
+</script>
+
+</body>
+</html>

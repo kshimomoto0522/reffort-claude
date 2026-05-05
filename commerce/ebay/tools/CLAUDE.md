@@ -21,12 +21,13 @@
 
 ---
 
-## 開発優先順位（2026年3月21日更新）
+## 開発優先順位（2026年5月5日夜更新）
 
 | 優先度 | ツール | 状態 | 次のアクション |
 |--------|--------|------|--------------|
-| ⚠️ 改善中 | **ASICSツール** | **旧exe暫定稼働中 / v2.3待機** | v2の成功率改善・旧ツールとの差分分析 |
-| ✅ 稼働中 | **adidasツール（scrape_adidas_v1.py）** | **テスト完了・タスク登録済み** | 商品追加に応じてモニタリング |
+| 🔥 改修中 | **ASICS v9 並列ワーカー** | **コード完了・実機テスト未** | **次セッション: テスト→exeビルド→本番デプロイ→.env移行**（`handoff_20260505_evening_parallel_v9.md` 参照） |
+| ✅ 稼働中 | **ASICSツール v8（本番）** | **本番稼働中・全機能完成** | v9完成までこのまま |
+| ⚠️ 改修待ち | **adidasツール（scrape_adidas_v1.py）** | 5/1 出品無しスキップ解除＆redirectリトライ済 | v9完成後に共通機能適用 |
 | 🟢 NEW | **無在庫リサーチツール Ver.1**（`research/`） | **2026-04-30 完成・5/31デモ用** | 楽天/Yahoo APIキー登録＋Marketplace Insights API申請（社長判断） |
 | 🟠 高 | HIROUNエクセル精査ツール | 未着手 | HIROUNのエクセル形式を確認してClaudeで試作 |
 | 🟠 高 | 競合リサーチツール（eBay API版） | **無在庫リサーチに統合済み** | research/ で並行カバー |
@@ -69,40 +70,44 @@
 
 ---
 
-## ASICSツール（稼働中）
+## ASICSツール v8（2026-05-05 現行・本番稼働中）
 
-### 仕様
-- **方式**: Firefox/Selenium（ヘッドレス）。Scrapling版→Selenium版への移行経緯は `development-history.md` 参照
-- **待機時間**: 240秒（固定）— 10〜20秒だとAkamaiにBot検出される
-- **バッチ書き込み**: 15件ごとにスプレッドシートに途中保存（カウンター方式）
-- **シート名**: `eBay在庫調整`（旧ツール互換のため元の名前に戻した）
+### 主要仕様
+- **方式**: Firefox/Selenium（visible だが画面外配置 = `set_window_position(-2000, -2000)`）
+- **ビルド**: PyInstaller 4.6 + Python 3.8.10（venv: `asics_master_work\.venv`）
+- **シート名**: `【ASICS】在庫管理`（旧 `eBay在庫調整` から移行）
+- **シート構造**: 行1=ステータス / 行2=ヘッダー / 行3+=データ
 - **SPREADSHEET_KEY**: `12SGD4RLze25JC6PWCFCOTxbk2qtL5UGp0D3B_mklK68`
+- **待機時間**: 240秒（Akamai対策・固定）
+- **書き込み**: 毎件書き込み（write_one_item で4セルbatch_update API）
+- **1周時間**: 約40時間（605件 × 4分）
+- **自動再起動**: 1周完了後 1時間休憩 → 自動ループ
 
-### タスクスケジューラ（登録済み）
-| タスク名 | 実行時刻 | 呼び出し先 |
-|---------|---------|-----------|
-| ASICS_v2_01ji | 毎日 01:00 | run_v2.bat → Desktop\run_asics.ps1 |
-| ASICS_v2_09ji | 毎日 09:00 | run_v2.bat → Desktop\run_asics.ps1 |
-| ASICS_v2_17ji | 毎日 17:00 | run_v2.bat → Desktop\run_asics.ps1 |
+### v8の機能一覧（`handoff_20260505_asics_v8_complete.md` 詳細）
+- ✅ Mod A: URL空/非ASICS → エラー情報表示
+- ✅ Mod B: Bot検出 → エラー情報表示
+- ✅ Mod C: メインパス後のリトライパス（最大5回）
+- ✅ Mod D: 5件連続Bot検出 → 30分休憩
+- ✅ Mod E: URL空 → eBay情報のみで `0/在Y` 表示
+- ✅ Mod F: Firefox 画面外配置
+- ✅ Mod G: GAS連携 出品削除予約（Q列チェックボックス + Z1ポーリング）
+- ✅ Policy違反対応・APIエラー厳密化・resume機能・ゾンビガード 他
 
-### スプレッドシート構造
-- **行1**: ヘッダー行（旧ツール互換のためステータス行を撤廃）
-- **行2以降**: データ
-- ※ v2のA1ステータス書き込み機能は旧ツールのヘッダーを破壊するため注意
+### タスクスケジューラ
+v8 は自動再起動するので、**スケジューラタスクは不要**（旧 ASICS_v2_*ji は無効化推奨）。  
+過去の登録: ASICS_v2_01ji / 09ji / 17ji（残してOKだが2重起動リスクあり）
 
 ### 運用ルール
 | 操作 | タイミング |
 |------|----------|
-| 行削除・途中挿入 | ツール停止中のみ（行番号ズレでデータ破損） |
-| 一番下への追加 | いつでもOK |
-| End商品の削除 | 行ごと削除（セルだけ消さない） |
+| 行削除・追加 | いつでもOK（次回起動時の compact が空行を物理削除） |
+| Q列チェック → 削除予約 | いつでもOK（**最大4分以内**にツールが検知して削除実行） |
+| ItemID/SKU/URL のセル削除 | OK（compact が物理削除） |
 
-### 旧ツール（exe）の現状（2026年3月30日更新）
-- `scrape_data.exe` はPyInstaller製（Python 3.8）
-- 起動不可だった根本原因はシート名リネーム。`'eBay在庫調整'` に戻して起動成功（2026/3/30）
-- **現在**: 土日の暫定運用として旧exeで稼働中
-- **注意**: config.xlsxのD-G列（eBay APIトークン）は旧exeも使用する。値を変更しないこと
-- **次のステップ**: v2の成功率を改善し、旧exeから移行する（v2.3詳細は `development-history.md`）
+### GAS bound プロジェクト（出品削除予約）
+- scriptId: `1L_zIKz5yW97qRpOqIAaCKzdrWmCIddowiPAiBvhHga93ELSGUUu-JhR1`
+- ローカルコード: `commerce/ebay/tools/gas/asics_delete/`
+- 編集後: `cd commerce/ebay/tools/gas/asics_delete/ && clasp push`
 
 ---
 
@@ -216,5 +221,5 @@ rows = ws.get_all_values()
 
 ---
 
-*最終更新: 2026-04-24（竹案T4実施 — 296→約180行圧縮・退避2ファイル作成・index.md新設）*
-*ASICSツール: v2.3稼働中 / adidasツール: 稼働中 / 仕入管理表GASツール: 本番反映完了*
+*最終更新: 2026-05-05夜（ASICS v9 並列ワーカー実装中・PoC成功・コード改修完了）*
+*ASICSツール: v8稼働中・v9実装中 / adidasツール: 稼働中 / 仕入管理表GASツール: 本番反映完了*

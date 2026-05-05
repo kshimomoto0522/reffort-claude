@@ -21,6 +21,10 @@
         "content": "{\"ItemID\": \"285556789012\", \"Title\": \"Sony A7 III Mirrorless Camera Body Black ILCE-7M3 Excellent Used Japan\", \"PrimaryCategoryName\": \"Cameras & Photo:Digital Cameras\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1180.00\", \"CurrentPrice\": \"1180.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"68.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
       },
       {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Priority\", \"trackingNumber\": \"770099887766\", \"estimatedDeliveryTimeMin\": \"2026-05-02T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
         "role": "system",
         "content": "[2026-04-25T03:00:00.000Z] purchase_completed"
       },
@@ -60,6 +64,10 @@
         "content": "{\"ItemID\": \"166445998123\", \"Title\": \"Louis Vuitton Vintage Speedy 30 Monogram Hand Bag Brown Authentic\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"685.00\", \"CurrentPrice\": \"685.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
       },
       {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"DHL Express\", \"trackingNumber\": \"DHL5566778899\", \"estimatedDeliveryTimeMin\": \"2026-05-02T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
         "role": "system",
         "content": "[2026-04-26T05:00:00.000Z] purchase_completed"
       },
@@ -97,6 +105,10 @@
       {
         "role": "developer",
         "content": "{\"ItemID\": \"395887223344\", \"Title\": \"Sony PlayStation 5 PS5 Standard Disc Edition Console Japan Region NEW Sealed\", \"PrimaryCategoryName\": \"Video Games & Consoles:Video Game Consoles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"498.00\", \"CurrentPrice\": \"498.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Priority\", \"trackingNumber\": \"770044556677\", \"estimatedDeliveryTimeMin\": \"2026-05-02T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",

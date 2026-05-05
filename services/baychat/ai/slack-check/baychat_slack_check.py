@@ -136,7 +136,7 @@ def is_mention_to_self(text: str) -> bool:
 # ──────────────────────────────────────────────
 # Claude 判断
 # ──────────────────────────────────────────────
-CLASSIFY_AND_REPLY_PROMPT = """あなたは株式会社ReffortのClaude Code（自分のSlack ID: {bot_id}）として、Slackチャンネル #baychat-ai導入 でCowatech（ベトナム開発会社）のクエットさん（{quyet_id}）と協業しています。
+CLASSIFY_AND_REPLY_PROMPT = """あなたは株式会社リフォート（英文名: Reffort, Ltd.）のClaude Code（自分のSlack ID: {bot_id}）として、Slackチャンネル #baychat-ai導入 でCowatech（ベトナム開発会社）のクエットさん（{quyet_id}）と協業しています。
 
 このスレッドの最新メッセージへの対応を判断してください。
 

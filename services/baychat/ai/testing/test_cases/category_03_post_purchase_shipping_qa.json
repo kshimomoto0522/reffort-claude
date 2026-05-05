@@ -10,7 +10,9 @@
     "buyer_ebay": "B31",
     "buyer_message": "Hi, has my camera been shipped yet? I purchased it 2 days ago and haven't received any update.",
     "buyer_message_ja": "こんにちは、購入から2日経ちますがカメラはもう発送されましたか?まだ更新がなくて。",
-    "history_ja": ["こんにちは、購入から2日経ちますがカメラはもう発送されましたか?まだ更新がなくて。"],
+    "history_ja": [
+      "こんにちは、購入から2日経ちますがカメラはもう発送されましたか?まだ更新がなくて。"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
@@ -39,13 +41,19 @@
     "buyer_ebay": "B32",
     "buyer_message": "Hello, I received the tracking number but it hasn't updated for 3 days now. Is everything okay with my order?",
     "buyer_message_ja": "こんにちは、トラッキング番号は受け取ったのですが、3日間更新がありません。注文は大丈夫でしょうか？",
-    "history_ja": ["こんにちは、トラッキング番号は受け取ったのですが、3日間更新がありません。注文は大丈夫でしょうか？"],
+    "history_ja": [
+      "こんにちは、トラッキング番号は受け取ったのですが、3日間更新がありません。注文は大丈夫でしょうか？"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
       {
         "role": "developer",
         "content": "{\"ItemID\": \"176891234567\", \"Title\": \"Fender Japan Stratocaster ST62 Sunburst Electric Guitar 1990s MIJ\", \"PrimaryCategoryName\": \"Musical Instruments & Gear:Guitars & Basses\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1250.00\", \"CurrentPrice\": \"1250.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"180.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"DHL Express\", \"trackingNumber\": \"1234567890\", \"estimatedDeliveryTimeMin\": \"2026-05-05T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-08T08:00:00.000Z\", \"shipByDate\": \"2026-05-02T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -72,13 +80,19 @@
     "buyer_ebay": "B33",
     "buyer_message": "Hi, the estimated delivery date was yesterday but the bag still hasn't arrived. I'm getting worried — is there a problem?",
     "buyer_message_ja": "こんにちは、予定到着日は昨日だったのですが、バッグがまだ届きません。心配なのですが、何か問題が起きているのでしょうか？",
-    "history_ja": ["こんにちは、予定到着日は昨日だったのですが、バッグがまだ届きません。心配なのですが、何か問題が起きているのでしょうか？"],
+    "history_ja": [
+      "こんにちは、予定到着日は昨日だったのですが、バッグがまだ届きません。心配なのですが、何か問題が起きているのでしょうか？"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
       {
         "role": "developer",
         "content": "{\"ItemID\": \"195774112084\", \"Title\": \"Coach Vintage Leather Shoulder Bag Tan Brown Authentic\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"180.00\", \"CurrentPrice\": \"180.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"42.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Yokohama\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"EMS International\", \"trackingNumber\": \"EE123456789JP\", \"estimatedDeliveryTimeMin\": \"2026-05-01T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-03T08:00:00.000Z\", \"shipByDate\": \"2026-04-26T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -105,13 +119,19 @@
     "buyer_ebay": "B34",
     "buyer_message": "Hello, I just got a notice from my local customs saying my package is being held there for inspection. I've never had this happen before. What should I do?",
     "buyer_message_ja": "こんにちは、地元の税関から、荷物が検査のため保管されているという通知が届きました。こんな事は初めてで、どうすればいいでしょうか？",
-    "history_ja": ["こんにちは、地元の税関から、荷物が検査のため保管されているという通知が届きました。こんな事は初めてで、どうすればいいでしょうか？"],
+    "history_ja": [
+      "こんにちは、地元の税関から、荷物が検査のため保管されているという通知が届きました。こんな事は初めてで、どうすればいいでしょうか？"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
       {
         "role": "developer",
         "content": "{\"ItemID\": \"166778991023\", \"Title\": \"Canon EF 50mm f/1.4 USM Standard Lens for EOS DSLR Used Excellent\", \"PrimaryCategoryName\": \"Cameras & Photo:Lenses & Filters:Lenses\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"245.00\", \"CurrentPrice\": \"245.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"45.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Priority\", \"trackingNumber\": \"770012345678\", \"estimatedDeliveryTimeMin\": \"2026-05-03T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-06T08:00:00.000Z\", \"shipByDate\": \"2026-04-30T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -138,13 +158,19 @@
     "buyer_ebay": "B35",
     "buyer_message": "Hi, I just received the watch and it's beautiful, thank you. However, the warranty card that I saw in the listing photos doesn't seem to be in the box. Can you check?",
     "buyer_message_ja": "こんにちは、時計を受け取りました、とても綺麗です。ありがとうございます。ただ、出品写真に写っていた保証書が箱の中に見当たりません。確認していただけますか？",
-    "history_ja": ["こんにちは、時計を受け取りました、とても綺麗です。ありがとうございます。ただ、出品写真に写っていた保証書が箱の中に見当たりません。確認していただけますか？"],
+    "history_ja": [
+      "こんにちは、時計を受け取りました、とても綺麗です。ありがとうございます。ただ、出品写真に写っていた保証書が箱の中に見当たりません。確認していただけますか？"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
       {
         "role": "developer",
         "content": "{\"ItemID\": \"275889122456\", \"Title\": \"Seiko Prospex SBDC053 Diver 200m Automatic Watch Black Japan\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Wristwatches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"690.00\", \"CurrentPrice\": \"690.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New with tags\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"DHL Express\", \"trackingNumber\": \"9876543210\", \"estimatedDeliveryTimeMin\": \"2026-04-30T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-02T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -186,6 +212,10 @@
       {
         "role": "developer",
         "content": "{\"ItemID\": \"395558122109\", \"Title\": \"Akira Manga Complete Set Volumes 1-6 Japanese First Edition Katsuhiro Otomo\", \"PrimaryCategoryName\": \"Books & Magazines:Comics & Graphic Novels\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"320.00\", \"CurrentPrice\": \"320.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"38.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"EMS International\", \"trackingNumber\": \"EJ987654321JP\", \"estimatedDeliveryTimeMin\": \"2026-05-08T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-12T08:00:00.000Z\", \"shipByDate\": \"2026-05-03T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -233,6 +263,10 @@
         "content": "{\"ItemID\": \"166889334512\", \"Title\": \"Bandai PG Perfect Grade RX-78-2 Gundam 1/60 Plastic Model Kit New Sealed\", \"PrimaryCategoryName\": \"Toys & Hobbies:Models & Kits:Anime\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"218.00\", \"CurrentPrice\": \"218.00\", \"Quantity\": \"2\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Economy\", \"ShippingServiceCost\": \"48.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
       },
       {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Economy\", \"trackingNumber\": \"770098765432\", \"estimatedDeliveryTimeMin\": \"2026-05-01T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-26T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
         "role": "system",
         "content": "[2026-04-23T05:00:00.000Z] purchase_completed"
       },
@@ -276,6 +310,10 @@
       {
         "role": "developer",
         "content": "{\"ItemID\": \"285332119876\", \"Title\": \"Issey Miyake L'Eau d'Issey Pour Homme 75ml EDT Vintage Discontinued\", \"PrimaryCategoryName\": \"Health & Beauty:Fragrances:Men's Fragrances\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"95.00\", \"CurrentPrice\": \"95.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"32.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Priority\", \"trackingNumber\": \"770011223344\", \"estimatedDeliveryTimeMin\": \"2026-05-06T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-09T08:00:00.000Z\", \"shipByDate\": \"2026-05-04T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -323,6 +361,10 @@
         "content": "{\"ItemID\": \"195994411203\", \"Title\": \"Levi's Vintage Clothing 1947 501 Jeans Rigid Indigo Selvedge W34 L34 Cone Mills\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Clothing:Jeans\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"265.00\", \"CurrentPrice\": \"265.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New with tags\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"42.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
       },
       {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"EMS International\", \"trackingNumber\": \"EJ112233445JP\", \"estimatedDeliveryTimeMin\": \"2026-04-29T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-02T08:00:00.000Z\", \"shipByDate\": \"2026-04-24T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
         "role": "system",
         "content": "[2026-04-22T04:00:00.000Z] purchase_completed"
       },
@@ -359,7 +401,9 @@
     "buyer_ebay": "B40",
     "buyer_message": "Hi! I just realized I entered the wrong shipping address when I purchased these sneakers an hour ago. Could you please change it before shipping? The correct one is 245 Pine Street, Apt 12B, Brooklyn NY 11215.",
     "buyer_message_ja": "こんにちは！1時間前に購入した際、配送先住所を間違って入力していたことに気づきました。発送前に変更していただけませんか？正しい住所は245 Pine Street, Apt 12B, Brooklyn NY 11215 です。",
-    "history_ja": ["こんにちは！1時間前に購入した際、配送先住所を間違って入力していたことに気づきました。発送前に変更していただけませんか？正しい住所は245 Pine Street, Apt 12B, Brooklyn NY 11215 です。"],
+    "history_ja": [
+      "こんにちは！1時間前に購入した際、配送先住所を間違って入力していたことに気づきました。発送前に変更していただけませんか？正しい住所は245 Pine Street, Apt 12B, Brooklyn NY 11215 です。"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
@@ -388,13 +432,19 @@
     "buyer_ebay": "B41",
     "buyer_message": "I had to pay $80 in customs when this was delivered today!! I never agreed to this. I want a full refund of the customs charge. This feels like a scam — you should have warned me!",
     "buyer_message_ja": "今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！",
-    "history_ja": ["今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！"],
+    "history_ja": [
+      "今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
       {
         "role": "developer",
         "content": "{\"ItemID\": \"285556789012\", \"Title\": \"Sony A7 III Mirrorless Camera Body Black ILCE-7M3 Excellent Used Japan\", \"PrimaryCategoryName\": \"Cameras & Photo:Digital Cameras\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"1180.00\", \"CurrentPrice\": \"1180.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"68.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Priority\", \"trackingNumber\": \"770099887766\", \"estimatedDeliveryTimeMin\": \"2026-05-02T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -425,13 +475,19 @@
     "buyer_ebay": "B42",
     "buyer_message": "This bag is FAKE!! The stitching doesn't match what I've seen on authentic ones online, and the lining feels cheap. I'm going to open a return and report you to eBay if you don't refund me immediately.",
     "buyer_message_ja": "このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。",
-    "history_ja": ["このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。"],
+    "history_ja": [
+      "このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
       {
         "role": "developer",
         "content": "{\"ItemID\": \"166445998123\", \"Title\": \"Louis Vuitton Vintage Speedy 30 Monogram Hand Bag Brown Authentic\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"685.00\", \"CurrentPrice\": \"685.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"DHL Express\", \"trackingNumber\": \"DHL5566778899\", \"estimatedDeliveryTimeMin\": \"2026-05-02T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",
@@ -462,13 +518,19 @@
     "buyer_ebay": "B43",
     "buyer_message": "Why didn't you deliver the console to my correct address?! It went to my old address and now I have to figure out how to get it. You sent it to the WRONG place. This is your responsibility to fix!",
     "buyer_message_ja": "なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！",
-    "history_ja": ["なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！"],
+    "history_ja": [
+      "なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！"
+    ],
     "num_messages": 1,
     "has_seller_history": false,
     "input": [
       {
         "role": "developer",
         "content": "{\"ItemID\": \"395887223344\", \"Title\": \"Sony PlayStation 5 PS5 Standard Disc Edition Console Japan Region NEW Sealed\", \"PrimaryCategoryName\": \"Video Games & Consoles:Video Game Consoles\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"498.00\", \"CurrentPrice\": \"498.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Priority\", \"ShippingServiceCost\": \"75.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Priority\", \"trackingNumber\": \"770044556677\", \"estimatedDeliveryTimeMin\": \"2026-05-02T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
       },
       {
         "role": "system",

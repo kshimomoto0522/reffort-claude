@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BayChat AI Reply モデル比較レポート — トーン ASSERTIVE (主張)</title>
+<style>
+    body {
+        font-family: 'Yu Gothic UI', 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+        background: #f5f3ff;
+        color: #1f2937;
+        margin: 0; padding: 0;
+    }
+    .container { max-width: 1600px; margin: 0 auto; padding: 32px; }
+    header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        color: white; padding: 28px 32px; border-radius: 16px; margin-bottom: 24px;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.25);
+    }
+    header h1 { margin: 0 0 4px; font-size: 24px; }
+    header .subtitle { opacity: 0.88; font-size: 14px; }
+
+    h2 {
+        color: #5b21b6;
+        border-bottom: 3px solid #7c3aed;
+        padding-bottom: 6px; margin-top: 32px;
+    }
+    h3 { color: #5b21b6; }
+
+    .summary-section {
+        background: white; padding: 24px; border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+
+    table.agg-table {
+        width: 100%; border-collapse: collapse; margin-top: 12px;
+        font-size: 13px;
+    }
+    table.agg-table th, table.agg-table td {
+        border: 1px solid #e5e7eb; padding: 8px 10px;
+        text-align: left; vertical-align: middle;
+    }
+    table.agg-table th {
+        background: #ede9fe; color: #5b21b6;
+        font-weight: 600; text-align: center;
+    }
+    table.agg-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.agg-table td.num.score { font-weight: 700; color: #5b21b6; font-size: 15px; }
+    table.agg-table td.model-name { white-space: nowrap; }
+
+    .badge-winner {
+        background: #7c3aed; color: white; padding: 2px 8px;
+        border-radius: 10px; font-size: 11px; margin-left: 4px;
+    }
+
+    /* 補足情報 + 再生成ボタン */
+    .supplemental-block {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 2px solid #f59e0b;
+        border-radius: 10px; padding: 16px; margin-top: 16px;
+    }
+    .supplemental-label {
+        display: block; font-weight: 700; color: #78350f;
+        margin-bottom: 8px; font-size: 13px;
+    }
+    .supplemental-label small { font-weight: 400; color: #92400e; }
+    .supplemental-input {
+        width: 100%; box-sizing: border-box;
+        border: 1px solid #f59e0b; border-radius: 6px;
+        padding: 10px 12px; font-size: 13px;
+        font-family: inherit; resize: vertical;
+        background: white;
+    }
+    .supplemental-input:focus {
+        outline: none; border-color: #d97706;
+        box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+    }
+    .supplemental-actions {
+        margin-top: 10px; display: flex; align-items: center; gap: 12px;
+    }
+    .regen-btn {
+        background: #d97706; color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; font-weight: 700;
+        font-size: 14px; cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(217,119,6,0.3);
+    }
+    .regen-btn:hover {
+        background: #b45309; transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(217,119,6,0.4);
+    }
+    .regen-btn:disabled {
+        background: #9ca3af; cursor: wait;
+        transform: none; box-shadow: none;
+    }
+    .regen-status {
+        font-size: 13px; color: #78350f; font-weight: 600;
+    }
+    .regen-status.error { color: #dc2626; }
+    .regen-status.success { color: #15803d; }
+
+    /* 再生成中の reply-card のオーバーレイ */
+    .reply-card.regenerating { position: relative; opacity: 0.6; }
+    .reply-card.regenerating::after {
+        content: "再生成中..."; position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: #7c3aed; color: white;
+        padding: 8px 16px; border-radius: 8px; font-weight: 700;
+    }
+    .reply-card.regenerated {
+        animation: highlight 1.5s ease-out;
+    }
+    @keyframes highlight {
+        0% { background: #fef3c7; }
+        100% { background: white; }
+    }
+    .meta-elapsed.fast b { color: #15803d; }
+    .meta-elapsed.slow b { color: #dc2626; }
+
+    .case-card {
+        background: white; margin-top: 20px; padding: 20px;
+        border-radius: 12px; border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .case-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .case-header h3 { margin: 0; font-size: 16px; }
+    .category-pill {
+        background: #ede9fe; color: #5b21b6;
+        padding: 3px 10px; border-radius: 10px; font-size: 12px;
+    }
+
+    .buyer-block {
+        background: #f5f3ff; padding: 14px;
+        border-left: 4px solid #7c3aed; border-radius: 8px;
+        margin-bottom: 14px;
+    }
+    .block-label {
+        font-size: 12px; font-weight: 700; color: #5b21b6;
+        margin-bottom: 8px;
+    }
+
+    /* 会話履歴全体のタイムライン */
+    .history-block {
+        margin-bottom: 16px; background: #fafafa;
+        border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px;
+    }
+    .history-header {
+        font-weight: 700; color: #5b21b6;
+        font-size: 13px; padding: 2px 0 8px;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 8px;
+    }
+    /* タイムライン：最大450pxでスクロール表示 */
+    .history-timeline {
+        max-height: 450px;
+        overflow-y: auto;
+        padding: 10px 4px 10px 4px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+    }
+    .history-timeline::-webkit-scrollbar {
+        width: 10px;
+    }
+    .history-timeline::-webkit-scrollbar-thumb {
+        background: #a78bfa;
+        border-radius: 5px;
+    }
+    .history-timeline::-webkit-scrollbar-track {
+        background: #f5f3ff;
+    }
+    .product-info {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px 12px; margin: 10px 0;
+        font-size: 12px;
+    }
+    .product-label {
+        display: block; color: #5b21b6;
+        font-weight: 700; margin-bottom: 6px; font-size: 11px;
+    }
+    .product-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 6px;
+    }
+    .msg {
+        margin: 6px 0; padding: 8px 12px;
+        border-radius: 8px; font-size: 12px;
+    }
+    .msg-role {
+        display: inline-block; font-weight: 700; font-size: 11px;
+        margin-bottom: 4px;
+    }
+    .msg-body {
+        white-space: pre-wrap; word-break: break-word;
+        font-size: 12px; line-height: 1.55;
+    }
+    .msg-system {
+        background: #eef2ff; border-left: 3px solid #6366f1; color: #4338ca;
+        font-size: 11px;
+    }
+    .msg-assistant {
+        background: #f0fdf4; border-left: 3px solid #22c55e;
+        margin-left: 30px;  /* セラー側はインデント */
+    }
+    .msg-assistant .msg-role { color: #15803d; }
+    .msg-user {
+        background: #ede9fe; border-left: 3px solid #7c3aed;
+    }
+    .msg-user .msg-role { color: #5b21b6; }
+    /* 最終バイヤーメッセージは強調 */
+    .msg-user-latest {
+        background: #fef3c7 !important;
+        border-left: 4px solid #f59e0b !important;
+        box-shadow: 0 0 0 2px #fbbf24 inset;
+    }
+    .msg-user-latest .msg-role { color: #b45309 !important; }
+    /* 履歴の日本語訳ブロック（各メッセージの下に小さく表示） */
+    .msg-body-ja {
+        margin-top: 6px; padding-top: 6px;
+        border-top: 1px dashed #e5e7eb;
+        font-size: 11px; line-height: 1.5;
+        color: #6b7280;
+        white-space: pre-wrap; word-break: break-word;
+    }
+    .msg-body-ja .ja-label {
+        display: inline-block; font-size: 10px;
+        color: #5b21b6; font-weight: 700;
+        margin-right: 4px;
+    }
+
+    /* ケース内勝者バッジ */
+    .case-winners { display: flex; gap: 4px; }
+    .case-winner-badge {
+        padding: 2px 8px; border-radius: 10px;
+        font-size: 10px; font-weight: 700; color: white;
+    }
+    .win-score { background: #7c3aed; }
+    .win-speed { background: #0ea5e9; }
+    .win-cost { background: #f59e0b; }
+
+    .bilingual {
+        display: grid; grid-template-columns: 1fr; gap: 12px;
+    }
+    .bilingual pre {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 6px; padding: 10px; margin: 4px 0 0;
+        white-space: pre-wrap; word-break: break-word; font-size: 13px;
+        font-family: inherit; max-height: 260px; overflow-y: auto;
+    }
+    .lang-label {
+        font-size: 11px; color: #6b7280; font-weight: 600;
+    }
+
+    .reply-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+        gap: 12px;
+    }
+    .reply-card {
+        background: #f5f3ff; padding: 14px;
+        border-radius: 10px; border: 1px solid #a78bfa;
+    }
+    .reply-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px; flex-wrap: wrap; gap: 6px;
+    }
+    .model-badge {
+        background: #7c3aed; color: white; padding: 4px 10px;
+        border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+    .score-total { font-size: 12px; color: #6b7280; }
+    .score-total b { color: #5b21b6; font-size: 14px; }
+    .score-detail { margin-bottom: 10px; }
+    .score-pill {
+        display: inline-block; background: white; border: 1px solid #e5e7eb;
+        padding: 2px 8px; border-radius: 10px; font-size: 11px; margin: 2px 2px 0 0;
+    }
+    .score-pill b { color: #5b21b6; }
+    .judge-summary {
+        margin-top: 10px; padding: 8px 10px; background: white;
+        border: 1px dashed #a78bfa; border-radius: 6px;
+        font-size: 12px; color: #6b7280;
+    }
+
+    /* フィードバック入力欄 */
+    .feedback-block {
+        margin-top: 16px; padding: 14px;
+        background: #fefce8;  /* ここだけ淡いクリーム色で目立たせる（注意喚起ではなく「入力エリア」として） */
+        border: 2px dashed #a78bfa;
+        border-radius: 10px;
+    }
+    .feedback-label {
+        display: block; font-size: 13px; font-weight: 600;
+        color: #5b21b6; margin-bottom: 6px;
+    }
+    .feedback-label small {
+        font-weight: 400; color: #6b7280; font-size: 11px;
+    }
+    .feedback-input {
+        width: 100%; box-sizing: border-box; padding: 10px;
+        border: 1px solid #e5e7eb; border-radius: 6px;
+        font-family: inherit; font-size: 13px;
+        resize: vertical;
+    }
+    .feedback-input:focus {
+        outline: none; border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+
+    /* フローティングボタン */
+    .floating-download {
+        position: fixed; bottom: 24px; right: 24px;
+        background: #7c3aed; color: white;
+        padding: 14px 22px; border-radius: 30px; border: none;
+        font-size: 14px; font-weight: 600; cursor: pointer;
+        box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+        z-index: 1000;
+    }
+    .floating-download:hover { background: #5b21b6; }
+    .floating-status {
+        position: fixed; bottom: 80px; right: 24px;
+        background: white; border: 1px solid #a78bfa;
+        padding: 6px 12px; border-radius: 20px; font-size: 12px;
+        color: #5b21b6; z-index: 1000;
+    }
+
+    footer {
+        text-align: center; margin-top: 48px; padding-bottom: 80px;
+        color: #6b7280; font-size: 12px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>BayChat AI Reply モデル比較レポート — トーン ASSERTIVE (主張)</h1>
+        <div class="subtitle">
+            <span style="background: #dc2626; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 16px; margin-right: 12px;">トーン: ASSERTIVE / 主張</span>
+            2モデル × 3ケース | 生成日時: 2026-05-05 17:38<br>
+            社長のフィードバックは各ケース下の入力欄に書いてください。自動保存されます。
+        </div>
+    </header>
+
+    <section class="summary-section">
+        <h2>📊 モデル別集計</h2>
+        
+    <table class="agg-table">
+        <thead>
+            <tr>
+                <th>モデル</th><th>件数</th><th>合計<br>(/25)</th>
+                <th>正確<br>性</th><th>トーン</th><th>完全<br>性</th>
+                <th>アクション</th><th>自然さ</th>
+                <th>応答<br>時間</th><th>1回<br>コスト</th><th>月額<br>推定</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="model-name"><strong>GPT-4.1-Mini | v2.3_baseline_natural4_principle</strong> <span class="badge-winner">速度◎</span></td>
+            <td class="num">3</td>
+            <td class="num score">18.0</td>
+            <td class="num">5.0</td>
+            <td class="num">3.0</td>
+            <td class="num">3.7</td>
+            <td class="num">3.3</td>
+            <td class="num">3.0</td>
+            <td class="num">7.8秒</td>
+            <td class="num">¥0.727</td>
+            <td class="num">¥20,125</td>
+        </tr>
+        <tr>
+            <td class="model-name"><strong>GPT-4o-Mini | v2.3_baseline_natural4_principle</strong> <span class="badge-winner">品質◎</span> <span class="badge-winner">コスト◎</span></td>
+            <td class="num">3</td>
+            <td class="num score">19.3</td>
+            <td class="num">4.7</td>
+            <td class="num">4.0</td>
+            <td class="num">3.7</td>
+            <td class="num">3.0</td>
+            <td class="num">4.0</td>
+            <td class="num">10.9秒</td>
+            <td class="num">¥0.269</td>
+            <td class="num">¥7,440</td>
+        </tr></tbody>
+    </table>
+    
+        
+    <h3 style="margin-top:28px">📂 カテゴリ別スコア比較</h3>
+    <table class="agg-table">
+        <thead><tr><th>カテゴリ</th><th>GPT-4.1-Mini</th><th>GPT-4o-Mini</th><th>勝者</th></tr></thead>
+        <tbody></tbody>
+    </table>
+    
+        
+    <h3 style="margin-top:28px">⏱ 速度ばらつき（差分TOP10）</h3>
+    <p style="font-size:13px;color:#6b7280">
+    同じケースでもモデルによって応答時間が大きく違うケースの一覧。
+    「モデル平均」だけでは見えない外れ値の傾向がわかる。
+    </p>
+    <table class="agg-table">
+        <thead><tr><th>ケース</th><th>最速モデル</th><th>最遅モデル</th><th>差分</th></tr></thead>
+        <tbody>
+        <tr>
+            <td>cat03_13_address_blame_buyer_fault_assertive</td>
+            <td>GPT-4.1-Mini <small>(5.4秒)</small></td>
+            <td>GPT-4o-Mini <small>(10.0秒)</small></td>
+            <td class="num"><strong>+4.6秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat03_12_counterfeit_accusation_assertive</td>
+            <td>GPT-4.1-Mini <small>(13.6秒)</small></td>
+            <td>GPT-4o-Mini <small>(17.2秒)</small></td>
+            <td class="num"><strong>+3.6秒</strong></td>
+        </tr>
+        <tr>
+            <td>cat03_11_customs_refund_demand_assertive</td>
+            <td>GPT-4.1-Mini <small>(4.5秒)</small></td>
+            <td>GPT-4o-Mini <small>(5.6秒)</small></td>
+            <td class="num"><strong>+1.1秒</strong></td>
+        </tr></tbody>
+    </table>
+    
+    </section>
+
+    <h2>📌 全3ケース（返信内容 + フィードバック入力欄）</h2>
+    <p style="color:#6b7280">
+    各ケースの一番下に「社長の理想フィードバック」入力欄があります。書き込むと即座にブラウザに自動保存。
+    最下部の <strong>紫ボタン</strong> から全フィードバックをJSONでダウンロードできます。
+    </p>
+    
+    <article class="case-card" data-case-id="cat03_11_customs_refund_demand_assertive">
+        <div class="case-header">
+            <h3>📩 cat03_11_customs_refund_demand_assertive</h3>
+            <span class="category-pill">post_purchase_shipping_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Sony A7 III Mirrorless Camera Body Black ILCE-7M3 Excellent Used Japan</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 1180.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-04-25T03:00:00.000Z] purchase_completed</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-04-26T01:00:00.000Z] shipped</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-05-04T13:00:00.000Z] delivered</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-04T14:05:33.000Z] I had to pay $80 in customs when this was delivered today!! I never agreed to this. I want a full refund of the customs charge. This feels like a scam — you should have warned me!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> 今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>I had to pay $80 in customs when this was delivered today!! I never agreed to this. I want a full refund of the customs charge. This feels like a scam — you should have warned me!</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat03_11_customs_refund_demand_assertive" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>4.5</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.740</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B41,
+
+Thank you for your message. Regarding the customs charge you paid, please understand that customs duties and import taxes are the responsibility of the buyer as a standard practice for international transactions, in line with eBay&#x27;s international shipping framework.
+
+Our store prepares and ships the necessary documents properly, but customs charges and payments are determined by the local customs authorities, and we are not obligated to provide prior warnings.
+
+Refunding customs charges is beyond what we can handle, so we appreciate your understanding. If you have any questions, please refer to eBay&#x27;s official procedures.
+
+Kind regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B41,
+
+ご連絡ありがとうございます。関税の支払いについてご不満のことと存じますが、国際取引における関税や輸入税は買主様のご負担となるのが国際的な標準的な慣行であり、eBayの国際取引の枠組みに準じております。
+
+当店は商品を発送する際に必要な書類を適切に準備し発送しておりますが、関税の請求や支払いは現地の税関の判断によるものであり、当店が事前に警告する義務はございません。
+
+関税の返金は当店の対応範囲外となりますので、ご了承くださいますようお願いいたします。ご不明な点がございましたら、eBayの正式な手続きをご確認ください。
+
+Kind regards,
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat03_11_customs_refund_demand_assertive" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.6</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.270</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B41,
+
+Thank you for your message regarding the customs charges. Please be advised that customs duties and taxes are typically the responsibility of the buyer for international shipments. This is standard practice for cross-border purchases, and we are unable to refund any customs fees incurred.
+
+If you have any further questions, feel free to reach out anytime.
+
+Best regards,
+
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB41、
+
+関税に関するご不満についてお知らせいただき、ありがとうございます。国際配送においては、関税や輸入税が発生することがありますが、これは通常、購入者の責任となります。私たちの出品内容には、関税が発生する可能性があることが明記されており、これに関しては返金を行うことはできません。
+
+今後とも何かご不明な点がございましたら、お気軽にお知らせください。
+
+よろしくお願いいたします。
+
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat03_11_customs_refund_demand_assertive">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat03_11_customs_refund_demand_assertive"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat03_11_customs_refund_demand_assertive', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat03_11_customs_refund_demand_assertive"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat03_12_counterfeit_accusation_assertive">
+        <div class="case-header">
+            <h3>📩 cat03_12_counterfeit_accusation_assertive</h3>
+            <span class="category-pill">post_purchase_shipping_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Louis Vuitton Vintage Speedy 30 Monogram Hand Bag Brown Authentic</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 685.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-04-26T05:00:00.000Z] purchase_completed</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-04-26T08:00:00.000Z] shipped</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-05-04T11:00:00.000Z] delivered</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-04T15:22:18.000Z] This bag is FAKE!! The stitching doesn&#x27;t match what I&#x27;ve seen on authentic ones online, and the lining feels cheap. I&#x27;m going to open a return and report you to eBay if you don&#x27;t refund me immediately.</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>This bag is FAKE!! The stitching doesn&#x27;t match what I&#x27;ve seen on authentic ones online, and the lining feels cheap. I&#x27;m going to open a return and report you to eBay if you don&#x27;t refund me immediately.</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat03_12_counterfeit_accusation_assertive" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>13.6</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.720</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B42,
+
+Thank you for your message. We can confirm that this bag is an authentic vintage Louis Vuitton product. We stand behind the authenticity of the items we list and do not deal in counterfeit goods.
+
+If you wish to proceed with a return, please use eBay&#x27;s official return process. Once the return is approved, we will process your refund accordingly.
+
+Please refer to eBay&#x27;s official procedures if you have any questions.
+
+Kind regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B42,
+
+ご連絡ありがとうございます。こちらのバッグは正規のルイ・ヴィトンのヴィンテージ品であることを確認しております。縫製や内張りについてご指摘の点があるとのことですが、当店は本物のみを出品しており、偽物は取り扱っておりません。
+
+返品をご希望の場合は、eBayの正式な返品手続きをご利用ください。返品が承認され次第、返金対応をいたします。
+
+ご不明な点がございましたら、eBayの正式な手続きをご確認ください。
+
+Kind regards,
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat03_12_counterfeit_accusation_assertive" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>17.2</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.270</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B42,
+
+Thank you for your message. I can confirm that the item we list is authentic. The Louis Vuitton Vintage Speedy 30 Monogram Hand Bag is sold as a genuine product. If there are specific details you find concerning, please let me know exactly which points you are worried about, and I will look into it together with you.
+
+Regarding the return process, you can proceed through eBay&#x27;s official return procedures, so please check that. If you have any further questions, feel free to reach out anytime.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB42、
+
+ご連絡ありがとうございます。弊店は出品している商品が本物であることを確認しております。ルイ・ヴィトンのスピーディ30モノグラムハンドバッグは、正規品として販売しております。もし具体的に気になる点があれば、どの部分が問題か教えていただければ、一緒に確認いたします。
+
+返品手続きについては、eBayの公式な手続きを通じて進めることができますので、そちらをご確認ください。何か他にご不明な点がございましたら、お気軽にお知らせください。
+
+よろしくお願いいたします。
+
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat03_12_counterfeit_accusation_assertive">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat03_12_counterfeit_accusation_assertive"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat03_12_counterfeit_accusation_assertive', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat03_12_counterfeit_accusation_assertive"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+    <article class="case-card" data-case-id="cat03_13_address_blame_buyer_fault_assertive">
+        <div class="case-header">
+            <h3>📩 cat03_13_address_blame_buyer_fault_assertive</h3>
+            <span class="category-pill">post_purchase_shipping_qa</span>
+        </div>
+        
+    <div class="history-block">
+        <div class="history-header">💬 会話履歴全体（AIにはこの内容が全部渡されている）</div>
+        
+            <div class="product-info">
+                <span class="product-label">🛒 商品情報（本番DBのログから抽出・eBay APIは未使用）</span>
+                <div class="product-grid">
+                    <div><b>Title:</b> Sony PlayStation 5 PS5 Standard Disc Edition Console Japan Region NEW Sealed</div>
+                    <div><b>SKU:</b> —</div>
+                    <div><b>Order ID:</b> —</div>
+                    <div><b>Price:</b> 498.00 USD</div>
+                </div>
+            </div>
+            
+        <div class="history-timeline">
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-04-25T02:00:00.000Z] purchase_completed</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-04-26T03:00:00.000Z] shipped</div>
+            </div>
+            
+            <div class="msg msg-system">
+                <span class="msg-role">📦 eBayイベント</span>
+                <div class="msg-body">[2026-05-04T09:00:00.000Z] delivered</div>
+            </div>
+            
+            <div class="msg msg-user msg-user-latest">
+                <span class="msg-role">👤 バイヤー 🔻 AIが返信する対象メッセージ</span>
+                <div class="msg-body">[2026-05-04T16:14:55.000Z] Why didn&#x27;t you deliver the console to my correct address?! It went to my old address and now I have to figure out how to get it. You sent it to the WRONG place. This is your responsibility to fix!</div>
+                <div class="msg-body-ja"><span class="ja-label">🇯🇵</span> なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！</div>
+            </div>
+            </div>
+    </div>
+    
+        
+    <div class="buyer-block">
+        <div class="block-label">📌 バイヤーの最新メッセージ（AIが返信すべき対象）</div>
+        <div class="bilingual">
+            <div class="en">
+                <div class="lang-label">🇬🇧 バイヤー原文（英語）</div>
+                <pre>Why didn&#x27;t you deliver the console to my correct address?! It went to my old address and now I have to figure out how to get it. You sent it to the WRONG place. This is your responsibility to fix!</pre>
+            </div>
+            <div class="ja">
+                <div class="lang-label">🇯🇵 日本語訳（GPT-4.1-Mini自動翻訳）</div>
+                <pre>なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！</pre>
+            </div>
+        </div>
+    </div>
+    
+        <div class="reply-grid">
+        <div class="reply-card" data-case-id="cat03_13_address_blame_buyer_fault_assertive" data-model-name="GPT-4.1-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4.1-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-speed">速度◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>5.4</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.720</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B43,
+
+Thank you for your message. Regarding the console being delivered to the wrong address, please be advised that we shipped the item to the address provided at the time of purchase. In line with eBay&#x27;s international shipping framework, we do not accept address changes or delivery corrections after shipment.
+
+Please check with the current residents at your old address or refer to eBay&#x27;s official procedures for further assistance. Our store fulfilled the shipment correctly based on the address information available at dispatch.
+
+Kind regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">Hello B43,
+
+ご連絡ありがとうございます。ご注文いただいたコンソールが誤った住所に配達されたとのことですが、発送はご購入時にご登録いただいた住所宛に行っております。eBayの国際取引の標準的な運用に則り、発送後の住所変更や配送先の修正は承っておりません。
+
+お手数ですが、現在の配送状況やお届け先については、旧住所の管理者様とご相談いただくか、eBayの正式な手続きをご確認ください。当店としては、発送時点での住所情報に基づき正しく発送を行っております。
+
+Kind regards,
+rioxxrinaxjapan</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reply-card" data-case-id="cat03_13_address_blame_buyer_fault_assertive" data-model-name="GPT-4o-Mini">
+            <div class="reply-header">
+                <div class="model-badge">GPT-4o-Mini</div>
+                <div class="case-winners"><span class="case-winner-badge win-score">品質◎</span><span class="case-winner-badge win-cost">コスト◎</span></div>
+                <div class="score-total">
+                    <span class="meta-elapsed">⏱ <b>10.0</b>秒</span>
+                    <span class="meta-cost">💴 <b>¥0.270</b></span>
+                </div>
+            </div>
+            <div class="bilingual">
+                <div class="en">
+                    <div class="lang-label">🇬🇧 AI返信（英語・バイヤー送信用）</div>
+                    <pre class="reply-en">Hello B43,
+
+Thank you for your message. I apologize for the issue regarding the delivery address. The order was shipped to the address provided at the time of purchase. Typically, to correct an address after purchase, we would need to cancel the current order so you can place a new one with the correct address. I recommend that we proceed with canceling the current order, and then you can reorder with the correct address.
+
+If you have any further questions, feel free to reach out anytime.
+
+Best regards,
+rioxxrinaxjapan</pre>
+                </div>
+                <div class="ja">
+                    <div class="lang-label">🇯🇵 日本語訳（セラー確認用）</div>
+                    <pre class="reply-ja">こんにちはB43、
+
+ご連絡ありがとうございます。ご指摘の件について、配送先の住所が誤っていたことをお詫び申し上げます。ご注文は、購入時に入力された住所に基づいて発送されました。通常、配送先の変更は、購入後にキャンセルして新しい注文を行う必要があります。現在の注文をキャンセルし、正しい住所で再注文していただくことをお勧めいたします。
+
+何か他にご不明な点がございましたら、お気軽にお知らせください。</pre>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+    <div class="supplemental-block" data-case-id="cat03_13_address_blame_buyer_fault_assertive">
+        <label class="supplemental-label">
+            🎯 補足情報（sellerSetting）<small>このケース全モデル共通枠。ここに「セラーが本当に伝えたい補足情報」を日本語で書いて「補足込みで再生成」を押すと、3モデル全部で再走します。空欄なら補足なし生成。</small>
+        </label>
+        <textarea class="supplemental-input"
+                  data-case-id="cat03_13_address_blame_buyer_fault_assertive"
+                  placeholder="例: 新品で未使用、保証書・原箱・papers全て同梱します。タグも付いています。"
+                  rows="3"></textarea>
+        <div class="supplemental-actions">
+            <button class="regen-btn" onclick="regenerateCase('cat03_13_address_blame_buyer_fault_assertive', this)">
+                🔁 補足込みで再生成（3モデル）
+            </button>
+            <span class="regen-status"></span>
+        </div>
+    </div>
+
+    <div class="feedback-block">
+        <label class="feedback-label">
+            ✏️ 社長の理想フィードバック <small>(このケースで本当に欲しかった返信内容・NG理由・トーン指示等を日本語で書く。自動保存・最下部からJSONダウンロード可能)</small>
+        </label>
+        <textarea class="feedback-input"
+                  data-case-id="cat03_13_address_blame_buyer_fault_assertive"
+                  placeholder="例: 返品の件は『Have you already started the return process via eBay? If not, please open a return request so I can issue a return label』と具体的な手順を提示してほしい。謝罪は簡潔に1文でOK。"
+                  rows="4"></textarea>
+    </div>
+    
+    </article>
+    
+
+    <footer>
+        BayChat AI Reply テストレポート / ソース: test_gpt_gpt4omini_v2.3_baseline_natural4_principle_prodON_20260505_173712.xlsx<br>
+        フィードバックは localStorage（このブラウザ）に自動保存されます。
+    </footer>
+</div>
+
+<div class="floating-status" id="saveStatus">💾 変更なし</div>
+<button class="floating-download" onclick="downloadFeedback()">
+    📥 全フィードバックをJSONダウンロード
+</button>
+
+<script>
+// localStorage キー（このレポート固有）
+const STORAGE_KEY = 'baychat_feedback_20260505_1738';
+const statusEl = document.getElementById('saveStatus');
+
+// 初期化：保存済みフィードバックを復元
+function restoreFeedback() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.feedback-input').forEach(ta => {
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        });
+        const count = Object.keys(data).filter(k => data[k]).length;
+        statusEl.textContent = `💾 保存済み ${count}件`;
+    } catch (e) { console.error(e); }
+}
+
+// 自動保存
+function saveFeedback() {
+    const data = {};
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const count = Object.keys(data).length;
+    statusEl.textContent = `💾 保存 ${count}件 (${new Date().toLocaleTimeString('ja-JP')})`;
+}
+
+document.querySelectorAll('.feedback-input').forEach(ta => {
+    ta.addEventListener('input', saveFeedback);
+});
+
+// ダウンロード
+function downloadFeedback() {
+    const data = {
+        exported_at: new Date().toISOString(),
+        report_source: 'test_gpt_gpt4omini_v2.3_baseline_natural4_principle_prodON_20260505_173712.xlsx',
+        feedback: {}
+    };
+    document.querySelectorAll('.feedback-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data.feedback[cid] = ta.value;
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    a.download = `baychat_feedback_${ts}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+restoreFeedback();
+
+// ==========================================================
+// 補足情報 + 再生成API
+// ==========================================================
+const REGENERATE_API = 'http://127.0.0.1:8765/api/regenerate';
+const TONE = 'assertive';
+const PROMPT_VERSION = '2.3_baseline_natural2';
+const TEST_CASE_PATH = 'test_cases/category_03_assertive_only.json';
+
+// 速度目標（秒）
+const SPEED_TARGET_STANDARD = 3.0;  // 標準
+const SPEED_TARGET_COMPLEX = 6.0;   // 複雑
+const SPEED_TARGET_APOLOGY = 8.0;   // 謝罪
+
+function colorizeElapsed(span, elapsed) {
+    span.classList.remove('fast', 'slow');
+    const target = (TONE === 'apologetic') ? SPEED_TARGET_APOLOGY : SPEED_TARGET_STANDARD;
+    if (elapsed <= target) span.classList.add('fast');
+    else if (elapsed > SPEED_TARGET_COMPLEX) span.classList.add('slow');
+}
+
+async function regenerateCase(caseId, btn) {
+    const block = document.querySelector(`.supplemental-block[data-case-id="${caseId}"]`);
+    if (!block) return;
+    const ta = block.querySelector('.supplemental-input');
+    const statusEl = block.querySelector('.regen-status');
+    const supplemental = (ta.value || '').trim();
+
+    // 同じケースの全 reply-card を取得（同 case-card 内）
+    const caseCard = block.closest('.case-card');
+    const replyCards = caseCard.querySelectorAll('.reply-card');
+
+    // ローディング表示
+    btn.disabled = true;
+    btn.textContent = '⏳ 生成中...';
+    statusEl.classList.remove('error','success');
+    statusEl.textContent = `${replyCards.length}モデルで再生成中...`;
+    replyCards.forEach(c => c.classList.add('regenerating'));
+
+    try {
+        const resp = await fetch(REGENERATE_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                case_id: caseId,
+                supplemental: supplemental,
+                tone: TONE,
+                prompt_version: PROMPT_VERSION,
+                test_case_path: TEST_CASE_PATH,
+            }),
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        const data = await resp.json();
+
+        // 各モデルの結果を画面更新
+        let updated = 0;
+        let errors = [];
+        data.results.forEach(r => {
+            if (r.error) { errors.push(`${r.model_name||r.model_id}: ${r.error}`); return; }
+            const card = caseCard.querySelector(`.reply-card[data-model-name="${r.model_name}"]`);
+            if (!card) return;
+            card.querySelector('.reply-en').textContent = r.buyer_reply;
+            card.querySelector('.reply-ja').textContent = r.jpn_reply;
+            const elapsedEl = card.querySelector('.meta-elapsed');
+            elapsedEl.innerHTML = `⏱ <b>${r.elapsed.toFixed(1)}</b>秒`;
+            colorizeElapsed(elapsedEl, r.elapsed);
+            const costEl = card.querySelector('.meta-cost');
+            costEl.innerHTML = `💴 <b>¥${r.cost_jpy.toFixed(3)}</b>`;
+            card.classList.remove('regenerating');
+            card.classList.add('regenerated');
+            setTimeout(() => card.classList.remove('regenerated'), 1500);
+            updated++;
+        });
+
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        if (errors.length > 0) {
+            statusEl.classList.add('error');
+            statusEl.textContent = `⚠️ ${updated}件成功 / ${errors.length}件エラー: ${errors.join('; ')}`;
+        } else {
+            statusEl.classList.add('success');
+            statusEl.textContent = `✅ ${updated}モデル再生成完了`;
+        }
+    } catch (e) {
+        replyCards.forEach(c => c.classList.remove('regenerating'));
+        statusEl.classList.add('error');
+        statusEl.textContent = `❌ 失敗: ${e.message}（result_server.py が起動しているか確認してください）`;
+        console.error(e);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🔁 補足込みで再生成（3モデル）';
+    }
+}
+
+// 補足情報の自動保存（localStorageに別キーで）
+const SUPP_KEY = 'baychat_supplemental_20260505_1738';
+function restoreSupplemental() {
+    const saved = localStorage.getItem(SUPP_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('.supplemental-input').forEach(ta => {
+            const cid = ta.dataset.caseId;
+            if (data[cid]) ta.value = data[cid];
+        });
+    } catch (e) { console.error(e); }
+}
+function saveSupplemental() {
+    const data = {};
+    document.querySelectorAll('.supplemental-input').forEach(ta => {
+        const cid = ta.dataset.caseId;
+        if (ta.value.trim()) data[cid] = ta.value;
+    });
+    localStorage.setItem(SUPP_KEY, JSON.stringify(data));
+}
+document.querySelectorAll('.supplemental-input').forEach(ta => {
+    ta.addEventListener('input', saveSupplemental);
+});
+restoreSupplemental();
+
+// 初期表示の応答時間を色付け
+document.querySelectorAll('.meta-elapsed').forEach(el => {
+    const m = el.textContent.match(/([\d.]+)秒/);
+    if (m) colorizeElapsed(el, parseFloat(m[1]));
+});
+</script>
+</body>
+</html>

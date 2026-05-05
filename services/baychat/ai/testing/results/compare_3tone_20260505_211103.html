@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BayChat AI Reply — 3トーン横並び比較 (POLITE / APOLOGY / ASSERTIVE)</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 24px;
+    color: #1f2937;
+    line-height: 1.7;
+  }
+  h1 { font-size: 22px; color: #6b21a8; margin: 0 0 8px 0; }
+  h2 { font-size: 17px; color: #374151; margin: 30px 0 8px 0; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 14px; color: #6b7280; margin: 12px 0 4px 0; font-weight: 600; }
+  .container { max-width: 1900px; margin: 0 auto; }
+  .meta { font-size: 12px; color: #6b7280; margin-bottom: 18px; }
+  .legend {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .legend strong { color: #6b21a8; }
+  .legend table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+  .legend td { padding: 5px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .legend td:first-child { width: 130px; font-weight: 600; }
+  .case-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .buyer-msg {
+    background: #faf5ff;
+    border-left: 4px solid #6d28d9;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 10px 0 16px 0;
+    font-size: 13.5px;
+  }
+  .buyer-msg .label { font-size: 11px; color: #6b21a8; font-weight: 600; margin-bottom: 4px; }
+  .scenario-note {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    color: #78350f;
+    border-radius: 4px;
+    margin: 8px 0 12px 0;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .col {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fafafa;
+    min-width: 0;
+  }
+  .col.POLITE { border-top: 4px solid #3b82f6; }
+  .col.APOLOGY { border-top: 4px solid #10b981; }
+  .col.ASSERTIVE { border-top: 4px solid #dc2626; }
+  .col-header {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .col.POLITE .col-header { color: #1d4ed8; }
+  .col.APOLOGY .col-header { color: #047857; }
+  .col.ASSERTIVE .col-header { color: #b91c1c; }
+  .model-block {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 12.5px;
+  }
+  .model-name {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .reply-en {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    color: #1f2937;
+    background: #fff;
+    border-radius: 4px;
+    padding: 8px;
+    border: 1px solid #f3f4f6;
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+  .reply-ja {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 11.5px;
+    color: #4b5563;
+    padding: 6px 8px;
+    background: #f9fafb;
+    border-radius: 4px;
+    border-left: 2px solid #c4b5fd;
+    line-height: 1.6;
+  }
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: #6b7280;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: #ede9fe;
+    color: #5b21b6;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .badge.elapsed { background: #fef3c7; color: #92400e; }
+  .badge.cost { background: #dbeafe; color: #1e40af; }
+  .judge-summary {
+    background: #fef9c3;
+    border-left: 3px solid #ca8a04;
+    padding: 6px 10px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #713f12;
+    border-radius: 3px;
+  }
+  .case-meta {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+  .case-id {
+    font-weight: 700;
+    color: #6b21a8;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎭 BayChat AI Reply — 3トーン横並び比較</h1>
+  <p class="meta">テスト走行: 2026-05-05 21:11:03 / プロンプト: v2.3_baseline_natural4_principle (iter10)</p>
+
+  <div class="legend">
+    <strong>3トーンの定義</strong>
+    <table>
+      <tr>
+        <td style="background:#dbeafe;">丁寧 (POLITE)</td>
+        <td>標準的なCSビジネス文体。「Thank you very much」「We appreciate」「Kindly」など。Close: "Best regards," / "Kind regards,"</td>
+      </tr>
+      <tr>
+        <td style="background:#d1fae5;">謝罪 (APOLOGY)</td>
+        <td>POLITE より格式高く深い共感。「We sincerely apologize」「We understand how disappointing」など。Close: "Sincerely," / "With our apologies,"</td>
+      </tr>
+      <tr>
+        <td style="background:#fee2e2;">主張 (ASSERTIVE)</td>
+        <td>礼儀正しく毅然。謝罪語(sorry/apologize/regret/unfortunately)・感情共感フレーズ全廃。eBayプラットフォーム/国際取引慣行の権威を借りる。Close: "Best regards," / "Kind regards,"</td>
+      </tr>
+    </table>
+    <p style="margin-top:8px; font-size:12px; color:#6b7280;">
+      <strong>確認観点</strong>: 同じクレームに対して3トーンがどう違うか。トーンによる事実情報の変化はNG（fact-invariant）。voice/form のみ変化すべし。
+    </p>
+  </div>
+
+<div class="case-card">
+  <div class="case-meta">
+    <span class="case-id">cat03_11_customs_refund_demand_assertive</span> | 感情: angry
+  </div>
+  <div class="scenario-note">Buyer paid customs at delivery and demands a refund, calling it a scam (single message, Stage 3 — delivered. Expected tone ASSERTIVE).</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ (英)</div>
+    I had to pay $80 in customs when this was delivered today!! I never agreed to this. I want a full refund of the customs charge. This feels like a scam — you should have warned me!
+    <div class="label" style="margin-top:6px;">日本語訳</div>
+    今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！
+  </div>
+  <div class="three-col">
+    <div class="col POLITE">
+      <div class="col-header">🔵 丁寧 (POLITE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. I confirm that the item was delivered on May 4, 2026.
+
+Regarding the customs charge, please understand that in international shipping, customs duties and taxes are the responsibility of the buyer. We shipped the item using FedEx International Priority, and the shipping cost was set to be paid by the buyer, but customs charges are often difficult to notify in advance.
+
+Unfortunately, we are unable to refund the customs charge. We appreciate your understanding.
+
+If you have any other questions, please let us know.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B41様
+
+この度はご連絡いただきありがとうございます。商品は2026年5月4日にお届け済みであることを確認しております。
+
+関税に関しましては、国際配送においては通関手続きおよび関税の支払いは買主様のご負担となっております。私どもは発送時にFedEx International Priorityを利用し、発送費用はお客様にご負担いただく形で設定しておりますが、関税に関しては事前にお知らせすることが難しい場合がございます。
+
+関税の返金につきましては、誠に恐れ入りますが、当店の方で対応することはできかねます。ご理解のほどよろしくお願いいたします。
+
+何か他にご不明な点がございましたらお知らせください。
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">4.0秒</span>
+    <span class="badge cost">¥0.340</span>
+  </div>
+  <div class="judge-summary">関税は国際配送で買い手負担であることを正確に伝えていますが、もう少し共感を示し、関税の仕組みについて説明を加えるとより良い対応になります。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message.
+
+Regarding customs duties, this is a standard procedure for international shipping and is imposed by the laws of the destination country. Our store cannot include customs fees or charges in the item price. These costs are the responsibility of the buyer upon delivery.
+
+I apologize for any inconvenience, but I am unable to assist with a refund for customs charges. Thank you for your understanding.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB41、
+
+ご連絡ありがとうございます。
+
+関税に関しては、国際配送においては一般的な手続きであり、輸入国の法律に基づいて課せられるものです。私たちのストアでは、商品の価格に関税や手数料を含めることはできません。これらの費用は、商品が到着する際にお客様の負担となります。
+
+ご不便をおかけして申し訳ありませんが、関税の返金についてはお手伝いできません。今後ともよろしくお願いいたします。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">4.4秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">関税は国の法律に基づくもので販売者の責任外であることを丁寧に説明しているが、次の対応や追加のサポート提案があるとより良い。</div>
+</div>
+    </div>
+    <div class="col APOLOGY">
+      <div class="col-header">🟢 謝罪 (APOLOGY)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. We shipped your order from our warehouse via FedEx International Priority with a handling time of up to 2 business days. Regarding the customs charge you paid upon delivery, please understand that in international shipping, customs duties and import taxes are typically the responsibility of the recipient.
+
+Our listing clearly states that customs fees are to be paid by the buyer, and we do not provide refunds for customs charges after shipment. We apologize for any inconvenience this may have caused, but the customs fees are borne by the buyer.
+
+Please let us know if you have any other questions.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B41様
+
+この度はご連絡いただき誠にありがとうございます。ご注文いただいた商品は、当店の倉庫からFedEx International Priorityにて発送し、約2営業日以内に発送手続きを完了しております。お届け時に関税が発生した件につきましては、国際配送においては関税や輸入税は通常、受取人様のご負担となっております。
+
+当店の出品ページにも「関税は購入者様負担」と明記しており、発送後の関税費用の返金対応は承っておりません。ご不快な思いをさせてしまい申し訳ございませんが、関税に関する費用はお客様のご負担となりますことを何卒ご理解ください。
+
+何か他にご不明点がございましたらお知らせください。
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">5.5秒</span>
+    <span class="badge cost">¥0.350</span>
+  </div>
+  <div class="judge-summary">関税は購入者負担であることを丁寧に説明しており、返品や返金はできない旨を伝えていますが、もう少し共感を示し、次の対応についても案内するとより良いです。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. I appreciate you bringing to my attention the customs charges that occurred upon delivery. International shipping can sometimes incur customs duties and fees, which are the responsibility of the buyer. Our store is unable to provide prior notification regarding these charges, but I will take your feedback into consideration for the future.
+
+Thank you for your understanding.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB41、
+
+ご連絡ありがとうございます。お届けした商品に関して、関税が発生したことについてお知らせいただき、感謝いたします。国際配送では、関税や手数料が発生することがありますが、これらはお客様のご負担となります。私たちのストアでは、関税についての事前の通知を行うことはできませんが、今後の参考にさせていただきます。
+
+ご理解いただけますようお願い申し上げます。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 19/25</span>
+    <span class="badge elapsed">5.2秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">AIの返信は正確で礼儀正しいが、関税負担の説明や今後の対応についての案内が不足しているため、次のステップを明確に示すとより良い。</div>
+</div>
+    </div>
+    <div class="col ASSERTIVE">
+      <div class="col-header">🔴 主張 (ASSERTIVE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message.
+
+Regarding the customs charge, please understand that for international shipments, any customs duties or taxes imposed by your country's customs authority are the buyer's responsibility. This is stated in our listing as well. We appreciate your understanding that we cannot refund customs fees.
+
+If you have concerns or questions about the customs charge, please contact your local customs office for clarification.
+
+If you have any other questions, please let us know.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B41様
+
+ご連絡ありがとうございます。
+
+関税に関しましては、国際配送においては通関時に発生する税金や手数料は買主様のご負担となっております。当店の出品ページにもその旨を記載しておりますが、事前に十分なご案内ができていなかった点についてはご理解いただけますと幸いです。
+
+関税の返金につきましては、当店の方で対応することはできません。お手数ですが、通関に関する詳細やご不明点はお住まいの国の税関にお問い合わせいただきますようお願いいたします。
+
+何か他にご質問がございましたらお知らせください。
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">3.3秒</span>
+    <span class="badge cost">¥0.330</span>
+  </div>
+  <div class="judge-summary">関税は購入者負担であることを正確に伝え、返金できない旨を説明していますが、もう少し共感的で丁寧な表現にすると良いでしょう。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. I understand that you incurred customs charges upon delivery. Please be advised that our store does not explicitly state that such fees may apply, but it is common for international shipments to incur customs duties that are the responsibility of the recipient.
+
+While we cannot refund the customs charges, we appreciate your feedback and will take it into consideration for future listings. If there is anything else I can assist you with, please let me know.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB41、
+
+ご連絡ありがとうございます。お届けの際に関税が発生したことについて、私たちのストアではそのような費用が発生する可能性があることを明示しておりませんでした。国際配送においては、関税や手数料は受取人の負担となることが一般的です。
+
+私たちのストアでは、関税の返金を行うことはできませんが、今後の参考としてお客様のご意見を大切にいたします。何か他にお手伝いできることがあればお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 17/25</span>
+    <span class="badge elapsed">5.5秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">カスタム料金は国際配送で発生する可能性があり、通常は購入者負担であることを明確に伝える必要があります。返信はやや事務的で、もう少し共感的なトーンが望まれます。</div>
+</div>
+    </div>
+  </div>
+</div>
+<div class="case-card">
+  <div class="case-meta">
+    <span class="case-id">cat03_12_counterfeit_accusation_assertive</span> | 感情: accusatory
+  </div>
+  <div class="scenario-note">Buyer received a vintage designer bag and accuses the seller of selling a fake (single message, Stage 3 — delivered. Expected tone ASSERTIVE).</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ (英)</div>
+    This bag is FAKE!! The stitching doesn't match what I've seen on authentic ones online, and the lining feels cheap. I'm going to open a return and report you to eBay if you don't refund me immediately.
+    <div class="label" style="margin-top:6px;">日本語訳</div>
+    このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。
+  </div>
+  <div class="three-col">
+    <div class="col POLITE">
+      <div class="col-header">🔵 丁寧 (POLITE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message.
+
+We list our items based on their descriptions and photos as authentic. We regret that you are not satisfied with the product you received.
+
+If you wish to return the item, we accept returns within 30 days. We will proceed with the return process, and refunds will be issued after we receive the returned item.
+
+Please feel free to contact us if you have any questions.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B42様
+
+この度はご連絡いただき誠にありがとうございます。
+
+当店では商品説明や掲載写真に基づき、正規品として出品しております。お届けした商品にご満足いただけなかったことは大変残念に思います。
+
+返品をご希望の場合は、30日以内であれば返品を承っておりますので、返品手続きを進めさせていただきます。返品後の返金対応となりますことをご了承ください。
+
+何かご不明点がございましたらお気軽にお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">4.3秒</span>
+    <span class="badge cost">¥0.320</span>
+  </div>
+  <div class="judge-summary">返信は正確で返品ポリシーを説明していますが、購入者の不満に対する共感がやや不足しています。返品手続きの具体的な案内もあるとより良いです。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message.
+
+I assure you that all items in our store are authentic. This bag is genuine and is in the condition described in our listing. If you have any questions about the bag, please feel free to ask.
+
+Regarding the return, we accept returns within 30 days as per eBay's policy. Please follow eBay's instructions to proceed with the return process.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB42、
+
+ご連絡ありがとうございます。
+
+私たちのストアでは、すべてのアイテムが本物であることを保証しています。このバッグは本物であり、私たちのリストに記載されている通りの状態です。もしバッグに関してご不明な点があれば、ぜひご質問ください。
+
+返品については、eBayのポリシーに従い、30日以内に返品を受け付けております。返品手続きについては、eBayの指示に従って進めていただければと思います。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 16/25</span>
+    <span class="badge elapsed">5.5秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">返信は商品の真贋について正確に述べていますが、購入者の感情に寄り添う表現が不足しており、返品手続きの案内もやや不十分です。</div>
+</div>
+    </div>
+    <div class="col APOLOGY">
+      <div class="col-header">🟢 謝罪 (APOLOGY)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message.
+
+We carefully inspect and describe the condition of our items and provide detailed photos for your reference. We regret that you are not satisfied with the bag you received.
+
+If you wish to return the item, we accept returns within 30 days. We will proceed with the return process and provide you with the necessary instructions.
+
+Please feel free to contact us if you have any questions.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B42様
+
+この度はご連絡いただき誠にありがとうございます。
+
+当店では出品時に商品の状態を詳しく確認し、掲載写真にてご確認いただけるよう努めております。お届けした商品についてご満足いただけなかったことは大変残念に思います。
+
+返品をご希望の場合は、30日以内であれば返品を承っておりますので、返品手続きを進めさせていただきます。返品の詳細についてはご案内いたしますので、どうぞよろしくお願いいたします。
+
+何かご不明点がございましたらお気軽にお知らせください。
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">4.1秒</span>
+    <span class="badge cost">¥0.320</span>
+  </div>
+  <div class="judge-summary">返信は正確で丁寧ですが、購入者の偽物疑惑に対する共感や返品手続きの具体的な案内が不足しています。より親身な対応と明確な次のステップの提示が望まれます。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message.
+
+Regarding your concerns, I want to assure you that all items in our store are verified as authentic. I encourage you to refer to the listing photos for the details on stitching and lining quality. Your feedback is very important to us, and we value your satisfaction.
+
+You can proceed with the return process as per eBay's standard procedures if you wish to do so.
+
+Best regards,
+
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B42様,
+
+ご連絡ありがとうございます。
+
+ご指摘いただいた件について、私たちの店舗では全てのアイテムが本物であることを確認しております。お客様がご指摘された縫製やライニングの質について、私たちのリストに掲載されている写真をご確認いただければと思います。お客様のご意見は非常に重要であり、私たちはお客様の満足を大切にしています。
+
+返品手続きについては、eBayの標準手順に従って進めることができますので、必要に応じてお手続きいただければと思います。
+
+よろしくお願いいたします。
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 16/25</span>
+    <span class="badge elapsed">6.2秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">返信は事実に基づき正確だが、買い手の強い不満に対してやや冷たく感じられる。返品手続きの具体的な案内も不足している。</div>
+</div>
+    </div>
+    <div class="col ASSERTIVE">
+      <div class="col-header">🔴 主張 (ASSERTIVE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B42,
+
+We only handle authentic Louis Vuitton Vintage Speedy 30 Monogram bags. The item was shipped from our own warehouse and its condition is accurately described based on our photos and description. We acknowledge your dissatisfaction with the product received.
+
+If you wish to return the item, we will proceed according to eBay's return policy. Please initiate the return process, and once we receive the item back, we will process your refund. Please let us know if you have any questions.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B42様
+
+当店ではルイヴィトンのヴィンテージスピーディ30モノグラムの本物のみを取り扱っております。商品は当店の倉庫から発送し、商品説明や写真に基づいて状態を正確に記載しております。お届けした商品にご満足いただけなかったことは承知いたしました。
+
+返品をご希望の場合は、eBayの返品ポリシーに基づき対応いたします。返品の手続きを進めていただければ、商品が当店に到着次第、返金手続きを行います。ご不明点がございましたらお知らせください。
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">4.9秒</span>
+    <span class="badge cost">¥0.330</span>
+  </div>
+  <div class="judge-summary">返信は正確で丁寧ですが、やや事務的で購入者の感情に寄り添う表現が不足しています。返品手続きの具体的な案内を加えるとより良くなります。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message.
+
+I assure you that all items in our store are authentic. I will look into the concerns you've raised, but please note that the item is used, and I recommend evaluating its condition based on the listing photos. If you wish to proceed with a return, we can follow eBay's policies to facilitate that.
+
+Thank you for your understanding.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB42、
+
+ご連絡ありがとうございます。
+
+私たちのストアでは、すべてのアイテムが本物であることを保証しています。ご指摘の点については、私たちも確認いたしますが、商品は中古品であり、写真に基づいて状態を評価していただくことをお勧めします。返品手続きについては、eBayのポリシーに従って進めることができますので、必要に応じてお知らせください。
+
+ご理解のほどよろしくお願いいたします。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 16/25</span>
+    <span class="badge elapsed">6.3秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">返信は概ね正確で返品対応について触れているが、買い手の感情に寄り添う表現や具体的な返品手続きの案内が不足しているため、トーンや完全性で改善の余地がある。</div>
+</div>
+    </div>
+  </div>
+</div>
+<div class="case-card">
+  <div class="case-meta">
+    <span class="case-id">cat03_13_address_blame_buyer_fault_assertive</span> | 感情: angry
+  </div>
+  <div class="scenario-note">Package was returned because buyer entered the wrong address; buyer now blames the seller (single message, Stage 3 — delivered to wrong address per eBay registered address. Expected tone ASSERTIVE).</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ (英)</div>
+    Why didn't you deliver the console to my correct address?! It went to my old address and now I have to figure out how to get it. You sent it to the WRONG place. This is your responsibility to fix!
+    <div class="label" style="margin-top:6px;">日本語訳</div>
+    なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！
+  </div>
+  <div class="three-col">
+    <div class="col POLITE">
+      <div class="col-header">🔵 丁寧 (POLITE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message. I understand that the console was delivered to your old address, and I will check the situation.
+
+We shipped the item on April 26, 2026 via FedEx International Priority to the address provided at the time of your order. According to the delivery records, it was delivered on May 4, 2026. We ship based on the address given at purchase, so to clarify responsibility for the misdelivery, I will coordinate with the carrier to investigate.
+
+Please confirm the shipping address you provided when ordering. If there was an error, we would like to discuss the next steps with you. We will continue to investigate and inform you of the resolution.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B43様
+
+この度はご連絡いただきありがとうございます。ご注文いただいたコンソールが旧住所に配送されたとのこと、状況を確認いたします。
+
+当店ではご注文時にご登録いただいた配送先住所に基づき発送を行っております。発送は2026年4月26日にFedEx International Priorityで行い、2026年5月4日に配達完了となっております。配送先住所の誤りについては、当店の発送時点での情報をもとに対応しておりますため、誤配送の責任の所在を明確にするために、配送業者と連携して調査を進めます。
+
+お手数ですが、ご注文時の配送先住所をご確認いただき、もし誤りがあった場合は、今後の対応についてご相談させていただきたく存じます。引き続き状況を調査し、対応策をご案内いたします。
+
+何卒よろしくお願いいたします。
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">5.7秒</span>
+    <span class="badge cost">¥0.360</span>
+  </div>
+  <div class="judge-summary">配送先誤りに関して、発送先は注文時の住所に基づいていることを説明し、配送業者と調査する旨を伝えているが、より共感的な表現と具体的な次の対応案があると良い。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message.
+
+I apologize for the inconvenience regarding your delivery address. Your order was shipped based on the address registered at the time of dispatch, and it seems it was sent to your old address as the new one was not updated.
+
+To resolve this issue, I will need to investigate the situation further and guide you on the appropriate steps to take. Please bear with me as I look into this matter.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B43様,
+
+ご連絡ありがとうございます。
+
+お届け先の住所に関してご不便をおかけし、申し訳ありません。お客様のご注文は、発送時に登録された住所に基づいて発送されました。新しい住所が登録されていなかったため、旧住所に送付されてしまったようです。
+
+この問題を解決するためには、現在の状況を確認し、適切な手続きを進める必要があります。お手数ですが、今後の手続きについてご案内いたしますので、少々お待ちください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">4.8秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">配送先間違いについて謝罪し調査を約束しているが、具体的な次の対応が明確でなく、もう少し丁寧な対応が望まれる。</div>
+</div>
+    </div>
+    <div class="col APOLOGY">
+      <div class="col-header">🟢 謝罪 (APOLOGY)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message.
+
+We understand your concern regarding the console being delivered to your old address. We shipped the item via FedEx International Priority on April 26, 2026, and the delivery was completed on May 4, 2026, according to the tracking information.
+
+We always ship to the address provided at the time of order. We will investigate with the carrier and review the shipping details to understand what happened. We will update you as soon as we have more information.
+
+Thank you for your patience and understanding.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B43様
+
+この度はご連絡いただき誠にありがとうございます。
+
+ご注文いただいたコンソールが旧住所に配送されたとのこと、大変ご不便をおかけしております。弊店ではご注文時にご登録いただいた住所情報をもとに発送手続きを行っております。発送はFedEx International Priorityにて行い、2026年4月26日に発送済み、2026年5月4日に配達完了となっております。
+
+お客様のご注文情報の住所に誤りがなかったか、また配送業者に確認を行い、状況を調査いたします。調査結果が分かり次第、改めてご連絡いたしますので、今しばらくお待ちください。
+
+何卒よろしくお願い申し上げます。
+
+敬具
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">4.5秒</span>
+    <span class="badge cost">¥0.340</span>
+  </div>
+  <div class="judge-summary">配送先の誤りについて調査する旨を伝え、状況説明は正確だが、次の対応や買い手の協力方法が明確でなく、もう少し共感的な表現が望ましい。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message.
+
+I’m very sorry to hear about the issue with the delivery address. According to our records, the console was shipped to the address that was provided at the time of purchase. It seems that the new address may not have been updated correctly.
+
+To resolve this issue, you will need to verify the delivery address and, if necessary, place a new order with the correct address. I appreciate your understanding in this matter.
+
+If you have any further questions, please feel free to reach out.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B43様、
+
+ご連絡ありがとうございます。
+
+お届け先の住所についての問題をお聞きし、非常に残念に思います。私たちの記録によると、発送時に登録された住所に基づいてお送りしました。新しい住所が正しく登録されていなかった可能性があります。
+
+この問題を解決するためには、まずはお届け先の住所を確認し、必要であれば新しい注文を行っていただく必要があります。お手数をおかけしますが、何卒ご理解いただけますようお願い申し上げます。
+
+ご不明な点がございましたら、お気軽にお知らせください。
+
+敬具、
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">4.6秒</span>
+    <span class="badge cost">¥0.130</span>
+  </div>
+  <div class="judge-summary">配送先の住所が購入時の情報に基づいていたことを説明していますが、買い手の不満に対する共感がやや不足しており、今後の対応についての案内も不十分です。</div>
+</div>
+    </div>
+    <div class="col ASSERTIVE">
+      <div class="col-header">🔴 主張 (ASSERTIVE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message. According to our records and the carrier's tracking information, the item was delivered to your old address rather than the correct one you intended. The shipping address used was the one provided at the time of your order, and any changes to the address must be communicated before dispatch.
+
+We will investigate the situation and coordinate with the carrier to determine the appropriate response. However, please note that responsibility and resolution options may be subject to the carrier's policies. We kindly ask you to consider retrieving the package from the old address or arranging for redelivery.
+
+We will update you as soon as we have further information.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B43様
+
+ご連絡ありがとうございます。ご注文いただいた商品は、当店の記録および配送業者の追跡情報によると、ご指定の配送先ではなく旧住所に配達されたことが確認されております。配送先のご住所はご注文時にご入力いただいた情報に基づいておりますため、配送先の変更は発送前にご連絡いただく必要がございます。
+
+現在の状況を調査し、配送業者と連携して対応を検討いたしますが、誤配送の責任範囲や対応方法については配送業者の規定も関わってまいります。お手数ですが、旧住所での受け取りや再配送の手配についてもご検討いただけますようお願いいたします。
+
+何か進展があり次第、改めてご連絡いたします。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">5.3秒</span>
+    <span class="badge cost">¥0.350</span>
+  </div>
+  <div class="judge-summary">配送先の住所が注文時の情報に基づいていたことを説明し、配送業者と調査する旨を伝えていますが、もう少し共感を示し、次の行動を明確に案内するとより良いです。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message.
+
+I understand there has been an issue with the delivery address. According to our records, the item was shipped to the address provided at the time of purchase, but it seems it went to your old address. I will investigate this matter on our side, so please bear with me.
+
+I appreciate your patience, and I will update you as soon as I have more information.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B43様、
+
+ご連絡ありがとうございます。
+
+お届け先の住所に関して問題が発生したことを理解しております。私たちの記録によれば、商品は指定された住所に発送されましたが、古い住所に送られたとのことです。この件については、私たちの側で調査を行いますので、少々お待ちください。
+
+お手数をおかけしますが、何か進展があり次第ご連絡いたします。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 19/25</span>
+    <span class="badge elapsed">4.2秒</span>
+    <span class="badge cost">¥0.120</span>
+  </div>
+  <div class="judge-summary">配送先住所の誤りについて調査すると伝えていますが、謝罪や具体的な次の対応が不足しており、もう少し丁寧な対応が望まれます。</div>
+</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

@@ -557,7 +557,8 @@ def _run_one_model_task(model_spec, messages, case_id, version, buyer_msg,
 def run_batch_test(model_ids, prompt_versions, cases, judge_model="openai",
                    enable_judge=True, use_production_payload=False,
                    forced_template=True, tone="polite",
-                   default_seller_name="rioxxrinaxjapan", description=""):
+                   default_seller_name="rioxxrinaxjapan", description="",
+                   hold_mode=False):
     """
     バッチテストのメインループ。
 
@@ -664,6 +665,7 @@ def run_batch_test(model_ids, prompt_versions, cases, judge_model="openai",
                     description=description,
                     include_forced_template=forced_template,
                     prompt_version=version,
+                    hold_mode=hold_mode,
                 )
             else:
                 # 旧来: 既存messagesのadmin promptだけ差し替え
@@ -740,6 +742,8 @@ if __name__ == "__main__":
                         help="FORCED TEMPLATE用のseller_name")
     parser.add_argument("--description", type=str, default="",
                         help="画面側(任意)補足入力。空ならsellerSetting補足ブロックを省略")
+    parser.add_argument("--hold-mode", action="store_true",
+                        help="保留モード ON で生成（HOLD_MODE_BLOCK を末尾に動的挿入）")
 
     args = parser.parse_args()
 
@@ -764,6 +768,7 @@ if __name__ == "__main__":
         tone=args.tone,
         default_seller_name=args.seller_name,
         description=args.description,
+        hold_mode=args.hold_mode,
     )
 
     if results:
@@ -774,6 +779,10 @@ if __name__ == "__main__":
         mode_str = ""
         if args.production_payload:
             mode_str = "_prodON" if not args.no_forced_template else "_prodOFF"
+        if args.hold_mode:
+            mode_str += "_HOLD"
+        elif args.description:
+            mode_str += "_DESC"
         output_path = os.path.join(RESULTS_DIR, f"test_{models_str}_{prompts_str}{mode_str}_{timestamp}.xlsx")
 
         save_results_to_excel(results, output_path)

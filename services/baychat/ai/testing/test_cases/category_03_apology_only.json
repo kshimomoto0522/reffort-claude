@@ -1,0 +1,186 @@
+[
+  {
+    "id": "cat03_03_delivery_overdue_anxious",
+    "category": "post_purchase_shipping_qa",
+    "stage": "stage3",
+    "product_category": "handbag",
+    "emotion": "worried",
+    "language": "english",
+    "situation": "Estimated delivery date passed but item still not arrived. Buyer is anxious (single message, Stage 3 — shipped event but not delivered, expected tone APOLOGY).",
+    "buyer_ebay": "B33",
+    "buyer_message": "Hi, the estimated delivery date was yesterday but the bag still hasn't arrived. I'm getting worried — is there a problem?",
+    "buyer_message_ja": "こんにちは、予定到着日は昨日だったのですが、バッグがまだ届きません。心配なのですが、何か問題が起きているのでしょうか？",
+    "history_ja": [
+      "こんにちは、予定到着日は昨日だったのですが、バッグがまだ届きません。心配なのですが、何か問題が起きているのでしょうか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"195774112084\", \"Title\": \"Coach Vintage Leather Shoulder Bag Tan Brown Authentic\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Women:Women's Bags & Handbags\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"180.00\", \"CurrentPrice\": \"180.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"Used\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"42.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Yokohama\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"EMS International\", \"trackingNumber\": \"EE123456789JP\", \"estimatedDeliveryTimeMin\": \"2026-05-01T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-03T08:00:00.000Z\", \"shipByDate\": \"2026-04-26T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-25T07:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-26T10:00:00.000Z] shipped"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-04T04:22:17.000Z] Hi, the estimated delivery date was yesterday but the bag still hasn't arrived. I'm getting worried — is there a problem?"
+      }
+    ]
+  },
+  {
+    "id": "cat03_05_missing_accessory_minor_apology",
+    "category": "post_purchase_shipping_qa",
+    "stage": "stage3",
+    "product_category": "watch",
+    "emotion": "mildly_upset",
+    "language": "english",
+    "situation": "Buyer received the watch but a warranty card pictured in the listing photos seems missing (single message, Stage 3 — delivered event, expected tone APOLOGY).",
+    "buyer_ebay": "B35",
+    "buyer_message": "Hi, I just received the watch and it's beautiful, thank you. However, the warranty card that I saw in the listing photos doesn't seem to be in the box. Can you check?",
+    "buyer_message_ja": "こんにちは、時計を受け取りました、とても綺麗です。ありがとうございます。ただ、出品写真に写っていた保証書が箱の中に見当たりません。確認していただけますか？",
+    "history_ja": [
+      "こんにちは、時計を受け取りました、とても綺麗です。ありがとうございます。ただ、出品写真に写っていた保証書が箱の中に見当たりません。確認していただけますか？"
+    ],
+    "num_messages": 1,
+    "has_seller_history": false,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"275889122456\", \"Title\": \"Seiko Prospex SBDC053 Diver 200m Automatic Watch Black Japan\", \"PrimaryCategoryName\": \"Jewelry & Watches:Watches, Parts & Accessories:Wristwatches\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"690.00\", \"CurrentPrice\": \"690.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New with tags\", \"ShippingType\": \"Flat\", \"ShippingService\": \"DHL Express\", \"ShippingServiceCost\": \"55.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"DHL Express\", \"trackingNumber\": \"9876543210\", \"estimatedDeliveryTimeMin\": \"2026-04-30T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-02T08:00:00.000Z\", \"shipByDate\": \"2026-04-27T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-25T08:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-26T03:00:00.000Z] shipped"
+      },
+      {
+        "role": "system",
+        "content": "[2026-05-02T15:00:00.000Z] delivered"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-04T06:11:42.000Z] Hi, I just received the watch and it's beautiful, thank you. However, the warranty card that I saw in the listing photos doesn't seem to be in the box. Can you check?"
+      }
+    ]
+  },
+  {
+    "id": "cat03_07_tracking_stuck_anxious_multi",
+    "category": "post_purchase_shipping_qa",
+    "stage": "stage3",
+    "product_category": "plastic_model",
+    "emotion": "worried",
+    "language": "english",
+    "situation": "Multi-message — buyer asked about shipment status earlier, seller replied with tracking, buyer now reports tracking has been stuck for a week.",
+    "buyer_ebay": "B37",
+    "buyer_message": "Hi again. I checked the tracking and it hasn't moved for over a week now. Last scan was on April 26. I'm getting really worried about my package — could you please look into this?",
+    "buyer_message_ja": "再度こんにちは。トラッキングを確認したのですが、1週間以上動きがありません。最終スキャンが4月26日でした。本当に心配しているので、一度確認していただけませんか？",
+    "history_ja": [
+      "発送はもうされましたか？",
+      "（セラー）発送済みです、トラッキング番号は123456789です。",
+      "再度こんにちは。トラッキングを確認したのですが、1週間以上動きがありません。最終スキャンが4月26日でした。本当に心配しているので、一度確認していただけませんか？"
+    ],
+    "num_messages": 3,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"166889334512\", \"Title\": \"Bandai PG Perfect Grade RX-78-2 Gundam 1/60 Plastic Model Kit New Sealed\", \"PrimaryCategoryName\": \"Toys & Hobbies:Models & Kits:Anime\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"218.00\", \"CurrentPrice\": \"218.00\", \"Quantity\": \"2\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New\", \"ShippingType\": \"Flat\", \"ShippingService\": \"FedEx International Economy\", \"ShippingServiceCost\": \"48.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Tokyo\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"3\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"FedEx International Economy\", \"trackingNumber\": \"770098765432\", \"estimatedDeliveryTimeMin\": \"2026-05-01T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-05T08:00:00.000Z\", \"shipByDate\": \"2026-04-26T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-23T05:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "user",
+        "content": "[2026-04-24T08:00:00.000Z] Has this been shipped yet?"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-04-25T01:30:00.000Z] Hello,\n\nThank you for your message. Your order has been shipped via FedEx International Economy. The tracking number is 123456789. Please feel free to reach out if you have any questions.\n\nBest regards,"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-25T01:30:00.000Z] shipped"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-04T08:30:18.000Z] Hi again. I checked the tracking and it hasn't moved for over a week now. Last scan was on April 26. I'm getting really worried about my package — could you please look into this?"
+      }
+    ]
+  },
+  {
+    "id": "cat03_09_box_damaged_minor_apology_multi",
+    "category": "post_purchase_shipping_qa",
+    "stage": "stage3",
+    "product_category": "denim_jeans",
+    "emotion": "concerned",
+    "language": "english",
+    "situation": "Multi-message — buyer confirms arrival, seller acknowledged. Buyer flags that the outer box was crushed but the contents look fine (expected tone APOLOGY).",
+    "buyer_ebay": "B39",
+    "buyer_message": "I just wanted to mention — the outer cardboard box arrived pretty crushed. The jeans inside look okay so far, but I just wanted to flag it in case you need to know about it for shipping.",
+    "buyer_message_ja": "ひとつお伝えしたいのですが、外箱の段ボールがかなり潰れた状態で届きました。中のジーンズ自体は今のところ大丈夫そうですが、配送に関して把握しておかれた方が良いかと思いお伝えしておきます。",
+    "history_ja": [
+      "ジーンズが届きました！",
+      "（セラー）無事に届いたとのこと、安心いたしました。",
+      "ひとつお伝えしたいのですが、外箱の段ボールがかなり潰れた状態で届きました。中のジーンズ自体は今のところ大丈夫そうですが、配送に関して把握しておかれた方が良いかと思いお伝えしておきます。"
+    ],
+    "num_messages": 3,
+    "has_seller_history": true,
+    "input": [
+      {
+        "role": "developer",
+        "content": "{\"ItemID\": \"195994411203\", \"Title\": \"Levi's Vintage Clothing 1947 501 Jeans Rigid Indigo Selvedge W34 L34 Cone Mills\", \"PrimaryCategoryName\": \"Clothing, Shoes & Accessories:Men:Men's Clothing:Jeans\", \"ListingType\": \"FixedPriceItem\", \"StartPrice\": \"265.00\", \"CurrentPrice\": \"265.00\", \"Quantity\": \"1\", \"ListingStatus\": \"Active\", \"ConditionDisplayName\": \"New with tags\", \"ShippingType\": \"Flat\", \"ShippingService\": \"EMS International\", \"ShippingServiceCost\": \"42.00\", \"ReturnsAcceptedOption\": \"ReturnsAccepted\", \"RefundOption\": \"MoneyBack\", \"ReturnsWithinOption\": \"Days_30\", \"ShippingCostPaidByOption\": \"Buyer\", \"Country\": \"JP\", \"Location\": \"Osaka\", \"Currency\": \"USD\", \"DispatchTimeMax\": \"2\"}"
+      },
+      {
+        "role": "developer",
+        "content": "{\"shippingCarrier\": \"EMS International\", \"trackingNumber\": \"EJ112233445JP\", \"estimatedDeliveryTimeMin\": \"2026-04-29T08:00:00.000Z\", \"estimatedDeliveryTimeMax\": \"2026-05-02T08:00:00.000Z\", \"shipByDate\": \"2026-04-24T14:59:59.000Z\", \"whoPaysShipping\": \"Buyer\", \"detailProduct\": null}"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-22T04:00:00.000Z] purchase_completed"
+      },
+      {
+        "role": "system",
+        "content": "[2026-04-23T01:00:00.000Z] shipped"
+      },
+      {
+        "role": "system",
+        "content": "[2026-05-01T15:00:00.000Z] delivered"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-02T03:00:00.000Z] The jeans arrived!"
+      },
+      {
+        "role": "assistant",
+        "content": "[2026-05-02T05:30:00.000Z] Hello,\n\nThank you for confirming. We're glad to hear they arrived safely. We hope you enjoy them.\n\nBest regards,"
+      },
+      {
+        "role": "user",
+        "content": "[2026-05-04T10:18:42.000Z] I just wanted to mention — the outer cardboard box arrived pretty crushed. The jeans inside look okay so far, but I just wanted to flag it in case you need to know about it for shipping."
+      }
+    ]
+  }
+]

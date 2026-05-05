@@ -121,6 +121,39 @@ FORCED_TEMPLATE_APOLOGETIC = """
 
 
 # ============================================================
+# HOLD MODE BLOCK（保留モード時に admin_prompt 末尾に動的挿入）
+# ============================================================
+# 仕様書: services/baychat/ai/cowatech_spec_4tone_hold_mode.md 章 5.3
+HOLD_MODE_BLOCK_CONTENT = """
+--------------------------------
+HOLD MODE — RESPOND WITH A HOLD/CONFIRMATION REPLY
+--------------------------------
+The seller has chosen to NOT answer the buyer's substantive question yet.
+
+Generate a reply that:
+- Acknowledges the buyer's message courteously, in the tone selected via {toneSetting}.
+- States that we will check / confirm on our end and follow up.
+- Does NOT attempt to answer the substantive question.
+- Does NOT make specific promises about timing (no "within 24 hours", no specific dates).
+- Stays under 4 sentences.
+
+This OVERRIDES "HARD RULE (3) NO FUTURE PROMISES" for this single turn —
+saying "we will follow up" or "we will get back to you" is REQUIRED, not
+forbidden, when HOLD MODE is active.
+
+Tone-specific guidance for HOLD MODE:
+  POLITE:    "Thank you for your message. Let me confirm this on our end
+              and get back to you shortly."
+  FRIENDLY:  "Thanks for reaching out! Let me check on this and I'll
+              follow up soon."
+  APOLOGY:   "Thank you for your patience. We are looking into this and
+              will follow up with you as soon as we have an update."
+
+(ASSERTIVE + HOLD is rejected at the API layer and will not occur here.)
+"""
+
+
+# ============================================================
 # Helper
 # ============================================================
 
@@ -205,6 +238,7 @@ def build_production_payload(
     description="",
     include_forced_template=True,
     prompt_version="2.4",
+    hold_mode=False,
 ):
     """
     本番ペイロード構造を再現したOpenAI messages配列を返す。
@@ -228,8 +262,12 @@ def build_production_payload(
     if tone not in ("polite", "friendly", "apologetic", "assertive"):
         raise ValueError(f"tone は polite/friendly/apologetic/assertive のいずれか: {tone}")
 
-    # FORCED_TEMPLATE 除去構成（Cowatech prd 2026-04-22 反映と一致）
-    if prompt_version in ("2.5", "2.3_baseline") or prompt_version.startswith("2.3_baseline"):
+    # FORCED_TEMPLATE 構成
+    # - natural4_principle: FORCED_TEMPLATE を再導入（Cowatech本番ペイロードと整合・closing/signature欠落対策）
+    # - その他 v2.3_baseline 系: FORCED_TEMPLATE 除去（Cowatech prd 2026-04-22 反映時点のNo-Templateバージョン）
+    if prompt_version == "2.3_baseline_natural4_principle":
+        pass  # include_forced_template はデフォルトTrueのまま使う
+    elif prompt_version in ("2.5", "2.3_baseline") or prompt_version.startswith("2.3_baseline"):
         include_forced_template = False
 
     original = test_case.get("input") or test_case.get("messages") or []
@@ -285,6 +323,15 @@ def build_production_payload(
             "role": "developer",
             "content": _build_forced_template_content(tone, buyer_name, seller_name),
         })
+
+    # [末尾] HOLD MODE BLOCK（hold_mode=True の時だけ追加）
+    # 仕様書: services/baychat/ai/cowatech_spec_4tone_hold_mode.md 章 5
+    # 仕様矛盾チェック: assertive + hold_mode は API 側で 400 で弾く想定
+    if hold_mode:
+        if tone == "assertive":
+            raise ValueError("tone='assertive' と hold_mode=True の組み合わせは仕様矛盾のため不可")
+        hold_block = HOLD_MODE_BLOCK_CONTENT.replace("{toneSetting}", tone)
+        messages.append({"role": "developer", "content": hold_block})
 
     return messages
 

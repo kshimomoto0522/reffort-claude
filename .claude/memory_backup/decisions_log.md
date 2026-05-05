@@ -270,9 +270,44 @@ originSessionId: 35eb4679-f28f-4d72-9a30-510e015273e2
 
 ---
 
+## BayChat AI Reply：保留モード（hold_mode）見送り判断（2026-05-05）
+
+### 決定
+hold_mode（保留モード）機能は実装しない。Cowatech 第1弾実装スコープは **ASSERTIVE トーン追加のみ** に絞る。
+
+### 検証経緯
+5ケース × 3パターン比較走行で実生成を比較：
+- A. 即答（補足なし）: スコア 21.3/25
+- B. 補足欄に「現在確認中…」入力: 17.0/25
+- C. 保留モード ON（HOLD_MODE_BLOCK 注入）: 16.2/25
+
+### 根拠
+1. **C は B に対して定量的に劣る**（16.2 < 17.0）
+2. **HOLD_MODE_BLOCK は「実質的な質問に答えるな・4文以内」と AI を縛るためテンプレ化**してしまい、AI の本質価値（文脈理解+自然文生成）が消える
+3. **B（補足欄に1文入力）で AI が踏まえた保留応答を生成可能** → C 不要
+4. **実装コスト**: hold_mode は Cowatech 3-5人日 vs 補足欄活用 0人日（10倍差）
+5. **HARD RULE 3 動的免除**は admin_prompt のルール体系の一貫性を崩す蟻の一穴
+6. **必要派・不要派エージェント討論**でも、改善版でも B を統計的有意に上回る根拠なしと判定
+
+### 譲歩点（v2 検討候補として温存）
+- HOLD_MODE_BLOCK を「reflect 型」（バイヤー文脈に1文触れる）に再設計
+- 20ケース規模で B vs C 追検証
+- 結果で C が B を有意に上回れば実装、超えなければ正式に concept ごと却下
+
+### 関連ファイル
+- 仕様書: `services/baychat/ai/cowatech_spec_assertive_tone_addition.md` / `.pdf`
+- 検証3パターン比較HTML: `services/baychat/ai/testing/results/holdmode_3way_compare_20260505_134143.html`
+- payload_builder.py / batch_test.py の hold_mode コードは温存（v2 検証用・デフォルト False で動作影響なし）
+
+### 補足判断
+- **補足欄プリセットボタン**（よく使う短文ワンクリック挿入UI）も一旦見送り。実運用テスト中に必要性を再検討する
+
+---
+
 ## 更新ログ
 | 日付 | 内容 |
 |------|------|
+| 2026-05-05 | BayChat AI Reply：保留モード見送り判断（B 補足入力で代替可能・Cowatech 仕様は ASSERTIVE 追加のみに絞る）／会社名表記の根本修正（13ファイル「株式会社Reffort」→「株式会社リフォート（Reffort, Ltd.）」・代表 下元 敬介 明記） |
 | 2026-05-01 | スケジュールタスク全面Windows化（4本移管・実害5日間Xダイジェスト停止が直接の引き金）／eBay OAuth rotate取り下げ（3点セット成立せず・3層防衛で代替）／PreToolUse hook追加 |
 | 2026-05-01 | BayChat AI Reply：cat02 完成（natural3 / iter8）・GPT-5-Mini 本番除外決定・SpeedPAK業者対応辞書を将来課題化 |
 | 2026-04-24 | **Claude Code運用の根本リファクタ実施**（梅案即効解毒＋竹案ハンドオフ作成）。肥大化診断・4点セット設計・隔週メンテサイクル導入・Campers素材化 |

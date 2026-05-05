@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BayChat AI Reply — 3トーン横並び比較 (POLITE / APOLOGY / ASSERTIVE)</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 24px;
+    color: #1f2937;
+    line-height: 1.7;
+  }
+  h1 { font-size: 22px; color: #6b21a8; margin: 0 0 8px 0; }
+  h2 { font-size: 17px; color: #374151; margin: 30px 0 8px 0; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 14px; color: #6b7280; margin: 12px 0 4px 0; font-weight: 600; }
+  .container { max-width: 1900px; margin: 0 auto; }
+  .meta { font-size: 12px; color: #6b7280; margin-bottom: 18px; }
+  .legend {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .legend strong { color: #6b21a8; }
+  .legend table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+  .legend td { padding: 5px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .legend td:first-child { width: 130px; font-weight: 600; }
+  .case-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .buyer-msg {
+    background: #faf5ff;
+    border-left: 4px solid #6d28d9;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 10px 0 16px 0;
+    font-size: 13.5px;
+  }
+  .buyer-msg .label { font-size: 11px; color: #6b21a8; font-weight: 600; margin-bottom: 4px; }
+  .scenario-note {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    color: #78350f;
+    border-radius: 4px;
+    margin: 8px 0 12px 0;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .col {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fafafa;
+    min-width: 0;
+  }
+  .col.POLITE { border-top: 4px solid #3b82f6; }
+  .col.APOLOGY { border-top: 4px solid #10b981; }
+  .col.ASSERTIVE { border-top: 4px solid #dc2626; }
+  .col-header {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .col.POLITE .col-header { color: #1d4ed8; }
+  .col.APOLOGY .col-header { color: #047857; }
+  .col.ASSERTIVE .col-header { color: #b91c1c; }
+  .model-block {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 12.5px;
+  }
+  .model-name {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .reply-en {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    color: #1f2937;
+    background: #fff;
+    border-radius: 4px;
+    padding: 8px;
+    border: 1px solid #f3f4f6;
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+  .reply-ja {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 11.5px;
+    color: #4b5563;
+    padding: 6px 8px;
+    background: #f9fafb;
+    border-radius: 4px;
+    border-left: 2px solid #c4b5fd;
+    line-height: 1.6;
+  }
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: #6b7280;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: #ede9fe;
+    color: #5b21b6;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .badge.elapsed { background: #fef3c7; color: #92400e; }
+  .badge.cost { background: #dbeafe; color: #1e40af; }
+  .judge-summary {
+    background: #fef9c3;
+    border-left: 3px solid #ca8a04;
+    padding: 6px 10px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #713f12;
+    border-radius: 3px;
+  }
+  .case-meta {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+  .case-id {
+    font-weight: 700;
+    color: #6b21a8;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎭 BayChat AI Reply — 3トーン横並び比較</h1>
+  <p class="meta">テスト走行: 2026-05-05 20:29:09 / プロンプト: v2.3_baseline_natural4_principle (iter10)</p>
+
+  <div class="legend">
+    <strong>3トーンの定義</strong>
+    <table>
+      <tr>
+        <td style="background:#dbeafe;">丁寧 (POLITE)</td>
+        <td>標準的なCSビジネス文体。「Thank you very much」「We appreciate」「Kindly」など。Close: "Best regards," / "Kind regards,"</td>
+      </tr>
+      <tr>
+        <td style="background:#d1fae5;">謝罪 (APOLOGY)</td>
+        <td>POLITE より格式高く深い共感。「We sincerely apologize」「We understand how disappointing」など。Close: "Sincerely," / "With our apologies,"</td>
+      </tr>
+      <tr>
+        <td style="background:#fee2e2;">主張 (ASSERTIVE)</td>
+        <td>礼儀正しく毅然。謝罪語(sorry/apologize/regret/unfortunately)・感情共感フレーズ全廃。eBayプラットフォーム/国際取引慣行の権威を借りる。Close: "Best regards," / "Kind regards,"</td>
+      </tr>
+    </table>
+    <p style="margin-top:8px; font-size:12px; color:#6b7280;">
+      <strong>確認観点</strong>: 同じクレームに対して3トーンがどう違うか。トーンによる事実情報の変化はNG（fact-invariant）。voice/form のみ変化すべし。
+    </p>
+  </div>
+
+<div class="case-card">
+  <div class="case-meta">
+    <span class="case-id">cat03_11_customs_refund_demand_assertive</span> | 感情: angry
+  </div>
+  <div class="scenario-note">Buyer paid customs at delivery and demands a refund, calling it a scam (single message, Stage 3 — delivered. Expected tone ASSERTIVE).</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ (英)</div>
+    I had to pay $80 in customs when this was delivered today!! I never agreed to this. I want a full refund of the customs charge. This feels like a scam — you should have warned me!
+    <div class="label" style="margin-top:6px;">日本語訳</div>
+    今日届いた時に関税で80ドルも払わされました！！こんなの聞いていません。関税分を全額返金してください。詐欺ではないですか — 事前に警告すべきでしょう！
+  </div>
+  <div class="three-col">
+    <div class="col POLITE">
+      <div class="col-header">🔵 丁寧 (POLITE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. Regarding the $80 customs charge you paid upon delivery, please understand that customs duties are part of international import procedures and are generally the responsibility of the buyer. Our store prepares all necessary shipping documents properly at dispatch, but the occurrence and amount of customs fees are determined by the local customs authorities, so it is difficult to provide an exact amount in advance.
+
+We regret any inconvenience, but refunds for customs charges are outside of what we can handle. If you wish to formally dispute this, you may use eBay's Resolution Center.
+
+Please let us know if you have any other questions.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B41,
+
+ご連絡いただきありがとうございます。お届け時に関税として80ドルをお支払いになったとのことですが、関税は国際取引における通関手続きの一環であり、買主様のご負担となる場合が一般的です。弊店は発送時に必要な書類を適切に準備しておりますが、関税の発生やその金額については現地の税関の判断によるため、事前に正確な金額をお知らせすることは難しい場合がございます。
+
+ご不便をおかけしますが、関税の返金は弊店の対応範囲外となりますことをご了承ください。もし正式に異議を申し立てたい場合は、eBayの解決センターをご利用いただくことが可能です。
+
+何か他にご不明な点がございましたらお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">8.4秒</span>
+    <span class="badge cost">¥0.830</span>
+  </div>
+  <div class="judge-summary">関税は通常購入者負担であることを丁寧に説明し、返金不可である旨を伝えていますが、もう少し共感的な表現が望まれます。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. It's common for customs duties or import taxes to be incurred during international shipping, and these are the buyer's responsibility. Our store cannot provide prior warnings about these costs, as this follows standard practice for cross-border purchases.
+
+Therefore, I am unable to refund the customs charges. I appreciate your understanding.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB41、
+
+お客様のメッセージをありがとうございます。国際配送において、関税や輸入税が発生することは一般的なことであり、これは購入者の責任となります。私たちのストアでは、これらの費用について事前に警告することはできませんが、国際取引の標準的な慣行に従っております。
+
+そのため、関税の返金を行うことはできません。ご理解いただけますようお願い申し上げます。
+
+今後ともよろしくお願いいたします。
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">6.3秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">返信は正確で事実に基づいていますが、トーンがやや冷たく、購入者の不満に対する共感が不足しています。次の対応についての案内ももう少し明確にすると良いでしょう。</div>
+</div>
+    </div>
+    <div class="col APOLOGY">
+      <div class="col-header">🟢 謝罪 (APOLOGY)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. I apologize for any inconvenience caused regarding the customs charge.
+
+For international shipments, customs duties and import taxes are generally the responsibility of the buyer, and we do not provide individual prior warnings about these charges. The customs fee you paid is determined by the carrier and customs authorities, and unfortunately, we are unable to refund this charge.
+
+Please feel free to contact us if you have any further questions.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B41,
+
+この度はご連絡いただきありがとうございます。関税の件でご不快な思いをさせてしまい、誠に申し訳ございません。
+
+国際発送の場合、関税や輸入税は通常、購入者様のご負担となることが多く、当店から事前に個別のご案内を差し上げておりませんでした。今回の関税料金については、配送業者や税関の判断によるものであり、当店での返金対応は致しかねますことをご了承ください。
+
+ご不明な点がございましたら、引き続きご連絡ください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">4.9秒</span>
+    <span class="badge cost">¥0.810</span>
+  </div>
+  <div class="judge-summary">関税は購入者負担であり、返金できない旨を丁寧に説明しているが、もう少し共感を示し、関税の仕組みについての案内を加えるとより良い。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B41,
+
+I’m sorry to hear that you had to pay $80 in customs when your order was delivered today. Please understand that customs duties and import taxes are the responsibility of the buyer in international shipping. This is in line with eBay's international shipping framework, and we are unable to refund these charges as they are not something we can control. I appreciate your understanding in this matter.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB41、
+
+本日お届けした際に80ドルの関税を支払わなければならなかったとのこと、誠に申し訳ございません。国際配送においては、関税や輸入税は購入者のご負担となります。これはeBayの国際配送の標準的な手続きに従ったものです。私たちの店舗では、関税に関しての事前の通知を行うことはできませんが、今後の参考としてお伝えいたします。関税に関するご返金はお受けできませんので、何卒ご理解のほどよろしくお願いいたします。
+
+今後ともよろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">12.7秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">関税は購入者負担であり、返金できない旨を正確に伝えていますが、もう少し共感を示し、次の対応や注意点を明確にするとより良い返信になります。</div>
+</div>
+    </div>
+    <div class="col ASSERTIVE">
+      <div class="col-header">🔴 主張 (ASSERTIVE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message. Regarding the $80 customs charge you paid upon delivery, please be advised that in international transactions, customs duties and import taxes are typically the responsibility of the buyer. Our store attaches the necessary documents at the time of shipment and ships via FedEx International Priority, but advance notice of customs charges is handled by local customs and the carrier, so we do not provide prior warnings.
+
+Refunding customs fees is outside the scope of what we can handle, so we ask for your understanding. If you wish to formally dispute this, you may use eBay's Resolution Center.
+
+Please let us know if you have any other questions.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B41,
+
+ご連絡ありがとうございます。お届け時に関税として80ドルをお支払いいただいたとのことですが、国際取引において関税や輸入税は買主様のご負担となるのが標準的な慣行となっております。弊店は発送時に必要な書類を添付し、FedEx国際優先便で発送しておりますが、関税の事前通知は現地の税関や配送業者の管轄となるため、弊店からの事前警告は行っておりません。
+
+この関税費用の返金は弊店の対応範囲外となりますので、ご了承願います。もし正式に異議を申し立てたい場合は、eBayの紛争解決センターをご利用いただくことが可能です。
+
+何か他にご不明な点がございましたらお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">12.6秒</span>
+    <span class="badge cost">¥0.830</span>
+  </div>
+  <div class="judge-summary">関税は通常購入者負担であることを正確に説明し、返金不可であることも伝えていますが、もう少し共感的なトーンと具体的な次のステップの案内があればより良いです。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B41,
+
+Thank you for your message regarding the customs charges. Please be advised that customs duties and import taxes are the responsibility of the buyer in international shipping. This is standard practice for cross-border purchases. Our store cannot include these fees in the item price, so they are incurred by the buyer.
+
+I appreciate your understanding. If you have any further questions, feel free to reach out anytime.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB41、
+
+関税に関するご不満についてお知らせいただき、ありがとうございます。国際配送においては、関税や輸入税は購入者の責任となっております。これは、国際取引の標準的な慣行に基づいています。私たちのストアでは、商品の価格に関税や税金を含めることはできませんので、これらの費用は購入者が負担することになります。
+
+ご理解いただけますようお願い申し上げます。何か他にご質問がございましたら、お気軽にお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 19/25</span>
+    <span class="badge elapsed">4.4秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">関税は国際取引で買い手負担であることを正確に説明しているが、買い手の不満に対する共感や返品ポリシーの案内が不足している。</div>
+</div>
+    </div>
+  </div>
+</div>
+<div class="case-card">
+  <div class="case-meta">
+    <span class="case-id">cat03_12_counterfeit_accusation_assertive</span> | 感情: accusatory
+  </div>
+  <div class="scenario-note">Buyer received a vintage designer bag and accuses the seller of selling a fake (single message, Stage 3 — delivered. Expected tone ASSERTIVE).</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ (英)</div>
+    This bag is FAKE!! The stitching doesn't match what I've seen on authentic ones online, and the lining feels cheap. I'm going to open a return and report you to eBay if you don't refund me immediately.
+    <div class="label" style="margin-top:6px;">日本語訳</div>
+    このバッグは偽物です！！縫製がネットで見た本物のものと違いますし、内側の生地も安っぽい感触です。即座に返金していただけない場合、返品手続きを開始してeBayに通報します。
+  </div>
+  <div class="three-col">
+    <div class="col POLITE">
+      <div class="col-header">🔵 丁寧 (POLITE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message. I can confirm that this bag is an authentic Louis Vuitton vintage item. I understand your concerns about the stitching and lining, but please be assured that we only sell genuine products.
+
+If you wish to return the item, our store accepts returns within 30 days, so I will proceed with the return process for you.
+
+Best regards,
+ rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B42,
+
+ご連絡いただきありがとうございます。こちらのバッグは正規のルイ・ヴィトンのヴィンテージ品でございます。縫製や裏地についてご心配の点があるとのことですが、当店は本物のみを取り扱っております。
+
+返品をご希望の場合は、30日以内であれば返品を承っておりますので、返品手続きを進めさせていただきます。ご安心ください。
+
+よろしくお願いいたします。
+
+Best regards,
+ rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 15/25</span>
+    <span class="badge elapsed">4.2秒</span>
+    <span class="badge cost">¥0.790</span>
+  </div>
+  <div class="judge-summary">返信は商品の正当性を主張していますが、購入者の不満を和らげる共感が不足し、返品手続きの案内も不十分です。より丁寧で具体的な対応が求められます。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message. I understand your concerns regarding the authenticity of the bag. I can assure you that all items listed in our store are genuine. If there are specific details you find unusual, please let me know exactly which points you are concerned about, and I will look into it together with you.
+
+Regarding the return process, we do accept returns in accordance with eBay's policy, so please proceed with the necessary steps for the return.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB42、
+
+ご連絡ありがとうございます。お客様がご指摘の通り、商品の状態についてご不安をお持ちのことを理解しております。弊店では、出品している商品はすべて本物であることを確認しております。もし具体的に気になる点があれば、どの部分が不明であるかを教えていただければ、一緒に確認いたします。
+
+返品手続きについては、eBayのポリシーに従い、返品を受け付けておりますので、必要な手続きを進めてまいります。お手数ですが、返品の手続きを進めていただければと思います。
+
+よろしくお願いいたします。
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">12.4秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">返信は正確で丁寧ですが、返品手続きの具体的な案内や、買い手の不安に対する共感がもう少しあるとより良いです。</div>
+</div>
+    </div>
+    <div class="col APOLOGY">
+      <div class="col-header">🟢 謝罪 (APOLOGY)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message. I understand your concerns regarding the stitching and lining of the Louis Vuitton bag you purchased.
+
+Please be assured that we only sell genuine products, and this item is authentic. If there are specific details you are concerned about, please let me know so I can review them with you.
+
+If you wish to return the item, we accept returns within 30 days. Please let me know if you would like to proceed with the return, and I will guide you through the process.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B42,
+
+この度はご連絡いただきありがとうございます。お買い上げいただいたルイ・ヴィトンのバッグについて、縫製や内張りにご不満があるとのこと、承知いたしました。
+
+当店では正規品のみを取り扱っておりますので、こちらの商品は本物であることを確認しております。もし具体的に気になる点がございましたら、詳細をお知らせいただければ一緒に確認させていただきます。
+
+返品をご希望の場合は、30日以内であれば返品対応をさせていただきますので、ご安心ください。返品手続きについてご案内いたしますので、ご希望の場合はお知らせください。
+
+よろしくお願いいたします。
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">4.8秒</span>
+    <span class="badge cost">¥0.810</span>
+  </div>
+  <div class="judge-summary">購入者の偽物疑惑に対し、商品の真贋を保証しつつ返品対応について案内しているが、もう少し共感的で具体的な返品手続きの案内が望ましい。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B42,
+
+I sincerely apologize for the distress this has caused you. We can confirm that all items listed in our store are authentic. If you could specify which details about the stitching or lining concern you, I would be happy to investigate further.
+
+Regarding the return process, we accept returns within 30 days, so please feel free to proceed with that. We value your feedback and will use it to improve our service.
+
+Sincerely,
+
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB42、
+
+この度はご不快な思いをさせてしまい、誠に申し訳ございません。私たちの店舗では、出品している商品はすべて本物であることを確認しております。お客様が指摘された縫製やライニングの件について、具体的にどの部分が気になるのか教えていただければ、さらに調査いたします。
+
+返品手続きについては、30日以内であれば受け付けておりますので、安心してお手続きください。お客様のご意見を大切にし、今後の改善に努めます。
+
+よろしくお願いいたします。
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">6.5秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">返信は正確で丁寧だが、購入者の不満に対する共感がやや不足しており、返品手続きの具体的な案内ももう少し明確にすると良い。</div>
+</div>
+    </div>
+    <div class="col ASSERTIVE">
+      <div class="col-header">🔴 主張 (ASSERTIVE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message. I can confirm that this bag is an authentic Louis Vuitton vintage item. I understand your concerns about the stitching and lining, but please be assured that we only list genuine products.
+
+If you are not satisfied with the item, we accept returns and will proceed with the return process. Please let me know if you have any questions.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B42,
+
+ご連絡ありがとうございます。こちらのバッグは正規のルイ・ヴィトンのヴィンテージ品でございます。縫製や裏地の感触についてご懸念をお持ちのようですが、当店は正規品のみを取り扱っております。
+
+もし商品にご満足いただけない場合は、返品を承っておりますので、返品手続きを進めさせていただきます。ご不明な点がございましたらお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 17/25</span>
+    <span class="badge elapsed">9.4秒</span>
+    <span class="badge cost">¥0.790</span>
+  </div>
+  <div class="judge-summary">返信は正確だが、購入者の不満に対する共感が不足しており、返品手続きの案内も不十分であるため、より丁寧で具体的な対応が望ましい。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B42,
+
+Thank you for your message. I can confirm that the item we listed is authentic. Our store does not list or ship counterfeit items. If there is a specific detail you find unusual, please let me know exactly which point you are concerned about, and I will look into it together with you.
+
+We can proceed with the return process if you wish, so please let me know if you would like to do that.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB42、
+
+ご連絡ありがとうございます。お客様のご指摘について、私たちは出品している商品が本物であることを確認しております。私たちの店舗では、偽造品を出品したり発送したりすることはありません。もし具体的な点でご不安なことがあれば、どの部分が気になるのか教えていただければ、一緒に確認いたします。
+
+この件については、返品手続きを進めることができますので、必要であればお知らせください。 
+
+よろしくお願いいたします。
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">7.5秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">返信は商品の正当性を主張しつつ返品対応も提案しており、正確で自然な表現だが、もう少し共感的なトーンと返品手続きの具体的案内が望ましい。</div>
+</div>
+    </div>
+  </div>
+</div>
+<div class="case-card">
+  <div class="case-meta">
+    <span class="case-id">cat03_13_address_blame_buyer_fault_assertive</span> | 感情: angry
+  </div>
+  <div class="scenario-note">Package was returned because buyer entered the wrong address; buyer now blames the seller (single message, Stage 3 — delivered to wrong address per eBay registered address. Expected tone ASSERTIVE).</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ (英)</div>
+    Why didn't you deliver the console to my correct address?! It went to my old address and now I have to figure out how to get it. You sent it to the WRONG place. This is your responsibility to fix!
+    <div class="label" style="margin-top:6px;">日本語訳</div>
+    なぜ正しい住所に配送しなかったのですか？！古い住所に送られて、今どうやって受け取るかも分からない状態です。間違った場所に送ったのはそちらです。これはそちらの責任で対応すべきです！
+  </div>
+  <div class="three-col">
+    <div class="col POLITE">
+      <div class="col-header">🔵 丁寧 (POLITE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message. The console you ordered was shipped to the address registered in your eBay order information. Once the item has been shipped, the delivery address cannot be changed. If it was delivered to your old address by mistake, the most practical step is to contact the current residents at that address.
+
+Our store arranged the shipment correctly based on the order information at the time of dispatch. If you wish to formally dispute this, you can open an Item Not Received case through eBay's Resolution Center, but please note that cases where the item was delivered to the registered address are typically reviewed in favor of the seller.
+
+Please let us know if you have any other questions.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B43,
+
+ご連絡ありがとうございます。ご注文いただいたコンソールは、eBayの注文情報に登録されていた住所に発送されております。発送後の配送先の変更はできませんので、誤って古い住所に届いてしまった場合は、そちらの住所の現在の居住者様にご連絡いただくのが最も現実的な対応となります。
+
+当店としては、発送時点での注文情報に基づいて正しく手配を行っております。もし正式に問題を申し立てたい場合は、eBayの解決センターで「商品未着」ケースを開くことが可能ですが、登録住所への配送が確認されている場合は、通常は買主様の責任と判断されることが多いです。
+
+何か他にご不明な点がございましたらお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">6.2秒</span>
+    <span class="badge cost">¥0.830</span>
+  </div>
+  <div class="judge-summary">発送先は注文時の登録住所であり、発送後の変更はできない旨を正確に伝えていますが、もう少し共感的な表現と具体的な次の対応策の案内があるとより良いです。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message. I want to clarify the situation regarding your order. It was shipped to the address that was registered at the time of purchase. Once a package has been dispatched, the delivery destination cannot be modified. The most practical step for recovery is to contact the current residents at that address, as the package should still be there.
+
+If you have any further questions, feel free to reach out anytime.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB43、
+
+ご連絡ありがとうございます。ご指摘の件についてお知らせいたします。ご注文は、購入時に登録された住所に発送されました。発送後は、配送先を変更することはできません。最も実用的な対処法は、その住所に住んでいる方に連絡を取ることです。荷物はその住所に届いているはずです。
+
+何か他にご不明な点がございましたら、お知らせください。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">5.0秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">発送先は購入時の登録住所であり、配送後の変更はできないことを丁寧に説明していますが、謝罪や追加のサポート提案があるとより良い対応になります。</div>
+</div>
+    </div>
+    <div class="col APOLOGY">
+      <div class="col-header">🟢 謝罪 (APOLOGY)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message.
+
+The console you ordered was shipped to the address registered on eBay at the time of purchase. We do not accept changes to the delivery address after shipment.
+
+The most practical way to recover the item is to check with the current residents at the old address or neighbors nearby. If you wish to formally dispute, you can open an Item Not Received case through eBay's Resolution Center, but please note that since the shipment was made to the registered address, cases are typically reviewed in favor of the seller.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B43,
+
+ご連絡いただきありがとうございます。
+
+ご注文いただいたコンソールは、ご購入時にeBayに登録されていた住所に発送しております。発送後の配送先の変更は承っておりません。
+
+お手数ですが、現在の住所の方や旧住所のご近所の方にご確認いただくことが、商品を受け取る最も早い方法となります。また、正式に問題を申し立てたい場合は、eBayの解決センターで「商品未着」ケースを開くことが可能ですが、発送先住所が購入時の登録住所であるため、通常はその住所に配達された記録が優先されます。
+
+ご理解のほどよろしくお願いいたします。
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 19/25</span>
+    <span class="badge elapsed">6.5秒</span>
+    <span class="badge cost">¥0.820</span>
+  </div>
+  <div class="judge-summary">配送先住所が購入時の登録住所に基づいていることは正確に伝えられているが、トーンがやや冷たく、買い手の感情に寄り添った対応が不足している。次の対応方法の案内はあるが、より親切な提案が望ましい。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B43,
+
+I sincerely apologize for the inconvenience. As you mentioned, the item was shipped to the address registered at the time of purchase. Once a package has been dispatched, the delivery destination cannot be modified. The most practical step for recovery is to contact the current residents at that address, as the package should still be there.
+
+Sincerely,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB43、
+
+ご不便をおかけして申し訳ございません。ご指摘の通り、商品はご登録の住所に発送されました。発送後は配送先を変更することができません。最も実用的な解決策は、現在の居住者に連絡を取ることです。商品はその住所に届いているはずです。
+
+今後ともよろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">3.5秒</span>
+    <span class="badge cost">¥0.300</span>
+  </div>
+  <div class="judge-summary">発送先は購入時の登録住所であり、配送先変更はできないことを丁寧に説明していますが、もう少し共感を示し、今後の対応についての案内を充実させると良いでしょう。</div>
+</div>
+    </div>
+    <div class="col ASSERTIVE">
+      <div class="col-header">🔴 主張 (ASSERTIVE)</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message. The console you ordered was shipped to the address registered on eBay at the time of purchase. We do not accept address changes after shipment.
+
+Since the delivery went to your old address, please understand that we shipped based on the registered address at dispatch. The most practical way to recover the package is to check with the current residents at your old address or neighbors.
+
+If you wish to formally dispute, you can open an Item Not Received case through eBay's Resolution Center, but please note that such cases are typically reviewed based on the address records at purchase.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">Hello B43,
+
+ご連絡ありがとうございます。ご注文いただいたコンソールは、ご購入時にeBayに登録されていた住所へ発送しております。発送後の配送先変更は承っておりません。
+
+お届け先が古い住所になってしまったとのことですが、当店では発送時点での登録住所に基づいて手配しております。お手数ですが、現在の住所のご近所や旧住所の住人の方にご確認いただくことが、最も早い回収方法となります。
+
+もし正式に紛争を申し立てたい場合は、eBayの解決センターにて「商品未着」ケースを開くことが可能ですが、発送先住所が購入時の登録住所であるため、通常は住所記録に基づいて判断されますことをご了承ください。
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">6.1秒</span>
+    <span class="badge cost">¥0.820</span>
+  </div>
+  <div class="judge-summary">発送先は購入時の登録住所であり、発送後の変更は受け付けていないことを丁寧に説明していますが、もう少し共感を示し、配送業者への連絡など具体的な対処法を案内するとより良い対応になります。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B43,
+
+Thank you for your message. Your order was shipped to the address that was registered in the eBay order at the time of purchase. Once a package has been dispatched, the delivery destination cannot be modified. For recovery, the most practical step is to contact the current residents at that address — the package should still be there or they should know where it went. If you'd like to formally dispute, eBay's Resolution Center offers an Item Not Received case process, though I should mention that since shipment was made to the address registered at purchase, that kind of case is generally reviewed against the address records on file.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB43、
+
+ご連絡ありがとうございます。ご注文は、購入時に登録された住所に発送されました。発送後は、配送先を変更することはできません。お手数ですが、現在の住所の住人に連絡を取って、荷物の回収を試みることをお勧めします。もし正式に異議を申し立てたい場合は、eBayの解決センターを通じて「未着アイテム」のケースを開くことができますが、発送先が購入時に登録された住所であるため、そのようなケースは通常、出品者に有利に審査されることをお伝えしておきます。
+
+よろしくお願いいたします。 
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">5.2秒</span>
+    <span class="badge cost">¥0.310</span>
+  </div>
+  <div class="judge-summary">配送先が購入時に登録された住所であったことを正確に伝え、購入者に対して今後の対応策を案内していますが、もう少し共感を示し、具体的な次の行動を明確にするとより良いです。</div>
+</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

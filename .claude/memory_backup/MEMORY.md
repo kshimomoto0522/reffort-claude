@@ -60,6 +60,7 @@
 - [スプレッドシート操作はAIコース必須テーマ](project_spreadsheet_automation_content.md) — Campers/コンサル教材の必須コンテンツ・記録蓄積先・扱い方針
 - [月次請求書 半自動化ツール](project_invoice_automation.md) — eBay外注3名の請求書自動作成（/月次請求書 YYYYMM）・3シート跨ぎ・列ごと型変換
 - [eBay 無在庫リサーチツール Ver.1](project_research_tool.md) — 2026-04-30完成・5/31ウェビナーデモ用・全コスト込み利益計算+楽天/Yahoo自動マッチング・社長判断待ちAPIキー3件
+- [ASICS v9 並列ワーカー化](project_asics_parallel_v9.md) — AdsPower(Onitsuka)+DECODO日本住宅IPで40h→16h短縮・PoC成功・コード改修完了・実機テスト未（2026-05-05夜）
 
 ## 参照なし（archive/・通常ロードしない）
 - `archive/README.md` — archive/ 配下のルール

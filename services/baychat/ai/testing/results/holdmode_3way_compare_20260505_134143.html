@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>保留モード必要性検証 — 3パターン比較</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 24px;
+    color: #1f2937;
+    line-height: 1.7;
+  }
+  h1 { font-size: 22px; color: #6b21a8; margin: 0 0 8px 0; }
+  h2 { font-size: 17px; color: #374151; margin: 30px 0 8px 0; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 14px; color: #6b7280; margin: 12px 0 4px 0; font-weight: 600; }
+  .container { max-width: 1700px; margin: 0 auto; }
+  .meta { font-size: 12px; color: #6b7280; margin-bottom: 18px; }
+  .legend {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .legend strong { color: #6b21a8; }
+  .legend table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+  .legend td { padding: 5px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .legend td:first-child { width: 100px; font-weight: 600; }
+  .case-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .buyer-msg {
+    background: #faf5ff;
+    border-left: 4px solid #6d28d9;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 10px 0 16px 0;
+    font-size: 13.5px;
+  }
+  .buyer-msg .label { font-size: 11px; color: #6b21a8; font-weight: 600; margin-bottom: 4px; }
+  .scenario-note {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    color: #78350f;
+    border-radius: 4px;
+    margin: 8px 0 12px 0;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .col {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fafafa;
+    min-width: 0;
+  }
+  .col.A { border-top: 4px solid #3b82f6; }
+  .col.B { border-top: 4px solid #f59e0b; }
+  .col.C { border-top: 4px solid #10b981; }
+  .col-header {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .col.A .col-header { color: #1d4ed8; }
+  .col.B .col-header { color: #b45309; }
+  .col.C .col-header { color: #047857; }
+  .model-block {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 12.5px;
+  }
+  .model-name {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .reply-en {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    color: #1f2937;
+    background: #fff;
+    border-radius: 4px;
+    padding: 8px;
+    border: 1px solid #f3f4f6;
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+  .reply-ja {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 11.5px;
+    color: #4b5563;
+    padding: 6px 8px;
+    background: #f9fafb;
+    border-radius: 4px;
+    border-left: 2px solid #c4b5fd;
+    line-height: 1.6;
+  }
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: #6b7280;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: #ede9fe;
+    color: #5b21b6;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .badge.elapsed { background: #fef3c7; color: #92400e; }
+  .badge.cost { background: #dbeafe; color: #1e40af; }
+  .judge-summary {
+    background: #fef9c3;
+    border-left: 3px solid #ca8a04;
+    padding: 6px 10px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #713f12;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔍 保留モード必要性検証 — 3パターン横並び比較</h1>
+  <p class="meta">テスト走行: 2026-05-05 13:41:43</p>
+
+  <div class="legend">
+    <strong>3パターンの違い</strong>
+    <table>
+      <tr>
+        <td style="background:#dbeafe;">A. 即答（補足なし）</td>
+        <td>通常生成。バイヤー質問に AI が即答する。</td>
+      </tr>
+      <tr>
+        <td style="background:#fef3c7;">B. 補足「確認中…」</td>
+        <td>「現在確認中のため、後ほど改めてご連絡します」を補足欄に入力して生成。</td>
+      </tr>
+      <tr>
+        <td style="background:#d1fae5;">C. 保留モード ON</td>
+        <td>HOLD_MODE_BLOCK を末尾挿入。専用ガイドで「実質的な質問に答えない・確認後連絡する旨だけ返す」。</td>
+      </tr>
+    </table>
+    <p style="margin-top:8px; font-size:12px; color:#6b7280;">
+      <strong>検証観点</strong>: B（補足だけ）で十分か? それとも C（専用モード）でないと達成できない違いがあるか? を実生成結果で社長判断していただく。
+    </p>
+  </div>
+
+
+<div class="case-card">
+  <h2>hold01_wholesale_inquiry</h2>
+  <div class="scenario-note">📌 シーン: Retail store owner asking about long-term wholesale arrangement (50 units/month, wholesale pricing, combined shipping, fast-track processing). Requires CEO-level business decision; AI cannot answer immediately.</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ</div>
+    <div>Hi, I run a retail boutique in NY. I'd like to order around 50 units of this product every month going forward. Could you offer wholesale pricing, combined shipping per order, and any way to fast-track processing? I'm open to a long-term arrangement if we can work out the right numbers.</div>
+    <div style="color:#6b7280; font-size:12px; margin-top:4px;">こんにちは、NYで小売店を営んでいる者です。今後この商品を毎月50個ほど継続発注したいと考えています。卸価格・同梱配送・優先処理は可能でしょうか？条件が合えば長期取引も視野に入れています。</div>
+  </div>
+
+  <div class="three-col">
+    <div class="col A">
+      <div class="col-header">A. 即答（補足なし）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B51,
+
+Thank you for your message.
+
+Regarding your interest in ordering around 50 units monthly, I would be happy to discuss wholesale pricing, combined shipping discounts, and expedited processing options. Currently, the price per unit is $168, and shipping via FedEx International Priority is $38 per shipment. For multiple units, I can review the specifics and provide you with the best possible offer.
+
+We appreciate your interest in a long-term arrangement and look forward to working out the details with you.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B51様
+
+お問い合わせいただきありがとうございます。
+
+毎月約50足のご注文について、卸売価格やまとめての送料割引、迅速な処理についてのご提案を検討いたします。現在のところ、当店の出品価格は1足あたり168ドルで、送料はFedEx International Priorityで38ドルとなっております。複数注文の場合の送料割引や優先処理については、具体的な条件を確認の上、ご案内させていただきます。
+
+長期的なお取引のご希望を大変嬉しく思います。詳細については引き続きご相談させていただければ幸いです。
+
+どうぞよろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">⏱ 6.7s</span>
+    <span class="badge cost">¥0.5</span>
+  </div>
+  <div class="judge-summary">📝 購入希望者の要望に対して丁寧に回答しているが、次の具体的なアクションが明確でなく、署名もやや不自然であるため改善が望まれる。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B51,
+
+Thank you for your message. I'm glad to hear about your interest in ordering around 50 units each month. However, due to eBay's policies, I am unable to offer wholesale pricing or special shipping arrangements. All transactions must be conducted through the eBay platform.
+
+If you're interested, please feel free to place your orders through the regular listings. If you have any other questions, don't hesitate to reach out.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB51、
+
+ご連絡ありがとうございます。卸売価格や、毎月50ユニットのご注文についてお話しできることを嬉しく思います。ただし、eBayのポリシーにより、卸売価格や特別な配送条件を提供することはできません。すべての取引はeBayのプラットフォームを通じて行われる必要があります。
+
+ご興味がある場合は、通常のリストからご注文いただければと思います。何か他にご質問があれば、お気軽にお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">⏱ 5s</span>
+    <span class="badge cost">¥0.18</span>
+  </div>
+  <div class="judge-summary">📝 購入希望者の卸売価格や特別な配送についての問い合わせに対し、eBayのポリシーで対応できない旨を丁寧に伝えているが、代替案や詳細説明が不足している。</div>
+</div>
+    </div>
+    <div class="col B">
+      <div class="col-header">B. 補足「確認中のため、後ほど…」</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B51,
+
+Thank you for your message.
+
+Regarding your inquiry about wholesale pricing, combined shipping, and expedited processing for monthly orders, I am currently confirming the details and will get back to you shortly with more information.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B51様
+
+お問い合わせいただき、誠にありがとうございます。
+
+大量注文や卸売価格、まとめての発送、迅速な処理について現在確認中のため、後ほど改めてご連絡いたします。
+
+何卒よろしくお願い申し上げます。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 19/25</span>
+    <span class="badge elapsed">⏱ 3.2s</span>
+    <span class="badge cost">¥0.46</span>
+  </div>
+  <div class="judge-summary">📝 購入者の問い合わせに対して丁寧に返信しているが、回答が保留中で具体的な次のステップやタイムラインの提示が不足している。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B51,
+
+Thank you for your message. I am currently looking into your request and will get back to you shortly.
+
+If you have any further questions, please feel free to reach out.
+
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB51、
+
+ご連絡ありがとうございます。お客様のご要望について現在確認中のため、後ほど改めてご連絡します。
+
+何か他にご質問がございましたら、お気軽にお知らせください。
+
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 15/25</span>
+    <span class="badge elapsed">⏱ 2.5s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 返信は正確だが、購入者の具体的な質問に答えておらず、次の対応も明確でないため、改善が必要。トーンもやや事務的で親しみが欠けている。</div>
+</div>
+    </div>
+    <div class="col C">
+      <div class="col-header">C. 保留モード ON（HOLD_MODE_BLOCK 注入）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">お問い合わせいただきありがとうございます。こちらの件について、当店で確認させていただき、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">⏱ 1.6s</span>
+    <span class="badge cost">¥0.45</span>
+  </div>
+  <div class="judge-summary">📝 返信は正確で丁寧ですが、購入者の複数の要望に具体的に触れておらず、次のステップの案内もやや曖昧です。より詳細で親しみやすい対応が望まれます。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。こちらで確認し、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">⏱ 1.6s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 返信は正確で丁寧ですが、買い手の具体的な質問に対して詳細な回答がなく、次のステップの案内もやや不十分です。</div>
+</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <h2>hold02_shipment_status_inquiry</h2>
+  <div class="scenario-note">📌 シーン: Buyer asks about a delayed package after 10 days. Seller needs to contact carrier directly to investigate; AI cannot answer immediately.</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ</div>
+    <div>Hi, it's been 10 days since you shipped my watch and the tracking still shows it stuck in transit. Where is my package? I'm getting worried something happened to it.</div>
+    <div style="color:#6b7280; font-size:12px; margin-top:4px;">こんにちは、時計を発送していただいてから10日が経ちましたが、トラッキングがまだ配送中で止まっています。荷物はどこにあるのでしょうか？何かあったのではないかと心配しています。</div>
+  </div>
+
+  <div class="three-col">
+    <div class="col A">
+      <div class="col-header">A. 即答（補足なし）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B52,
+
+Thank you for your message.
+
+I understand your concern about the tracking status not updating even after 10 days since we shipped your watch. We shipped it from Tokyo, Japan using FedEx International Priority. Typically, international transit takes about 3 to 7 business days after dispatch, but delays can occur due to customs or local delivery conditions.
+
+Please kindly check the latest tracking status directly on FedEx's website using the tracking number provided. If there is no update, I recommend contacting FedEx for further information.
+
+If you have any other questions, please feel free to reach out anytime.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B52様
+
+ご連絡いただきありがとうございます。
+
+発送から10日経過しても追跡情報が動いていないとのことで、ご心配のことと存じます。弊店ではFedEx International Priorityにて発送しており、発送は日本の東京から行っております。発送後の国際輸送期間は通常3〜7営業日程度ですが、通関や現地配送の状況により遅延が発生する場合がございます。
+
+お手数ですが、FedExの追跡番号を使って直接FedExのウェブサイトで最新の配送状況をご確認いただけますでしょうか。もし配送状況に変化がない場合は、FedExにお問い合わせいただくことをおすすめいたします。
+
+ご不明な点がございましたら、いつでもご連絡ください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 21/25</span>
+    <span class="badge elapsed">⏱ 9.5s</span>
+    <span class="badge cost">¥0.51</span>
+  </div>
+  <div class="judge-summary">📝 発送から10日経っても追跡情報が更新されないことに対し、国際配送の通常日数や遅延の可能性を説明し、FedExの追跡確認を促していますが、追跡番号の案内やさらなるサポート提案があればより良いです。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B52,
+
+Thank you for your message. I understand your concern about the tracking information for your watch not being updated yet.
+
+I shipped your watch using FedEx International Priority. Typically, international transit takes about 3-7 business days after dispatch, but delays can occur due to customs and local delivery conditions. I recommend checking the FedEx tracking information for the latest updates.
+
+If the tracking information does not update further, please feel free to reach out again. I will do my best to assist you with the situation.
+
+If you have any other questions, feel free to ask anytime.</div>
+  <div class="reply-ja">こんにちはB52様、
+
+ご連絡ありがとうございます。お届けした時計の追跡情報がまだ更新されていないとのこと、心配されるのも無理はありません。
+
+私たちの店舗からは、FedEx International Priorityを利用して発送いたしました。通常、発送後の国際輸送には約3〜7営業日かかりますが、税関や現地の配達状況によって遅延が発生することがあります。現在の状況については、FedExの追跡情報を確認することをお勧めいたします。
+
+もし追跡情報がさらに更新されない場合は、再度ご連絡いただければと思います。私たちも状況を確認し、できる限りサポートいたします。
+
+何か他にご不明な点がございましたら、お気軽にお知らせください。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 23/25</span>
+    <span class="badge elapsed">⏱ 8.5s</span>
+    <span class="badge cost">¥0.19</span>
+  </div>
+  <div class="judge-summary">📝 配送遅延に関する不安に共感し、FedExの追跡状況を確認するよう案内していますが、より具体的なサポート提案があるとより良いです。</div>
+</div>
+    </div>
+    <div class="col B">
+      <div class="col-header">B. 補足「確認中のため、後ほど…」</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B52,
+
+Thank you for your message.
+
+We understand your concern regarding the tracking status of your watch. We are currently confirming the situation and will contact you again once we have more information. Please kindly wait a little longer.
+
+If you have any further questions, please feel free to reach out.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B52様
+
+ご連絡いただきありがとうございます。
+
+お送りした時計の配送状況についてご心配をおかけしており、現在、状況を確認中でございます。確認が取れ次第、改めてご連絡いたしますので、今しばらくお待ちくださいますようお願い申し上げます。
+
+何かご不明な点がございましたら、お気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">⏱ 11.7s</span>
+    <span class="badge cost">¥0.48</span>
+  </div>
+  <div class="judge-summary">📝 配送遅延に関する不安に共感し、状況確認中であることを伝えていますが、次の連絡時期の明示やより親しみやすい表現があればさらに良くなります。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B52,
+
+Thank you for your message. I am currently checking the shipping status, and I will get back to you shortly.
+
+If you have any questions, feel free to reach out anytime.
+rioxxrinaxjapan</div>
+  <div class="reply-ja">ご連絡ありがとうございます。現在、配送状況を確認中ですので、後ほど改めてご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 15/25</span>
+    <span class="badge elapsed">⏱ 2.6s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 発送状況を確認中と伝えているが、具体的な情報や次の対応が明確でなく、署名も不自然であるため改善が必要。</div>
+</div>
+    </div>
+    <div class="col C">
+      <div class="col-header">C. 保留モード ON（HOLD_MODE_BLOCK 注入）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。こちらで状況を確認し、改めてご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 17/25</span>
+    <span class="badge elapsed">⏱ 1.5s</span>
+    <span class="badge cost">¥0.45</span>
+  </div>
+  <div class="judge-summary">📝 返信は丁寧で自然だが、購入者の不安に対する配慮や具体的な次の対応の説明が不足している。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。こちらで確認し、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 17/25</span>
+    <span class="badge elapsed">⏱ 1.6s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 返信は丁寧で自然ですが、購入者の不安を和らげる説明や次の対応についての具体的な案内が不足しています。</div>
+</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <h2>hold03_compound_deal_request</h2>
+  <div class="scenario-note">📌 シーン: Buyer requests a compound deal: $50 discount AND free express shipping AND 60-day return window. Requires CEO judgment on margin/repeat-customer value tradeoff.</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ</div>
+    <div>Hello, I'm seriously interested in this camera but I'd need some flexibility — could we do $1,150 instead of $1,200, AND include free express shipping, AND extend the return window to 60 days? I'm a regular eBay shopper with a great history. If we can make this work I'll commit today.</div>
+    <div style="color:#6b7280; font-size:12px; margin-top:4px;">こんにちは、このカメラに本気で興味があるのですが、いくつかご相談させてください — $1,200を$1,150にしていただき、加えて速達送料無料、さらに返品期限を60日に延長していただけませんか？eBayでの購入履歴は良好です。条件が合えば今日購入します。</div>
+  </div>
+
+  <div class="three-col">
+    <div class="col A">
+      <div class="col-header">A. 即答（補足なし）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B53,
+
+Thank you for your message.
+
+I have noted your offer regarding the price, free express shipping, and extending the return window. However, the price is set at $1,200 as a fixed price, and the shipping cost of $68 is to be paid by the buyer as per our current listing. The return window is set at 30 days. These terms are in line with eBay's international shipping framework and our store policy, and we are unable to make changes to them.
+
+Thank you for your understanding. If you have any further questions, please feel free to reach out.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B53様
+
+お問い合わせいただきありがとうございます。
+
+価格のご希望や送料、返品期間の延長についてのご提案を拝見しましたが、現在の価格は1,200ドルでの固定価格となっており、送料は68ドルをお客様にご負担いただく形で設定しております。また、返品期間は30日間となっております。これらの条件はeBayの国際配送の枠組みおよび当店の販売方針に沿ったものであり、変更はできかねます。
+
+ご理解のほどよろしくお願いいたします。ご不明な点がございましたら、いつでもご連絡ください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">⏱ 6.1s</span>
+    <span class="badge cost">¥0.5</span>
+  </div>
+  <div class="judge-summary">📝 価格や送料、返品期間の変更はできないことを丁寧に伝えているが、もう少し共感的なトーンや次のアクションの案内があるとより良い。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B53,
+
+Thank you for your message. I’m sorry, but I cannot accommodate a price change, an extension of the return window, or free express shipping. The current price is $1,200, and the return period is 30 days. Additionally, shipping is done via FedEx International Priority at a cost of $68.
+
+I appreciate your understanding. If you have any other questions, feel free to reach out.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB53、
+
+ご連絡ありがとうございます。申し訳ありませんが、価格の変更や返品期間の延長、送料無料の提供はできません。現在の価格は$1,200で、返品は30日間受け付けております。また、発送はFedEx International Priorityを利用し、送料は$68となります。
+
+ご理解いただけますと幸いです。何か他にご質問があれば、お気軽にお知らせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">⏱ 4.4s</span>
+    <span class="badge cost">¥0.18</span>
+  </div>
+  <div class="judge-summary">📝 価格交渉や返品期間延長、無料配送の要望には応じられない旨を正確かつ丁寧に伝えているが、もう少し親しみやすく柔らかい表現が望ましい。</div>
+</div>
+    </div>
+    <div class="col B">
+      <div class="col-header">B. 補足「確認中のため、後ほど…」</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B53,
+
+Thank you for your message. I am currently checking regarding your request for a price adjustment to $1,150, free express shipping, and an extended 60-day return window. I will get back to you with an update shortly.
+
+If you have any questions in the meantime, please feel free to reach out.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B53様
+
+お問い合わせいただきありがとうございます。ご希望の価格や配送、返品期間の延長について現在確認中のため、後ほど改めてご連絡いたします。
+
+何かご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">⏱ 3.4s</span>
+    <span class="badge cost">¥0.47</span>
+  </div>
+  <div class="judge-summary">📝 購入希望者の値下げや条件変更の依頼に対し、確認中である旨を丁寧に伝えていますが、回答の具体的な見通しや各要望への言及が不足しています。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Thank you for your message. I am currently reviewing your request and will get back to you shortly.</div>
+  <div class="reply-ja">現在確認中のため、後ほど改めてご連絡します。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 14/25</span>
+    <span class="badge elapsed">⏱ 1.6s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 返信は正確だが、買い手の具体的な要望に対して不十分で、次の対応の明確な案内も欠けているため、改善が必要。</div>
+</div>
+    </div>
+    <div class="col C">
+      <div class="col-header">C. 保留モード ON（HOLD_MODE_BLOCK 注入）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">お問い合わせいただきありがとうございます。こちらで確認させていただき、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">⏱ 1.2s</span>
+    <span class="badge cost">¥0.45</span>
+  </div>
+  <div class="judge-summary">📝 返信は正確で丁寧ですが、購入者の具体的な要望に対して回答がなく、次の対応も明確ではありません。より詳細な回答と行動指示が必要です。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。こちらで確認し、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 18/25</span>
+    <span class="badge elapsed">⏱ 1.3s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 返信は正確で丁寧ですが、買い手の全ての要望に具体的に答えておらず、次の対応がやや不明瞭です。もう少し親切で具体的な案内が望まれます。</div>
+</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <h2>hold04_damage_claim_refund</h2>
+  <div class="scenario-note">📌 シーン: Buyer received a damaged item and demands refund. Seller needs to verify photos, assess damage severity, and decide between full refund / partial refund / replacement / return-and-refund.</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ</div>
+    <div>Just received the guitar today and the headstock has a crack that wasn't shown in the listing photos. The strings are also corroded. This isn't what was advertised. I want a full refund, please.</div>
+    <div style="color:#6b7280; font-size:12px; margin-top:4px;">本日ギターを受け取りましたが、出品写真には写っていなかったヘッドストックのひび割れがあります。弦も腐食しています。これは説明と違います。全額返金をお願いします。</div>
+  </div>
+
+  <div class="three-col">
+    <div class="col A">
+      <div class="col-header">A. 即答（補足なし）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B54,
+
+Thank you for your message.
+
+I understand that the guitar you received has a crack on the headstock and corroded strings, which were not shown in the photos I took for the product page. I had not noticed these issues before shipping.
+
+Since you wish to return the item, I will proceed with the return process within the 30-day return window. Please follow eBay's official return procedure to initiate the return.
+
+If you have any questions, feel free to reach out anytime.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B54様
+
+この度はご連絡いただきありがとうございます。
+
+お届けしたギターのヘッドストックに割れがあり、また弦に腐食が見られるとのこと、承知いたしました。ご指摘の状態は私どもが確認しておらず、商品ページの写真にも反映されておりませんでした。
+
+返品をご希望とのことですので、30日以内の返品対応を進めさせていただきます。返品の詳細についてはeBayの返品手続きをご確認いただき、そちらに従ってお手続きください。
+
+何かご不明な点がございましたら、どうぞお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">⏱ 12.9s</span>
+    <span class="badge cost">¥0.5</span>
+  </div>
+  <div class="judge-summary">📝 購入者の不具合報告に対し、返品対応を案内しているが、返品手続きの具体的な案内や謝罪表現が不足しているため、改善が望ましい。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B54,
+
+Thank you for your message.
+
+I’m sorry to hear that the guitar arrived with a crack in the headstock and corroded strings. We take great care to ensure our products are accurately described, and I regret that this did not meet your expectations.
+
+I have noted your request for a full refund. Please proceed with the return process through eBay's official channels. Once the return is completed, I will process the refund.
+
+If you have any further questions, feel free to reach out anytime.</div>
+  <div class="reply-ja">B54様、
+
+ご連絡ありがとうございます。
+
+お届けしたギターに関して、ヘッドストックに亀裂があり、弦も腐食しているとのこと、大変残念に思います。私たちの店舗では、商品が正確に説明されていることを重視しておりますので、これがご期待に沿えなかったことをお詫び申し上げます。
+
+全額返金のリクエストを承りました。返品手続きについては、eBayの公式な手続きをご確認ください。返品が完了次第、返金処理を行います。
+
+何か他にご不明な点がございましたら、お気軽にお問い合わせください。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 23/25</span>
+    <span class="badge elapsed">⏱ 11.5s</span>
+    <span class="badge cost">¥0.19</span>
+  </div>
+  <div class="judge-summary">📝 購入者の不満に対して丁寧かつ適切に対応しているが、返品手続きの具体的な案内や返品ポリシーの説明があるとより親切。</div>
+</div>
+    </div>
+    <div class="col B">
+      <div class="col-header">B. 補足「確認中のため、後ほど…」</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B54,
+
+Thank you for your message. Regarding the crack on the headstock and the corroded strings you found upon receiving the guitar, we are currently looking into this matter and will contact you again shortly with an update.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B54様
+
+この度はご連絡いただき誠にありがとうございます。お届けしたギターのヘッドストックにひび割れがあるとのこと、また弦の腐食についてもご指摘いただきました件、現在確認中のため、後ほど改めてご連絡いたします。
+
+何卒よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 16/25</span>
+    <span class="badge elapsed">⏱ 3.8s</span>
+    <span class="badge cost">¥0.47</span>
+  </div>
+  <div class="judge-summary">📝 購入者の不具合報告に対し調査中と伝えているが、返金要求への具体的対応や次の手順の案内が不足しているため、改善が必要。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B54,
+
+Thank you for your message. I'm sorry to hear about the crack in the headstock and the corroded strings on the guitar you received. I am currently looking into this matter and will get back to you shortly.
+
+If you have any further questions, please feel free to reach out anytime.</div>
+  <div class="reply-ja">B54様、
+
+ご連絡ありがとうございます。お届けしたギターに関して、ヘッドストックに亀裂があり、弦が腐食しているとのこと、大変申し訳ございません。現在確認中のため、後ほど改めてご連絡します。
+
+何かご不明な点がございましたら、お気軽にお知らせください。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 16/25</span>
+    <span class="badge elapsed">⏱ 6.5s</span>
+    <span class="badge cost">¥0.18</span>
+  </div>
+  <div class="judge-summary">📝 購入者の不具合報告に対して謝罪はあるが、返金要求への対応や返品手続きの案内がなく不十分。次の対応を明確に示す必要がある。</div>
+</div>
+    </div>
+    <div class="col C">
+      <div class="col-header">C. 保留モード ON（HOLD_MODE_BLOCK 注入）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。こちらで確認させていただき、改めてご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 12/25</span>
+    <span class="badge elapsed">⏱ 1.6s</span>
+    <span class="badge cost">¥0.46</span>
+  </div>
+  <div class="judge-summary">📝 返信は丁寧ですが、購入者の具体的な問題に対する対応や返金手続きの案内が不足しており、次のステップが不明確です。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。こちらで確認し、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 12/25</span>
+    <span class="badge elapsed">⏱ 4s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 返信は丁寧だが、購入者の具体的な問題に対する対応や返金手続きの説明がなく、不十分である。</div>
+</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <h2>hold05_spec_detail_inquiry</h2>
+  <div class="scenario-note">📌 シーン: Buyer asks about a specific feature (manual focus mode availability) that is not in the listing. Seller needs to verify on the actual unit or check manufacturer specs.</div>
+  <div class="buyer-msg">
+    <div class="label">バイヤーメッセージ</div>
+    <div>Hi, I'm thinking about buying this camera but I need to confirm — does it have a true manual focus mode (with focus peaking), or is it autofocus only? The listing doesn't mention it.</div>
+    <div style="color:#6b7280; font-size:12px; margin-top:4px;">こんにちは、このカメラの購入を検討しているのですが、ひとつ確認させてください — 完全なマニュアルフォーカスモード（ピーキング機能付き）はありますか？それともオートフォーカスのみでしょうか？出品ページに記載がなくて。</div>
+  </div>
+
+  <div class="three-col">
+    <div class="col A">
+      <div class="col-header">A. 即答（補足なし）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B55,
+
+Thank you for your message.
+
+This Fujifilm X100V camera does have a true manual focus mode with focus peaking. It is not autofocus only, so you can manually adjust focus with the assistance of focus peaking.
+
+If you have any other questions, please feel free to ask anytime.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B55様
+
+お問い合わせいただきありがとうございます。
+
+このFujifilm X100Vカメラには、マニュアルフォーカスモードが搭載されており、フォーカスピーキング機能も備わっています。オートフォーカスだけでなく、手動でのピント合わせも可能ですので、ご安心ください。
+
+ご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">⏱ 5.5s</span>
+    <span class="badge cost">¥0.47</span>
+  </div>
+  <div class="judge-summary">📝 AIの返信は正確かつ丁寧で、購入者の質問に的確に答えていますが、署名部分がやや不自然で、より自然な表現に改善すると良いでしょう。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Hello B55,
+
+Thank you for your inquiry. The Fujifilm X100V camera does indeed feature a true manual focus mode with focus peaking functionality. It is not limited to autofocus only, allowing for manual adjustments as well.
+
+If you have any further questions, feel free to reach out anytime.
+
+Best regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">こんにちはB55、
+
+ご質問ありがとうございます。このFujifilm X100Vカメラには、真のマニュアルフォーカスモードが搭載されており、フォーカスピーキング機能もあります。オートフォーカスだけではなく、手動での焦点調整が可能です。
+
+他に何かご不明な点がございましたら、いつでもお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 22/25</span>
+    <span class="badge elapsed">⏱ 19.2s</span>
+    <span class="badge cost">¥0.18</span>
+  </div>
+  <div class="judge-summary">📝 マニュアルフォーカスとフォーカスピーキング機能があることを正確に伝えていますが、署名や購入促進の表現をより自然で親切にすると良いでしょう。</div>
+</div>
+    </div>
+    <div class="col B">
+      <div class="col-header">B. 補足「確認中のため、後ほど…」</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Hello B55,
+
+Thank you for your message.
+
+I am currently confirming whether this camera has a true manual focus mode with focus peaking, and I will get back to you with the details shortly.
+
+If you have any other questions, please feel free to ask.
+
+Kind regards,
+rioxxrinaxjapan</div>
+  <div class="reply-ja">B55様
+
+お問い合わせいただきありがとうございます。
+
+マニュアルフォーカスモード（フォーカスピーキング機能の有無）について現在確認中のため、後ほど改めてご連絡いたします。
+
+何かご不明な点がございましたら、どうぞお気軽にお問い合わせください。
+
+よろしくお願いいたします。
+rioxxrinaxjapan</div>
+  <div class="meta-row">
+    <span class="badge">スコア 20/25</span>
+    <span class="badge elapsed">⏱ 4.2s</span>
+    <span class="badge cost">¥0.47</span>
+  </div>
+  <div class="judge-summary">📝 マニュアルフォーカスの有無について確認中と伝えており、正確で丁寧な対応だが、回答をすぐに提供できていない点と署名がやや不自然な点が改善できる。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Thank you for your message. I am currently checking on this and will get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。現在確認中のため、後ほど改めてご連絡します。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 15/25</span>
+    <span class="badge elapsed">⏱ 5.3s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 購入検討者の質問に対し、回答を保留しているだけで具体的な情報提供がなく不十分。次の対応が明確でなく、改善が必要。</div>
+</div>
+    </div>
+    <div class="col C">
+      <div class="col-header">C. 保留モード ON（HOLD_MODE_BLOCK 注入）</div>
+      <div class="model-block">
+  <div class="model-name">📦 GPT-4.1-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">お問い合わせいただきありがとうございます。こちらの件について確認させていただき、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 16/25</span>
+    <span class="badge elapsed">⏱ 1.7s</span>
+    <span class="badge cost">¥0.45</span>
+  </div>
+  <div class="judge-summary">📝 返信は丁寧で自然ですが、質問に対する具体的な回答がなく、次の対応についても明確さに欠けます。</div>
+</div><div class="model-block">
+  <div class="model-name">📦 GPT-4o-Mini</div>
+  <div class="reply-en">Thank you for your message. Let me confirm this on our end and get back to you shortly.</div>
+  <div class="reply-ja">ご連絡ありがとうございます。こちらで確認し、追ってご連絡いたします。</div>
+  <div class="meta-row">
+    <span class="badge">スコア 16/25</span>
+    <span class="badge elapsed">⏱ 12.4s</span>
+    <span class="badge cost">¥0.17</span>
+  </div>
+  <div class="judge-summary">📝 返信は丁寧で自然だが、質問に対して具体的な情報を提供せず、対応の次のステップも曖昧なため、改善が必要。</div>
+</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

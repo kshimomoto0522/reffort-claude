@@ -21,12 +21,14 @@
 
 ## AI Reply — 現状要点（最重要開発案件）
 
-- **プロンプト**: v2.4 本番運用中 / **v2.3_baseline_natural3 (iter8)** = cat02 確定版（テスト中）
+- **プロンプト**: v2.4 本番運用中 / **v2.3_baseline_natural5_lean (iter11)** = 最新テスト版・**原則ベース抜本書き直し**（10原則+5HARD RULES・280行）
 - **本番モデル候補**: **GPT-4.1-Mini / GPT-4o-Mini**（標準目標3秒近接で達成）。GPT-5-Mini は **2026-05-01 本番除外決定**（余計なことを言う・コントロール困難・推論モデル特性で速度遅い）
 - **cat02 完成**: 全15ケース（subset5 + additional10）で社長OK判定済（2026-05-01）。社長フィードバック ABCDEF 全解消・品質100%クリーン
+- **cat03 社長指摘 6ケース全クリア**（natural5_lean iter11c）: 03_01確定形・03_03投げやり解消・03_04状況確認先行・03_06フォーマット完備・03_07eBay公式振り解消・03_10cancel+repurchase案内
 - **Cowatech stg+prd 反映完了**（2026-04-22 23:58）：FORCED_TEMPLATE除去＋プレースホルダ `{sellerAccountEbay}/{buyerAccountEbay}` 注入対応
-- **本番反映待ち**: natural3 系の改修を Cowatech に反映依頼するタイミングは社長判断（cat03 まで完了後の一括反映が候補）
-- **次セッション冒頭必読**: `handoff_20260501_evening_cat02_complete.md`
+- **本番反映待ち**: natural5_lean の改修を Cowatech に反映依頼するタイミングは社長判断
+- **🔥 次セッション冒頭必読**: `handoff_20260505_natural5_lean_complete.md`
+- **⚠️ プロンプト改修前必読**: `_reffort_internal/prompt_construction_rules.md`（永続メタルール・レシピ積み上げ再発防止）
 
 👉 **詳細全量: `ai-reply-status.md`**（開発状況・本番ペイロード構造・モデル選定・プロンプト管理・テスト環境・今後の機能）
 
@@ -34,20 +36,27 @@
 
 ## 進行中・今後のタスク（未完了分）
 
-### 現在進行中（2026-05-01 〜）
+### 現在進行中（2026-05-05 〜）
 - [x] cat02 完成（全15ケース・natural3 / iter8・社長OK判定）
 - [x] GPT-5-Mini 本番除外決定（社長判断 2026-05-01）
-- [x] 比較HTMLに補足情報入力UI + 再生成APIサーバー実装（result_server.py / port 8765）
-- [ ] cat03（配送関連 / 購入後質問）テスト着手 — 次セッション
-- [ ] cat03 で APOLOGY トーン込みテスト・5-Mini を念のため最終挙動確認 → 完全除外
-- [⏸ 保留] SpeedPAK 業者対応辞書（admin_prompt 組み込み判断・社長Q1〜Q4回答待ち・cat03 完了後に再着手）
-- [ ] natural3 系の Cowatech 本番反映タイミング判断
-- [ ] testing/payload_builder.py の v2.6 対応は不要（v2.3_baseline 系で完結）
+- [x] cat03 13ケース JSON 設計完了（single 5 + multi 5 + ASSERTIVE 3）
+- [x] 4つ目のトーン ASSERTIVE 追加（admin_prompt natural3_assertive / iter9）
+- [x] batch_test.py ThreadPoolExecutor 並列化実装（速度ほぼ半減・質影響なし）
+- [x] cat03 ASSERTIVE 3ケース × POLITE/ASSERTIVE 対比走行（Round A）完了
+- [x] 保留モード（hold_mode）必要性検証 → 不要判断（補足入力で代替可能）
+- [x] Cowatech 仕様書（ASSERTIVE 追加のみ）作成・PDF送付（`cowatech_spec_assertive_tone_addition.pdf`）
+- [x] 会社名表記の根本修正（13ファイル「株式会社Reffort」→「株式会社リフォート（Reffort, Ltd.）」）
+- [ ] **次セッション ①**: cat03 残ケース（cat03_01〜10）テスト走行（POLITE/FRIENDLY/APOLOGY）
+- [ ] **次セッション ②**: 要約モードの仕様検討
+- [ ] Cowatech 主張トーン実装完了待ち（工数・コスト見積を Slack で受領後）
+- [ ] natural3_assertive の Reffort 側 admin 画面登録タイミング判断
+- [⏸ 保留] SpeedPAK 業者対応辞書（cat03 完了後再着手・社長Q1〜Q4回答待ち）
+- [⏸ 保留] hold_mode v2 検討（reflect 型再設計 + 20ケース追検証）
+- [⏸ 保留] 補足欄プリセットボタン（実運用テスト中に必要性を再検討）
 
 ### 次セッション冒頭の確認事項
-- `handoff_20260501_evening_cat02_complete.md` を読んで cat02 状態と cat03 着手内容を把握
-- cat03 設計（10ケース・single 5 + multi 5）→ 社長レビュー → テスト
-- 速度改善（3モデル → 2モデル化 + 並列実行検討）
+- `handoff_20260505_assertive_complete.md` を読んで ASSERTIVE 追加完了状態と次セッション内容を把握
+- cat03 残ケーステスト + 要約モード仕様検討を 2セッション並行で進める
 
 ### 並行継続
 - [ ] v2.4での本番運用継続（品質担保済み）
