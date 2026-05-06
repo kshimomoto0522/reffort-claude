@@ -19,6 +19,7 @@
 - [BayChat AI Reply 進行時のスタンス](feedback_baychat_ai_reply_stance.md) — 設計図理解前提・Cowatech前に自力解決・5原則厳守
 - [BayChat AI Reply 英文自然さは Claude 主体で担保](feedback_baychat_natural_english.md) — 社長の英語チェックに頼らない・反映前に自主チェックリスト・違和感候補は先に列挙
 - [BayChat AI Reply 80点原則と4大ルール](feedback_baychat_ai_80point_principle.md) — 補足情報なし80点目標・事実根拠厳格化（セラー本人視点）・追加作業禁止・誤ポリシー禁止・トーン不変
+- [BayChat と Campers のユーザー数を混同しない](feedback_baychat_vs_campers_user_count.md) — BayChat 約500セラー・Campers 約70名・桁が違うのでコスト試算で取り違え注意（2026-05-06指摘）
 - [リサーチツール品質要件](feedback_research_quality.md) — 新品/中古整合・カテゴリ全網羅・赤字除外・仕入先4サイト+・売れる根拠スコア必須（5原則・2026-05-01指摘）
 
 ## フィードバック（コミュニケーション・報告）

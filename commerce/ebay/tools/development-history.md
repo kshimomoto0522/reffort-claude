@@ -5,7 +5,75 @@
 
 ---
 
-## ASICS v9 並列ワーカー実装（進行中・2026-05-05夜）
+## ASICS v8+補正版 本番投入（2026-05-06）
+
+### 背景
+v9 並列化が中止になった一方で、v9 開発中・運用中に v8 の構造的問題が3件判明。これらを v8 ベースに反映して本番投入した。
+
+### 修正内容
+1. **論点①**: `identify_retry_targets` で URL空欄+ItemIDあり+未処理（更新日時空）の行を Mod E 対象として拾うよう改修
+   - **発見経緯**: S04635（行89）/ S03890（行150）が朝の時点で全列空のまま放置されている事象から逆探知
+   - **根本原因**: 過去ビルドの exe（Mod E未実装）でメインパス通過 → 何も書かれず → resume_state.json idx=556 が立つ → v8 exe スワップ後はメインパス再走しないため永遠に拾われない構造
+   - **修正後**: URL空+ItemIDあり+更新日時空 ＝ 「一度も処理されていない」と判定して retry_indices に追加
+
+2. **論点②**: Policy違反表示を在庫状況とエラー情報で分離
+   - 旧: 在庫状況=`Policy違反 (X/在Y)` 一体表示、エラー情報=空
+   - 新: 在庫状況=`X/在Y` (通常表記)、エラー情報=`Policy違反`
+   - `compute_inventory_status` の戻り値を `(status, should_process)` → `(status, should_process, error_info)` の3要素タプルに拡張
+   - Mod E（URL空欄処理）の Policy違反分岐も同様に分離
+
+3. **論点③**: EndItem ErrorCode 1047 (auction has been closed) を成功扱いに分岐追加
+   - **発見経緯**: S02754（朝7:20:39 削除失敗）が再起動後の削除キューでまた1047失敗 → 社長指摘
+   - **根本原因**: eBay 側で既に listing が End している（理由は別途調査要）。EndItem を呼んでも 1047 を返す → 旧版は failed 扱いで Q=TRUE が残り続けた
+   - **修正後**: error_code == '1047' or 'auction has been closed' in short_msg → ended（成功扱い）→ cell_clear で行A〜S列クリア・Q列もクリア
+
+### 待機時間 240→210秒に短縮（試行）
+社長判断で1周40h→35h（12.5%短縮）狙い。
+- **戻し条件**: 1周のうち 5件連続Bot検出（30分休憩）が 2回以上発生したら 240秒へ戻す
+- 戻し方は config.xlsx の遅延秒数を 240 に書き換えて exe 再起動
+- v9 PoC 知見: AdsPower（別IP・別指紋）120秒で OK だったが、ローカル単独IPは未検証ゾーン
+
+### 教訓
+1. **resume_state.json は exe 切替時にクリアすべき**
+   - 古いexeで通過した行が新ロジックで再評価されない
+   - exe をスワップする際は `rm resume_state.json` も合わせて行う運用ルール化
+2. **「失敗」ステータスは API ErrorCode 単位で意味を再定義する価値がある**
+   - 1047 は技術的には Failure ack だが、業務上は「削除完了」と等価
+   - 同様にPolicy違反（21920397/21920396）も「権限内・処理続行」扱いに既に改修済（5/1）
+3. **本番 exe を停止する作業中は削除キュー検知が止まる**
+   - 社長が Q列にチェック入れたタイミングと Claude の停止作業が重なると検知漏れ
+   - 運用ルール: Claude が exe を停止する作業前に「停止中はQ列検知できない」旨を社長に一言宣言
+
+### 関連ファイル
+- `commerce/ebay/tools/handoff_20260506_v8plus_deploy.md` 引継ぎ書
+- `asics_master_work/scrape_data.py.bak_v8_pre_parallel_20260505_204545` 並列化前 v8 バックアップ
+- `eBay在庫調整ツール（アシックス）/scrape_data.exe.bak_v8plus_*` 旧exeバックアップ
+
+---
+
+## ASICS v9 並列ワーカー（中止・2026-05-06）
+
+### 中止理由
+- DECODO Pay As You Go コスト試算: 約 19,000円/月（ASICS のみ・他サイト追加で倍々）
+- AdsPower(Onitsuka) はスタッフ仕入れ業務と共有 → 16h/日連続稼働でロック競合
+- 事業規模に対して割が合わないと社長判断 → ローカル単独運用維持
+
+### 残置したもの（将来再開可能）
+- `asics_master_work/scrape_data.py` v9並列ロジック入りのまま（NUM_WORKERS=1 でデフォルト単独動作）
+- `asics_master_work/worker_split.py` 比率分割
+- `asics_master_work/adspower_driver.py` AdsPower 起動 + safe_get
+- `asics_master_work/run_parallel.bat` 並列起動ランチャー
+
+### 将来の代替案（コスト抑えて並列化したい時）
+1. モバイル回線 SIM 増設（楽天無制限 / povo / イオンモバイル等）月3,000円以内
+2. 自宅IP1本+時間帯分散
+3. 「在庫切れ継続行」のサイト確認頻度を半分にする（代替F）
+4. 商品優先度ベースの差別化（売れ筋は高頻度・不動は低頻度）
+詳細: `memory/project_asics_parallel_v9.md`
+
+---
+
+## ASICS v9 並列ワーカー実装（PoC段階・2026-05-05夜）
 
 ### 背景
 v8 が1周40時間以上かかり遅すぎる課題。240秒待機を縮められない（Akamai Bot Manager に弾かれる）。

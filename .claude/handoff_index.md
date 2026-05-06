@@ -16,10 +16,15 @@
 - **ASICS v8+補正版 本番稼働中（210秒試行・1047対応・3論点修正反映）**: `commerce/ebay/tools/handoff_20260506_v8plus_deploy.md`
   - v9並列化中止・v8ベースに3論点修正＋待機210秒短縮＋EndItem 1047成功扱い・5/6 13:47ビルド・S02754自動クリア確認済
   - 1周完走後にBot検出頻度をレビュー
+- **🆕 BayChat 発送追跡 API 統合（OC返信待ちで凍結中）**: `services/baychat/ai/handoff_20260506_shipment_api_investigation.md`
+  - 方針確定：層A(BayChat既存DB→構造化SHIPMENT BLOCK) + 層B(FedEx/DHL公開API + Orange Connex非公開API) + バックグラウンド同期+キャッシュ
+  - Orange Connex 担当者宛て依頼メッセージ社長から送信済 → 返信後に層B仕様書を全面書き直し
+  - 既存ドラフト `cowatech_spec_ebay_shipment_data_integration.md` は **凍結（旧Fulfillment API前提）**・流用不可
+  - Quantity 修正（A）は完了：設計図訂正済み
 - **BayChat AI Reply natural5_lean (iter11) 完成・原則ベース抜本書き直し**: `services/baychat/ai/handoff_20260505_natural5_lean_complete.md`
   - 10原則+5HARD RULESに圧縮・660→280行/-63%・cat03社長指摘6ケース全クリア
   - プロンプト構成永続メタルール `_reffort_internal/prompt_construction_rules.md` 新設
-  - 次セッションでは ①cat03_05保証書欠品 ②cat03 FRIENDLY/ASSERTIVEスコア低下 ③Cowatech仕様書
+  - 残タスク（OC返信待ちと並行可）：①cat03_05保証書欠品 ②cat03 FRIENDLY/ASSERTIVEスコア低下
 
 ## 🔥 完了済み（参考・参照のみ）
 

@@ -27,8 +27,16 @@
 - **cat03 社長指摘 6ケース全クリア**（natural5_lean iter11c）: 03_01確定形・03_03投げやり解消・03_04状況確認先行・03_06フォーマット完備・03_07eBay公式振り解消・03_10cancel+repurchase案内
 - **Cowatech stg+prd 反映完了**（2026-04-22 23:58）：FORCED_TEMPLATE除去＋プレースホルダ `{sellerAccountEbay}/{buyerAccountEbay}` 注入対応
 - **本番反映待ち**: natural5_lean の改修を Cowatech に反映依頼するタイミングは社長判断
-- **🔥 次セッション冒頭必読**: `handoff_20260505_natural5_lean_complete.md`
+- **🔥 次セッション冒頭必読**: `handoff_20260506_shipment_api_investigation.md`（**最新・OC返信待ちで凍結中**）
+- 前回引継ぎ: `handoff_20260505_natural5_lean_complete.md`（natural5_lean プロンプト残課題分）
 - **⚠️ プロンプト改修前必読**: `_reffort_internal/prompt_construction_rules.md`（永続メタルール・レシピ積み上げ再発防止）
+
+### 発送追跡 API 統合（2026-05-06 方針確定・OC返信待ち）
+- 層A: BayChat 既存DBの状態（未発送/発送済/配達済/トラブル＋追跡番号＋配送業者＋配達予定日）を構造化 SHIPMENT BLOCK として GPT 注入
+- 層B: FedEx/DHL 公開API（無料）+ Orange Connex 非公開API（社長コネ経由・依頼送信済）でスキャンイベント取得
+- 方式: バックグラウンド同期＋キャッシュ（生成時間影響なし）
+- UPS/USPS/EMS直契約: 切り捨て
+- 詳細: `handoff_20260506_shipment_api_investigation.md`
 
 👉 **詳細全量: `ai-reply-status.md`**（開発状況・本番ペイロード構造・モデル選定・プロンプト管理・テスト環境・今後の機能）
 

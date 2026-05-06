@@ -23,7 +23,11 @@ from dotenv import dotenv_values
 # このスクリプトの1つ上のフォルダ（baychat-ai）に.envがある
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_BAYCHAT = os.path.join(BASE_DIR, ".env")
-ENV_VPS = os.path.join(os.path.dirname(BASE_DIR), ".env.vps")
+ENV_VPS_CANDIDATES = [
+    os.path.join(os.path.dirname(BASE_DIR), ".env.vps"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR))), ".env.vps"),
+]
+ENV_VPS = next((p for p in ENV_VPS_CANDIDATES if os.path.exists(p)), ENV_VPS_CANDIDATES[0])
 SSH_KEY = os.path.expanduser(r"~\.ssh\id_ed25519_vps_baychat")
 
 # ===== SSHトンネル用のローカルポート =====
