@@ -75,27 +75,10 @@
 
 ---
 
-## 🚨 次セッション冒頭で必ず読むファイル（2026-05-05夜更新）
+## 🚨 次セッション冒頭で必ず読むファイル
 
-- **🔥🔥 ASICS v9 並列ワーカー実装中（コード完了・実機テスト未実施）**: `commerce/ebay/tools/handoff_20260505_evening_parallel_v9.md`（**ローカル+AdsPower(Onitsuka) 2並列で40h→16h に短縮**・PoC成功・本体改修完了・syntax/import OK・次セッションは「単独モード互換テスト→worker2単体→2並列→DECODO瞬断対策→exeビルド→本番デプロイ→.env移行」の順）
-- **ASICS在庫管理ツール v8 完成（参考・前セッション）**: `commerce/ebay/tools/handoff_20260505_asics_v8_complete.md`（v9のベース・GAS削除予約連携稼働中・adidas適用は v9 完成後に再開予定）
-- **🔥🔥 BayChat AI Reply natural5_lean (iter11) 完成・原則ベース抜本書き直し**: `services/baychat/ai/handoff_20260505_natural5_lean_complete.md`（10原則+5HARD RULESに圧縮・660→280行/-63%・cat03社長指摘6ケース全クリア・**プロンプト構成永続メタルール`_reffort_internal/prompt_construction_rules.md`新設**・次セッションでは①cat03_05保証書欠品②cat03 FRIENDLY/ASSERTIVEスコア低下③Cowatech仕様書）
-- **🔥 BayChat AI Reply ASSERTIVE 追加完了（旧）**: `services/baychat/ai/handoff_20260505_assertive_complete.md`（朝の引継ぎ・iter9時点・上書き済み）
-- **🔥 BayChat AI Reply cat02 完成・cat03 引継ぎ（旧）**: `services/baychat/ai/handoff_20260501_evening_cat02_complete.md`（iter1〜8自走改善で品質100%クリーン・GPT-5-Mini本番除外決定・補足情報UI/再生成APIサーバー実装済・cat03で APOLOGY トーン込みテスト着手予定）
-- **🔥 eBay リサーチツール Ver.1.5 完成（社長厳指摘で全面刷新）**: `commerce/ebay/tools/research/handoff_20260501_v15.md`（Ver.1の中古混入・スニーカー偏重・赤字混入・売れる根拠ゼロを是正・5サイト並列+12カテゴリ+evidence score 7シグナル+赤字除外ゲート・社長判断待ちAPI 3件）
-- **🔥 コンテンツ基盤整備 完了引継ぎ**: `.claude/handoff_20260429_content_infrastructure_complete.md`（業務縦軸構造に根本刷新完了・5/31ウェビナー骨子v0.1＋AIコースカリキュラムv0.1完成・残タスクは社長コミット4点＋判断待ち5点）
-- **配信ダッシュボード**: `education/campers/content-projects/INDEX.md`（全体の取り出し窓口・最初に開く）
-- **2軸戦略コンテンツ前提**: `memory/project_consulting.md` + `memory/feedback_content_audience_framing.md`（**BayChat は Campers のみ・Note/X 完全禁止**）
-- **直近イベント**: 2026-05-31（日）Campersウェビナー（`memory/project_campers_webinar.md`）
-- **竹案リファクタ T1-T15 全完了**（梅案`eef37ab`→竹案 `ea044c9`）。各部門 `index.md` → `.claude/rules/project-structure.md` の順で把握
-- **新機能（4/24以降稼働中）**:
-  - 隔週自動メンテ: `biweekly-claude-maintenance`（第1・第3月曜10時・肥大化監視＋Chatwork個人DM通知）
-  - 半自動改善: `/隔週メンテナンス` スラッシュコマンド
-  - memory3層統合: `memory/` → `.claude/memory_backup/` → GitHub（daily-github-backup 0:00自動同期）
-  - Campers削除: Windowsタスク `CampersMemberRemoval`（Playwright版・毎日5:00・Chrome MCP不要）
-  - 仕入管理表GAS: `commerce/ebay/tools/gas/shiire/` clasp管理（Monaco貼付け廃止）
-- **BayChat AI Reply作業時**: `services/baychat/ai/handoff_20260423_cowatech_prd_sync.md` + `memory/feedback_baychat_ai_reply_stance.md`
+進行中ハンドオフ・最新ダッシュボード・新機能の一覧 → **`.claude/handoff_index.md`** を必ず開く。
 
 ---
 
-*最終更新: 2026-05-05夜（ASICS v9 並列ワーカー実装中・PoC成功・コード改修完了・実機テスト未実施・次セッションでテスト→exeビルド→本番デプロイ）*
+*最終更新: 2026-05-06午後（隔週メンテで「次セッション冒頭で必ず読むファイル」を `.claude/handoff_index.md` に分離）*
