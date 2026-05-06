@@ -21,13 +21,13 @@
 
 ---
 
-## 開発優先順位（2026年5月5日夜更新）
+## 開発優先順位（2026年5月6日午後更新）
 
 | 優先度 | ツール | 状態 | 次のアクション |
 |--------|--------|------|--------------|
-| 🔥 改修中 | **ASICS v9 並列ワーカー** | **コード完了・実機テスト未** | **次セッション: テスト→exeビルド→本番デプロイ→.env移行**（`handoff_20260505_evening_parallel_v9.md` 参照） |
-| ✅ 稼働中 | **ASICSツール v8（本番）** | **本番稼働中・全機能完成** | v9完成までこのまま |
-| ⚠️ 改修待ち | **adidasツール（scrape_adidas_v1.py）** | 5/1 出品無しスキップ解除＆redirectリトライ済 | v9完成後に共通機能適用 |
+| ✅ 稼働中 | **ASICSツール v8+補正版** | **本番稼働中（5/6 13:47ビルド・210秒待機）** | 1周完走後にBot検出頻度レビュー（210秒の妥当性判定） |
+| ⏸ 中止 | **ASICS v9 並列ワーカー** | **コスト過大で中止** | コード残置（将来モバイルSIM案で再開可能・`memory/project_asics_parallel_v9.md`参照） |
+| ⚠️ 改修待ち | **adidasツール（scrape_adidas_v1.py）** | 5/1 出品無しスキップ解除＆redirectリトライ済 | v8+補正の知見（identify_retry_targets改修・1047対応）を適用 |
 | 🟢 NEW | **無在庫リサーチツール Ver.1**（`research/`） | **2026-04-30 完成・5/31デモ用** | 楽天/Yahoo APIキー登録＋Marketplace Insights API申請（社長判断） |
 | 🟠 高 | HIROUNエクセル精査ツール | 未着手 | HIROUNのエクセル形式を確認してClaudeで試作 |
 | 🟠 高 | 競合リサーチツール（eBay API版） | **無在庫リサーチに統合済み** | research/ で並行カバー |
@@ -70,44 +70,15 @@
 
 ---
 
-## ASICSツール v8（2026-05-05 現行・本番稼働中）
+## ASICSツール v8+補正版（2026-05-06 現行・本番稼働中）— 要点
 
-### 主要仕様
-- **方式**: Firefox/Selenium（visible だが画面外配置 = `set_window_position(-2000, -2000)`）
-- **ビルド**: PyInstaller 4.6 + Python 3.8.10（venv: `asics_master_work\.venv`）
-- **シート名**: `【ASICS】在庫管理`（旧 `eBay在庫調整` から移行）
-- **シート構造**: 行1=ステータス / 行2=ヘッダー / 行3+=データ
-- **SPREADSHEET_KEY**: `12SGD4RLze25JC6PWCFCOTxbk2qtL5UGp0D3B_mklK68`
-- **待機時間**: 240秒（Akamai対策・固定）
-- **書き込み**: 毎件書き込み（write_one_item で4セルbatch_update API）
-- **1周時間**: 約40時間（605件 × 4分）
-- **自動再起動**: 1周完了後 1時間休憩 → 自動ループ
-
-### v8の機能一覧（`handoff_20260505_asics_v8_complete.md` 詳細）
-- ✅ Mod A: URL空/非ASICS → エラー情報表示
-- ✅ Mod B: Bot検出 → エラー情報表示
-- ✅ Mod C: メインパス後のリトライパス（最大5回）
-- ✅ Mod D: 5件連続Bot検出 → 30分休憩
-- ✅ Mod E: URL空 → eBay情報のみで `0/在Y` 表示
-- ✅ Mod F: Firefox 画面外配置
-- ✅ Mod G: GAS連携 出品削除予約（Q列チェックボックス + Z1ポーリング）
-- ✅ Policy違反対応・APIエラー厳密化・resume機能・ゾンビガード 他
-
-### タスクスケジューラ
-v8 は自動再起動するので、**スケジューラタスクは不要**（旧 ASICS_v2_*ji は無効化推奨）。  
-過去の登録: ASICS_v2_01ji / 09ji / 17ji（残してOKだが2重起動リスクあり）
-
-### 運用ルール
-| 操作 | タイミング |
-|------|----------|
-| 行削除・追加 | いつでもOK（次回起動時の compact が空行を物理削除） |
-| Q列チェック → 削除予約 | いつでもOK（**最大4分以内**にツールが検知して削除実行） |
-| ItemID/SKU/URL のセル削除 | OK（compact が物理削除） |
-
-### GAS bound プロジェクト（出品削除予約）
-- scriptId: `1L_zIKz5yW97qRpOqIAaCKzdrWmCIddowiPAiBvhHga93ELSGUUu-JhR1`
-- ローカルコード: `commerce/ebay/tools/gas/asics_delete/`
-- 編集後: `cd commerce/ebay/tools/gas/asics_delete/ && clasp push`
+- **方式**: Firefox/Selenium（visible・画面外配置）／PyInstaller 4.6 + Python 3.8.10／5/6 13:47ビルド
+- **シート**: `【ASICS】在庫管理` / SPREADSHEET_KEY: `12SGD4RLze25JC6PWCFCOTxbk2qtL5UGp0D3B_mklK68`
+- **待機時間**: 210秒（Akamai対策・5/6 240→210秒に短縮試行中）
+- **1周**: 約35時間（605件×3.5分）→ 1時間休憩 → 自動ループ
+- **5/6補正3点**: ①identify_retry_targets でURL空+ItemIDあり+未処理行を Mod E に追加 ②Policy違反を在庫状況/エラー情報に分離 ③EndItem ErrorCode 1047 を成功扱い
+- **詳細仕様（機能Mod A-G・運用ルール・待機時間戻し条件・GAS連携）**: → [`asics_v8plus_spec.md`](asics_v8plus_spec.md)
+- **タスクスケジューラ**: v8 は自動再起動するため**不要**（旧 ASICS_v2_*ji は無効化推奨）
 
 ---
 
@@ -221,5 +192,5 @@ rows = ws.get_all_values()
 
 ---
 
-*最終更新: 2026-05-05夜（ASICS v9 並列ワーカー実装中・PoC成功・コード改修完了）*
-*ASICSツール: v8稼働中・v9実装中 / adidasツール: 稼働中 / 仕入管理表GASツール: 本番反映完了*
+*最終更新: 2026-05-06午後（v9並列化中止・v8+補正版本番投入・210秒試行中・1047対応反映）*
+*ASICSツール: v8+補正版稼働中 / adidasツール: 稼働中 / 仕入管理表GASツール: 本番反映完了*
