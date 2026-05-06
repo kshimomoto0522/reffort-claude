@@ -81,4 +81,13 @@
 
 ---
 
+## エージェント組織（Phase 1：Education部門のみ稼働中・2026-05-06〜）
+
+- 全体組織図: `.claude/org_chart.md`
+- PM/COO（メイン会話の私）の振る舞い: `.claude/pm_role.md`
+- Education部門の依頼は `/education <依頼内容>` 経由でEducation Leadへ
+- 他部門（Commerce / Services / Operations / Marketing）はPhase 2-4で順次立ち上げ・現状はPM直轄
+
+---
+
 *最終更新: 2026-05-06午後（隔週メンテで「次セッション冒頭で必ず読むファイル」を `.claude/handoff_index.md` に分離）*
