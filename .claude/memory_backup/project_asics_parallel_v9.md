@@ -1,57 +1,63 @@
 ---
-name: ASICS v9 並列ワーカー化プロジェクト
-description: AdsPower(Onitsuka)+DECODO日本住宅IPでローカルと並列稼働させ40h→16h短縮するプロジェクト
+name: ASICS 並列化検討（2026-05-06 中止）と将来の低コスト代替案
+description: AdsPower+DECODO並列案はコスト過大で中止。ローカル単独維持。将来の代替案を記録
 type: project
 originSessionId: 71635640-2b4c-45d4-902d-138036ff99a1
 ---
-# ASICS v9 並列ワーカー化（実装中・2026-05-05夜時点）
+# ASICS 並列化検討（中止）と低コスト代替案
 
-## 採用構成
+## 結論（2026-05-06）
 
-```
-worker1 = ローカルFirefox  ・240秒待機 ・自宅IP        ・226件担当（605時）
-worker2 = AdsPower Chrome ・120秒待機 ・DECODO日本住宅IP ・379件担当（605時）
-全体 15.9時間（40h→16h ＝ 2.5倍速）
-```
+**v9 並列化は中止。ローカル単独運用（v8/v8+補正）を維持。**
 
-**Why**: ASICS v8 の240秒待機は単独運用では妥当（Akamai対策）だが、別IP・別指紋なら120秒で済む。
-ローカル既存実績を温存しつつ、worker2を追加することで実質倍速化。
+## 中止理由（社長判断）
 
-**How to apply**: 比率分割で「パイ（総件数）が変わっても両ワーカーが同時刻に終わる」設計。
-n1:n2 = (1/t1):(1/t2)。WORKER_CONFIG の avg_fetch_seconds を実測で更新可能。
-
-## PoC実証結果（2026-05-05夜）
-
-- AdsPower Local API（v6+ Bearer認証）疎通OK
-- DECODO 日本住宅IP（117.109.55.32 / 124.210.45.52）動作確認
-- ASICS 5件連続取得（120秒待機）→ Bot検出ゼロ
-- 1件のみDECODO瞬断（住宅プロキシは性質上たまに切断）
-- 取得時間平均: 31秒/件
-
-## 環境
-
-| 項目 | 値 |
+| 理由 | 内容 |
 |---|---|
-| AdsPower プロファイル名 | Onitsuka |
-| AdsPower user_id | k1c60dgp |
-| AdsPower API Key | （adspower_driver.py にハードコード・要 .env 移行） |
-| DECODO プロキシ | jp.decodo.com:30001（住宅・日本） |
-| DECODO 認証 | spp5y3m50d / uj4+jNadmqbP97rRN7 |
+| ① 月額コスト過大 | DECODO Pay As You Go で約 19,000円/月（25 GB × $5・ASICS のみ）。adidas や他サイト追加で倍々。事業規模に対して割が合わない |
+| ② AdsPower プロファイル共有問題 | 既存「Onitsuka」プロファイルは社内スタッフが別 PC で仕入れに使っている。ASICS が16h/日連続稼働するとプロファイルロックで仕入れ業務が止まる。専用プロファイル新設は無料だが、DECODO コストは結局かかる |
+| ③ ローカル40h周回でも実害なし | 在庫変動の頻度的に1日1.5周（v8 単独）でも業務上問題にはなっていない |
 
-## ファイル
+## v9 PoC で得た知見（保存価値あり）
 
-- `asics_master_work/scrape_data.py` v9改修済（要テスト）
-- `asics_master_work/worker_split.py` 比率分割（再利用可能）
-- `asics_master_work/adspower_driver.py` AdsPower起動 + safe_get
-- `asics_master_work/run_parallel.bat` 並列起動ランチャー
-- `commerce/ebay/tools/handoff_20260505_evening_parallel_v9.md` 詳細引継ぎ
+- AdsPower Local API（v6+ Bearer認証）疎通方法は確立済み
+- DECODO 日本住宅 IP で 120秒待機 + Bot 検出ゼロが実証された（5件連続テスト）
+- 取得時間平均: 31秒/件
+- DECODO 瞬断対策: `adspower_driver.py` の `safe_get`（3回リトライ・8秒間隔）
 
-## 次のステップ
+→ **将来コスト構造が変われば即再開できる状態でコードはバックアップされている**：
+- `asics_master_work/scrape_data.py.bak_v8_pre_parallel_20260505_204545`（並列化前の v8）
+- `asics_master_work/worker_split.py`（比率分割ロジック・再利用可）
+- `asics_master_work/adspower_driver.py`（AdsPower 起動 + safe_get）
+- `asics_master_work/run_parallel.bat`（並列起動ランチャー）
 
-1. 単独モード互換テスト
-2. worker2 単体テスト
-3. 2並列テスト（10件規模）
-4. process_one_item の driver.get → safe_get 化
-5. exe 再ビルド
-6. 本番デプロイ
-7. .env 移行
+## 将来の低コスト代替案（コスト抑えて並列実行する場合）
+
+| 案 | 概算月額 | 詳細 | 安定性 |
+|---|---|---|---|
+| **a. モバイル回線 SIM 増設** | 1,000〜3,000円 | povo/ahamo/イオンモバイル等の格安SIM をモバイルルーター/スマホテザリングで2〜3回線並列。日本IPで自然な分散 | ◎（実IP） |
+| **b. 楽天モバイル + 既存光回線** | 既加入なら無料〜3,000円 | 楽天無制限プランの追加SIMをモバイルルーターに刺すだけ。光回線+モバイルで2並列 | ◎ |
+| **c. 自宅 IP 1本 + 時間帯分散** | 0円 | 待機時間短縮のため、Akamai cool-down が薄い時間帯（深夜2〜6時）に集中処理。並列ではなく速度最適化 | ○ |
+| **d. 部分並列（優先度ベース）** | 0円 | 「動きやすい商品（売れ筋・新作）」を高頻度（300件/12h）で巡回、「動かない商品」は低頻度（605件/40h）に分割 | ○ |
+| **e. クラウド住宅 IP 月額固定プラン** | 8,000〜15,000円 | BrightData / Smartproxy 等の月額10〜30 GB 固定プラン。Pay As You Go より単価安 | ○ |
+| **f. VPS + IP ローテーション** | 500〜1,000円 | Vultr/Linode の安価 VPS から自前で IP ローテーション。日本リージョンの VPS なら国境警戒なし | △（運用工数大）|
+
+**最有力（コスト x 効果）**: 案a または案b（モバイル回線 SIM 増設）。月3,000円以内で worker2 のローカル化が可能。
+
+→ DECODO に比べて月額 1/6 以下、専用プロファイル不要、AdsPower 共有問題も解消。
+
+**実装難度**: SIM 受領 → モバイルルーター設定 → Windows のネットワーク インターフェース指定で worker2 だけ別 IP。30分〜1時間で実現可能。
+
+## やめないこと（v9 開発で残った副産物）
+
+v9 開発中に identify_retry_targets の構造的バグ（URL 空欄行が永遠に処理されない）と、Policy違反表示が在庫状況に混在する問題が発覚。**v8+補正版** として下記2点を本番反映する：
+
+1. URL 空欄 + ItemID あり + 未処理 → リトライ対象に追加
+2. Policy違反 → 在庫状況は通常表記、エラー情報に "Policy違反" 分離
+
+## 関連ファイル
+
+- `commerce/ebay/tools/handoff_20260506_v8plus_deploy.md`（次セッション引継ぎ・本ファイル合わせて参照）
+- `commerce/ebay/tools/CLAUDE.md`（部門ルール・状態反映済）
+
+*最終更新: 2026-05-06 v9 中止判断・v8+補正版デプロイ計画*

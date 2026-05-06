@@ -10,9 +10,10 @@
 ## フィードバック（最重要・姿勢）
 - [Claudeの立ち位置（Reffort一従業員）](feedback_role_identity.md) — BayChat AI Reply開発の一担当者・社外連絡で社長の名前を勝手に使わない（なりすまし禁止）
 - [口調と分析の徹底度](feedback_tone_and_depth.md) — 敬語厳守・指摘される前に徹底的に考え抜く・最初から徹底版
+- [専門用語は素人向けの噛み砕き必須](feedback_layperson_explanation.md) — Claude Code内部仕様/API/技術用語は直後に1行で意味＋Reffortでの使い道を併記（2026-05-06指摘）
 - [経営パートナーとしての在り方](feedback_proactive_partner.md) — 言いなり禁止・指示の目的を理解し先回り提案
 - [常にベストから逆算する思考ルール](feedback_best_first_thinking.md) — ハードル/コストで切り捨てず松竹梅でベストを推奨
-- [宣言は必ず実装とセット](feedback_declaration_to_implementation.md) — 時間トリガー宣言→scheduled-task/hook/スクリプトに落とすまで完了しない
+- [宣言は必ず実装とセット](feedback_declaration_to_implementation.md) — 時間トリガー宣言→scheduled-task/hook/スクリプトに落とすまで完了しない＋アクティベートテスト・キュー方式・社長意図汲み（旧task_activation統合・2026-05-06）
 - [実装・修正は社長に渡す前に動作テストまで](feedback_test_before_handoff.md) — ビルド成功≠動作OK・起動テストまでやって出鼻くじかれない状態で渡す
 - [API調査は根本を掘る](feedback_api_investigation_depth.md) — 自社他プロダクトで動いているならAPIに必ずある・安易な回避策前に根本調査
 - [BayChat AI Reply 進行時のスタンス](feedback_baychat_ai_reply_stance.md) — 設計図理解前提・Cowatech前に自力解決・5原則厳守
@@ -30,14 +31,12 @@
 - [セキュリティルール（統合）](feedback_security.md) — APIトークン.env管理・.env出力禁止・settings.json deny判断基準・**2026-05-01 重大インシデント発覚＆rotate不要判断（3点セット原則）／PreToolUse hook追加（sensitive_file_guard.py）／3層防衛完成**
 - [.envファイルの作成・入力方法](feedback_env_file_handling.md) — Claudeがファイル作成→社長が直接入力（チャット入力禁止）
 - [スケジュールタスク運用ルール（統合）](feedback_scheduled_tasks.md) — 実行厳守・プロンプト同期・承認キャッシュ／**2026-05-01 ルール5・6追加：高頻度タスクはWindows直起動を原則化（API完結タスクも対象に）**
-- [スケジュールタスク アクティベート必須](feedback_task_activation.md) — 新規タスク必ずアクティベートテスト→承認→本番プロンプト更新
 - [Chrome操作の無人タスクはClaude経由を捨てる](feedback_chrome_mcp_unattended.md) — Chrome必須はPlaywright+Windowsタスクスケジューラ直接起動・**2026-04-29 派生指針改訂：API完結タスクもWindows優先（feedback_scheduled_tasks.md ルール5を参照）**
 - [スプレッドシート自動化3型](feedback_spreadsheet_automation_patterns.md) — GASロジック=clasp / 外部読書=Sheets API / UI操作=Playwright の即判定ルール
 - [Claude Code 運用ルール（統合）](feedback_claude_code_operation.md) — Progressive Disclosure＋4点セット（archive・biweekly-maintenance・index.md・/隔週メンテナンス）＋effort_booster厳選
 - [管理方法統一](feedback_management_unification.md) — 3層管理原則（ソース/バックアップ/スマホ参照）
 
 ## フィードバック（ツール・作業）
-- [ASICSブロック誤判定ミス](feedback_asics_block.md) — Bot検出をIPブロックと誤認する繰り返しミス・無限監視ループ禁止
 - [ファイル作成後は厳選して開く](feedback_file_delivery.md) — 成果物・結果・社長確認必須のみ開く。内部更新は開かない
 - [モデル判断は社長・Effortは自動調整](feedback_model_effort_policy.md) — モデル切替は提案しない・Opus基本
 - [事業実践のコンテンツ記録ルール](feedback_content_recording.md) — AI運用の発見・テスト・結果をSNS/Note/コンサル向け記録
@@ -47,7 +46,6 @@
 - [BayChat UI設計原則](feedback_baychat_ui_design.md) — 紫ベース配色・信号機色禁止・英日併記・シンプルイズザベスト
 
 ## フィードバック（サーバー・デプロイ）
-- [サーバーデプロイの教訓](feedback_server_deploy.md) — VPS失敗の教訓・PaaS優先・社長に手作業させない
 - [ダイレクト販売テスト・デプロイ運用](feedback_local_test_workflow.md) — ローカルテスト→社長OK→本番push・営業時間中push禁止
 
 ## プロジェクト
@@ -60,7 +58,7 @@
 - [スプレッドシート操作はAIコース必須テーマ](project_spreadsheet_automation_content.md) — Campers/コンサル教材の必須コンテンツ・記録蓄積先・扱い方針
 - [月次請求書 半自動化ツール](project_invoice_automation.md) — eBay外注3名の請求書自動作成（/月次請求書 YYYYMM）・3シート跨ぎ・列ごと型変換
 - [eBay 無在庫リサーチツール Ver.1](project_research_tool.md) — 2026-04-30完成・5/31ウェビナーデモ用・全コスト込み利益計算+楽天/Yahoo自動マッチング・社長判断待ちAPIキー3件
-- [ASICS v9 並列ワーカー化](project_asics_parallel_v9.md) — AdsPower(Onitsuka)+DECODO日本住宅IPで40h→16h短縮・PoC成功・コード改修完了・実機テスト未（2026-05-05夜）
+- [ASICS 並列化検討（中止）と低コスト代替案](project_asics_parallel_v9.md) — DECODOコスト過大＋AdsPower共有問題で2026-05-06中止・v9コード残置・将来モバイルSIM案で再開可能
 
 ## 参照なし（archive/・通常ロードしない）
 - `archive/README.md` — archive/ 配下のルール
@@ -69,6 +67,9 @@
 - `archive/project_shiire_gas_tool.md` — 仕入管理表GAS memory（gas-shiire-tool-spec.md で情報保全済み）
 - `archive/project_ebay_report.md` — 週次レポートv3 memory（weekly-report-spec.md＋本番稼働で完了）
 - `archive/feedback_remotion_video.md` — Remotion動画制作失敗教訓（過去参照用）
+- `archive/feedback_task_activation.md` — スケジュールタスクのアクティベートテスト等（**2026-05-06 declaration_to_implementation.md に統合**・参照不要）
+- `archive/feedback_asics_block.md` — ASICSスクレイピングのBot検出誤認過去事例（**v8+補正版で構造的に対処済**・参照不要）
+- `archive/feedback_server_deploy.md` — VPSデプロイ失敗教訓（**現在VPS不使用・Render/PaaS運用**・参照不要）
 
 ## 参照（Reference）
 - [eBay API 2系統の使い分け](reference_ebay_api_dual.md) — Trading(Auth'n'Auth)とSell Fulfillment(OAuth2)の選定基準・認証・用途
