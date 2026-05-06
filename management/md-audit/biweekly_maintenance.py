@@ -298,13 +298,17 @@ def is_first_or_third_monday():
 
 def main():
     # 第1・第3月曜ガード（--force で強制実行可）
+    # --dry-run 指定時は計測のみで、レポート保存／audit_log追記／Chatwork送信を全てスキップ
     force = "--force" in sys.argv
+    dry_run = "--dry-run" in sys.argv
+
     if not force and not is_first_or_third_monday():
         today = datetime.now()
         print(f"⏭ スキップ: {today.strftime('%Y-%m-%d (%A)')} は第1・第3月曜ではありません。--force で強制実行可")
         return 0
 
-    print(f"=== biweekly-claude-maintenance 実行: {datetime.now().isoformat()} ===")
+    mode_label = "[DRY-RUN] " if dry_run else ""
+    print(f"=== {mode_label}biweekly-claude-maintenance 実行: {datetime.now().isoformat()} ===")
 
     print("[1/5] 現状計測...")
     claude_md_list = measure_claude_md()
@@ -322,8 +326,11 @@ def main():
     print("[3/5] レポート生成...")
     today = datetime.now().strftime("%Y-%m-%d")
     detailed = build_detailed_report(today, claude_md_list, settings, memory, effort_log, prev)
-    save_detailed_report(today, detailed)
-    print(f"  reports/{today}.md 保存完了")
+    if dry_run:
+        print(f"  [DRY-RUN] reports/{today}.md 保存スキップ")
+    else:
+        save_detailed_report(today, detailed)
+        print(f"  reports/{today}.md 保存完了")
 
     print("[4/5] audit_log.csv 追記...")
     root_claude = next((c for c in claude_md_list if c["path"] == "CLAUDE.md"), None)
@@ -341,14 +348,26 @@ def main():
         "memory_total_lines": memory["total_lines"],
         "effort_booster_fires_2weeks": effort_log["total_fires_2weeks"],
     }
-    save_audit_log(snapshot)
+    if dry_run:
+        print("  [DRY-RUN] audit_log.csv 追記スキップ")
+    else:
+        save_audit_log(snapshot)
 
     print("[5/5] Chatwork個人DMへ送信...")
-    body = build_chatwork_body(claude_md_list, settings, memory, effort_log, prev)
-    success = post_to_chatwork(body)
+    if dry_run:
+        print("  [DRY-RUN] Chatwork送信スキップ（プレビューのみ表示）")
+        body = build_chatwork_body(claude_md_list, settings, memory, effort_log, prev)
+        print("--- 送信予定本文（プレビュー） ---")
+        print(body)
+        print("--- ここまで ---")
+        success = True
+    else:
+        body = build_chatwork_body(claude_md_list, settings, memory, effort_log, prev)
+        success = post_to_chatwork(body)
 
     if success:
-        print("\n✅ 隔週メンテナンス実行完了")
+        suffix = "（DRY-RUNのため副作用なし）" if dry_run else ""
+        print(f"\n✅ 隔週メンテナンス実行完了{suffix}")
         return 0
     else:
         print("\n⚠️ Chatwork送信失敗（レポート・ログは保存済み）")
