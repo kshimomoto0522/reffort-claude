@@ -7,6 +7,12 @@
 
 ## 🔥🔥 進行中（最重要）
 
+- **🆕 5/31 Campersウェビナー残タスク整理（ドラフト・Education Lead作成）**: `education/campers/content-projects/webinar-materials/handoff_20260506_remaining_tasks_to_531_DRAFT.md`
+  - 5/13〜5/19 隔週メンテで社長判断必須の8項目（料金・開始時期・運営フォーマット等）を整理
+  - 第1週から course-curator / content-recorder 起動推奨・第2週から webinar-architect 本格起動
+- **🆕 Phase 1 エージェント組織立ち上げ（Education部門のみ稼働中）**: `.claude/org_chart.md` + `.claude/pm_role.md` + `.claude/agents/`
+  - 次セッションから `/education <依頼内容>` でEducation Lead起動可能
+  - PM/COO（メイン会話のClaude）→ Education Lead → 3 Specialists の3階層構造
 - **ASICS v8+補正版 本番稼働中（210秒試行・1047対応・3論点修正反映）**: `commerce/ebay/tools/handoff_20260506_v8plus_deploy.md`
   - v9並列化中止・v8ベースに3論点修正＋待機210秒短縮＋EndItem 1047成功扱い・5/6 13:47ビルド・S02754自動クリア確認済
   - 1周完走後にBot検出頻度をレビュー
